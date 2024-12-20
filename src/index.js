@@ -1,188 +1,214 @@
 import { Worker, spawn, Thread } from 'threads';
-import localForage from "localforage";
+import localForage from 'localforage';
 import md5 from 'md5';
 import '../css/container.css';
 
 // document.currentScript polyfill
 if (document.currentScript === undefined) {
-	var scripts = document.getElementsByTagName('script');
-	document.currentScript = scripts[scripts.length - 1];
+    const scripts = document.getElementsByTagName('script');
+    document.currentScript = scripts[scripts.length - 1];
 }
 
-// Determine where this script was loaded from. We will use that to find the files to load.
-var url = new URL(document.currentScript.src);
-var processQueue = [];
-var observer = null;
-var texWorker;
+// Determine where this script was loaded from. This is used to find the files to load.
+const url = new URL(document.currentScript.src);
 
-async function processTikzScripts(scripts) {
-	let currentProcessPromise = new Promise(async function(resolve, reject) {
-		let texQueue = [];
+const processQueue = [];
+let observer = null;
+let texWorker;
 
-		async function loadCachedOrSetupLoader(elt) {
-			elt.md5hash = md5(JSON.stringify(elt.dataset) + elt.childNodes[0].nodeValue);
+const processTikzScripts = async (scripts) => {
+    const currentProcessPromise = new Promise((resolve) => {
+        const texQueue = [];
 
-			let savedSVG = await localForage.getItem(elt.md5hash);
+        const loadCachedOrSetupLoader = async (elt) => {
+            elt.md5hash = md5(JSON.stringify(elt.dataset) + elt.childNodes[0].nodeValue);
 
-			if (savedSVG) {
-				let svg = document.createRange().createContextualFragment(savedSVG).firstChild;
-				elt.replaceWith(svg);
+            const savedSVG = elt.dataset.disableCache ? undefined : await localForage.getItem(elt.md5hash);
 
-				// Emit a bubbling event that the svg is ready.
-				const loadFinishedEvent = new Event('tikzjax-load-finished', { bubbles: true});
-				svg.dispatchEvent(loadFinishedEvent);
-			} else {
-				texQueue.push(elt);
+            if (savedSVG) {
+                const svg = document.createRange().createContextualFragment(savedSVG).firstChild;
+                elt.replaceWith(svg);
 
-				let width = parseFloat(elt.dataset.width) || 75;
-				let height = parseFloat(elt.dataset.height) || 75;
+                // Emit a bubbling event that the svg is ready.
+                const loadFinishedEvent = new Event('tikzjax-load-finished', { bubbles: true });
+                svg.dispatchEvent(loadFinishedEvent);
+            } else {
+                texQueue.push(elt);
 
-				// Replace the elt with a spinning loader.
-				elt.loader = document.createRange().createContextualFragment(`<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='${width}pt' height='${height}pt' viewBox='0 0 ${width} ${height}'><rect width='${width}' height='${height}' rx='5pt' ry='5pt' fill='#000' fill-opacity='0.2'/><circle cx="${width / 2}" cy="${height / 2}" r="15" stroke="#f3f3f3" fill="none" stroke-width="3"/><circle cx="${width / 2}" cy="${height / 2}" r="15" stroke="#3498db" fill="none" stroke-width="3" stroke-linecap="round"><animate attributeName="stroke-dasharray" begin="0s" dur="2s" values="56.5 37.7;1 93.2;56.5 37.7" keyTimes="0;0.5;1" repeatCount="indefinite"></animate><animate attributeName="stroke-dashoffset" begin="0s" dur="2s" from="0" to="188.5" repeatCount="indefinite"></animate></circle></svg>`).firstChild;
-				elt.replaceWith(elt.loader);
-			}
-		}
+                const width = parseFloat(elt.dataset.width) || 75;
+                const height = parseFloat(elt.dataset.height) || 75;
 
-		async function process(elt) {
-			let text = elt.childNodes[0].nodeValue;
-			let loader = elt.loader;
+                // Replace the elt with a spinning loader.
+                elt.loader = document
+                    .createRange()
+                    .createContextualFragment(
+                        '<svg version="1.1" ' +
+                            'xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" ' +
+                            `width="${width}pt" height="${height}pt" viewBox="0 0 ${width} ${height}">` +
+                            `<rect width="${width}" height="${height}" rx="5pt" ry="5pt" ` +
+                            'fill="#000" fill-opacity="0.2"/>' +
+                            `<circle cx="${width / 2}" cy="${height / 2}" r="15" stroke="#f3f3f3" ` +
+                            'fill="none" stroke-width="3"/>' +
+                            `<circle cx="${width / 2}" cy="${height / 2}" r="15" stroke="#3498db" ` +
+                            'fill="none" stroke-width="3" stroke-linecap="round">' +
+                            '<animate attributeName="stroke-dasharray" begin="0s" dur="2s" ' +
+                            'values="56.5 37.7;1 93.2;56.5 37.7" keyTimes="0;0.5;1" repeatCount="indefinite">' +
+                            '</animate>' +
+                            '<animate attributeName="stroke-dashoffset" begin="0s" dur="2s" ' +
+                            'from="0" to="188.5" repeatCount="indefinite"></animate></circle>' +
+                            '</svg>'
+                    ).firstChild;
+                elt.replaceWith(elt.loader);
+            }
+        };
 
-			// Check for a saved svg again in case this script tag is a duplicate of another.
-			let savedSVG = await localForage.getItem(elt.md5hash);
+        const process = async (elt) => {
+            const text = elt.childNodes[0].nodeValue;
+            const loader = elt.loader;
 
-			if (savedSVG) {
-				let svg = document.createRange().createContextualFragment(savedSVG).firstChild;
-				loader.replaceWith(svg);
+            // Check for a saved svg again in case this script tag is a duplicate of another.
+            const savedSVG = elt.dataset.disableCache ? undefined : await localForage.getItem(elt.md5hash);
 
-				// Emit a bubbling event that the svg is ready.
-				const loadFinishedEvent = new Event('tikzjax-load-finished', { bubbles: true});
-				svg.dispatchEvent(loadFinishedEvent);
+            if (savedSVG) {
+                const svg = document.createRange().createContextualFragment(savedSVG).firstChild;
+                loader.replaceWith(svg);
 
-				return;
-			}
+                // Emit a bubbling event that the svg is ready.
+                const loadFinishedEvent = new Event('tikzjax-load-finished', { bubbles: true });
+                svg.dispatchEvent(loadFinishedEvent);
 
-			let html = "";
-			try {
-				html = await texWorker.texify(text, Object.assign({}, elt.dataset));
-			} catch (err) {
-				console.log(err);
-				// Show the browser's image not found icon.
-				loader.outerHTML = "<img src='//invalid.site/img-not-found.png'/>";
-				return;
-			}
+                return;
+            }
 
-			let ids = html.match(/\bid="pgf[^"]*"/g);
-			if (ids) {
-				// Sort the ids from longest to shortest.
-				ids.sort((a, b) => { return b.length - a.length; });
-				for (let id of ids) {
-					let pgfIdString = id.replace(/id="pgf(.*)"/, "$1");
-					html = html.replaceAll("pgf" + pgfIdString, `pgf${elt.md5hash}${pgfIdString}`);
-				}
-			}
+            let html = '';
+            try {
+                html = await texWorker.texify(text, Object.assign({}, elt.dataset));
+            } catch (err) {
+                console.log(err);
+                // Show the browser's image not found icon.
+                loader.outerHTML = '<img src="//invalid.site/img-not-found.png">';
+                return;
+            }
 
-			let svg = document.createRange().createContextualFragment(html).firstChild;
-			loader.replaceWith(svg);
+            const ids = html.match(/\bid="pgf[^"]*"/g);
+            if (ids) {
+                // Sort the ids from longest to shortest.
+                ids.sort((a, b) => {
+                    return b.length - a.length;
+                });
+                for (const id of ids) {
+                    const pgfIdString = id.replace(/id="pgf(.*)"/, '$1');
+                    html = html.replaceAll('pgf' + pgfIdString, `pgf${elt.md5hash}${pgfIdString}`);
+                }
+            }
 
-			try {
-				await localForage.setItem(elt.md5hash, svg.outerHTML);
-			} catch (err) {
-				console.log(err);
-			}
+            const svg = document.createRange().createContextualFragment(html).firstChild;
+            loader.replaceWith(svg);
 
-			// Emit a bubbling event that the svg image generation is complete.
-			const loadFinishedEvent = new Event('tikzjax-load-finished', { bubbles: true});
-			svg.dispatchEvent(loadFinishedEvent);
-		};
+            if (!elt.dataset.disableCache) {
+                try {
+                    await localForage.setItem(elt.md5hash, svg.outerHTML);
+                } catch (err) {
+                    console.log(err);
+                }
+            }
 
-		// First check the session storage to see if an image is already cached,
-		// and if so load that.  Otherwise show a spinning loader, and push the
-		// element onto the queue to run tex on.
-		for (let element of scripts) {
-			await loadCachedOrSetupLoader(element);
-		}
+            // Emit a bubbling event that the svg image generation is complete.
+            const loadFinishedEvent = new Event('tikzjax-load-finished', { bubbles: true });
+            svg.dispatchEvent(loadFinishedEvent);
+        };
 
-		// End here if there is nothing to run tex on.
-		if (!texQueue.length) return resolve();
+        (async () => {
+            // First check the session storage to see if an image is already cached,
+            // and if so load that.  Otherwise show a spinning loader, and push the
+            // element onto the queue to run tex on.
+            for (const element of scripts) {
+                await loadCachedOrSetupLoader(element);
+            }
 
-		texWorker = await texWorker;
+            // End here if there is nothing to run tex on.
+            if (!texQueue.length) return resolve();
 
-		processQueue.push(currentProcessPromise);
-		if (processQueue.length > 1) {
-			await processQueue[processQueue.length - 2];
-		}
+            texWorker = await texWorker;
 
-		// Run tex on the text in each of the scripts that wasn't cached.
-		for (let element of texQueue) {
-			await process(element);
-		}
+            processQueue.push(currentProcessPromise);
+            if (processQueue.length > 1) await processQueue[processQueue.length - 2];
 
-		processQueue.shift();
+            // Run tex on the text in each of the scripts that wasn't cached.
+            for (const element of texQueue) {
+                await process(element);
+            }
 
-		return resolve();
-	});
-	return currentProcessPromise;
-}
+            processQueue.shift();
 
-async function initializeWorker() {
-	var urlRoot = url.href.replace(/\/tikzjax(\.min)?\.js$/, '');
+            return resolve();
+        })();
+    });
+    return currentProcessPromise;
+};
 
-	// Set up the worker thread.
-	const tex = await spawn(new Worker(`${urlRoot}/run-tex.js`));
-	Thread.events(tex).subscribe(e => {
-		if (e.type == "message" && typeof(e.data) === "string") console.log(e.data);
-	});
+const initializeWorker = async () => {
+    const urlRoot = url.href.replace(/\/tikzjax\.js(?:\?.*)?$/, '');
 
-	// Load the assembly and core dump.
-	try {
-		await tex.load(urlRoot);
-	} catch (err) {
-		console.log(err);
-	}
+    // Set up the worker thread.
+    const tex = await spawn(new Worker(`${urlRoot}/run-tex.js`));
+    Thread.events(tex).subscribe((e) => {
+        if (e.type == 'message' && typeof e.data === 'string') console.log(e.data);
+    });
 
-	return tex;
-}
+    // Load the assembly and core dump.
+    try {
+        await tex.load(urlRoot);
+    } catch (err) {
+        console.log(err);
+    }
 
-async function initialize() {
-	// Process any text/tikz scripts that are on the page initially.
-	processTikzScripts(Array.prototype.slice.call(document.getElementsByTagName('script')).filter(
-		(e) => (e.getAttribute('type') === 'text/tikz')
-	));
+    return tex;
+};
 
-	// If a text/tikz script is added to the page later, then process those.
-	observer = new MutationObserver((mutationsList, observer) => {
-		let newTikzScripts = [];
-		for (const mutation of mutationsList) {
-			for (const node of mutation.addedNodes) {
-				if (node.tagName && node.tagName.toLowerCase() == 'script' && node.type == "text/tikz")
-					newTikzScripts.push(node);
-				else if (node.getElementsByTagName)
-					newTikzScripts.push.apply(newTikzScripts,
-						Array.prototype.slice.call(node.getElementsByTagName('script')).filter(
-							(e) => (e.getAttribute('type') === 'text/tikz')
-						)
-					);
-			}
-		}
-		processTikzScripts(newTikzScripts);
-	});
-	observer.observe(document.getElementsByTagName('body')[0], { childList: true, subtree: true });
-}
+const initialize = async () => {
+    // Process any text/tikz scripts that are on the page initially.
+    processTikzScripts(
+        Array.prototype.slice
+            .call(document.getElementsByTagName('script'))
+            .filter((e) => e.getAttribute('type') === 'text/tikz')
+    );
 
-async function shutdown() {
-	if (observer) observer.disconnect();
-	await Thread.terminate(await texWorker);
-}
+    // If a text/tikz script is added to the page later, then process those.
+    observer = new MutationObserver((mutationsList) => {
+        const newTikzScripts = [];
+        for (const mutation of mutationsList) {
+            for (const node of mutation.addedNodes) {
+                if (node.tagName && node.tagName.toLowerCase() == 'script' && node.type == 'text/tikz')
+                    newTikzScripts.push(node);
+                else if (node.getElementsByTagName)
+                    newTikzScripts.push.apply(
+                        newTikzScripts,
+                        Array.prototype.slice
+                            .call(node.getElementsByTagName('script'))
+                            .filter((e) => e.getAttribute('type') === 'text/tikz')
+                    );
+            }
+        }
+        processTikzScripts(newTikzScripts);
+    });
+    observer.observe(document.getElementsByTagName('body')[0], { childList: true, subtree: true });
+};
+
+const shutdown = async () => {
+    if (observer) observer.disconnect();
+    await Thread.terminate(await texWorker);
+};
 
 if (!window.TikzJax) {
-	window.TikzJax = true;
+    window.TikzJax = true;
 
-	localForage.config({ name: 'TikzJax', storeName: 'svgImages' });
-	texWorker = initializeWorker();
+    localForage.config({ name: 'TikzJax', storeName: 'svgImages' });
+    texWorker = initializeWorker();
 
-	if (document.readyState == 'complete') initialize();
-	else window.addEventListener('load', initialize);
+    if (document.readyState == 'complete') initialize();
+    else window.addEventListener('load', initialize);
 
-	// Stop the mutation observer and close the thread when the window is closed.
-	window.addEventListener('unload', shutdown);
+    // Stop the mutation observer and close the thread when the window is closed.
+    window.addEventListener('unload', shutdown);
 }

@@ -1,0 +1,16 @@
+/src
+/node_modules
+/public
+/.github
+/misc
+/css
+bakoma.zip
+core.dump.gz
+tex.wasm.gz
+webpack.config.js
+genTexFiles.js
+gulpfile.mjs
+tex_files.json
+.vim
+.editorconfig
+.prettierrc

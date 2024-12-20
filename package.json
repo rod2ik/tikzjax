@@ -1,40 +1,61 @@
 {
-	"name": "tikzjax",
-	"version": "1.0.0",
-	"description": "",
-	"browser": "tikzjax.js",
-	"scripts": {
-		"gen-tex-files": "node genTexFiles.js",
-		"install-fonts": "gulp download-fonts && gulp install-fonts",
-		"devbuild": "webpack --mode development",
-		"build": "webpack",
-		"postbuild": "npm run install-fonts && npm run gen-tex-files"
-	},
-	"author": "Jim Fowler",
-	"contributors": [
-		"Glenn Rice"
-	],
-	"license": "GPL-3.0+",
-	"dependencies": {
-		"buffer": "^6.0.3",
-		"dvi2html": "github:drgrice1/dvi2html#ww-modifications",
-		"fetch-readablestream": "^0.2.0",
-		"localforage": "^1.9.0",
-		"md5": "^2.3.0",
-		"pako": "^2.0.2",
-		"process": "^0.11.10",
-		"stream-browserify": "^3.0.0",
-		"threads": "^1.6.3"
-	},
-	"devDependencies": {
-		"copy-webpack-plugin": "^7.0.0",
-		"css-loader": "^5.0.1",
-		"gulp": "^4.0.2",
-		"gulp-decompress": "^3.0.0",
-		"gulp-download2": "^1.0.2",
-		"gulp-filter": "^6.0.0",
-		"style-loader": "^2.0.0",
-		"webpack": "^5.11.1",
-		"webpack-cli": "^4.3.0"
-	}
+    "name": "@drgrice1/tikzjax",
+    "version": "1.0.0-beta9",
+    "description": "TikZJax loader",
+    "author": "Jim Fowler",
+    "contributors": [
+        "Glenn Rice"
+    ],
+    "license": "GPL-3.0+",
+    "main": "tikzjax.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/drgrice1/tikzjax.git"
+    },
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "format": "prettier --write .",
+        "format:check": "prettier --check .",
+        "lint": "eslint . --fix",
+        "lint:check": "eslint .",
+        "gen-tex-files": "node genTexFiles.js",
+        "install-fonts": "node installFonts.js",
+        "build": "webpack --mode production",
+        "build:dev": "webpack --mode development",
+        "postbuild": "npm run install-fonts && npm run gen-tex-files",
+        "serve": "webpack serve --mode development"
+    },
+    "dependencies": {
+        "buffer": "^6.0.3",
+        "dvi2html": "github:drgrice1/dvi2html#ww-modifications",
+        "fetch-readablestream": "^0.2.0",
+        "localforage": "^1.10.0",
+        "md5": "^2.3.0",
+        "pako": "^2.1.0",
+        "process": "^0.11.10",
+        "stream-browserify": "^3.0.0",
+        "threads": "^1.7.0"
+    },
+    "devDependencies": {
+        "@awmottaz/prettier-plugin-void-html": "^1.6.1",
+        "@stylistic/eslint-plugin": "^2.12.1",
+        "copy-webpack-plugin": "^12.0.2",
+        "css-loader": "^7.1.2",
+        "decompress": "^4.2.1",
+        "eslint": "^9.17.0",
+        "eslint-config-prettier": "^9.1.0",
+        "eslint-webpack-plugin": "^4.2.0",
+        "prettier": "^3.4.2",
+        "style-loader": "^4.0.0",
+        "webpack": "^5.97.1",
+        "webpack-cli": "^5.1.4",
+        "webpack-dev-server": "^5.2.0"
+    },
+    "overrides": {
+        "@awmottaz/prettier-plugin-void-html": {
+            "prettier": ">=3.4.2"
+        }
+    }
 }

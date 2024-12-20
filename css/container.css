@@ -1,9 +1,9 @@
 .tikzjax-content svg {
-	overflow: visible;
+    overflow: visible;
 }
 
 .tikzjax-scaled-content svg {
-	width: 100%;
-	height: 100%;
-	overflow: visible;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
 }
