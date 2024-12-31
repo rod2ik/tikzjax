@@ -100,7 +100,7 @@ const openSync = (filename, mode) => {
         // Otherwise attempt to find it.
         const descriptor = files.findIndex((element) => element.filename == filename && !element.erstat);
         if (descriptor == -1) {
-            if (initialSleepState || filename.match(/\.(aux|log|dvi)$/)) {
+            if (initialSleepState || filename.startsWith('TeXinputs:') || filename.match(/\.(aux|log|dvi)$/)) {
                 // If we are returning from sleep and the file is still not in the filesystem,
                 // or it is an aux, log, or dvi file, then report it as not found.
                 files.push({

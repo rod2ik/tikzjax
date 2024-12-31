@@ -1,6 +1,7 @@
 [
     "array.sty",
     "ifthen.sty",
+    "l3backend-dvips.def",
     "pgfcalendar.code.tex",
     "pgfcalendar.sty",
     "pgfint.code.tex",
@@ -69,6 +70,7 @@
     "pgfplotsmeshplothandler.code.tex",
     "pgfplotsmeshplotimage.code.tex",
     "pgfplotsoldpgfsupp_loader.code.tex",
+    "pgfplotsoldpgfsupp_pgfutil-common-lists.tex",
     "pgfplotsplothandlers.code.tex",
     "pgfplotsstackedplots.code.tex",
     "pgfplotssysgeneric.code.tex",
@@ -154,6 +156,5 @@
     "tikzlibrarythrough.code.tex",
     "tikzlibrarytrees.code.tex",
     "tikzlibraryturtle.code.tex",
-    "tikzlibraryviews.code.tex",
-    "l3backend-dvips.def"
+    "tikzlibraryviews.code.tex"
 ]
