@@ -89,8 +89,7 @@ will add
 to the preamble of the TeX input. Note that TeX packages must be loaded in this way. This will ensure that the needed
 TeX system files are made available to the TeX WebAssembly for successful compilation. Note that the only TeX packages
 that are available at this time are `array`, `pgfplots`, `tikz-3dplot`, and `tikz-cd`. Additional packages can be made
-available by adding a file `<package-name>.json` that contains an array of file names needed by the package to the
-`tex_packages` directory, and adding the gzipped files in that array to the `tex_files` directory.
+available by adding the gzipped TeX files used by the package to the `tex_files` directory.
 
 Use `data-tikz-libraries` to load and use TikZ libraries. For example:
 

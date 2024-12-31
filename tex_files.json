@@ -154,5 +154,6 @@
     "tikzlibrarythrough.code.tex",
     "tikzlibrarytrees.code.tex",
     "tikzlibraryturtle.code.tex",
-    "tikzlibraryviews.code.tex"
+    "tikzlibraryviews.code.tex",
+    "l3backend-dvips.def"
 ]

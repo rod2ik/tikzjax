@@ -14,7 +14,7 @@ let view = null;
 let fileLoader = null;
 let finished = null;
 
-export const pages = 1100;
+export const pages = 2500;
 
 let DATA_ADDR = (pages - 100) * 1024 * 64;
 let END_ADDR = pages * 1024 * 64;
@@ -105,7 +105,8 @@ const openSync = (filename, mode) => {
                 // or it is an aux, log, or dvi file, then report it as not found.
                 files.push({
                     filename: filename,
-                    erstat: 1
+                    erstat: /\.(aux|log|dvi|tex)$/.test(filename) ? 1 : 0,
+                    eof: true
                 });
                 return files.length - 1;
             } else {
@@ -361,6 +362,24 @@ export const rewrite = (length, pointer) => {
     return openSync(filename, 'w');
 };
 
+export const getfilesize = (length, pointer) => {
+    const buffer = new Uint8Array(memory, pointer, length);
+    let filename = String.fromCharCode.apply(null, buffer);
+
+    if (filename.startsWith('{')) {
+        filename = filename.replace(/^{/g, '');
+        filename = filename.replace(/}.*/g, '');
+    }
+
+    filename = filename.replace(/ +$/g, '');
+    filename = filename.replace(/^\*/, '');
+
+    if (filename == 'TeXformats:TEX.POOL') filename = 'tex.pool';
+
+    if (openSync(filename, 'r') !== -1) return filesystem[filename]?.length ?? 0;
+    return 0;
+};
+
 export const close = (descriptor) => {
     const file = files[descriptor];
     if (file.descriptor) closeSync(file.descriptor);
@@ -397,6 +416,8 @@ export const inputln = (descriptor, bypass_eoln, bufferp, firstp, lastp, _max_bu
     if (bypass_eoln && !file.eof && file.eoln) {
         file.position2 = file.position2 + 1;
     }
+
+    if (file.eof) return false;
 
     let endOfLine = file.content.indexOf(10, file.position2);
     if (endOfLine < 0) endOfLine = file.content.length;

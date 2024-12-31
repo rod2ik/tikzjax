@@ -60,13 +60,10 @@ expose({
         buffer.set(coredump.slice(0));
 
         library.setMemory(memory.buffer);
-        library.setInput(' input.tex \n\\end\n');
+        library.setInput('input.tex\n\\end\n');
         library.setFileLoader(loadDecompress);
 
-        const wasm = await WebAssembly.instantiate(code, {
-            library: library,
-            env: { memory: memory }
-        });
+        const wasm = await WebAssembly.instantiate(code, { library, env: { memory } });
 
         // Execute the tex web assembly.
         await library.executeAsync(wasm.instance.exports);
