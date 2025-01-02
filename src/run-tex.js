@@ -25,7 +25,7 @@ const loadDecompress = async (file) => {
 
         return inflate.result;
     } else {
-        throw `Unable to load ${file}.  File not available.`;
+        throw new Error(`Unable to load ${file}. File not available.`);
     }
 };
 

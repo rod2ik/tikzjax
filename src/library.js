@@ -105,7 +105,7 @@ const openSync = (filename, mode) => {
                 // or it is an aux, log, or dvi file, then report it as not found.
                 files.push({
                     filename: filename,
-                    erstat: /\.(aux|log|dvi|tex)$/.test(filename) ? 1 : 0,
+                    erstat: /\.(aux|log|dvi|tex|sty|def|cls)$/.test(filename) ? 1 : 0,
                     eof: true
                 });
                 return files.length - 1;
@@ -114,12 +114,24 @@ const openSync = (filename, mode) => {
                 startUnwind();
                 sleeping = true;
                 setTimeout(async () => {
-                    // Attempt to load the file.
+                    // Attempt to load the file. The file is first searched for in the package's tex_files directory.
+                    // If it isn't found there then try to load it directly assuming it is a URL. In this case it is
+                    // also assumed that the file is not a gzip compressed file.
                     try {
                         const data = await fileLoader(`tex_files/${filename}.gz`);
                         filesystem[filename] = data;
                     } catch {
-                        /* ignore */
+                        try {
+                            const response = await fetch(filename);
+                            if (response.ok) {
+                                const data = await response.text();
+                                filesystem[filename] = data;
+                            } else {
+                                throw new Error(`Unable to load ${filename}.`);
+                            }
+                        } catch {
+                            /* ignore */
+                        }
                     }
                     startRewind();
                 }, 0);
