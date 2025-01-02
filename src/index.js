@@ -103,6 +103,14 @@ const processTikzScripts = async (scripts) => {
             }
 
             const svg = document.createRange().createContextualFragment(html).firstChild;
+            svg.role = 'img';
+
+            if (elt.dataset.ariaLabel) {
+                const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+                title.textContent = elt.dataset.ariaLabel;
+                svg.prepend(title);
+            }
+
             loader.replaceWith(svg);
 
             if (!elt.dataset.disableCache) {

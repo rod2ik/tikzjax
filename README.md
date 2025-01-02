@@ -111,6 +111,8 @@ library).
 
 Use `data-add-to-preamble="..."` to add to the TeX preamble.
 
+An SVG title can be added for screen reader users by setting `data-aria-label`.
+
 Use `data-show-console="true"` to enable the output of TeX in the console. By default, console output is disabled and
 nothing is shown in the browser console. If this data attribute is set, then you will see
 
