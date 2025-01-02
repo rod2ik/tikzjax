@@ -1,6 +1,5 @@
 import { Worker, spawn, Thread } from 'threads';
 import { openDB } from 'idb';
-import md5 from 'md5';
 import '../css/container.css';
 
 // document.currentScript polyfill
@@ -20,6 +19,12 @@ const dbPromise = openDB('TikzJax', 2, {
 const getItem = async (key) => (await dbPromise).get('svgImages', key);
 const setItem = async (key, val) => (await dbPromise).put('svgImages', val, key);
 
+const createHash = async (string) => {
+    return Array.from(new Uint8Array(await window.crypto.subtle.digest('SHA-1', new TextEncoder().encode(string))))
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join('');
+};
+
 const processQueue = [];
 let observer = null;
 let texWorker;
@@ -29,9 +34,9 @@ const processTikzScripts = async (scripts) => {
         const texQueue = [];
 
         const loadCachedOrSetupLoader = async (elt) => {
-            elt.md5hash = md5(JSON.stringify(elt.dataset) + elt.childNodes[0].nodeValue);
+            elt.sourceHash = await createHash(JSON.stringify(elt.dataset) + elt.childNodes[0].nodeValue);
 
-            const savedSVG = elt.dataset.disableCache ? undefined : await getItem(elt.md5hash);
+            const savedSVG = elt.dataset.disableCache ? undefined : await getItem(elt.sourceHash);
 
             if (savedSVG) {
                 const svg = document.createRange().createContextualFragment(savedSVG).firstChild;
@@ -75,7 +80,7 @@ const processTikzScripts = async (scripts) => {
             const loader = elt.loader;
 
             // Check for a saved svg again in case this script tag is a duplicate of another.
-            const savedSVG = elt.dataset.disableCache ? undefined : await getItem(elt.md5hash);
+            const savedSVG = elt.dataset.disableCache ? undefined : await getItem(elt.sourceHash);
 
             if (savedSVG) {
                 const svg = document.createRange().createContextualFragment(savedSVG).firstChild;
@@ -106,7 +111,7 @@ const processTikzScripts = async (scripts) => {
                 });
                 for (const id of ids) {
                     const pgfIdString = id.replace(/id="pgf(.*)"/, '$1');
-                    html = html.replaceAll('pgf' + pgfIdString, `pgf${elt.md5hash}${pgfIdString}`);
+                    html = html.replaceAll('pgf' + pgfIdString, `pgf${elt.sourceHash}${pgfIdString}`);
                 }
             }
 
@@ -123,7 +128,7 @@ const processTikzScripts = async (scripts) => {
 
             if (!elt.dataset.disableCache) {
                 try {
-                    await setItem(elt.md5hash, svg.outerHTML);
+                    await setItem(elt.sourceHash, svg.outerHTML);
                 } catch (err) {
                     console.log(err);
                 }
