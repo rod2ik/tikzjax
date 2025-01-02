@@ -29,7 +29,7 @@
     },
     "dependencies": {
         "buffer": "^6.0.3",
-        "dvi2html": "github:drgrice1/dvi2html#ww-modifications",
+        "dvi2html": "github:drgrice1/dvi2html",
         "fetch-readablestream": "^0.2.0",
         "localforage": "^1.10.0",
         "md5": "^2.3.0",

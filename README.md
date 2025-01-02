@@ -40,8 +40,8 @@ image.
 
 ## How does this work?
 
-Using the ww-modifications branch of [drgrice1/web2js](https://github.com/drgrice1/web2js) the Pascal source of `TeX` is
-compiled to WebAssembly, and the `LaTeX` format is loaded (without all the hyphenation data). Then
+Using the main branch of [drgrice1/web2js](https://github.com/drgrice1/web2js) the Pascal source of `TeX` is compiled to
+WebAssembly, and the `LaTeX` format is loaded (without all the hyphenation data). Then
 
 ```tex
 \documentclass[margin=0pt]{standalone}
@@ -51,8 +51,8 @@ compiled to WebAssembly, and the `LaTeX` format is loaded (without all the hyphe
 ```
 
 is executed. Then the core is dumped and compressed. The WebAssembly and core are loaded in the browser and executed. An
-SVG driver for PGF along in the ww-modifications branch of [drgrice1/dvi2thml](https://github.com/drgrice1/dvi2html) are
-then utilized to convert the DVI output into to an SVG image.
+SVG driver for PGF along with the [drgrice1/dvi2thml](https://github.com/drgrice1/dvi2html) library are then utilized to
+convert the DVI output into to an SVG image.
 
 All of this happens in the browser.
 
@@ -113,6 +113,8 @@ Use `data-add-to-preamble="..."` to add to the TeX preamble.
 
 An SVG title can be added for screen reader users by setting `data-aria-label`.
 
+The `data-disable-cache` attribute can be set to `true` to disable caching of an image in the indexed database.
+
 Use `data-show-console="true"` to enable the output of TeX in the console. By default, console output is disabled and
 nothing is shown in the browser console. If this data attribute is set, then you will see
 
@@ -155,12 +157,11 @@ document.addEventListener('tikzjax-load-finished', function(e) {
 
 ## Building
 
-First clone this GitHub repository [https://github.com/drgrice1/tikzjax](https://github.com/drgrice1/tikzjax) and switch
-to the ww-modifications branch.
+First clone this GitHub repository [https://github.com/drgrice1/tikzjax](https://github.com/drgrice1/tikzjax).
 
-Then clone my fork of web2js [https://github.com/drgrice1/web2js](https://github.com/drgrice1/web2js) and also switch to
-the ww-modifications branch. Follow the directions in the README for a "quick path to generate the tex.wasm and
-core.dump files". Then copy the generated core.dump and tex.wasm files to the tikzjax directory, and gzip them.
+Then clone my fork of web2js [https://github.com/drgrice1/web2js](https://github.com/drgrice1/web2js). Follow the
+directions in the README for a "quick path to generate the tex.wasm and core.dump files". Then copy the generated
+core.dump and tex.wasm files to the tikzjax directory, and gzip them.
 
 Finally run
 
