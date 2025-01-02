@@ -1,5 +1,5 @@
 import { Worker, spawn, Thread } from 'threads';
-import localForage from 'localforage';
+import { openDB } from 'idb';
 import md5 from 'md5';
 import '../css/container.css';
 
@@ -12,6 +12,14 @@ if (document.currentScript === undefined) {
 // Determine where this script was loaded from. This is used to find the files to load.
 const url = new URL(document.currentScript.src);
 
+const dbPromise = openDB('TikzJax', 2, {
+    upgrade(db) {
+        db.createObjectStore('svgImages');
+    }
+});
+const getItem = async (key) => (await dbPromise).get('svgImages', key);
+const setItem = async (key, val) => (await dbPromise).put('svgImages', val, key);
+
 const processQueue = [];
 let observer = null;
 let texWorker;
@@ -23,7 +31,7 @@ const processTikzScripts = async (scripts) => {
         const loadCachedOrSetupLoader = async (elt) => {
             elt.md5hash = md5(JSON.stringify(elt.dataset) + elt.childNodes[0].nodeValue);
 
-            const savedSVG = elt.dataset.disableCache ? undefined : await localForage.getItem(elt.md5hash);
+            const savedSVG = elt.dataset.disableCache ? undefined : await getItem(elt.md5hash);
 
             if (savedSVG) {
                 const svg = document.createRange().createContextualFragment(savedSVG).firstChild;
@@ -67,7 +75,7 @@ const processTikzScripts = async (scripts) => {
             const loader = elt.loader;
 
             // Check for a saved svg again in case this script tag is a duplicate of another.
-            const savedSVG = elt.dataset.disableCache ? undefined : await localForage.getItem(elt.md5hash);
+            const savedSVG = elt.dataset.disableCache ? undefined : await getItem(elt.md5hash);
 
             if (savedSVG) {
                 const svg = document.createRange().createContextualFragment(savedSVG).firstChild;
@@ -115,7 +123,7 @@ const processTikzScripts = async (scripts) => {
 
             if (!elt.dataset.disableCache) {
                 try {
-                    await localForage.setItem(elt.md5hash, svg.outerHTML);
+                    await setItem(elt.md5hash, svg.outerHTML);
                 } catch (err) {
                     console.log(err);
                 }
@@ -211,7 +219,6 @@ const shutdown = async () => {
 if (!window.TikzJax) {
     window.TikzJax = true;
 
-    localForage.config({ name: 'TikzJax', storeName: 'svgImages' });
     texWorker = initializeWorker();
 
     if (document.readyState == 'complete') initialize();
