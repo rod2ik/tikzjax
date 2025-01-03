@@ -88,9 +88,9 @@ will add
 
 to the preamble of the TeX input. Note that TeX packages must be loaded in this way. This will ensure that the needed
 TeX system files are made available to the TeX WebAssembly for successful compilation. Note that the TeX packages that
-are available at this time are `amsbsy`, `amsgen`, `amsmath`, `amsopn`, `amstext`, `array`, `etoolbox`, `hf-tikz`,
-`pgfplots`, `tikz-3dplot`, `tikz-cd`, and `xparse`. Additional packages can be made available by adding the gzipped TeX
-files used by the package to the `tex_files` directory.
+are available at this time are `amsbsy`, `amsfonts`, `amsgen`, `amsmath`, `amsopn`, `amssymb`, `amstext`, `array`,
+`etoolbox`, `hf-tikz`, `pgfplots`, `tikz-3dplot`, `tikz-cd`, and `xparse`. Additional packages can be made available by
+adding the gzipped TeX files used by the package to the `tex_files` directory.
 
 Use `data-tikz-libraries` to load and use TikZ libraries. For example:
 
