@@ -1,6 +1,6 @@
 {
     "name": "@drgrice1/tikzjax",
-    "version": "1.0.0-beta20",
+    "version": "1.0.0-beta21",
     "description": "TikZJax loader",
     "author": "Jim Fowler",
     "contributors": [
@@ -28,8 +28,8 @@
         "serve": "webpack serve --mode development"
     },
     "dependencies": {
+        "@drgrice1/dvi2html": "^0.0.7-beta1",
         "buffer": "^6.0.3",
-        "dvi2html": "github:drgrice1/dvi2html",
         "idb": "^8.0.1",
         "pako": "^2.1.0",
         "process": "^0.11.10",

@@ -1,4 +1,4 @@
-import { dvi2html } from 'dvi2html';
+import { dvi2html } from '@drgrice1/dvi2html';
 import { expose } from 'threads/worker';
 import pako from 'pako';
 import { Buffer } from 'buffer';
