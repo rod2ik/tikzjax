@@ -1,6 +1,6 @@
 {
     "name": "@drgrice1/tikzjax",
-    "version": "1.0.0-beta21",
+    "version": "1.0.0-beta23",
     "description": "TikZJax loader",
     "author": "Jim Fowler",
     "contributors": [
@@ -21,14 +21,14 @@
         "lint": "eslint . --fix",
         "lint:check": "eslint .",
         "gen-tex-files": "node genTexFiles.js",
-        "install-fonts": "node installFonts.js",
+        "install-fonts": "node installFonts.mjs",
         "build": "webpack --mode production",
         "build:dev": "webpack --mode development",
         "postbuild": "npm run install-fonts && npm run gen-tex-files",
         "serve": "webpack serve --mode development"
     },
     "dependencies": {
-        "@drgrice1/dvi2html": "^0.0.7-beta1",
+        "@drgrice1/dvi2html": "^0.0.7-beta3",
         "buffer": "^6.0.3",
         "idb": "^8.0.1",
         "pako": "^2.1.0",
@@ -45,6 +45,7 @@
         "eslint": "^9.17.0",
         "eslint-config-prettier": "^9.1.0",
         "eslint-webpack-plugin": "^4.2.0",
+        "fonteditor-core": "^2.4.1",
         "prettier": "^3.4.2",
         "style-loader": "^4.0.0",
         "webpack": "^5.97.1",
