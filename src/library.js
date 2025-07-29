@@ -1,4 +1,4 @@
-import { tfmData } from '@drgrice1/dvi2html';
+import { tfmData } from '@rod2ik/dvi2html';
 import { Buffer } from 'buffer';
 
 let filesystem = {};
