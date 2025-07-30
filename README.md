@@ -7,14 +7,15 @@ See a live demo at [tikzjax.com](http://tikzjax.com/).
 Note that the demo above is not the same as what you will get from what this branch of my fork. However, it does show
 the general concept.
 
-Thanks to Jim Fowler for doing all of the hard work. See [kisonecat/tikzjax](https://github.com/kisonecat/tikzjax),
+* Thanks to Jim Fowler and for doing all of the hard work. See [kisonecat/tikzjax](https://github.com/kisonecat/tikzjax),
 [kisonecat/web2js](https://github.com/kisonecat/web2js), and [kisonecat/dvi2html](https://github.com/kisonecat/dvi2html)
-for his original work.
+for his original work.  
+* This work is a fork of Glenn Rice, that I hereby thank. See [drgrice1/tikjax](https://github.com/drgrice1/tikzjax), [drgrice1/web2js](https://github.com/drgrice1/web2js) and [drgrice1/web2js](https://github.com/drgrice1/dvi2html) for his work.
+* The main enhancement of my work is to add the `tkz-tab` package, so as to embed **maths variation tables**, as SVGs, directly into HTML.
 
-Also see [jhoobergs/web2js](https://github.com/jhoobergs/web2js) for additional changes that were made by Jesse Hoobergs
-that were used in this work.
+Also see [jhoobergs/web2js](https://github.com/jhoobergs/web2js) for additional changes that were made by Jesse Hoobergs that were used in this work.
 
-## Example
+## Examples
 
 In the `<head>` of your HTML, include
 
@@ -27,20 +28,38 @@ In the `<head>` of your HTML, include
 
 Then in the `<body>`, include TikZ code such as
 
-```html
-<script type="text/tikz">
- \begin{tikzpicture}
- \draw (0,0) circle (1in);
- \end{tikzpicture}
-</script>
-```
+* Simple `TikZ` syntax (without `tkz-tab` syntax):
+
+    ```html
+    <script type="text/tikz">
+    \begin{tikzpicture}
+    \draw (0,0) circle (1in);
+    \end{tikzpicture}
+    </script>
+    ```
+
+* With the `tkz-tab` syntax:
+
+    ```html
+    <script type="text/tikz" data-tex-packages='{"tkz-tab": ""}'>
+        \begin{tikzpicture}
+            \tkzTab{$x$ / 1 , $\cos(x)$ / 1, $\sin(x)$ / 1.5}{$0$, $\displaystyle \frac{\pi}{2}$, $\pi$}
+            {, +, z, -, }
+            {-/ 0, +/ 1, -/ 0}
+        \end{tikzpicture}
+    </script>
+    ```
+
+    produces the following `svg` image (an *svg* tag is embeded into HTML):
+
+    <center><img src="./vartable.jpg" /></center>
 
 The TikZ code will be compiled into an SVG image, and the `<script>` element will be replaced with the generated SVG
 image.
 
 ## How does this work?
 
-Using the main branch of [drgrice1/web2js](https://github.com/drgrice1/web2js) the Pascal source of `TeX` is compiled to
+Using the main branch of [rod2ik/web2js](https://github.com/rod2ik/web2js) the Pascal source of `TeX` is compiled to
 WebAssembly, and the `LaTeX` format is loaded (without all the hyphenation data). Then
 
 ```tex
@@ -48,10 +67,11 @@ WebAssembly, and the `LaTeX` format is loaded (without all the hyphenation data)
 \def\pgfsysdriver{pgfsys-ximera.def}
 \usepackage[svgnames]{xcolor}
 \usepackage{tikz}
+\usepackage{tkz-tab}
 ```
 
 is executed. Then the core is dumped and compressed. The WebAssembly and core are loaded in the browser and executed. An
-SVG driver for PGF along with the [drgrice1/dvi2thml](https://github.com/drgrice1/dvi2html) library are then utilized to
+SVG driver for PGF along with the [rod2ik/dvi2thml](https://github.com/rod2ik/dvi2html) library are then utilized to
 convert the DVI output into to an SVG image.
 
 All of this happens in the browser.
@@ -157,9 +177,9 @@ document.addEventListener('tikzjax-load-finished', function(e) {
 
 ## Building
 
-First clone this GitHub repository [https://github.com/drgrice1/tikzjax](https://github.com/drgrice1/tikzjax).
+First clone this GitHub repository [https://github.com/rod2ik/tikzjax](https://github.com/rod2ik/tikzjax).
 
-Then clone my fork of web2js [https://github.com/drgrice1/web2js](https://github.com/drgrice1/web2js). Follow the
+Then clone my fork of web2js [https://github.com/rod2ik/web2js](https://github.com/rod2ik/web2js). Follow the
 directions in the README for a "quick path to generate the tex.wasm and core.dump files". Then copy the generated
 core.dump and tex.wasm files to the tikzjax directory, and gzip them.
 

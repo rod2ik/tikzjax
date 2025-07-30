@@ -1,6 +1,6 @@
 {
     "name": "@rod2ik/tikzjax",
-    "version": "1.0.0-beta26",
+    "version": "1.0.0-beta27",
     "description": "TikZJax loader",
     "author": "Jim Fowler",
     "contributors": [
@@ -29,7 +29,7 @@
         "serve": "webpack serve --mode development"
     },
     "dependencies": {
-        "@rod2ik/dvi2html": "^0.0.7-beta4",
+        "@rod2ik/dvi2html": "^0.0.7-beta5",
         "buffer": "^6.0.3",
         "idb": "^8.0.1",
         "pako": "^2.1.0",
