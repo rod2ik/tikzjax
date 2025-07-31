@@ -117,6 +117,8 @@ const processTikzScripts = async (scripts) => {
 
             const svg = document.createRange().createContextualFragment(html).firstChild;
             svg.role = 'img';
+            svg.classList.addClass("tikz");
+            svg.classList.addClass("tikzjax");
 
             if (elt.dataset.ariaLabel) {
                 const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
