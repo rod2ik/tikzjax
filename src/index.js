@@ -30,13 +30,30 @@ let observer = null;
 let texWorker;
 
 const SVG_BLACK_VALUES = new Set(['black', '#000', '#000000', 'rgb(0,0,0)', 'rgb(0, 0, 0)']);
+const SVG_WHITE_VALUES = new Set(['white', '#fff', '#ffffff', 'rgb(255,255,255)', 'rgb(255, 255, 255)']);
 
-const normalizeSvgColorValue = (value) => {
+const isTextNode = (node) => {
+    const tagName = node.tagName ? node.tagName.toLowerCase() : '';
+    return tagName === 'text' || tagName === 'tspan';
+};
+
+const normalizeSvgColorValue = (value, attr, node) => {
     if (!value) return value;
 
     const normalized = value.trim().toLowerCase();
 
     if (SVG_BLACK_VALUES.has(normalized)) return 'currentColor';
+
+    /*
+     * tkz-tab creates white background rectangles behind labels/values.
+     * In dark mode, those white backgrounds make white text unreadable.
+     *
+     * We only convert white fills to transparent.
+     * We do not convert white strokes, and we do not touch text/tspan nodes directly.
+     */
+    if (attr === 'fill' && SVG_WHITE_VALUES.has(normalized) && !isTextNode(node)) {
+        return 'transparent';
+    }
 
     return value;
 };
@@ -52,18 +69,24 @@ const normalizeTikzSvgForTheme = (svg) => {
             if (!node.hasAttribute(attr)) continue;
 
             const current = node.getAttribute(attr);
-            node.setAttribute(attr, normalizeSvgColorValue(current));
+            node.setAttribute(attr, normalizeSvgColorValue(current, attr, node));
         }
 
         const style = node.getAttribute('style');
         if (style) {
-            node.setAttribute(
-                'style',
-                style
-                    .replace(/fill\s*:\s*(black|#000000|#000)\b/gi, 'fill: currentColor')
-                    .replace(/stroke\s*:\s*(black|#000000|#000)\b/gi, 'stroke: currentColor')
-                    .replace(/color\s*:\s*(black|#000000|#000)\b/gi, 'color: currentColor')
-            );
+            let normalizedStyle = style
+                .replace(/fill\s*:\s*(black|#000000|#000)\b/gi, 'fill: currentColor')
+                .replace(/stroke\s*:\s*(black|#000000|#000)\b/gi, 'stroke: currentColor')
+                .replace(/color\s*:\s*(black|#000000|#000)\b/gi, 'color: currentColor');
+
+            if (!isTextNode(node)) {
+                normalizedStyle = normalizedStyle.replace(
+                    /fill\s*:\s*(white|#ffffff|#fff)\b/gi,
+                    'fill: transparent'
+                );
+            }
+
+            node.setAttribute('style', normalizedStyle);
         }
     });
 
