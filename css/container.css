@@ -1,3 +1,22 @@
+.tikzjax-wrapper {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+    margin: 0.75em 0;
+    line-height: 0;
+    color: inherit;
+}
+
+.tikzjax-wrapper svg.tikz,
+.tikzjax-wrapper svg.tikzjax {
+    display: block;
+    overflow: visible;
+    height: auto;
+    max-width: 100%;
+    color: inherit;
+}
+
 .tikzjax-content svg {
     overflow: visible;
 }
@@ -6,4 +25,58 @@
     width: 100%;
     height: 100%;
     overflow: visible;
+}
+
+/*
+   tkz-tab sometimes emits white background rectangles around
+   variation-table labels, for example:
+   <g fill="#fff"> ... </g>
+
+   In dark mode this creates white-on-white text.
+   Presentation attributes like fill="#fff" can be overridden by CSS.
+*/
+.tikzjax-wrapper svg.tikz [fill="#fff"],
+.tikzjax-wrapper svg.tikz [fill="#ffffff"],
+.tikzjax-wrapper svg.tikz [fill="white"],
+.tikzjax-wrapper svg.tikzjax [fill="#fff"],
+.tikzjax-wrapper svg.tikzjax [fill="#ffffff"],
+.tikzjax-wrapper svg.tikzjax [fill="white"],
+svg.tikz [fill="#fff"],
+svg.tikz [fill="#ffffff"],
+svg.tikz [fill="white"],
+svg.tikzjax [fill="#fff"],
+svg.tikzjax [fill="#ffffff"],
+svg.tikzjax [fill="white"] {
+    fill: transparent !important;
+}
+
+/* Keep text controlled by the surrounding page color. */
+.tikzjax-wrapper svg.tikz text,
+.tikzjax-wrapper svg.tikz tspan,
+.tikzjax-wrapper svg.tikzjax text,
+.tikzjax-wrapper svg.tikzjax tspan,
+svg.tikz text,
+svg.tikz tspan,
+svg.tikzjax text,
+svg.tikzjax tspan {
+    fill: currentColor;
+}
+
+/* MkDocs Material admonitions/details */
+.md-typeset .admonition .tikzjax-wrapper,
+.md-typeset details .tikzjax-wrapper {
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+}
+
+/*
+   Wide tkz-tab SVGs should not be forced to shrink inside admonitions.
+   Let the wrapper scroll horizontally instead.
+*/
+.md-typeset .admonition .tikzjax-wrapper svg.tikz,
+.md-typeset .admonition .tikzjax-wrapper svg.tikzjax,
+.md-typeset details .tikzjax-wrapper svg.tikz,
+.md-typeset details .tikzjax-wrapper svg.tikzjax {
+    max-width: none;
 }

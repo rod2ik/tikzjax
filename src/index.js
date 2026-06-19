@@ -94,17 +94,7 @@ const normalizeTikzSvgForTheme = (svg) => {
 };
 
 /*
- * This is a second safety pass on the raw SVG string.
- *
- * It matters because the generated SVG can contain groups like:
- *
- *   <g fill="#fff">
- *
- * These are usually tkz-tab label/value background boxes.
- * In dark mode they create white-on-white text areas.
- *
- * We normalize the raw string before parsing it as DOM, then normalize
- * the parsed SVG again with normalizeTikzSvgForTheme().
+ * Second safety pass on the raw SVG string.
  */
 const normalizeTikzHtmlForTheme = (html) => {
     return html
@@ -125,10 +115,32 @@ const normalizeTikzHtmlForTheme = (html) => {
         .replace(/fill\s*:\s*(white|#ffffff|#fff|rgb\(255,\s*255,\s*255\))\b/gi, 'fill: transparent');
 };
 
+/*
+ * Final DOM pass.
+ *
+ * This is intentionally close to the browser-console test that worked:
+ *
+ * document.querySelectorAll('svg.tikz [fill="#fff"], svg.tikzjax [fill="#fff"]')
+ *
+ * Some generated/cached SVGs can still contain <g fill="#fff"> after the
+ * earlier parsing steps. This catches the live SVG nodes before/after insertion.
+ */
+const fixLiveTikzSvgColors = (root = document) => {
+    root.querySelectorAll(
+        'svg.tikz [fill="#fff"], svg.tikz [fill="#ffffff"], svg.tikz [fill="white"], ' +
+            'svg.tikzjax [fill="#fff"], svg.tikzjax [fill="#ffffff"], svg.tikzjax [fill="white"]'
+    ).forEach((node) => {
+        if (!isTextNode(node)) node.setAttribute('fill', 'transparent');
+    });
+};
+
 const wrapTikzSvg = (svg) => {
     const wrapper = document.createElement('span');
     wrapper.className = 'tikzjax-wrapper';
     wrapper.appendChild(svg);
+
+    fixLiveTikzSvgColors(wrapper);
+
     return wrapper;
 };
 
@@ -150,6 +162,7 @@ const processTikzScripts = async (scripts) => {
             if (savedSVG) {
                 const svg = svgFromHtml(savedSVG);
                 elt.replaceWith(wrapTikzSvg(svg));
+                fixLiveTikzSvgColors();
 
                 // Emit a bubbling event that the svg is ready.
                 const loadFinishedEvent = new Event('tikzjax-load-finished', { bubbles: true });
@@ -194,6 +207,7 @@ const processTikzScripts = async (scripts) => {
             if (savedSVG) {
                 const svg = svgFromHtml(savedSVG);
                 loader.replaceWith(wrapTikzSvg(svg));
+                fixLiveTikzSvgColors();
 
                 // Emit a bubbling event that the svg is ready.
                 const loadFinishedEvent = new Event('tikzjax-load-finished', { bubbles: true });
@@ -234,6 +248,7 @@ const processTikzScripts = async (scripts) => {
             }
 
             loader.replaceWith(wrapTikzSvg(svg));
+            fixLiveTikzSvgColors();
 
             if (!elt.dataset.disableCache) {
                 try {
