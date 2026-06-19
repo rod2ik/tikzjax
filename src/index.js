@@ -48,8 +48,8 @@ const normalizeSvgColorValue = (value, attr, node) => {
      * tkz-tab creates white background rectangles behind labels/values.
      * In dark mode, those white backgrounds make white text unreadable.
      *
-     * We only convert white fills to transparent.
-     * We do not convert white strokes, and we do not touch text/tspan nodes directly.
+     * We convert white fills to transparent, but only for non-text nodes.
+     * This preserves any real white text/tspan if ever used.
      */
     if (attr === 'fill' && SVG_WHITE_VALUES.has(normalized) && !isTextNode(node)) {
         return 'transparent';
@@ -75,13 +75,13 @@ const normalizeTikzSvgForTheme = (svg) => {
         const style = node.getAttribute('style');
         if (style) {
             let normalizedStyle = style
-                .replace(/fill\s*:\s*(black|#000000|#000)\b/gi, 'fill: currentColor')
-                .replace(/stroke\s*:\s*(black|#000000|#000)\b/gi, 'stroke: currentColor')
-                .replace(/color\s*:\s*(black|#000000|#000)\b/gi, 'color: currentColor');
+                .replace(/fill\s*:\s*(black|#000000|#000|rgb\(0,\s*0,\s*0\))\b/gi, 'fill: currentColor')
+                .replace(/stroke\s*:\s*(black|#000000|#000|rgb\(0,\s*0,\s*0\))\b/gi, 'stroke: currentColor')
+                .replace(/color\s*:\s*(black|#000000|#000|rgb\(0,\s*0,\s*0\))\b/gi, 'color: currentColor');
 
             if (!isTextNode(node)) {
                 normalizedStyle = normalizedStyle.replace(
-                    /fill\s*:\s*(white|#ffffff|#fff)\b/gi,
+                    /fill\s*:\s*(white|#ffffff|#fff|rgb\(255,\s*255,\s*255\))\b/gi,
                     'fill: transparent'
                 );
             }
@@ -93,6 +93,38 @@ const normalizeTikzSvgForTheme = (svg) => {
     return svg;
 };
 
+/*
+ * This is a second safety pass on the raw SVG string.
+ *
+ * It matters because the generated SVG can contain groups like:
+ *
+ *   <g fill="#fff">
+ *
+ * These are usually tkz-tab label/value background boxes.
+ * In dark mode they create white-on-white text areas.
+ *
+ * We normalize the raw string before parsing it as DOM, then normalize
+ * the parsed SVG again with normalizeTikzSvgForTheme().
+ */
+const normalizeTikzHtmlForTheme = (html) => {
+    return html
+        // black -> currentColor
+        .replace(/\bfill=(['"])(black|#000|#000000|rgb\(0,\s*0,\s*0\))\1/gi, 'fill=$1currentColor$1')
+        .replace(/\bstroke=(['"])(black|#000|#000000|rgb\(0,\s*0,\s*0\))\1/gi, 'stroke=$1currentColor$1')
+        .replace(/\bcolor=(['"])(black|#000|#000000|rgb\(0,\s*0,\s*0\))\1/gi, 'color=$1currentColor$1')
+
+        // tkz-tab white label backgrounds -> transparent
+        .replace(/\bfill=(['"])(white|#fff|#ffffff|rgb\(255,\s*255,\s*255\))\1/gi, 'fill=$1transparent$1')
+
+        // inline style black -> currentColor
+        .replace(/fill\s*:\s*(black|#000000|#000|rgb\(0,\s*0,\s*0\))\b/gi, 'fill: currentColor')
+        .replace(/stroke\s*:\s*(black|#000000|#000|rgb\(0,\s*0,\s*0\))\b/gi, 'stroke: currentColor')
+        .replace(/color\s*:\s*(black|#000000|#000|rgb\(0,\s*0,\s*0\))\b/gi, 'color: currentColor')
+
+        // inline style white background fills -> transparent
+        .replace(/fill\s*:\s*(white|#ffffff|#fff|rgb\(255,\s*255,\s*255\))\b/gi, 'fill: transparent');
+};
+
 const wrapTikzSvg = (svg) => {
     const wrapper = document.createElement('span');
     wrapper.className = 'tikzjax-wrapper';
@@ -101,7 +133,8 @@ const wrapTikzSvg = (svg) => {
 };
 
 const svgFromHtml = (html) => {
-    const svg = document.createRange().createContextualFragment(html).firstChild;
+    const normalizedHtml = normalizeTikzHtmlForTheme(html);
+    const svg = document.createRange().createContextualFragment(normalizedHtml).firstChild;
     return normalizeTikzSvgForTheme(svg);
 };
 
