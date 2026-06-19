@@ -1,7 +1,14 @@
 bakoma.zip
+
+core.dump
 core.dump.gz
+tex.wasm
 tex.wasm.gz
+
 dist
 node_modules
 .vim
 misc
+
+public/fonts
+public/tex_files

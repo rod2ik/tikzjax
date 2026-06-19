@@ -29,6 +29,59 @@ const processQueue = [];
 let observer = null;
 let texWorker;
 
+const SVG_BLACK_VALUES = new Set(['black', '#000', '#000000', 'rgb(0,0,0)', 'rgb(0, 0, 0)']);
+
+const normalizeSvgColorValue = (value) => {
+    if (!value) return value;
+
+    const normalized = value.trim().toLowerCase();
+
+    if (SVG_BLACK_VALUES.has(normalized)) return 'currentColor';
+
+    return value;
+};
+
+const normalizeTikzSvgForTheme = (svg) => {
+    if (!svg || svg.nodeName.toLowerCase() !== 'svg') return svg;
+
+    svg.classList.add('tikz', 'tikzjax');
+    svg.setAttribute('data-tikzjax-normalized', 'true');
+
+    svg.querySelectorAll('[fill], [stroke], [color], [style]').forEach((node) => {
+        for (const attr of ['fill', 'stroke', 'color']) {
+            if (!node.hasAttribute(attr)) continue;
+
+            const current = node.getAttribute(attr);
+            node.setAttribute(attr, normalizeSvgColorValue(current));
+        }
+
+        const style = node.getAttribute('style');
+        if (style) {
+            node.setAttribute(
+                'style',
+                style
+                    .replace(/fill\s*:\s*(black|#000000|#000)\b/gi, 'fill: currentColor')
+                    .replace(/stroke\s*:\s*(black|#000000|#000)\b/gi, 'stroke: currentColor')
+                    .replace(/color\s*:\s*(black|#000000|#000)\b/gi, 'color: currentColor')
+            );
+        }
+    });
+
+    return svg;
+};
+
+const wrapTikzSvg = (svg) => {
+    const wrapper = document.createElement('span');
+    wrapper.className = 'tikzjax-wrapper';
+    wrapper.appendChild(svg);
+    return wrapper;
+};
+
+const svgFromHtml = (html) => {
+    const svg = document.createRange().createContextualFragment(html).firstChild;
+    return normalizeTikzSvgForTheme(svg);
+};
+
 const processTikzScripts = async (scripts) => {
     const currentProcessPromise = new Promise((resolve) => {
         const texQueue = [];
@@ -39,8 +92,8 @@ const processTikzScripts = async (scripts) => {
             const savedSVG = elt.dataset.disableCache ? undefined : await getItem(elt.sourceHash);
 
             if (savedSVG) {
-                const svg = document.createRange().createContextualFragment(savedSVG).firstChild;
-                elt.replaceWith(svg);
+                const svg = svgFromHtml(savedSVG);
+                elt.replaceWith(wrapTikzSvg(svg));
 
                 // Emit a bubbling event that the svg is ready.
                 const loadFinishedEvent = new Event('tikzjax-load-finished', { bubbles: true });
@@ -83,8 +136,8 @@ const processTikzScripts = async (scripts) => {
             const savedSVG = elt.dataset.disableCache ? undefined : await getItem(elt.sourceHash);
 
             if (savedSVG) {
-                const svg = document.createRange().createContextualFragment(savedSVG).firstChild;
-                loader.replaceWith(svg);
+                const svg = svgFromHtml(savedSVG);
+                loader.replaceWith(wrapTikzSvg(svg));
 
                 // Emit a bubbling event that the svg is ready.
                 const loadFinishedEvent = new Event('tikzjax-load-finished', { bubbles: true });
@@ -115,10 +168,8 @@ const processTikzScripts = async (scripts) => {
                 }
             }
 
-            const svg = document.createRange().createContextualFragment(html).firstChild;
+            const svg = svgFromHtml(html);
             svg.role = 'img';
-            svg.classList.add("tikz");
-            svg.classList.add("tikzjax");
 
             if (elt.dataset.ariaLabel) {
                 const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
@@ -126,7 +177,7 @@ const processTikzScripts = async (scripts) => {
                 svg.prepend(title);
             }
 
-            loader.replaceWith(svg);
+            loader.replaceWith(wrapTikzSvg(svg));
 
             if (!elt.dataset.disableCache) {
                 try {
@@ -143,7 +194,7 @@ const processTikzScripts = async (scripts) => {
 
         (async () => {
             // First check the session storage to see if an image is already cached,
-            // and if so load that.  Otherwise show a spinning loader, and push the
+            // and if so load that. Otherwise show a spinning loader, and push the
             // element onto the queue to run tex on.
             for (const element of scripts) {
                 await loadCachedOrSetupLoader(element);
