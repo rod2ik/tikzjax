@@ -86,6 +86,82 @@ const normalizeTikzLibraries = (value) => {
     return value;
 };
 
+// =================================================
+// TKZ-TAB GLOBAL MACROS
+// =================================================
+const createTexMacro = (macroName, value) => {
+    if (value === undefined || value === null || value === false) {
+        return '';
+    }
+
+    return `\\def\\${macroName}{${String(value)}}\n`;
+};
+
+const getTkzTabPreamble = () => {
+    const options = getOptions();
+    const tkzTab = options.tkzTab || {};
+
+    if (!tkzTab || typeof tkzTab !== 'object') {
+        return '';
+    }
+
+    let preamble = '';
+
+    preamble += '% TikZJax tkz-tab global options\n';
+
+    preamble += createTexMacro(
+        'tikzjaxTkzTabLineWidth',
+        tkzTab.lineWidth
+    );
+
+    preamble += createTexMacro(
+        'tikzjaxTkzTabFont',
+        tkzTab.font
+    );
+
+    preamble += createTexMacro(
+        'tikzjaxTkzTabLgt',
+        tkzTab.lgt
+    );
+
+    preamble += createTexMacro(
+        'tikzjaxTkzTabFirstColumnWidth',
+        tkzTab.firstColumnWidth ?? tkzTab.lgt
+    );
+
+    preamble += createTexMacro(
+        'tikzjaxTkzTabEspcl',
+        tkzTab.espcl
+    );
+
+    preamble += createTexMacro(
+        'tikzjaxTkzTabVariableRowHeight',
+        tkzTab.variableRowHeight
+    );
+
+    preamble += createTexMacro(
+        'tikzjaxTkzTabSignRowHeight',
+        tkzTab.signRowHeight
+    );
+
+    preamble += createTexMacro(
+        'tikzjaxTkzTabVariationRowHeight',
+        tkzTab.variationRowHeight
+    );
+
+    preamble += createTexMacro(
+        'tikzjaxTkzTabImageRowHeight',
+        tkzTab.imageRowHeight
+    );
+
+    preamble += createTexMacro(
+        'tikzjaxTkzTabAntecedentRowHeight',
+        tkzTab.antecedentRowHeight
+    );
+
+    return preamble;
+};
+
 const getGlobalTexDataset = () => {
     const options = getOptions();
     const tex = options.tex || {};
@@ -94,6 +170,7 @@ const getGlobalTexDataset = () => {
     const texPackages = tex.texPackages || options.texPackages;
     const tikzLibraries = tex.tikzLibraries || options.tikzLibraries;
     const addToPreamble = tex.addToPreamble || options.addToPreamble;
+    const tkzTabPreamble = getTkzTabPreamble();
 
     if (texPackages) {
         dataset.texPackages = stringifyTexPackages(texPackages);
@@ -103,8 +180,10 @@ const getGlobalTexDataset = () => {
         dataset.tikzLibraries = normalizeTikzLibraries(tikzLibraries);
     }
 
-    if (addToPreamble) {
-        dataset.addToPreamble = addToPreamble;
+    if (tkzTabPreamble || addToPreamble) {
+        dataset.addToPreamble =
+            tkzTabPreamble +
+            (addToPreamble || '');
     }
 
     return dataset;
