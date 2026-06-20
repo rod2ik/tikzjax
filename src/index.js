@@ -13,11 +13,156 @@ if (document.currentScript === undefined) {
 const url = new URL(document.currentScript.src);
 
 // =================================================
+// OPTIONS
+// =================================================
+const getOptions = () => window.TikzJaxOptions || {};
+
+const getThemeOptions = () => {
+    const options = getOptions();
+
+    return options.theme || {};
+};
+
+const parseJsonObject = (value) => {
+    if (!value) return {};
+
+    if (typeof value === 'object') return value;
+
+    try {
+        return JSON.parse(value);
+    } catch (error) {
+        console.warn('TikZJax: unable to parse JSON option:', value, error);
+        return {};
+    }
+};
+
+const stringifyTexPackages = (value) => {
+    if (!value) return undefined;
+
+    if (typeof value === 'string') return value;
+
+    return JSON.stringify(value);
+};
+
+const normalizeTikzLibraries = (value) => {
+    if (!value) return undefined;
+
+    if (Array.isArray(value)) return value.join(',');
+
+    return value;
+};
+
+const getGlobalTexDataset = () => {
+    const options = getOptions();
+    const tex = options.tex || {};
+    const dataset = {};
+
+    const texPackages = tex.texPackages || options.texPackages;
+    const tikzLibraries = tex.tikzLibraries || options.tikzLibraries;
+    const addToPreamble = tex.addToPreamble || options.addToPreamble;
+
+    if (texPackages) {
+        dataset.texPackages = stringifyTexPackages(texPackages);
+    }
+
+    if (tikzLibraries) {
+        dataset.tikzLibraries = normalizeTikzLibraries(tikzLibraries);
+    }
+
+    if (addToPreamble) {
+        dataset.addToPreamble = addToPreamble;
+    }
+
+    return dataset;
+};
+
+const mergeTexPackages = (globalPackages, localPackages) => {
+    const globalObject = parseJsonObject(globalPackages);
+    const localObject = parseJsonObject(localPackages);
+
+    const merged = {
+        ...globalObject,
+        ...localObject
+    };
+
+    return Object.keys(merged).length ? JSON.stringify(merged) : undefined;
+};
+
+const mergeTikzLibraries = (globalLibraries, localLibraries) => {
+    const libraries = [];
+
+    const appendLibraries = (value) => {
+        if (!value) return;
+
+        String(value)
+            .split(',')
+            .map((library) => library.trim())
+            .filter(Boolean)
+            .forEach((library) => {
+                if (!libraries.includes(library)) {
+                    libraries.push(library);
+                }
+            });
+    };
+
+    appendLibraries(globalLibraries);
+    appendLibraries(localLibraries);
+
+    return libraries.length ? libraries.join(',') : undefined;
+};
+
+const cleanInternalDataset = (dataset) => {
+    const cleaned = { ...dataset };
+
+    delete cleaned.tikzjaxProcessed;
+
+    return cleaned;
+};
+
+const getTikzDataset = (elt) => {
+    const globalDataset = getGlobalTexDataset();
+    const localDataset = cleanInternalDataset(Object.assign({}, elt.dataset || {}));
+
+    const dataset = {
+        ...globalDataset,
+        ...localDataset
+    };
+
+    const texPackages = mergeTexPackages(
+        globalDataset.texPackages,
+        localDataset.texPackages
+    );
+
+    if (texPackages) {
+        dataset.texPackages = texPackages;
+    }
+
+    const tikzLibraries = mergeTikzLibraries(
+        globalDataset.tikzLibraries,
+        localDataset.tikzLibraries
+    );
+
+    if (tikzLibraries) {
+        dataset.tikzLibraries = tikzLibraries;
+    }
+
+    if (globalDataset.addToPreamble || localDataset.addToPreamble) {
+        dataset.addToPreamble =
+            (globalDataset.addToPreamble || '') +
+            (localDataset.addToPreamble || '');
+    }
+
+    return dataset;
+};
+
+// =================================================
 // CACHE
 // =================================================
 const dbPromise = openDB('TikzJax', 2, {
     upgrade(db) {
-        db.createObjectStore('svgImages');
+        if (!db.objectStoreNames.contains('svgImages')) {
+            db.createObjectStore('svgImages');
+        }
     }
 });
 
@@ -32,16 +177,12 @@ const setItem = async (key, val) =>
 // =================================================
 let texWorker;
 let observer;
+let themeObserver;
+let themeRaf = null;
 
 // =================================================
-// THEME SUPPORT — MKDOCS 1.x / MATERIAL
+// THEME SUPPORT
 // =================================================
-const getMkdocsTheme = () => {
-    const bodyTheme = document.body?.getAttribute('data-md-color-scheme');
-
-    return bodyTheme === 'slate' ? 'dark' : 'light';
-};
-
 const isBlackValue = (value) => {
     if (!value) return false;
 
@@ -79,17 +220,14 @@ const isTextNode = (node) => {
 const getTikzWrappers = (root = document) => {
     const wrappers = [];
 
-    if (
-        root instanceof Element &&
-        root.matches('.tikzjax-wrapper')
-    ) {
+    if (root instanceof Element && root.matches('.tikzjax-wrapper')) {
         wrappers.push(root);
     }
 
     root.querySelectorAll?.('.tikzjax-wrapper')
         ?.forEach((wrapper) => wrappers.push(wrapper));
 
-    return wrappers;
+    return [...new Set(wrappers)];
 };
 
 const normalizeStyleForTheme = (styleText, node) => {
@@ -128,7 +266,9 @@ const normalizeStyleForTheme = (styleText, node) => {
 };
 
 const normalizeSvgForTheme = (svg) => {
-    if (!svg) return;
+    if (!svg || svg.dataset.tikzjaxThemeNormalized === 'true') return;
+
+    svg.dataset.tikzjaxThemeNormalized = 'true';
 
     svg.classList.add('tikzjax', 'tikz');
     svg.style.color = 'currentColor';
@@ -179,10 +319,120 @@ const normalizeSvgForTheme = (svg) => {
     });
 };
 
-const applyThemeToTikz = (root = document) => {
-    const isDark = getMkdocsTheme() === 'dark';
+const getConfiguredThemeTargets = () => {
+    const themeOptions = getThemeOptions();
+    const selector = themeOptions.selector;
 
+    if (!selector) return [];
+
+    try {
+        return Array.from(document.querySelectorAll(selector));
+    } catch (error) {
+        console.warn('TikZJax: invalid theme selector:', selector, error);
+        return [];
+    }
+};
+
+const getConfiguredThemeTarget = (wrapper) => {
+    const targets = getConfiguredThemeTargets();
+
+    for (const target of targets) {
+        if (target === wrapper || target.contains(wrapper)) {
+            return target;
+        }
+    }
+
+    return null;
+};
+
+const getThemeFromElement = (element) => {
+    if (!element) return null;
+
+    const themeOptions = getThemeOptions();
+
+    const darkClass = themeOptions.darkClass || 'dark';
+    const lightClass = themeOptions.lightClass || 'light';
+
+    const attribute = themeOptions.attribute || 'data-theme';
+    const darkValue = themeOptions.darkValue || 'dark';
+    const lightValue = themeOptions.lightValue || 'light';
+
+    if (attribute && element.hasAttribute(attribute)) {
+        const value = element.getAttribute(attribute);
+
+        if (value === darkValue) return 'dark';
+        if (value === lightValue) return 'light';
+    }
+
+    if (element.classList?.contains(darkClass)) return 'dark';
+    if (element.classList?.contains(lightClass)) return 'light';
+
+    if (element.hasAttribute('data-bs-theme')) {
+        const value = element.getAttribute('data-bs-theme');
+
+        if (value === 'dark') return 'dark';
+        if (value === 'light') return 'light';
+    }
+
+    if (element.hasAttribute('data-color-scheme')) {
+        const value = element.getAttribute('data-color-scheme');
+
+        if (value === 'dark' || value === 'slate') return 'dark';
+        if (value === 'light' || value === 'default') return 'light';
+    }
+
+    return null;
+};
+
+const getThemeForWrapper = (wrapper) => {
+    const configuredTarget = getConfiguredThemeTarget(wrapper);
+    const configuredTheme = getThemeFromElement(configuredTarget);
+
+    if (configuredTheme) return configuredTheme;
+
+    const themeOptions = getThemeOptions();
+    const darkClass = themeOptions.darkClass || 'dark';
+    const lightClass = themeOptions.lightClass || 'light';
+    const attribute = themeOptions.attribute || 'data-theme';
+
+    let localThemeElement = null;
+
+    try {
+        localThemeElement = wrapper.closest(
+            `.${darkClass}, .${lightClass}, [${attribute}], [data-bs-theme], [data-color-scheme]`
+        );
+    } catch {
+        localThemeElement = wrapper.closest(
+            '.dark, .light, [data-theme], [data-bs-theme], [data-color-scheme]'
+        );
+    }
+
+    const localTheme = getThemeFromElement(localThemeElement);
+
+    if (localTheme) return localTheme;
+
+    const bodyTheme = document.body?.getAttribute('data-md-color-scheme');
+
+    if (bodyTheme === 'slate') return 'dark';
+    if (bodyTheme) return 'light';
+
+    const bodyClassTheme = getThemeFromElement(document.body);
+    if (bodyClassTheme) return bodyClassTheme;
+
+    const htmlClassTheme = getThemeFromElement(document.documentElement);
+    if (htmlClassTheme) return htmlClassTheme;
+
+    if (window.matchMedia?.('(prefers-color-scheme: dark)').matches) {
+        return 'dark';
+    }
+
+    return 'light';
+};
+
+const applyThemeToTikz = (root = document) => {
     getTikzWrappers(root).forEach((wrapper) => {
+        const isDark = getThemeForWrapper(wrapper) === 'dark';
+
         wrapper.style.color = isDark ? '#ffffff' : '#000000';
 
         wrapper.querySelectorAll('svg').forEach((svg) => {
@@ -191,23 +441,55 @@ const applyThemeToTikz = (root = document) => {
     });
 };
 
+const scheduleThemeApply = () => {
+    if (themeRaf !== null) return;
+
+    themeRaf = window.requestAnimationFrame(() => {
+        themeRaf = null;
+        applyThemeToTikz(document);
+    });
+};
+
 const observeTheme = () => {
     if (!document.body) return;
 
-    const themeObserver = new MutationObserver((mutations) => {
+    const observedTargets = new Set([
+        document.body,
+        document.documentElement,
+        ...getConfiguredThemeTargets()
+    ]);
+
+    themeObserver = new MutationObserver((mutations) => {
         for (const mutation of mutations) {
             if (
                 mutation.type === 'attributes' &&
-                mutation.attributeName === 'data-md-color-scheme'
+                (
+                    mutation.attributeName === 'class' ||
+                    mutation.attributeName === 'data-theme' ||
+                    mutation.attributeName === 'data-bs-theme' ||
+                    mutation.attributeName === 'data-color-scheme' ||
+                    mutation.attributeName === 'data-md-color-scheme'
+                )
             ) {
-                applyThemeToTikz(document);
+                scheduleThemeApply();
+                return;
             }
         }
     });
 
-    themeObserver.observe(document.body, {
-        attributes: true,
-        attributeFilter: ['data-md-color-scheme']
+    observedTargets.forEach((target) => {
+        if (!target) return;
+
+        themeObserver.observe(target, {
+            attributes: true,
+            attributeFilter: [
+                'class',
+                'data-theme',
+                'data-bs-theme',
+                'data-color-scheme',
+                'data-md-color-scheme'
+            ]
+        });
     });
 };
 
@@ -238,13 +520,44 @@ const createLoader = () => {
 // =================================================
 // SOURCES
 // =================================================
+const isTikzPre = (node) => {
+    if (!node || node.nodeType !== 1) return false;
+
+    if (node.tagName !== 'PRE') return false;
+
+    return (
+        node.classList.contains('language-tikzjax') ||
+        node.classList.contains('tikzjax') ||
+        node.classList.contains('language-tikz') ||
+        node.classList.contains('tikz')
+    );
+};
+
 const getTikzSources = (root = document) => {
     const sources = [];
 
-    sources.push(...root.querySelectorAll('script[type="text/tikz"]'));
-    sources.push(...root.querySelectorAll('pre.language-tikzjax'));
+    if (
+        root instanceof Element &&
+        root.matches('script[type="text/tikz"]')
+    ) {
+        sources.push(root);
+    }
 
-    return sources.filter((el) => !el.dataset?.tikzjaxProcessed);
+    if (
+        root instanceof Element &&
+        isTikzPre(root)
+    ) {
+        sources.push(root);
+    }
+
+    root.querySelectorAll?.('script[type="text/tikz"]')
+        ?.forEach((source) => sources.push(source));
+
+    root.querySelectorAll?.('pre.language-tikzjax, pre.tikzjax, pre.language-tikz, pre.tikz')
+        ?.forEach((source) => sources.push(source));
+
+    return [...new Set(sources)]
+        .filter((el) => !el.dataset?.tikzjaxProcessed);
 };
 
 // =================================================
@@ -285,11 +598,15 @@ const processTikzSources = async (sources) => {
     const load = async (elt) => {
         const text = getTikzSourceText(elt);
 
-        elt.dataset.tikzjaxProcessed = 'true';
         elt.tikzjaxText = text;
+        elt.tikzjaxDataset = getTikzDataset(elt);
+        elt.dataset.tikzjaxProcessed = 'true';
 
         const container =
             elt.closest('pre.language-tikzjax') ||
+            elt.closest('pre.tikzjax') ||
+            elt.closest('pre.language-tikz') ||
+            elt.closest('pre.tikz') ||
             elt.closest('script') ||
             elt;
 
@@ -310,16 +627,21 @@ const processTikzSources = async (sources) => {
 
     const process = async (elt) => {
         const text = elt.tikzjaxText;
+        const dataset = elt.tikzjaxDataset || {};
+        const cacheKey = JSON.stringify(dataset) + '\n' + text;
 
-        const cached = await getItem(text);
+        const cached = dataset.disableCache ? undefined : await getItem(cacheKey);
 
         let html;
 
         if (cached) {
             html = cached;
         } else {
-            html = await texWorker.texify(text, {});
-            await setItem(text, html);
+            html = await texWorker.texify(text, dataset);
+
+            if (!dataset.disableCache) {
+                await setItem(cacheKey, html);
+            }
         }
 
         const svg = document
@@ -355,7 +677,11 @@ const initializeWorker = async () => {
 
     const tex = await spawn(new Worker(`${root}/run-tex.js`));
 
-    Thread.events(tex).subscribe(() => {});
+    Thread.events(tex).subscribe((event) => {
+        if (event.type === 'message' && typeof event.data === 'string') {
+            console.log(event.data);
+        }
+    });
 
     await tex.load(root);
 
@@ -401,14 +727,14 @@ const initialize = async () => {
                     targets.push(node);
                 }
 
-                if (node.matches?.('pre.language-tikzjax')) {
+                if (isTikzPre(node)) {
                     targets.push(node);
                 }
 
                 node.querySelectorAll?.('script[type="text/tikz"]')
                     ?.forEach((child) => targets.push(child));
 
-                node.querySelectorAll?.('pre.language-tikzjax')
+                node.querySelectorAll?.('pre.language-tikzjax, pre.tikzjax, pre.language-tikz, pre.tikz')
                     ?.forEach((child) => targets.push(child));
             }
         }
@@ -416,8 +742,6 @@ const initialize = async () => {
         if (targets.length) {
             targets.forEach(scheduleProcess);
         }
-
-        applyThemeToTikz(document);
     });
 
     observer.observe(document.body, {
@@ -435,6 +759,28 @@ const initialize = async () => {
 };
 
 // =================================================
+// SHUTDOWN
+// =================================================
+const shutdown = async () => {
+    if (observer) {
+        observer.disconnect();
+    }
+
+    if (themeObserver) {
+        themeObserver.disconnect();
+    }
+
+    if (themeRaf !== null) {
+        window.cancelAnimationFrame(themeRaf);
+        themeRaf = null;
+    }
+
+    if (texWorker) {
+        await Thread.terminate(await texWorker);
+    }
+};
+
+// =================================================
 // BOOT
 // =================================================
 if (!window.TikzJax) {
@@ -445,4 +791,6 @@ if (!window.TikzJax) {
     } else {
         window.addEventListener('load', initialize);
     }
+
+    window.addEventListener('unload', shutdown);
 }
