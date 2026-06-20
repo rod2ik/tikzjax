@@ -37,7 +37,11 @@ expose({
     },
     async texify(input, dataset) {
         // Set up the tex input file.
-        const texPackages = dataset.texPackages ? JSON.parse(dataset.texPackages) : {};
+        // const texPackages = dataset.texPackages ? JSON.parse(dataset.texPackages) : {};
+        const texPackages = {
+            amsmath: '',
+            ...(dataset.texPackages ? JSON.parse(dataset.texPackages) : {})
+        };
 
         input =
             Object.entries(texPackages).reduce((usePackageString, thisPackage) => {
