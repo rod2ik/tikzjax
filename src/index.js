@@ -2,357 +2,447 @@ import { Worker, spawn, Thread } from 'threads';
 import { openDB } from 'idb';
 import '../css/container.css';
 
-// document.currentScript polyfill
+// =================================================
+// BASE URL
+// =================================================
 if (document.currentScript === undefined) {
     const scripts = document.getElementsByTagName('script');
     document.currentScript = scripts[scripts.length - 1];
 }
 
-// Determine where this script was loaded from. This is used to find the files to load.
 const url = new URL(document.currentScript.src);
 
+// =================================================
+// CACHE
+// =================================================
 const dbPromise = openDB('TikzJax', 2, {
     upgrade(db) {
         db.createObjectStore('svgImages');
     }
 });
-const getItem = async (key) => (await dbPromise).get('svgImages', key);
-const setItem = async (key, val) => (await dbPromise).put('svgImages', val, key);
 
-const createHash = async (string) => {
-    return Array.from(new Uint8Array(await window.crypto.subtle.digest('SHA-1', new TextEncoder().encode(string))))
-        .map((b) => b.toString(16).padStart(2, '0'))
-        .join('');
+const getItem = async (key) =>
+    (await dbPromise).get('svgImages', key);
+
+const setItem = async (key, val) =>
+    (await dbPromise).put('svgImages', val, key);
+
+// =================================================
+// STATE
+// =================================================
+let texWorker;
+let observer;
+
+// =================================================
+// THEME SUPPORT — MKDOCS 1.x / MATERIAL
+// =================================================
+const getMkdocsTheme = () => {
+    const bodyTheme = document.body?.getAttribute('data-md-color-scheme');
+
+    return bodyTheme === 'slate' ? 'dark' : 'light';
 };
 
-const processQueue = [];
-let observer = null;
-let texWorker;
+const isBlackValue = (value) => {
+    if (!value) return false;
 
-const SVG_BLACK_VALUES = new Set(['black', '#000', '#000000', 'rgb(0,0,0)', 'rgb(0, 0, 0)']);
-const SVG_WHITE_VALUES = new Set(['white', '#fff', '#ffffff', 'rgb(255,255,255)', 'rgb(255, 255, 255)']);
+    const v = value.trim().toLowerCase();
+
+    return (
+        v === 'black' ||
+        v === '#000' ||
+        v === '#000000' ||
+        v === 'rgb(0,0,0)' ||
+        v === 'rgb(0, 0, 0)'
+    );
+};
+
+const isWhiteValue = (value) => {
+    if (!value) return false;
+
+    const v = value.trim().toLowerCase();
+
+    return (
+        v === 'white' ||
+        v === '#fff' ||
+        v === '#ffffff' ||
+        v === 'rgb(255,255,255)' ||
+        v === 'rgb(255, 255, 255)'
+    );
+};
 
 const isTextNode = (node) => {
-    const tagName = node.tagName ? node.tagName.toLowerCase() : '';
-    return tagName === 'text' || tagName === 'tspan';
+    const tag = node?.tagName?.toLowerCase();
+
+    return tag === 'text' || tag === 'tspan';
 };
 
-const normalizeSvgColorValue = (value, attr, node) => {
-    if (!value) return value;
+const getTikzWrappers = (root = document) => {
+    const wrappers = [];
 
-    const normalized = value.trim().toLowerCase();
-
-    if (SVG_BLACK_VALUES.has(normalized)) return 'currentColor';
-
-    /*
-     * tkz-tab creates white background rectangles behind labels/values.
-     * In dark mode, those white backgrounds make white text unreadable.
-     *
-     * We convert white fills to transparent, but only for non-text nodes.
-     * This preserves any real white text/tspan if ever used.
-     */
-    if (attr === 'fill' && SVG_WHITE_VALUES.has(normalized) && !isTextNode(node)) {
-        return 'transparent';
+    if (
+        root instanceof Element &&
+        root.matches('.tikzjax-wrapper')
+    ) {
+        wrappers.push(root);
     }
 
-    return value;
+    root.querySelectorAll?.('.tikzjax-wrapper')
+        ?.forEach((wrapper) => wrappers.push(wrapper));
+
+    return wrappers;
 };
 
-const normalizeTikzSvgForTheme = (svg) => {
-    if (!svg || svg.nodeName.toLowerCase() !== 'svg') return svg;
+const normalizeStyleForTheme = (styleText, node) => {
+    if (!styleText) return styleText;
 
-    svg.classList.add('tikz', 'tikzjax');
-    svg.setAttribute('data-tikzjax-normalized', 'true');
+    let result = styleText;
 
-    svg.querySelectorAll('[fill], [stroke], [color], [style]').forEach((node) => {
-        for (const attr of ['fill', 'stroke', 'color']) {
-            if (!node.hasAttribute(attr)) continue;
+    result = result.replace(
+        /fill\s*:\s*(black|#000000|#000|rgb\(0,\s*0,\s*0\))\b/gi,
+        'fill: currentColor'
+    );
 
-            const current = node.getAttribute(attr);
-            node.setAttribute(attr, normalizeSvgColorValue(current, attr, node));
-        }
+    result = result.replace(
+        /stroke\s*:\s*(black|#000000|#000|rgb\(0,\s*0,\s*0\))\b/gi,
+        'stroke: currentColor'
+    );
 
-        const style = node.getAttribute('style');
-        if (style) {
-            let normalizedStyle = style
-                .replace(/fill\s*:\s*(black|#000000|#000|rgb\(0,\s*0,\s*0\))\b/gi, 'fill: currentColor')
-                .replace(/stroke\s*:\s*(black|#000000|#000|rgb\(0,\s*0,\s*0\))\b/gi, 'stroke: currentColor')
-                .replace(/color\s*:\s*(black|#000000|#000|rgb\(0,\s*0,\s*0\))\b/gi, 'color: currentColor');
+    result = result.replace(
+        /color\s*:\s*(black|#000000|#000|rgb\(0,\s*0,\s*0\))\b/gi,
+        'color: currentColor'
+    );
 
-            if (!isTextNode(node)) {
-                normalizedStyle = normalizedStyle.replace(
-                    /fill\s*:\s*(white|#ffffff|#fff|rgb\(255,\s*255,\s*255\))\b/gi,
-                    'fill: transparent'
-                );
+    if (isTextNode(node)) {
+        result = result.replace(
+            /fill\s*:\s*(white|#ffffff|#fff|rgb\(255,\s*255,\s*255\))\b/gi,
+            'fill: currentColor'
+        );
+    } else {
+        result = result.replace(
+            /fill\s*:\s*(white|#ffffff|#fff|rgb\(255,\s*255,\s*255\))\b/gi,
+            'fill: transparent'
+        );
+    }
+
+    return result;
+};
+
+const normalizeSvgForTheme = (svg) => {
+    if (!svg) return;
+
+    svg.classList.add('tikzjax', 'tikz');
+    svg.style.color = 'currentColor';
+
+    svg.querySelectorAll('[fill], [stroke], [color], [style]')
+        .forEach((node) => {
+            if (node.hasAttribute('fill')) {
+                const fill = node.getAttribute('fill');
+
+                if (isTextNode(node)) {
+                    node.setAttribute('fill', 'currentColor');
+                    node.style.setProperty('fill', 'currentColor', 'important');
+                } else if (isBlackValue(fill)) {
+                    node.setAttribute('fill', 'currentColor');
+                } else if (isWhiteValue(fill)) {
+                    node.setAttribute('fill', 'transparent');
+                }
             }
 
-            node.setAttribute('style', normalizedStyle);
+            if (node.hasAttribute('stroke')) {
+                const stroke = node.getAttribute('stroke');
+
+                if (isBlackValue(stroke)) {
+                    node.setAttribute('stroke', 'currentColor');
+                }
+            }
+
+            if (node.hasAttribute('color')) {
+                const color = node.getAttribute('color');
+
+                if (isBlackValue(color)) {
+                    node.setAttribute('color', 'currentColor');
+                }
+            }
+
+            if (node.hasAttribute('style')) {
+                node.setAttribute(
+                    'style',
+                    normalizeStyleForTheme(node.getAttribute('style'), node)
+                );
+            }
+        });
+
+    svg.querySelectorAll('text, tspan').forEach((node) => {
+        node.setAttribute('fill', 'currentColor');
+        node.style.setProperty('fill', 'currentColor', 'important');
+        node.style.setProperty('opacity', '1', 'important');
+    });
+};
+
+const applyThemeToTikz = (root = document) => {
+    const isDark = getMkdocsTheme() === 'dark';
+
+    getTikzWrappers(root).forEach((wrapper) => {
+        wrapper.style.color = isDark ? '#ffffff' : '#000000';
+
+        wrapper.querySelectorAll('svg').forEach((svg) => {
+            normalizeSvgForTheme(svg);
+        });
+    });
+};
+
+const observeTheme = () => {
+    if (!document.body) return;
+
+    const themeObserver = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+            if (
+                mutation.type === 'attributes' &&
+                mutation.attributeName === 'data-md-color-scheme'
+            ) {
+                applyThemeToTikz(document);
+            }
         }
     });
 
-    return svg;
-};
-
-/*
- * Second safety pass on the raw SVG string.
- */
-const normalizeTikzHtmlForTheme = (html) => {
-    return html
-        // black -> currentColor
-        .replace(/\bfill=(['"])(black|#000|#000000|rgb\(0,\s*0,\s*0\))\1/gi, 'fill=$1currentColor$1')
-        .replace(/\bstroke=(['"])(black|#000|#000000|rgb\(0,\s*0,\s*0\))\1/gi, 'stroke=$1currentColor$1')
-        .replace(/\bcolor=(['"])(black|#000|#000000|rgb\(0,\s*0,\s*0\))\1/gi, 'color=$1currentColor$1')
-
-        // tkz-tab white label backgrounds -> transparent
-        .replace(/\bfill=(['"])(white|#fff|#ffffff|rgb\(255,\s*255,\s*255\))\1/gi, 'fill=$1transparent$1')
-
-        // inline style black -> currentColor
-        .replace(/fill\s*:\s*(black|#000000|#000|rgb\(0,\s*0,\s*0\))\b/gi, 'fill: currentColor')
-        .replace(/stroke\s*:\s*(black|#000000|#000|rgb\(0,\s*0,\s*0\))\b/gi, 'stroke: currentColor')
-        .replace(/color\s*:\s*(black|#000000|#000|rgb\(0,\s*0,\s*0\))\b/gi, 'color: currentColor')
-
-        // inline style white background fills -> transparent
-        .replace(/fill\s*:\s*(white|#ffffff|#fff|rgb\(255,\s*255,\s*255\))\b/gi, 'fill: transparent');
-};
-
-/*
- * Final DOM pass.
- *
- * This is intentionally close to the browser-console test that worked:
- *
- * document.querySelectorAll('svg.tikz [fill="#fff"], svg.tikzjax [fill="#fff"]')
- *
- * Some generated/cached SVGs can still contain <g fill="#fff"> after the
- * earlier parsing steps. This catches the live SVG nodes before/after insertion.
- */
-const fixLiveTikzSvgColors = (root = document) => {
-    root.querySelectorAll(
-        'svg.tikz [fill="#fff"], svg.tikz [fill="#ffffff"], svg.tikz [fill="white"], ' +
-            'svg.tikzjax [fill="#fff"], svg.tikzjax [fill="#ffffff"], svg.tikzjax [fill="white"]'
-    ).forEach((node) => {
-        if (!isTextNode(node)) node.setAttribute('fill', 'transparent');
+    themeObserver.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['data-md-color-scheme']
     });
 };
 
-const wrapTikzSvg = (svg) => {
+// =================================================
+// SPINNER
+// =================================================
+const createLoader = () => {
+    const frag = document.createRange().createContextualFragment(`
+<svg class="tikzjax-loader" width="75" height="75" viewBox="0 0 75 75">
+    <rect width="100%" height="100%" fill="rgba(0,0,0,0.08)"/>
+    <circle cx="37.5" cy="37.5" r="14"
+        stroke="currentColor" fill="none" stroke-width="3"/>
+    <circle cx="37.5" cy="37.5" r="14"
+        stroke="currentColor" fill="none" stroke-width="3">
+        <animateTransform attributeName="transform"
+            type="rotate"
+            from="0 37.5 37.5"
+            to="360 37.5 37.5"
+            dur="1s"
+            repeatCount="indefinite"/>
+    </circle>
+</svg>
+    `);
+
+    return frag.firstChild;
+};
+
+// =================================================
+// SOURCES
+// =================================================
+const getTikzSources = (root = document) => {
+    const sources = [];
+
+    sources.push(...root.querySelectorAll('script[type="text/tikz"]'));
+    sources.push(...root.querySelectorAll('pre.language-tikzjax'));
+
+    return sources.filter((el) => !el.dataset?.tikzjaxProcessed);
+};
+
+// =================================================
+// TEXT EXTRACTION
+// =================================================
+const getTikzSourceText = (elt) => {
+    if (!elt) return '';
+
+    if (elt.tagName === 'SCRIPT') {
+        return elt.textContent || '';
+    }
+
+    const code = elt.querySelector('code');
+
+    return (code ? code.textContent : elt.textContent || '').trim();
+};
+
+// =================================================
+// SVG WRAPPER
+// =================================================
+const wrapSvg = (svg) => {
     const wrapper = document.createElement('span');
     wrapper.className = 'tikzjax-wrapper';
+
     wrapper.appendChild(svg);
 
-    fixLiveTikzSvgColors(wrapper);
+    applyThemeToTikz(wrapper);
 
     return wrapper;
 };
 
-const svgFromHtml = (html) => {
-    const normalizedHtml = normalizeTikzHtmlForTheme(html);
-    const svg = document.createRange().createContextualFragment(normalizedHtml).firstChild;
-    return normalizeTikzSvgForTheme(svg);
-};
+// =================================================
+// ENGINE
+// =================================================
+const processTikzSources = async (sources) => {
+    const queue = [];
 
-const processTikzScripts = async (scripts) => {
-    const currentProcessPromise = new Promise((resolve) => {
-        const texQueue = [];
+    const load = async (elt) => {
+        const text = getTikzSourceText(elt);
 
-        const loadCachedOrSetupLoader = async (elt) => {
-            elt.sourceHash = await createHash(JSON.stringify(elt.dataset) + elt.childNodes[0].nodeValue);
+        elt.dataset.tikzjaxProcessed = 'true';
+        elt.tikzjaxText = text;
 
-            const savedSVG = elt.dataset.disableCache ? undefined : await getItem(elt.sourceHash);
+        const container =
+            elt.closest('pre.language-tikzjax') ||
+            elt.closest('script') ||
+            elt;
 
-            if (savedSVG) {
-                const svg = svgFromHtml(savedSVG);
-                elt.replaceWith(wrapTikzSvg(svg));
-                fixLiveTikzSvgColors();
+        const loader = createLoader();
 
-                // Emit a bubbling event that the svg is ready.
-                const loadFinishedEvent = new Event('tikzjax-load-finished', { bubbles: true });
-                svg.dispatchEvent(loadFinishedEvent);
-            } else {
-                texQueue.push(elt);
+        const wrapper = document.createElement('span');
+        wrapper.className = 'tikzjax-wrapper';
 
-                const width = parseFloat(elt.dataset.width) || 75;
-                const height = parseFloat(elt.dataset.height) || 75;
+        container.replaceWith(wrapper);
+        wrapper.appendChild(loader);
 
-                // Replace the elt with a spinning loader.
-                elt.loader = document
-                    .createRange()
-                    .createContextualFragment(
-                        '<svg version="1.1" ' +
-                            'xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" ' +
-                            `width="${width}pt" height="${height}pt" viewBox="0 0 ${width} ${height}">` +
-                            `<rect width="${width}" height="${height}" rx="5pt" ry="5pt" ` +
-                            'fill="#000" fill-opacity="0.2"/>' +
-                            `<circle cx="${width / 2}" cy="${height / 2}" r="15" stroke="#f3f3f3" ` +
-                            'fill="none" stroke-width="3"/>' +
-                            `<circle cx="${width / 2}" cy="${height / 2}" r="15" stroke="#3498db" ` +
-                            'fill="none" stroke-width="3" stroke-linecap="round">' +
-                            '<animate attributeName="stroke-dasharray" begin="0s" dur="2s" ' +
-                            'values="56.5 37.7;1 93.2;56.5 37.7" keyTimes="0;0.5;1" repeatCount="indefinite">' +
-                            '</animate>' +
-                            '<animate attributeName="stroke-dashoffset" begin="0s" dur="2s" ' +
-                            'from="0" to="188.5" repeatCount="indefinite"></animate></circle>' +
-                            '</svg>'
-                    ).firstChild;
-                elt.replaceWith(elt.loader);
-            }
-        };
+        applyThemeToTikz(wrapper);
 
-        const process = async (elt) => {
-            const text = elt.childNodes[0].nodeValue;
-            const loader = elt.loader;
+        elt.tikzjaxLoader = wrapper;
 
-            // Check for a saved svg again in case this script tag is a duplicate of another.
-            const savedSVG = elt.dataset.disableCache ? undefined : await getItem(elt.sourceHash);
+        queue.push(elt);
+    };
 
-            if (savedSVG) {
-                const svg = svgFromHtml(savedSVG);
-                loader.replaceWith(wrapTikzSvg(svg));
-                fixLiveTikzSvgColors();
+    const process = async (elt) => {
+        const text = elt.tikzjaxText;
 
-                // Emit a bubbling event that the svg is ready.
-                const loadFinishedEvent = new Event('tikzjax-load-finished', { bubbles: true });
-                svg.dispatchEvent(loadFinishedEvent);
+        const cached = await getItem(text);
 
-                return;
-            }
+        let html;
 
-            let html = '';
-            try {
-                html = await texWorker.texify(text, Object.assign({}, elt.dataset));
-            } catch (err) {
-                console.log(err);
-                // Show the browser's image not found icon.
-                loader.outerHTML = '<img src="//invalid.site/img-not-found.png">';
-                return;
-            }
+        if (cached) {
+            html = cached;
+        } else {
+            html = await texWorker.texify(text, {});
+            await setItem(text, html);
+        }
 
-            const ids = html.match(/\bid="pgf[^"]*"/g);
-            if (ids) {
-                // Sort the ids from longest to shortest.
-                ids.sort((a, b) => {
-                    return b.length - a.length;
-                });
-                for (const id of ids) {
-                    const pgfIdString = id.replace(/id="pgf(.*)"/, '$1');
-                    html = html.replaceAll('pgf' + pgfIdString, `pgf${elt.sourceHash}${pgfIdString}`);
-                }
-            }
+        const svg = document
+            .createRange()
+            .createContextualFragment(html)
+            .firstChild;
 
-            const svg = svgFromHtml(html);
-            svg.role = 'img';
+        elt.tikzjaxLoader.replaceWith(wrapSvg(svg));
 
-            if (elt.dataset.ariaLabel) {
-                const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
-                title.textContent = elt.dataset.ariaLabel;
-                svg.prepend(title);
-            }
+        applyThemeToTikz(document);
 
-            loader.replaceWith(wrapTikzSvg(svg));
-            fixLiveTikzSvgColors();
+        svg.dispatchEvent(
+            new Event('tikzjax-load-finished', { bubbles: true })
+        );
+    };
 
-            if (!elt.dataset.disableCache) {
-                try {
-                    await setItem(elt.sourceHash, svg.outerHTML);
-                } catch (err) {
-                    console.log(err);
-                }
-            }
-
-            // Emit a bubbling event that the svg image generation is complete.
-            const loadFinishedEvent = new Event('tikzjax-load-finished', { bubbles: true });
-            svg.dispatchEvent(loadFinishedEvent);
-        };
-
-        (async () => {
-            // First check the session storage to see if an image is already cached,
-            // and if so load that. Otherwise show a spinning loader, and push the
-            // element onto the queue to run tex on.
-            for (const element of scripts) {
-                await loadCachedOrSetupLoader(element);
-            }
-
-            // End here if there is nothing to run tex on.
-            if (!texQueue.length) return resolve();
-
-            texWorker = await texWorker;
-
-            processQueue.push(currentProcessPromise);
-            if (processQueue.length > 1) await processQueue[processQueue.length - 2];
-
-            // Run tex on the text in each of the scripts that wasn't cached.
-            for (const element of texQueue) {
-                await process(element);
-            }
-
-            processQueue.shift();
-
-            return resolve();
-        })();
-    });
-    return currentProcessPromise;
-};
-
-const initializeWorker = async () => {
-    const urlRoot = url.href.replace(/\/tikzjax\.js(?:\?.*)?$/, '');
-
-    // Set up the worker thread.
-    const tex = await spawn(new Worker(`${urlRoot}/run-tex.js`));
-    Thread.events(tex).subscribe((e) => {
-        if (e.type == 'message' && typeof e.data === 'string') console.log(e.data);
-    });
-
-    // Load the assembly and core dump.
-    try {
-        await tex.load(urlRoot);
-    } catch (err) {
-        console.log(err);
+    for (const source of sources) {
+        await load(source);
     }
+
+    texWorker = await texWorker;
+
+    for (const elt of queue) {
+        await process(elt);
+    }
+};
+
+// =================================================
+// WORKER
+// =================================================
+const initializeWorker = async () => {
+    const root = url.href.replace(/\/tikzjax\.js(?:\?.*)?$/, '');
+
+    const tex = await spawn(new Worker(`${root}/run-tex.js`));
+
+    Thread.events(tex).subscribe(() => {});
+
+    await tex.load(root);
 
     return tex;
 };
 
+// =================================================
+// INIT
+// =================================================
 const initialize = async () => {
-    // Process any text/tikz scripts that are on the page initially.
-    processTikzScripts(
-        Array.prototype.slice
-            .call(document.getElementsByTagName('script'))
-            .filter((e) => e.getAttribute('type') === 'text/tikz')
-    );
+    texWorker = await initializeWorker();
 
-    // If a text/tikz script is added to the page later, then process those.
-    observer = new MutationObserver((mutationsList) => {
-        const newTikzScripts = [];
-        for (const mutation of mutationsList) {
+    const schedule = new Set();
+
+    const scheduleProcess = (node) => {
+        schedule.add(node);
+
+        setTimeout(() => {
+            processTikzSources([...schedule]);
+            schedule.clear();
+        }, 50);
+    };
+
+    const boot = () => {
+        processTikzSources(getTikzSources(document));
+        applyThemeToTikz(document);
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', boot);
+    } else {
+        boot();
+    }
+
+    observer = new MutationObserver((mutations) => {
+        const targets = [];
+
+        for (const mutation of mutations) {
             for (const node of mutation.addedNodes) {
-                if (node.tagName && node.tagName.toLowerCase() == 'script' && node.type == 'text/tikz')
-                    newTikzScripts.push(node);
-                else if (node.getElementsByTagName)
-                    newTikzScripts.push.apply(
-                        newTikzScripts,
-                        Array.prototype.slice
-                            .call(node.getElementsByTagName('script'))
-                            .filter((e) => e.getAttribute('type') === 'text/tikz')
-                    );
+                if (!node || node.nodeType !== 1) continue;
+
+                if (node.matches?.('script[type="text/tikz"]')) {
+                    targets.push(node);
+                }
+
+                if (node.matches?.('pre.language-tikzjax')) {
+                    targets.push(node);
+                }
+
+                node.querySelectorAll?.('script[type="text/tikz"]')
+                    ?.forEach((child) => targets.push(child));
+
+                node.querySelectorAll?.('pre.language-tikzjax')
+                    ?.forEach((child) => targets.push(child));
             }
         }
-        processTikzScripts(newTikzScripts);
+
+        if (targets.length) {
+            targets.forEach(scheduleProcess);
+        }
+
+        applyThemeToTikz(document);
     });
-    observer.observe(document.getElementsByTagName('body')[0], { childList: true, subtree: true });
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
+    observeTheme();
+    applyThemeToTikz(document);
+
+    setTimeout(() => {
+        processTikzSources(getTikzSources(document));
+        applyThemeToTikz(document);
+    }, 300);
 };
 
-const shutdown = async () => {
-    if (observer) observer.disconnect();
-    await Thread.terminate(await texWorker);
-};
-
+// =================================================
+// BOOT
+// =================================================
 if (!window.TikzJax) {
     window.TikzJax = true;
 
-    texWorker = initializeWorker();
-
-    if (document.readyState == 'complete') initialize();
-    else window.addEventListener('load', initialize);
-
-    // Stop the mutation observer and close the thread when the window is closed.
-    window.addEventListener('unload', shutdown);
+    if (document.readyState === 'complete') {
+        initialize();
+    } else {
+        window.addEventListener('load', initialize);
+    }
 }

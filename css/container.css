@@ -1,39 +1,41 @@
 .tikzjax-wrapper {
-    display: block;
-    max-width: 100%;
-    overflow-x: auto;
-    overflow-y: visible;
-    margin: 0.75em 0;
-    line-height: 0;
-    color: inherit;
+display: block;
+width: 100%;
+max-width: 100%;
+overflow-x: auto;
+overflow-y: visible;
+margin: 0.75em 0;
+line-height: 0;
+color: inherit;
+text-align: center;
+box-sizing: border-box;
 }
 
 .tikzjax-wrapper svg.tikz,
 .tikzjax-wrapper svg.tikzjax {
-    display: block;
-    overflow: visible;
-    height: auto;
-    max-width: 100%;
-    color: inherit;
+display: inline-block;
+overflow: visible;
+height: auto;
+max-width: none;
+color: inherit;
+vertical-align: middle;
 }
 
 .tikzjax-content svg {
-    overflow: visible;
+overflow: visible;
 }
 
 .tikzjax-scaled-content svg {
-    width: 100%;
-    height: 100%;
-    overflow: visible;
+width: 100%;
+height: 100%;
+overflow: visible;
 }
 
 /*
-   tkz-tab sometimes emits white background rectangles around
-   variation-table labels, for example:
-   <g fill="#fff"> ... </g>
+tkz-tab sometimes emits white background rectangles around
+variation-table labels, for example: <g fill="#fff"> ... </g>
 
-   In dark mode this creates white-on-white text.
-   Presentation attributes like fill="#fff" can be overridden by CSS.
+In dark mode this creates white-on-white text.
 */
 .tikzjax-wrapper svg.tikz [fill="#fff"],
 .tikzjax-wrapper svg.tikz [fill="#ffffff"],
@@ -47,7 +49,7 @@ svg.tikz [fill="white"],
 svg.tikzjax [fill="#fff"],
 svg.tikzjax [fill="#ffffff"],
 svg.tikzjax [fill="white"] {
-    fill: transparent !important;
+fill: transparent !important;
 }
 
 /* Keep text controlled by the surrounding page color. */
@@ -59,24 +61,48 @@ svg.tikz text,
 svg.tikz tspan,
 svg.tikzjax text,
 svg.tikzjax tspan {
-    fill: currentColor;
-}
-
-/* MkDocs Material admonitions/details */
-.md-typeset .admonition .tikzjax-wrapper,
-.md-typeset details .tikzjax-wrapper {
-    max-width: 100%;
-    overflow-x: auto;
-    overflow-y: visible;
+fill: currentColor;
 }
 
 /*
-   Wide tkz-tab SVGs should not be forced to shrink inside admonitions.
-   Let the wrapper scroll horizontally instead.
+MkDocs Material admonitions and details blocks.
+
+The wrapper is constrained to the admonition width.
+The SVG itself is allowed to keep its natural width.
+If it is too wide, the wrapper scrolls horizontally.
 */
+.md-typeset .admonition .tikzjax-wrapper,
+.md-typeset details .tikzjax-wrapper {
+display: block;
+width: 100%;
+max-width: 100%;
+overflow-x: auto;
+overflow-y: visible;
+box-sizing: border-box;
+text-align: center;
+}
+
 .md-typeset .admonition .tikzjax-wrapper svg.tikz,
 .md-typeset .admonition .tikzjax-wrapper svg.tikzjax,
 .md-typeset details .tikzjax-wrapper svg.tikz,
 .md-typeset details .tikzjax-wrapper svg.tikzjax {
-    max-width: none;
+display: inline-block;
+max-width: none;
+height: auto;
+}
+
+/*
+Error block shown when TeX compilation fails.
+This replaces the old invalid.site broken-image fallback.
+*/
+.tikzjax-error {
+white-space: pre-wrap;
+overflow-x: auto;
+margin: 0.75em 0;
+padding: 0.75em;
+border: 1px solid currentColor;
+border-radius: 0.2rem;
+color: #b00020;
+background: rgba(176, 0, 32, 0.08);
+line-height: 1.4;
 }
