@@ -496,23 +496,30 @@ const observeTheme = () => {
 // =================================================
 // SPINNER
 // =================================================
-const createLoader = () => {
-    const frag = document.createRange().createContextualFragment(`
-<svg class="tikzjax-loader" width="75" height="75" viewBox="0 0 75 75">
-    <rect width="100%" height="100%" fill="rgba(0,0,0,0.08)"/>
-    <circle cx="37.5" cy="37.5" r="14"
-        stroke="currentColor" fill="none" stroke-width="3"/>
-    <circle cx="37.5" cy="37.5" r="14"
-        stroke="currentColor" fill="none" stroke-width="3">
-        <animateTransform attributeName="transform"
-            type="rotate"
-            from="0 37.5 37.5"
-            to="360 37.5 37.5"
-            dur="1s"
-            repeatCount="indefinite"/>
-    </circle>
-</svg>
-    `);
+const createLoader = (dataset = {}) => {
+    const width = parseFloat(dataset.width) || 75;
+    const height = parseFloat(dataset.height) || 75;
+    const radius = Math.min(width, height) * 0.2;
+
+    const frag = document.createRange().createContextualFragment(
+        '<svg class="tikzjax-loader" version="1.1" ' +
+            'xmlns="http://www.w3.org/2000/svg" ' +
+            'xmlns:xlink="http://www.w3.org/1999/xlink" ' +
+            `width="${width}pt" height="${height}pt" viewBox="0 0 ${width} ${height}">` +
+            `<rect width="${width}" height="${height}" rx="5pt" ry="5pt" ` +
+            'fill="#000" fill-opacity="0.2"/>' +
+            `<circle cx="${width / 2}" cy="${height / 2}" r="${radius}" ` +
+            'stroke="#f3f3f3" fill="none" stroke-width="3"/>' +
+            `<circle cx="${width / 2}" cy="${height / 2}" r="${radius}" ` +
+            'stroke="#3498db" fill="none" stroke-width="3" stroke-linecap="round">' +
+            '<animate attributeName="stroke-dasharray" begin="0s" dur="2s" ' +
+            'values="56.5 37.7;1 93.2;56.5 37.7" keyTimes="0;0.5;1" repeatCount="indefinite">' +
+            '</animate>' +
+            '<animate attributeName="stroke-dashoffset" begin="0s" dur="2s" ' +
+            'from="0" to="188.5" repeatCount="indefinite"></animate>' +
+            '</circle>' +
+            '</svg>'
+    );
 
     return frag.firstChild;
 };
@@ -610,10 +617,16 @@ const processTikzSources = async (sources) => {
             elt.closest('script') ||
             elt;
 
-        const loader = createLoader();
+        const loader = createLoader(elt.dataset || {});
 
         const wrapper = document.createElement('span');
-        wrapper.className = 'tikzjax-wrapper';
+        wrapper.className = 'tikzjax-wrapper tikzjax-loading';
+        wrapper.style.display = 'inline-flex';
+        wrapper.style.alignItems = 'center';
+        wrapper.style.justifyContent = 'center';
+        wrapper.style.verticalAlign = 'middle';
+        wrapper.style.minWidth = `${parseFloat(elt.dataset.width) || 75}pt`;
+        wrapper.style.minHeight = `${parseFloat(elt.dataset.height) || 75}pt`;
 
         container.replaceWith(wrapper);
         wrapper.appendChild(loader);
@@ -662,6 +675,8 @@ const processTikzSources = async (sources) => {
         await load(source);
     }
 
+    if (!queue.length) return;
+
     texWorker = await texWorker;
 
     for (const elt of queue) {
@@ -692,7 +707,7 @@ const initializeWorker = async () => {
 // INIT
 // =================================================
 const initialize = async () => {
-    texWorker = await initializeWorker();
+    texWorker = texWorker || initializeWorker();
 
     const schedule = new Set();
 
@@ -786,10 +801,12 @@ const shutdown = async () => {
 if (!window.TikzJax) {
     window.TikzJax = true;
 
-    if (document.readyState === 'complete') {
-        initialize();
+    texWorker = initializeWorker();
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initialize);
     } else {
-        window.addEventListener('load', initialize);
+        initialize();
     }
 
     window.addEventListener('unload', shutdown);
