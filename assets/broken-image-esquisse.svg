@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="75" height="75" viewBox="0 0 75 75" role="img" aria-label="Broken image sketch">
+  <defs>
+    <filter id="roughen" x="-8%" y="-8%" width="116%" height="116%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="9"/>
+      <feDisplacementMap in="SourceGraphic" scale="0.7"/>
+    </filter>
+  </defs>
+
+  <g fill="none" stroke="#4b5563" stroke-linecap="round" stroke-linejoin="round" filter="url(#roughen)">
+    <path d="M13 14 C22 13,34 14,48 13 C55 14,61 17,63 24 C62 34,63 46,62 58 C53 60,36 59,17 60 C13 51,13 31,13 14 Z"
+          stroke-width="2.4"/>
+    <path d="M51 14 C50 19,51 23,57 24 C60 24,62 24,63 24" stroke-width="2.2"/>
+
+    <circle cx="25" cy="28" r="6" stroke-width="2.6"/>
+    <path d="M15 57 C21 49,25 44,30 39 C35 44,37 46,40 50 C45 43,49 37,54 33 C58 39,61 44,63 49"
+          stroke-width="2.6"/>
+    <path d="M16 59 C24 53,31 48,40 43 M22 58 C31 51,41 45,54 38 M33 58 C42 51,52 45,62 42"
+          stroke-width="1.1" opacity="0.45"/>
+  </g>
+
+  <g stroke="#fb7185" stroke-linecap="round" filter="url(#roughen)">
+    <path d="M50 47 L67 64 M66 47 L49 64" stroke-width="5.2"/>
+    <path d="M53 46 L68 61 M64 46 L49 62" stroke-width="2.2" opacity="0.75"/>
+  </g>
+</svg>

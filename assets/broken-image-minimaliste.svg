@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="75" height="75" viewBox="0 0 75 75" role="img" aria-label="Broken image minimalist">
+  <path d="M14 10 H50 L63 23 V55 C63 61 60 64 54 64 H19 C15 64 12 61 12 56 V16 C12 12.5 14.5 10 18 10 Z"
+        fill="none" stroke="#4b5563" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M50 10 V23 H63"
+        fill="none" stroke="#4b5563" stroke-width="4" stroke-linejoin="round"/>
+  <circle cx="26" cy="27" r="6.5"
+          fill="none" stroke="#4b5563" stroke-width="4"/>
+  <path d="M13 57 L29 41 L39 50 L51 37 L62 48"
+        fill="none" stroke="#4b5563" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M50 49 L65 64 M65 49 L50 64"
+        stroke="#ef4444" stroke-width="5" stroke-linecap="round"/>
+</svg>

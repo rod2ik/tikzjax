@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="75" height="75" viewBox="0 0 75 75" role="img" aria-label="Broken image gradient">
+  <defs>
+    <linearGradient id="cardGradient" x1="12" y1="13" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#93c5fd"/>
+      <stop offset="1" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <linearGradient id="mountainGradient" x1="20" y1="37" x2="55" y2="61" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#dbeafe"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0.7"/>
+    </linearGradient>
+    <filter id="softShadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#4338ca" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <rect x="12" y="11" width="51" height="53" rx="9" ry="9" fill="url(#cardGradient)" filter="url(#softShadow)"/>
+  <circle cx="27" cy="27" r="7.5" fill="#ffffff" opacity="0.95"/>
+
+  <path d="M19 58 L30 45 C32 42.5 34 42.5 36 45 L41 50 L51 36 C53 33.4 55 33.4 57 36 L64 45 V58 Z"
+        fill="url(#mountainGradient)" opacity="0.92"/>
+  <path d="M19 58 L30 45 C32 42.5 34 42.5 36 45 L41 50 L51 36 C53 33.4 55 33.4 57 36 L64 45"
+        fill="none" stroke="#ffffff" stroke-width="1.5" stroke-opacity="0.38" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <path d="M52 52 L64 64 M64 52 L52 64"
+        stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="75" height="75" viewBox="0 0 75 75" role="img" aria-label="Broken image clean line">
+  <path d="M14 12 H50 L62 24 V55 C62 60 59 63 54 63 H20 C16 63 13 60 13 56 V17 C13 14 15 12 18 12 Z"
+        fill="none" stroke="#5b6470" stroke-width="3.5" stroke-linejoin="round"/>
+  <path d="M50 12 V24 H62"
+        fill="none" stroke="#5b6470" stroke-width="3.5" stroke-linejoin="round"/>
+  <circle cx="26" cy="28" r="6.5"
+          fill="none" stroke="#5b6470" stroke-width="3.5"/>
+  <path d="M17 55 L31 41 L40 50 L52 37 L62 47"
+        fill="none" stroke="#5b6470" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <circle cx="58" cy="57" r="13.5"
+          fill="none" stroke="#5b6470" stroke-width="3.5"/>
+  <path d="M53 52 L63 62 M63 52 L53 62"
+        stroke="#5b6470" stroke-width="3.5" stroke-linecap="round"/>
+</svg>

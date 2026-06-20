@@ -15,12 +15,22 @@ module.exports = (_env, argv) => {
         module: { rules: [{ test: /\.css$/, use: ['style-loader', 'css-loader'] }] },
         performance: { hints: false },
         plugins: [
-            new TerserPlugin({ terserOptions: { format: { comments: false } }, extractComments: false }),
+            new TerserPlugin({
+                terserOptions: { format: { comments: false } },
+                extractComments: false
+            }),
             new CopyPlugin({
                 patterns: [
                     { from: './css/fonts.css', to: path.resolve(__dirname, 'dist') },
                     { from: './core.dump.gz', to: path.resolve(__dirname, 'dist'), noErrorOnMissing: true },
-                    { from: './tex.wasm.gz', to: path.resolve(__dirname, 'dist'), noErrorOnMissing: true }
+                    { from: './tex.wasm.gz', to: path.resolve(__dirname, 'dist'), noErrorOnMissing: true },
+
+                    // Runtime fallback images.
+                    // Export all SVG assets to dist/assets/.
+                    {
+                        from: './assets/*.svg',
+                        to: path.resolve(__dirname, 'dist', 'assets', '[name][ext]')
+                    }
                 ]
             }),
             new webpack.ProvidePlugin({ process: 'process/browser' }),

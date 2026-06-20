@@ -15,12 +15,46 @@ const url = new URL(document.currentScript.src);
 // =================================================
 // OPTIONS
 // =================================================
+const DEFAULT_BROKEN_IMAGE_SRC =
+    new URL('assets/broken-image.svg', url).href;
+
 const getOptions = () => window.TikzJaxOptions || {};
 
 const getThemeOptions = () => {
     const options = getOptions();
 
     return options.theme || {};
+};
+
+const getRenderTimeout = () => {
+    const options = getOptions();
+    const texOptions = options.tex || {};
+    const timeout = options.renderTimeout || texOptions.renderTimeout || 15000;
+    const parsed = Number(timeout);
+
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : 15000;
+};
+
+const getMaxRetries = () => {
+    const options = getOptions();
+    const texOptions = options.tex || {};
+    const retries = options.maxRetries ?? texOptions.maxRetries ?? 0;
+    const parsed = Number(retries);
+
+    return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
+};
+
+const shouldRestartWorkerOnFail = () => {
+    const options = getOptions();
+    const texOptions = options.tex || {};
+
+    return options.restartWorkerOnFail ?? texOptions.restartWorkerOnFail ?? true;
+};
+
+const getBrokenImageSrc = () => {
+    const options = getOptions();
+
+    return options.brokenImageSrc || DEFAULT_BROKEN_IMAGE_SRC;
 };
 
 const parseJsonObject = (value) => {
@@ -179,6 +213,111 @@ let texWorker;
 let observer;
 let themeObserver;
 let themeRaf = null;
+
+// =================================================
+// TIMEOUT / FAILURE SAFETY
+// =================================================
+const withTimeout = (promise, ms) => {
+    let timer;
+
+    const timeout = new Promise((_, reject) => {
+        timer = window.setTimeout(() => {
+            reject(new Error(`TikZJax render timeout after ${ms}ms`));
+        }, ms);
+    });
+
+    return Promise.race([promise, timeout]).finally(() => {
+        window.clearTimeout(timer);
+    });
+};
+
+const createDefaultBrokenImageSvg = () => {
+    const frag = document.createRange().createContextualFragment(
+        '<svg class="tikzjax-broken-image" ' +
+            'xmlns="http://www.w3.org/2000/svg" ' +
+            'width="75pt" height="75pt" viewBox="0 0 75 75" ' +
+            'role="img" aria-label="TikZJax rendering error">' +
+            '<defs>' +
+                '<linearGradient id="tikzjax-broken-image-gradient-inline" x1="12" y1="18" x2="58" y2="58" gradientUnits="userSpaceOnUse">' +
+                    '<stop offset="0" stop-color="#93c5fd"/>' +
+                    '<stop offset="1" stop-color="#c4b5fd"/>' +
+                '</linearGradient>' +
+            '</defs>' +
+            '<path d="M14 10 H50 L63 23 V56 C63 61 60 64 55 64 H20 C16 64 12 61 12 56 V16 C12 13 14 10 18 10 Z" ' +
+                'fill="none" stroke="#3b82f6" stroke-width="3" stroke-linejoin="round"/>' +
+            '<path d="M50 10 V23 H63" ' +
+                'fill="none" stroke="#3b82f6" stroke-width="3" stroke-linejoin="round"/>' +
+            '<circle cx="26" cy="27" r="6" ' +
+                'fill="url(#tikzjax-broken-image-gradient-inline)" stroke="#3b82f6" stroke-width="3"/>' +
+            '<path d="M14 56 L29 39 L39 49 L51 35 L63 49" ' +
+                'fill="url(#tikzjax-broken-image-gradient-inline)" opacity="0.75" ' +
+                'stroke="#3b82f6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>' +
+            '<path d="M52 50 L66 64 M66 50 L52 64" ' +
+                'stroke="#ef4444" stroke-width="5" stroke-linecap="round"/>' +
+        '</svg>'
+    );
+
+    const svg = frag.firstChild;
+
+    svg.style.display = 'inline-block';
+    svg.style.width = '75pt';
+    svg.style.height = '75pt';
+    svg.style.minWidth = '75pt';
+    svg.style.minHeight = '75pt';
+    svg.style.verticalAlign = 'middle';
+
+    return svg;
+};
+
+const createBrokenImageElement = () => {
+    const img = document.createElement('img');
+
+    img.className = 'tikzjax-broken-image';
+    img.src = getBrokenImageSrc();
+    img.alt = '';
+    img.setAttribute('aria-hidden', 'true');
+
+    img.style.display = 'inline-block';
+    img.style.width = '75pt';
+    img.style.height = '75pt';
+    img.style.minWidth = '75pt';
+    img.style.minHeight = '75pt';
+    img.style.objectFit = 'contain';
+    img.style.verticalAlign = 'middle';
+
+    img.onerror = () => {
+        const fallback = createDefaultBrokenImageSvg();
+
+        fallback.style.marginLeft = 'auto';
+        fallback.style.marginRight = 'auto';
+
+        img.replaceWith(fallback);
+    };
+
+    return img;
+};
+
+const createBrokenImage = () => {
+    const wrapper = document.createElement('span');
+
+    wrapper.className = 'tikzjax-wrapper tikzjax-broken-wrapper';
+
+    wrapper.style.display = 'block';
+    wrapper.style.width = '100%';
+    wrapper.style.minWidth = '75pt';
+    wrapper.style.minHeight = '75pt';
+    wrapper.style.textAlign = 'center';
+    wrapper.style.verticalAlign = 'middle';
+
+    const img = createBrokenImageElement();
+
+    img.style.marginLeft = 'auto';
+    img.style.marginRight = 'auto';
+
+    wrapper.appendChild(img);
+
+    return wrapper;
+};
 
 // =================================================
 // THEME SUPPORT
@@ -597,6 +736,43 @@ const wrapSvg = (svg) => {
 };
 
 // =================================================
+// WORKER
+// =================================================
+const initializeWorker = async () => {
+    const root = url.href.replace(/\/tikzjax\.js(?:\?.*)?$/, '');
+
+    const tex = await spawn(new Worker(`${root}/run-tex.js`));
+
+    Thread.events(tex).subscribe((event) => {
+        if (event.type === 'message' && typeof event.data === 'string') {
+            console.log(event.data);
+        }
+    });
+
+    await tex.load(root);
+
+    return tex;
+};
+
+const restartWorker = async () => {
+    const oldWorker = texWorker;
+
+    texWorker = initializeWorker();
+
+    try {
+        if (oldWorker) {
+            await Thread.terminate(await oldWorker);
+        }
+    } catch (error) {
+        console.warn('TikZJax: unable to terminate failed worker:', error);
+    }
+
+    texWorker = await texWorker;
+
+    return texWorker;
+};
+
+// =================================================
 // ENGINE
 // =================================================
 const processTikzSources = async (sources) => {
@@ -638,37 +814,86 @@ const processTikzSources = async (sources) => {
         queue.push(elt);
     };
 
+    const failRender = async (elt, error) => {
+        console.warn('TikZJax rendering failed:', error);
+
+        const brokenImage = createBrokenImage();
+
+        if (elt.tikzjaxLoader) {
+            elt.tikzjaxLoader.replaceWith(brokenImage);
+        }
+
+        if (shouldRestartWorkerOnFail()) {
+            await restartWorker();
+        }
+    };
+
+    const renderWithSafety = async (text, dataset) => {
+        const timeout = getRenderTimeout();
+
+        return withTimeout(
+            texWorker.texify(text, dataset),
+            timeout
+        );
+    };
+
     const process = async (elt) => {
         const text = elt.tikzjaxText;
         const dataset = elt.tikzjaxDataset || {};
         const cacheKey = JSON.stringify(dataset) + '\n' + text;
 
-        const cached = dataset.disableCache ? undefined : await getItem(cacheKey);
+        try {
+            const cached = dataset.disableCache ? undefined : await getItem(cacheKey);
 
-        let html;
+            let html;
 
-        if (cached) {
-            html = cached;
-        } else {
-            html = await texWorker.texify(text, dataset);
+            if (cached) {
+                html = cached;
+            } else {
+                let lastError = null;
+                const maxRetries = getMaxRetries();
 
-            if (!dataset.disableCache) {
-                await setItem(cacheKey, html);
+                for (let attempt = 0; attempt <= maxRetries; attempt += 1) {
+                    try {
+                        html = await renderWithSafety(text, dataset);
+                        break;
+                    } catch (error) {
+                        lastError = error;
+
+                        if (attempt < maxRetries && shouldRestartWorkerOnFail()) {
+                            await restartWorker();
+                        }
+                    }
+                }
+
+                if (!html) {
+                    throw lastError || new Error('TikZJax rendering failed.');
+                }
+
+                if (!dataset.disableCache) {
+                    await setItem(cacheKey, html);
+                }
             }
+
+            const svg = document
+                .createRange()
+                .createContextualFragment(html)
+                .firstChild;
+
+            if (!svg) {
+                throw new Error('TikZJax: texify returned empty output.');
+            }
+
+            elt.tikzjaxLoader.replaceWith(wrapSvg(svg));
+
+            applyThemeToTikz(document);
+
+            svg.dispatchEvent(
+                new Event('tikzjax-load-finished', { bubbles: true })
+            );
+        } catch (error) {
+            await failRender(elt, error);
         }
-
-        const svg = document
-            .createRange()
-            .createContextualFragment(html)
-            .firstChild;
-
-        elt.tikzjaxLoader.replaceWith(wrapSvg(svg));
-
-        applyThemeToTikz(document);
-
-        svg.dispatchEvent(
-            new Event('tikzjax-load-finished', { bubbles: true })
-        );
     };
 
     for (const source of sources) {
@@ -682,25 +907,6 @@ const processTikzSources = async (sources) => {
     for (const elt of queue) {
         await process(elt);
     }
-};
-
-// =================================================
-// WORKER
-// =================================================
-const initializeWorker = async () => {
-    const root = url.href.replace(/\/tikzjax\.js(?:\?.*)?$/, '');
-
-    const tex = await spawn(new Worker(`${root}/run-tex.js`));
-
-    Thread.events(tex).subscribe((event) => {
-        if (event.type === 'message' && typeof event.data === 'string') {
-            console.log(event.data);
-        }
-    });
-
-    await tex.load(root);
-
-    return tex;
 };
 
 // =================================================

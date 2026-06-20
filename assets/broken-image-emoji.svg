@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="75" height="75" viewBox="0 0 75 75" role="img" aria-label="Broken image emoji style">
+  <defs>
+    <linearGradient id="paper" x1="13" y1="11" x2="60" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#eef2f7"/>
+    </linearGradient>
+    <radialGradient id="badge" cx="45%" cy="35%" r="75%">
+      <stop offset="0" stop-color="#ff9a8f"/>
+      <stop offset="1" stop-color="#dc2626"/>
+    </radialGradient>
+    <filter id="shadow" x="-18%" y="-18%" width="136%" height="136%">
+      <feDropShadow dx="0" dy="1.4" stdDeviation="1.3" flood-color="#000000" flood-opacity="0.22"/>
+    </filter>
+  </defs>
+
+  <path d="M14 10 H50 L63 23 V56 C63 61 60 64 55 64 H20 C16 64 12 61 12 56 V16 C12 13 14 10 18 10 Z"
+        fill="url(#paper)" stroke="#4b5563" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M50 10 V23 H63"
+        fill="#d1d5db" stroke="#4b5563" stroke-width="4" stroke-linejoin="round"/>
+
+  <circle cx="26" cy="29" r="3.8" fill="#4b5563"/>
+  <circle cx="39" cy="29" r="3.8" fill="#4b5563"/>
+  <path d="M24 40 C29 35 36 35 42 40"
+        fill="none" stroke="#4b5563" stroke-width="4" stroke-linecap="round"/>
+
+  <path d="M14 57 L28 44 L38 54 L49 40 L62 53"
+        fill="none" stroke="#4b5563" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <circle cx="57" cy="57" r="13" fill="url(#badge)" stroke="#ffffff" stroke-width="3" filter="url(#shadow)"/>
+  <path d="M51.5 51.5 L62.5 62.5 M62.5 51.5 L51.5 62.5"
+        stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+</svg>
