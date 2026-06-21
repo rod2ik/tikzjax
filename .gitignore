@@ -12,3 +12,7 @@ misc
 
 public/fonts
 public/tex_files
+
+# MkDocs documentation build/cache
+site/site/
+site/.cache/

@@ -1,0 +1,36 @@
+site_name: TikZJax
+site_description: Documentation de TikZJax
+site_url: https://rod2ik.github.io/tikzjax/
+repo_url: https://github.com/rod2ik/tikzjax
+repo_name: rod2ik/tikzjax
+
+theme:
+  name: material
+  custom_dir: overrides
+  language: fr
+  features:
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+
+nav:
+  - Accueil: index.md
+  - Installation: installation.md
+  - Configuration: configuration.md
+  - Exemples: examples.md
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+
+extra_css:
+  - https://rod2ik.github.io/cdn/tikzjax/fonts.css
+
+extra_javascript:
+  - assets/javascripts/tikzjax.config.js
+  - https://rod2ik.github.io/cdn/tikzjax/tikzjax.js
