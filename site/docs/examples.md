@@ -1,8 +1,8 @@
-# Exemples
+# Examples
 
-## Bibliothèques TikZ
+## TikZ libraries
 
-Ce bloc utilise `arrows.meta`, `calc` et `positioning`.
+This block uses `arrows.meta`, `calc`, and `positioning`.
 
 ```tikzjax
 \begin{tikzpicture}[
@@ -19,7 +19,27 @@ Ce bloc utilise `arrows.meta`, `calc` et `positioning`.
 \end{tikzpicture}
 ```
 
-## Tableau de variations
+## Axes and line
+
+```tikzjax
+\begin{tikzpicture}
+    \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
+    \draw[->, thick] (0,0) -- (0,3) node[above] {$y$};
+    \draw[thick] (0,0) -- (3,2);
+\end{tikzpicture}
+```
+
+## Figure with colors
+
+```tikzjax
+\begin{tikzpicture}
+    \draw[thick] (0,0) rectangle (4,2);
+    \draw[fill=gray!20] (0.5,0.5) circle (0.4);
+    \node at (2,1) {$Area$};
+\end{tikzpicture}
+```
+
+## Variation table
 
 ```tikzjax
 \begin{tikzpicture}[line width=\tikzjaxTkzTabLineWidth, font=\tikzjaxTkzTabFont]
@@ -30,8 +50,8 @@ Ce bloc utilise `arrows.meta`, `calc` et `positioning`.
     ]
         {
             $x$/\tikzjaxTkzTabVariableRowHeight,
-            Signe de $f'(x)=2x$/\tikzjaxTkzTabSignRowHeight,
-            Variations de $f(x)=x^2$/\tikzjaxTkzTabVariationRowHeight
+            Sign of $f'(x)=2x$/\tikzjaxTkzTabSignRowHeight,
+            Variations of $f(x)=x^2$/\tikzjaxTkzTabVariationRowHeight
         }
         {$-\infty$, $0$, $+\infty$}
     \tkzTabLine{,-,z,+,}
@@ -39,10 +59,10 @@ Ce bloc utilise `arrows.meta`, `calc` et `positioning`.
 \end{tikzpicture}
 ```
 
-## Dans une admonition ouverte
+## Inside an open admonition
 
-!!! example
-    Ce bloc doit être rendu dans une admonition ouverte.
+!!! example "TikZ inside an admonition"
+    This block should be rendered inside an open admonition.
 
     ```tikzjax
     \begin{tikzpicture}
@@ -51,20 +71,20 @@ Ce bloc utilise `arrows.meta`, `calc` et `positioning`.
     \end{tikzpicture}
     ```
 
-## Dans une admonition repliable
+## Inside a collapsible admonition
 
-??? example
-    Ce bloc doit être rendu dans une admonition repliable.
+??? example "TikZ inside a collapsible admonition"
+    This block should be rendered when the admonition is opened.
 
     ```tikzjax
     \begin{tikzpicture}
-        \node[draw, rounded corners] {$TikZJax$};
+        \node[draw, rounded corners, inner sep=6pt] {$TikZJax$};
     \end{tikzpicture}
     ```
 
-## Test d’erreur
+## Error test
 
-Ce bloc est volontairement cassé. Il doit afficher l’image d’erreur configurée.
+This block is intentionally broken. It should display the configured error image.
 
 ```tikzjax
 \begin{tikzpicture}

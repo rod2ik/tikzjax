@@ -1,21 +1,30 @@
 # Configuration
 
-TikZJax se configure avec l’objet global `window.TikzJaxOptions`.
+TikZJax is configured with the global `window.TikzJaxOptions` object.
 
-Le fichier de configuration doit être chargé avant `tikzjax.js`.
+This file must be loaded before `tikzjax.js`.
 
-## Exemple complet
+```html
+<script src="tikzjax.config.js"></script>
+<script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.js"></script>
+```
+
+## Complete example
 
 ```js
 window.TikzJaxOptions = {
     renderTimeout: 10000,
+    maxRetries: 1,
+    restartWorkerOnFail: true,
     brokenImageSrc: "https://rod2ik.github.io/cdn/tikzjax/assets/broken-image-esquisse.svg",
 
     theme: {
         selector: "body",
         attribute: "data-md-color-scheme",
         darkValue: "slate",
-        lightValue: "default"
+        lightValue: "default",
+        fallbackTheme: "light",
+        followSystemTheme: false
     },
 
     tex: {
@@ -27,7 +36,8 @@ window.TikzJaxOptions = {
             "arrows.meta",
             "calc",
             "positioning"
-        ]
+        ],
+        addToPreamble: ""
     },
 
     tkzTab: {
@@ -47,17 +57,153 @@ window.TikzJaxOptions = {
 };
 ```
 
-## Surcharge locale
+## General options
 
-On peut surcharger localement le préambule avec `data-add-to-preamble`.
+| Option | Type | Default | Description |
+|---|---:|---:|---|
+| `renderTimeout` | number | `15000` | Maximum time, in milliseconds, allowed for a TikZ render. |
+| `maxRetries` | number | `0` | Number of retry attempts after a render failure. |
+| `restartWorkerOnFail` | boolean | `true` | Restarts the TeX worker after a failure or timeout. |
+| `brokenImageSrc` | string | internal image | Image displayed when rendering fails. |
 
-```html
-<script
-  type="text/tikz"
-  data-add-to-preamble="\def\tikzjaxTkzTabLineWidth{3pt}\def\tikzjaxTkzTabFont{\Huge}"
->
+The `renderTimeout`, `maxRetries`, and `restartWorkerOnFail` options can also be placed under `tex`.
+
+```js
+window.TikzJaxOptions = {
+    tex: {
+        renderTimeout: 20000,
+        maxRetries: 1,
+        restartWorkerOnFail: true
+    }
+};
+```
+
+## TeX options
+
+| Option | Type | Description |
+|---|---:|---|
+| `tex.texPackages` | object or JSON string | LaTeX packages injected with `\usepackage`. |
+| `tex.tikzLibraries` | array or string | TikZ libraries injected with `\usetikzlibrary`. |
+| `tex.addToPreamble` | string | Raw LaTeX preamble added before `\begin{document}`. |
+
+Example:
+
+```js
+window.TikzJaxOptions = {
+    tex: {
+        texPackages: {
+            amsmath: "",
+            "tkz-tab": "",
+            xcolor: "dvipsnames"
+        },
+        tikzLibraries: [
+            "arrows.meta",
+            "calc",
+            "positioning"
+        ],
+        addToPreamble: String.raw`
+\newcommand{\R}{\mathbb{R}}
+`
+    }
+};
+```
+
+## LaTeX packages with options
+
+The package value corresponds to the options passed to `\usepackage`.
+
+```js
+texPackages: {
+    xcolor: "dvipsnames",
+    amsmath: "",
+    "tkz-tab": ""
+}
+```
+
+This conceptually produces:
+
+```tex
+\usepackage[dvipsnames]{xcolor}
+\usepackage{amsmath}
+\usepackage{tkz-tab}
+```
+
+The `amsmath` package is added by default in the worker to support common mathematical rendering.
+
+## TikZ libraries
+
+Libraries can be provided as an array:
+
+```js
+tikzLibraries: ["arrows.meta", "calc", "positioning"]
+```
+
+or as a string:
+
+```js
+tikzLibraries: "arrows.meta,calc,positioning"
+```
+
+## `tkzTab` options
+
+The `tkzTab` options generate global LaTeX macros. They help avoid repeating the same dimensions in every variation table.
+
+| JS option | Generated TeX macro |
+|---|---|
+| `lineWidth` | `\tikzjaxTkzTabLineWidth` |
+| `font` | `\tikzjaxTkzTabFont` |
+| `lgt` | `\tikzjaxTkzTabLgt` |
+| `firstColumnWidth` | `\tikzjaxTkzTabFirstColumnWidth` |
+| `espcl` | `\tikzjaxTkzTabEspcl` |
+| `variableRowHeight` | `\tikzjaxTkzTabVariableRowHeight` |
+| `signRowHeight` | `\tikzjaxTkzTabSignRowHeight` |
+| `variationRowHeight` | `\tikzjaxTkzTabVariationRowHeight` |
+| `imageRowHeight` | `\tikzjaxTkzTabImageRowHeight` |
+| `antecedentRowHeight` | `\tikzjaxTkzTabAntecedentRowHeight` |
+
+Example:
+
+```tikzjax
 \begin{tikzpicture}[line width=\tikzjaxTkzTabLineWidth, font=\tikzjaxTkzTabFont]
-    \draw (0,0) -- (3,1);
+    \tkzTabInit[
+        lgt=\tikzjaxTkzTabLgt,
+        espcl=\tikzjaxTkzTabEspcl,
+        lw=\tikzjaxTkzTabLineWidth
+    ]
+        {
+            $x$/\tikzjaxTkzTabVariableRowHeight,
+            Sign of $f'(x)$/\tikzjaxTkzTabSignRowHeight,
+            Variations of $f(x)$/\tikzjaxTkzTabVariationRowHeight
+        }
+        {$-\infty$, $0$, $+\infty$}
+    \tkzTabLine{,-,z,+,}
+    \tkzTabVar{+/ $+\infty$, -/ $0$, +/ $+\infty$}
 \end{tikzpicture}
-</script>
+```
+
+## Backward-compatible options
+
+Some options can be placed directly at the root of `TikzJaxOptions`.
+
+```js
+window.TikzJaxOptions = {
+    texPackages: {
+        amsmath: "",
+        "tkz-tab": ""
+    },
+    tikzLibraries: "arrows.meta,calc",
+    addToPreamble: ""
+};
+```
+
+The recommended form is still:
+
+```js
+window.TikzJaxOptions = {
+    tex: {
+        texPackages: {},
+        tikzLibraries: [],
+        addToPreamble: ""
+    }
+};
 ```

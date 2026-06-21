@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block htmltitle %}
+{{ super() }}
+<title>{{ base_url }}</title>
+{% endblock %}
+
+{% block content %}
+    {{ super() }}
+{% endblock %}
+
+{% block libs %}
+    {{ super() }}    
+
+    <link rel="stylesheet" type="text/css" href="https://rod2ik.github.io/cdn/tikzjax/fonts.css">
+    <script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.js"></script>
+
+{% endblock %}
+
+{% block footer scoped %}
+  {% include "partials/footer.html" with context %}
+{% endblock %}
+
