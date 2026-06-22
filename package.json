@@ -25,7 +25,7 @@
         "install-fonts": "node installFonts.mjs",
         "build": "webpack --mode production",
         "build:dev": "webpack --mode development",
-        "postbuild": "npm run install-fonts && npm run gen-tex-files",
+        "postbuild": "yarn install-fonts && yarn gen-tex-files",
         "serve": "webpack serve --mode development"
     },
     "dependencies": {

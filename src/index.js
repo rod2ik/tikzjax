@@ -313,26 +313,20 @@ const withTimeout = (promise, ms) => {
 const createDefaultBrokenImageSvg = () => {
     const frag = document.createRange().createContextualFragment(
         '<svg class="tikzjax-broken-image" ' +
-            'xmlns="http://www.w3.org/2000/svg" ' +
-            'width="75pt" height="75pt" viewBox="0 0 75 75" ' +
-            'role="img" aria-label="TikZJax rendering error">' +
-            '<defs>' +
-                '<linearGradient id="tikzjax-broken-image-gradient-inline" x1="12" y1="18" x2="58" y2="58" gradientUnits="userSpaceOnUse">' +
-                    '<stop offset="0" stop-color="#93c5fd"/>' +
-                    '<stop offset="1" stop-color="#c4b5fd"/>' +
-                '</linearGradient>' +
-            '</defs>' +
-            '<path d="M14 10 H50 L63 23 V56 C63 61 60 64 55 64 H20 C16 64 12 61 12 56 V16 C12 13 14 10 18 10 Z" ' +
-                'fill="none" stroke="#3b82f6" stroke-width="3" stroke-linejoin="round"/>' +
-            '<path d="M50 10 V23 H63" ' +
-                'fill="none" stroke="#3b82f6" stroke-width="3" stroke-linejoin="round"/>' +
-            '<circle cx="26" cy="27" r="6" ' +
-                'fill="url(#tikzjax-broken-image-gradient-inline)" stroke="#3b82f6" stroke-width="3"/>' +
-            '<path d="M14 56 L29 39 L39 49 L51 35 L63 49" ' +
-                'fill="url(#tikzjax-broken-image-gradient-inline)" opacity="0.75" ' +
-                'stroke="#3b82f6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>' +
-            '<path d="M52 50 L66 64 M66 50 L52 64" ' +
-                'stroke="#ef4444" stroke-width="5" stroke-linecap="round"/>' +
+        'xmlns="http://www.w3.org/2000/svg" ' +
+        'width="75pt" height="75pt" viewBox="0 0 75 75" ' +
+        'role="img" aria-label="TikZJax rendering error">' +
+        '<path d="M14 10 H50 L63 23 V56 C63 61 60 64 55 64 H20 C16 64 12 61 12 56 V16 C12 13 14 10 18 10 Z" ' +
+        'fill="none" stroke="#3b82f6" stroke-width="3" stroke-linejoin="round"/>' +
+        '<path d="M50 10 V23 H63" ' +
+        'fill="none" stroke="#3b82f6" stroke-width="3" stroke-linejoin="round"/>' +
+        '<circle cx="26" cy="27" r="6" ' +
+        'fill="url(#tikzjax-broken-image-gradient-inline)" stroke="#3b82f6" stroke-width="3"/>' +
+        '<path d="M14 56 L29 39 L39 49 L51 35 L63 49" ' +
+        'fill="url(#tikzjax-broken-image-gradient-inline)" opacity="0.75" ' +
+        'stroke="#3b82f6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '<path d="M52 50 L66 64 M66 50 L52 64" ' +
+        'stroke="#ef4444" stroke-width="5" stroke-linecap="round"/>' +
         '</svg>'
     );
 
@@ -602,6 +596,24 @@ const getThemeFromElement = (element) => {
     return null;
 };
 
+const getFallbackTheme = () => {
+    const themeOptions = getThemeOptions();
+    const fallbackTheme = themeOptions.fallbackTheme || themeOptions.defaultTheme;
+
+    if (fallbackTheme === 'dark' || fallbackTheme === 'light') {
+        return fallbackTheme;
+    }
+
+    if (
+        themeOptions.followSystemTheme === true &&
+        window.matchMedia?.('(prefers-color-scheme: dark)').matches
+    ) {
+        return 'dark';
+    }
+
+    return 'light';
+};
+
 const getThemeForWrapper = (wrapper) => {
     const configuredTarget = getConfiguredThemeTarget(wrapper);
     const configuredTheme = getThemeFromElement(configuredTarget);
@@ -640,11 +652,7 @@ const getThemeForWrapper = (wrapper) => {
     const htmlClassTheme = getThemeFromElement(document.documentElement);
     if (htmlClassTheme) return htmlClassTheme;
 
-    if (window.matchMedia?.('(prefers-color-scheme: dark)').matches) {
-        return 'dark';
-    }
-
-    return 'light';
+    return getFallbackTheme();
 };
 
 const applyThemeToTikz = (root = document) => {
@@ -671,6 +679,21 @@ const scheduleThemeApply = () => {
 const observeTheme = () => {
     if (!document.body) return;
 
+    const themeOptions = getThemeOptions();
+    const configuredAttribute = themeOptions.attribute || 'data-theme';
+
+    const attributeFilter = [
+        'class',
+        'data-theme',
+        'data-bs-theme',
+        'data-color-scheme',
+        'data-md-color-scheme'
+    ];
+
+    if (configuredAttribute && !attributeFilter.includes(configuredAttribute)) {
+        attributeFilter.push(configuredAttribute);
+    }
+
     const observedTargets = new Set([
         document.body,
         document.documentElement,
@@ -681,13 +704,7 @@ const observeTheme = () => {
         for (const mutation of mutations) {
             if (
                 mutation.type === 'attributes' &&
-                (
-                    mutation.attributeName === 'class' ||
-                    mutation.attributeName === 'data-theme' ||
-                    mutation.attributeName === 'data-bs-theme' ||
-                    mutation.attributeName === 'data-color-scheme' ||
-                    mutation.attributeName === 'data-md-color-scheme'
-                )
+                attributeFilter.includes(mutation.attributeName)
             ) {
                 scheduleThemeApply();
                 return;
@@ -700,13 +717,7 @@ const observeTheme = () => {
 
         themeObserver.observe(target, {
             attributes: true,
-            attributeFilter: [
-                'class',
-                'data-theme',
-                'data-bs-theme',
-                'data-color-scheme',
-                'data-md-color-scheme'
-            ]
+            attributeFilter
         });
     });
 };
@@ -721,22 +732,22 @@ const createLoader = (dataset = {}) => {
 
     const frag = document.createRange().createContextualFragment(
         '<svg class="tikzjax-loader" version="1.1" ' +
-            'xmlns="http://www.w3.org/2000/svg" ' +
-            'xmlns:xlink="http://www.w3.org/1999/xlink" ' +
-            `width="${width}pt" height="${height}pt" viewBox="0 0 ${width} ${height}">` +
-            `<rect width="${width}" height="${height}" rx="5pt" ry="5pt" ` +
-            'fill="#000" fill-opacity="0.2"/>' +
-            `<circle cx="${width / 2}" cy="${height / 2}" r="${radius}" ` +
-            'stroke="#f3f3f3" fill="none" stroke-width="3"/>' +
-            `<circle cx="${width / 2}" cy="${height / 2}" r="${radius}" ` +
-            'stroke="#3498db" fill="none" stroke-width="3" stroke-linecap="round">' +
-            '<animate attributeName="stroke-dasharray" begin="0s" dur="2s" ' +
-            'values="56.5 37.7;1 93.2;56.5 37.7" keyTimes="0;0.5;1" repeatCount="indefinite">' +
-            '</animate>' +
-            '<animate attributeName="stroke-dashoffset" begin="0s" dur="2s" ' +
-            'from="0" to="188.5" repeatCount="indefinite"></animate>' +
-            '</circle>' +
-            '</svg>'
+        'xmlns="http://www.w3.org/2000/svg" ' +
+        'xmlns:xlink="http://www.w3.org/1999/xlink" ' +
+        `width="${width}pt" height="${height}pt" viewBox="0 0 ${width} ${height}">` +
+        `<rect width="${width}" height="${height}" rx="5pt" ry="5pt" ` +
+        'fill="#000" fill-opacity="0.2"/>' +
+        `<circle cx="${width / 2}" cy="${height / 2}" r="${radius}" ` +
+        'stroke="#f3f3f3" fill="none" stroke-width="3"/>' +
+        `<circle cx="${width / 2}" cy="${height / 2}" r="${radius}" ` +
+        'stroke="#3498db" fill="none" stroke-width="3" stroke-linecap="round">' +
+        '<animate attributeName="stroke-dasharray" begin="0s" dur="2s" ' +
+        'values="56.5 37.7;1 93.2;56.5 37.7" keyTimes="0;0.5;1" repeatCount="indefinite">' +
+        '</animate>' +
+        '<animate attributeName="stroke-dashoffset" begin="0s" dur="2s" ' +
+        'from="0" to="188.5" repeatCount="indefinite"></animate>' +
+        '</circle>' +
+        '</svg>'
     );
 
     return frag.firstChild;
@@ -788,16 +799,39 @@ const getTikzSources = (root = document) => {
 // =================================================
 // TEXT EXTRACTION
 // =================================================
+const normalizeTikzSourceText = (text) => {
+    const raw = String(text || '').replace(/\r\n?/g, '\n');
+    const trimmed = raw.trim();
+
+    if (!trimmed) return '';
+
+    const lines = trimmed.split('\n');
+
+    const indents = lines
+        .filter((line) => line.trim())
+        .map((line) => {
+            const match = line.match(/^[ \t]*/);
+            return match ? match[0].length : 0;
+        });
+
+    const minIndent = indents.length ? Math.min(...indents) : 0;
+
+    return lines
+        .map((line) => line.slice(minIndent))
+        .join('\n')
+        .trim();
+};
+
 const getTikzSourceText = (elt) => {
     if (!elt) return '';
 
     if (elt.tagName === 'SCRIPT') {
-        return elt.textContent || '';
+        return normalizeTikzSourceText(elt.textContent || '');
     }
 
     const code = elt.querySelector('code');
 
-    return (code ? code.textContent : elt.textContent || '').trim();
+    return normalizeTikzSourceText(code ? code.textContent : elt.textContent || '');
 };
 
 // =================================================

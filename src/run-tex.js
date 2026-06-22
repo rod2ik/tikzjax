@@ -39,7 +39,6 @@ expose({
         // Set up the tex input file.
         // const texPackages = dataset.texPackages ? JSON.parse(dataset.texPackages) : {};
         const texPackages = {
-            amsmath: '',
             ...(dataset.texPackages ? JSON.parse(dataset.texPackages) : {})
         };
 

@@ -31,6 +31,14 @@ Native compatibility with MkDocs includes:
 
 ### 1. TikZ
 
+<script type="text/tikz">
+\begin{tikzpicture}
+    \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
+    \draw[->, thick] (0,0) -- (0,3) node[above] {$y$};
+    \draw[thick] (0,0) -- (3,2);
+\end{tikzpicture}
+</script>
+
 === "Example 1"
     ```html
     <script type="text/tikz">
@@ -42,7 +50,25 @@ Native compatibility with MkDocs includes:
 
     <script type="text/tikz">
     \begin{tikzpicture}
+        \draw[-{Stealth}, thick] (0,0) -- (4,0) node[right] {$x$};
+        \draw[-{Stealth}, thick] (0,0) -- (0,3) node[above] {$y$};
+        \draw[thick] (0,0) -- (3,2);
+    \end{tikzpicture}
+    </script>
+
+    <script type="text/tikz">
+    \begin{tikzpicture}
         \draw (0,0) circle (1in);
+    \end{tikzpicture}
+    </script>
+
+    <script type="text/tikz">
+    \begin{tikzpicture}[line width=1.2pt, font=\Large]
+        \tkzTabInit[lgt=5, espcl=4, lw=1.2pt]
+            {$x$/1.5 , $f'(x)=3x(x-2)$/1.5 , $f(x)=x^3-3x^2+2$/2.5}
+            {$-\infty$, $0$, $2$, $+\infty$}
+        \tkzTabLine{,+,z,-,z,+,}
+        \tkzTabVar{-/ $-\infty$, +/ $2$, -/ $-2$, +/ $+\infty$}
     \end{tikzpicture}
     </script>
 
@@ -57,13 +83,14 @@ Native compatibility with MkDocs includes:
     </script>
     ```
 
-    ```tikzjax
+
+    <script type="text/tikz">
     \begin{tikzpicture}
         \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
         \draw[->, thick] (0,0) -- (0,3) node[above] {$y$};
         \draw[thick] (0,0) -- (3,2);
     \end{tikzpicture}
-    ```
+    </script>
 
 !!! success
     AVANT
