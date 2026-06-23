@@ -292,6 +292,7 @@ let texWorker;
 let observer;
 let themeObserver;
 let themeRaf = null;
+let mkDocsTabsRescanTimer = null;
 
 // =================================================
 // TIMEOUT / FAILURE SAFETY
@@ -800,15 +801,65 @@ const getTikzSources = (root = document) => {
 // TEXT EXTRACTION
 // =================================================
 const decodeHtmlEntities = (text) => {
-    const raw = String(text || '');
+    let decoded = String(text || '');
 
-    if (!raw.includes('&')) return raw;
+    for (let i = 0; i < 3; i += 1) {
+        if (!decoded.includes('&')) {
+            return decoded;
+        }
 
-    const textarea = document.createElement('textarea');
+        const textarea = document.createElement('textarea');
 
-    textarea.innerHTML = raw;
+        textarea.innerHTML = decoded;
 
-    return textarea.value;
+        const next = textarea.value;
+
+        if (next === decoded) {
+            return decoded;
+        }
+
+        decoded = next;
+    }
+
+    return decoded;
+
+};
+
+const cleanMkDocsMaterialTextArtifacts = (text) => {
+    let cleaned = decodeHtmlEntities(text);
+
+    cleaned = cleaned.replace(/<br\s*\/?>/gi, '\n');
+    cleaned = cleaned.replace(/<\/?p\b[^>]*>/gi, '\n');
+
+    cleaned = cleaned.replace(
+        /<span\b[^>]*class=(["'])[^"']*\barithmatex\b[^"']*\1[^>]*>\s*\\\(([\s\S]*?)\\\)\s*<\/span>/gi,
+        (_match, _quote, math) => `$${math}$`
+    );
+
+    cleaned = cleaned.replace(
+        /<span\b[^>]*class=(["'])[^"']*\barithmatex\b[^"']*\1[^>]*>\s*\\\[([\s\S]*?)\\\]\s*<\/span>/gi,
+        (_match, _quote, math) => `$$${math}$$`
+    );
+
+    cleaned = cleaned.replace(
+        /<span\b[^>]*class=(["'])[^"']*\barithmatex\b[^"']*\1[^>]*>\s*([\s\S]*?)\s*<\/span>/gi,
+        (_match, _quote, math) => math
+    );
+
+    cleaned = cleaned.replace(/<\/?span\b[^>]*>/gi, '');
+
+    cleaned = cleaned.replace(
+        /\\\(([\s\S]*?)\\\)/g,
+        (_match, math) => `$${math}$`
+    );
+
+    cleaned = cleaned.replace(
+        /\\\[([\s\S]*?)\\\]/g,
+        (_match, math) => `$$${math}$$`
+    );
+
+    return decodeHtmlEntities(cleaned);
+
 };
 
 const normalizeTikzSourceText = (text) => {
@@ -839,13 +890,54 @@ const getTikzSourceText = (elt) => {
 
     if (elt.tagName === 'SCRIPT') {
         return normalizeTikzSourceText(
-            decodeHtmlEntities(elt.textContent || '')
+            cleanMkDocsMaterialTextArtifacts(elt.textContent || '')
         );
     }
 
     const code = elt.querySelector('code');
 
     return normalizeTikzSourceText(code ? code.textContent : elt.textContent || '');
+
+};
+
+// =================================================
+// MKDOCS MATERIAL CONTENT TABS SUPPORT
+// =================================================
+const isMkDocsTabbedElement = (node) => {
+    if (!node || node.nodeType !== 1) return false;
+
+    return (
+        node.matches?.('.tabbed-set, .tabbed-content, .tabbed-block') ||
+        Boolean(node.closest?.('.tabbed-set')) ||
+        Boolean(node.querySelector?.('.tabbed-set, .tabbed-content, .tabbed-block'))
+    );
+};
+
+const scheduleMkDocsTabsRescan = (delay = 80) => {
+    if (mkDocsTabsRescanTimer !== null) return;
+
+    mkDocsTabsRescanTimer = window.setTimeout(() => {
+        mkDocsTabsRescanTimer = null;
+
+        const sources = getTikzSources(document);
+
+        if (sources.length) {
+            processTikzSources(sources);
+        }
+
+        applyThemeToTikz(document);
+    }, delay);
+};
+
+const handleMkDocsTabsInteraction = (event) => {
+    const target = event.target;
+
+    if (
+        target?.matches?.('.tabbed-set input[type="radio"]') ||
+        target?.closest?.('.tabbed-set label, .tabbed-set [role="tab"], .tabbed-label')
+    ) {
+        scheduleMkDocsTabsRescan();
+    }
 };
 
 // =================================================
@@ -1056,6 +1148,7 @@ const initialize = async () => {
     const boot = () => {
         processTikzSources(getTikzSources(document));
         applyThemeToTikz(document);
+        scheduleMkDocsTabsRescan();
     };
 
     if (document.readyState === 'loading') {
@@ -1084,6 +1177,10 @@ const initialize = async () => {
 
                 node.querySelectorAll?.('pre.language-tikzjax, pre.tikzjax, pre.language-tikz, pre.tikz')
                     ?.forEach((child) => targets.push(child));
+
+                if (isMkDocsTabbedElement(node)) {
+                    scheduleMkDocsTabsRescan();
+                }
             }
         }
 
@@ -1097,12 +1194,16 @@ const initialize = async () => {
         subtree: true
     });
 
+    document.addEventListener('change', handleMkDocsTabsInteraction, true);
+    document.addEventListener('click', handleMkDocsTabsInteraction, true);
+
     observeTheme();
     applyThemeToTikz(document);
 
     setTimeout(() => {
         processTikzSources(getTikzSources(document));
         applyThemeToTikz(document);
+        scheduleMkDocsTabsRescan();
     }, 300);
 };
 
@@ -1122,6 +1223,14 @@ const shutdown = async () => {
         window.cancelAnimationFrame(themeRaf);
         themeRaf = null;
     }
+
+    if (mkDocsTabsRescanTimer !== null) {
+        window.clearTimeout(mkDocsTabsRescanTimer);
+        mkDocsTabsRescanTimer = null;
+    }
+
+    document.removeEventListener('change', handleMkDocsTabsInteraction, true);
+    document.removeEventListener('click', handleMkDocsTabsInteraction, true);
 
     if (texWorker) {
         await Thread.terminate(await texWorker);
