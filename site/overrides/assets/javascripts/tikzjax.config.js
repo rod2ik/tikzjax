@@ -13,7 +13,7 @@ window.TikzJaxOptions = {
     tex: {
         texPackages: {
             amsmath: "",
-            // "tkz-tab": ""
+            "tkz-tab": ""
         },
         tikzLibraries: [
             "arrows.meta",

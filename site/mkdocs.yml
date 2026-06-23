@@ -49,6 +49,9 @@ markdown_extensions:
   - attr_list
   - md_in_html
   - pymdownx.details
+  - pymdownx.arithmatex:
+      generic: true
+      smart_dollar: false
   - pymdownx.superfences:   # for ```tikzjax ... ``` syntaxes
       custom_fences:
         - name: tikzjax
@@ -57,9 +60,11 @@ markdown_extensions:
   - pymdownx.tabbed:
       alternate_style: true
 
-# extra_css:
-#   - https://rod2ik.github.io/cdn/tikzjax/fonts.css
+extra_css:
+  - assets/css/style.css
+  - assets/css/columns.css
 
 extra_javascript:
+  - assets/javascripts/mathjax.js
+  - https://cdn.jsdelivr.net/npm/mathjax@4.1.0/tex-mml-chtml.js
   - assets/javascripts/tikzjax.config.js
-  # - https://rod2ik.github.io/cdn/tikzjax/tikzjax.js

@@ -1,0 +1,43 @@
+.md-typeset {
+  /* BULLET LISTS
+     Niveau 1 : disque  ●
+     Niveau 2 : cercle  ○
+     Niveau 3 : carré   ■  (list-style-type natif, pas de ::before nécessaire)
+     Niveau 4 : flèche  ➔  (via ::before, car list-style-type ne suffit pas)
+  */
+}
+.md-typeset ul li:not(.reveal *) {
+  list-style-type: disc;
+}
+.md-typeset ul li ul li:not(.reveal *) {
+  list-style-type: circle;
+}
+.md-typeset {
+  /* NIVEAU 3 : carré natif */
+}
+.md-typeset ul li ul li ul li:not(.reveal *) {
+  list-style-type: square;
+}
+.md-typeset {
+  /* NIVEAU 4 : suppression puce native, position relative pour ::before */
+}
+.md-typeset ul li ul li ul li ul li:not(.reveal *) {
+  list-style-type: none;
+  position: relative;
+  padding-left: 1.5em;
+}
+.md-typeset {
+  /* NIVEAU 4 : flèche → via ::before
+     IMPORTANT : on n'utilise PAS le mixin outside-reveal ici.
+     Le mixin génère  &:not(.reveal *) { @content }  ce qui donnerait
+     ul li ul li ul li ul li::before:not(.reveal *)  → CSS invalide.
+     On écrit donc le :not() sur .md-typeset lui-même via & :
+     .md-typeset:not(.reveal *) ul li ul li ul li ul li::before  → CSS valide. */
+}
+.md-typeset:not(.reveal *) ul li ul li ul li ul li::before {
+  content: "➔";
+  font-size: 1em;
+  position: absolute;
+  top: 0;
+  left: 0;
+}

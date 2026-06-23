@@ -1,0 +1,453 @@
+/* License: GNU GPLv3+, Rodrigo Schwencke (Copyleft) */
+/* Mkdocs Admonition Extension IS NEEDED */
+/* =========================================================== */
+/*                          Helpers                            */
+/* =========================================================== */
+/* =========================================================== */
+/*                      Common Behavior                        */
+/* =========================================================== */
+.md-typeset .admonition.col,
+.md-typeset details.col,
+.md-typeset .admonition.colonne,
+.md-typeset details.colonne,
+.md-typeset .admonition.column,
+.md-typeset details.column {
+  margin-bottom: 0.8rem;
+  margin-top: 0;
+  padding: 0.2rem;
+  background-color: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  box-sizing: border-box;
+}
+
+.md-typeset .col > .admonition-title,
+.md-typeset .col > summary,
+.md-typeset .colonne > .admonition-title,
+.md-typeset .colonne > summary,
+.md-typeset .column > .admonition-title,
+.md-typeset .column > summary {
+  display: none;
+}
+
+/* =========================================================== */
+/*                       Small Screens                         */
+/*           / Mobiles & Tablets in Portrait mode              */
+/* =========================================================== */
+@media only screen and (hover: none) and (pointer: coarse) and (orientation: portrait), only screen and (max-width: 999px) {
+  /* By default, Admonitions are 100% width because of their default behavior */
+}
+/* ============================================================= */
+/*                       Desktop / Print                         */
+/*             / Mobiles & Tablets in Landscape Mode             */
+/* ============================================================= */
+@media only screen and (min-width: 1000px), only screen and (hover: none) and (pointer: coarse) and (orientation: landscape), print {
+  /* FLOAT LEFT by DEFAULT */
+  .md-typeset .admonition.col:not(.admonition.col.right),
+  .md-typeset details.col:not(.admonition.col.right),
+  .md-typeset .admonition.colonne:not(.admonition.colonne.right),
+  .md-typeset details.colonne:not(.admonition.colonne.right),
+  .md-typeset .admonition.column:not(.admonition.column.right),
+  .md-typeset details.column:not(.admonition.column.right) {
+    float: left;
+  }
+  /* FLOAT RIGHT if RIGHT class */
+  .md-typeset .admonition.col.right,
+  .md-typeset details.col.right,
+  .md-typeset .admonition.colonne.right,
+  .md-typeset details.colonne.right,
+  .md-typeset .admonition.column.right,
+  .md-typeset details.column.right {
+    float: right;
+  }
+  /* .clear marks the LAST column of the row */
+  .md-typeset .admonition.col.clear,
+  .md-typeset details.col.clear,
+  .md-typeset .admonition.colonne.clear,
+  .md-typeset details.colonne.clear,
+  .md-typeset .admonition.column.clear,
+  .md-typeset details.column.clear {
+    clear: none;
+  }
+  /* The next sibling must start below the floated row */
+  .md-typeset .admonition.col.clear + *,
+  .md-typeset details.col.clear + *,
+  .md-typeset .admonition.colonne.clear + *,
+  .md-typeset details.colonne.clear + *,
+  .md-typeset .admonition.column.clear + *,
+  .md-typeset details.column.clear + * {
+    clear: both;
+  }
+  /* IMPORTANT:
+     each new ordered-list item must start below previous floats
+     so that "2." does not get squeezed on the right of question 1 */
+  .md-typeset ol > li + li {
+    clear: both;
+  }
+  /* ========================================================= */
+  /*                 Fixed fraction width classes              */
+  /* ========================================================= */
+  .md-typeset ._1 {
+    width: 100% !important;
+  }
+  .md-typeset ._2 {
+    width: 50% !important;
+  }
+  .md-typeset ._3 {
+    width: 33.333333% !important;
+  }
+  .md-typeset ._4 {
+    width: 25% !important;
+  }
+  .md-typeset ._5 {
+    width: 20% !important;
+  }
+  .md-typeset ._6 {
+    width: 16.666666% !important;
+  }
+  /* ========================================================= */
+  /*                 Custom width classes 1..100              */
+  /* ========================================================= */
+  .md-typeset .__1 {
+    width: 1%;
+  }
+  .md-typeset .__01 {
+    width: 1%;
+  }
+  .md-typeset .__2 {
+    width: 2%;
+  }
+  .md-typeset .__02 {
+    width: 2%;
+  }
+  .md-typeset .__3 {
+    width: 3%;
+  }
+  .md-typeset .__03 {
+    width: 3%;
+  }
+  .md-typeset .__4 {
+    width: 4%;
+  }
+  .md-typeset .__04 {
+    width: 4%;
+  }
+  .md-typeset .__5 {
+    width: 5%;
+  }
+  .md-typeset .__05 {
+    width: 5%;
+  }
+  .md-typeset .__6 {
+    width: 6%;
+  }
+  .md-typeset .__06 {
+    width: 6%;
+  }
+  .md-typeset .__7 {
+    width: 7%;
+  }
+  .md-typeset .__07 {
+    width: 7%;
+  }
+  .md-typeset .__8 {
+    width: 8%;
+  }
+  .md-typeset .__08 {
+    width: 8%;
+  }
+  .md-typeset .__9 {
+    width: 9%;
+  }
+  .md-typeset .__09 {
+    width: 9%;
+  }
+  .md-typeset .__10 {
+    width: 10%;
+  }
+  .md-typeset .__11 {
+    width: 11%;
+  }
+  .md-typeset .__12 {
+    width: 12%;
+  }
+  .md-typeset .__13 {
+    width: 13%;
+  }
+  .md-typeset .__14 {
+    width: 14%;
+  }
+  .md-typeset .__15 {
+    width: 15%;
+  }
+  .md-typeset .__16 {
+    width: 16%;
+  }
+  .md-typeset .__17 {
+    width: 17%;
+  }
+  .md-typeset .__18 {
+    width: 18%;
+  }
+  .md-typeset .__19 {
+    width: 19%;
+  }
+  .md-typeset .__20 {
+    width: 20%;
+  }
+  .md-typeset .__21 {
+    width: 21%;
+  }
+  .md-typeset .__22 {
+    width: 22%;
+  }
+  .md-typeset .__23 {
+    width: 23%;
+  }
+  .md-typeset .__24 {
+    width: 24%;
+  }
+  .md-typeset .__25 {
+    width: 25%;
+  }
+  .md-typeset .__26 {
+    width: 26%;
+  }
+  .md-typeset .__27 {
+    width: 27%;
+  }
+  .md-typeset .__28 {
+    width: 28%;
+  }
+  .md-typeset .__29 {
+    width: 29%;
+  }
+  .md-typeset .__30 {
+    width: 30%;
+  }
+  .md-typeset .__31 {
+    width: 31%;
+  }
+  .md-typeset .__32 {
+    width: 32%;
+  }
+  .md-typeset .__33 {
+    width: 33%;
+  }
+  .md-typeset .__34 {
+    width: 34%;
+  }
+  .md-typeset .__35 {
+    width: 35%;
+  }
+  .md-typeset .__36 {
+    width: 36%;
+  }
+  .md-typeset .__37 {
+    width: 37%;
+  }
+  .md-typeset .__38 {
+    width: 38%;
+  }
+  .md-typeset .__39 {
+    width: 39%;
+  }
+  .md-typeset .__40 {
+    width: 40%;
+  }
+  .md-typeset .__41 {
+    width: 41%;
+  }
+  .md-typeset .__42 {
+    width: 42%;
+  }
+  .md-typeset .__43 {
+    width: 43%;
+  }
+  .md-typeset .__44 {
+    width: 44%;
+  }
+  .md-typeset .__45 {
+    width: 45%;
+  }
+  .md-typeset .__46 {
+    width: 46%;
+  }
+  .md-typeset .__47 {
+    width: 47%;
+  }
+  .md-typeset .__48 {
+    width: 48%;
+  }
+  .md-typeset .__49 {
+    width: 49%;
+  }
+  .md-typeset .__50 {
+    width: 50%;
+  }
+  .md-typeset .__51 {
+    width: 51%;
+  }
+  .md-typeset .__52 {
+    width: 52%;
+  }
+  .md-typeset .__53 {
+    width: 53%;
+  }
+  .md-typeset .__54 {
+    width: 54%;
+  }
+  .md-typeset .__55 {
+    width: 55%;
+  }
+  .md-typeset .__56 {
+    width: 56%;
+  }
+  .md-typeset .__57 {
+    width: 57%;
+  }
+  .md-typeset .__58 {
+    width: 58%;
+  }
+  .md-typeset .__59 {
+    width: 59%;
+  }
+  .md-typeset .__60 {
+    width: 60%;
+  }
+  .md-typeset .__61 {
+    width: 61%;
+  }
+  .md-typeset .__62 {
+    width: 62%;
+  }
+  .md-typeset .__63 {
+    width: 63%;
+  }
+  .md-typeset .__64 {
+    width: 64%;
+  }
+  .md-typeset .__65 {
+    width: 65%;
+  }
+  .md-typeset .__66 {
+    width: 66%;
+  }
+  .md-typeset .__67 {
+    width: 67%;
+  }
+  .md-typeset .__68 {
+    width: 68%;
+  }
+  .md-typeset .__69 {
+    width: 69%;
+  }
+  .md-typeset .__70 {
+    width: 70%;
+  }
+  .md-typeset .__71 {
+    width: 71%;
+  }
+  .md-typeset .__72 {
+    width: 72%;
+  }
+  .md-typeset .__73 {
+    width: 73%;
+  }
+  .md-typeset .__74 {
+    width: 74%;
+  }
+  .md-typeset .__75 {
+    width: 75%;
+  }
+  .md-typeset .__76 {
+    width: 76%;
+  }
+  .md-typeset .__77 {
+    width: 77%;
+  }
+  .md-typeset .__78 {
+    width: 78%;
+  }
+  .md-typeset .__79 {
+    width: 79%;
+  }
+  .md-typeset .__80 {
+    width: 80%;
+  }
+  .md-typeset .__81 {
+    width: 81%;
+  }
+  .md-typeset .__82 {
+    width: 82%;
+  }
+  .md-typeset .__83 {
+    width: 83%;
+  }
+  .md-typeset .__84 {
+    width: 84%;
+  }
+  .md-typeset .__85 {
+    width: 85%;
+  }
+  .md-typeset .__86 {
+    width: 86%;
+  }
+  .md-typeset .__87 {
+    width: 87%;
+  }
+  .md-typeset .__88 {
+    width: 88%;
+  }
+  .md-typeset .__89 {
+    width: 89%;
+  }
+  .md-typeset .__90 {
+    width: 90%;
+  }
+  .md-typeset .__91 {
+    width: 91%;
+  }
+  .md-typeset .__92 {
+    width: 92%;
+  }
+  .md-typeset .__93 {
+    width: 93%;
+  }
+  .md-typeset .__94 {
+    width: 94%;
+  }
+  .md-typeset .__95 {
+    width: 95%;
+  }
+  .md-typeset .__96 {
+    width: 96%;
+  }
+  .md-typeset .__97 {
+    width: 97%;
+  }
+  .md-typeset .__98 {
+    width: 98%;
+  }
+  .md-typeset .__99 {
+    width: 99%;
+  }
+  .md-typeset .__100 {
+    width: 100%;
+  }
+}
+/* Optionally, if you don't already have a center class in your css,
+   uncomment the following lines. */
+/*
+.center, .center * {
+  display: block;
+  text-align: center;
+  margin: 0 auto;
+}
+*/
+
+.md-typeset div.clear:not(.reveal *),
+.md-typeset clear:not(.reveal *) {
+  display: block;
+  clear: both;
+}
