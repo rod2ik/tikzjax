@@ -1,0 +1,61 @@
+{
+    "name": "@rod2ik/tikzjax",
+    "version": "1.0.0-beta32",
+    "description": "TikZJax loader",
+    "author": "Jim Fowler",
+    "contributors": [
+        "Glenn Rice",
+        "Rodrigo Schwencke"
+    ],
+    "license": "GPL-3.0+",
+    "main": "tikzjax.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/rod2ik/tikzjax.git"
+    },
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "format": "prettier --write .",
+        "format:check": "prettier --check .",
+        "lint": "eslint . --fix",
+        "lint:check": "eslint .",
+        "gen-tex-files": "node genTexFiles.js",
+        "install-fonts": "node installFonts.mjs",
+        "build": "webpack --mode production",
+        "build:dev": "webpack --mode development",
+        "postbuild": "yarn install-fonts && yarn gen-tex-files",
+        "serve": "webpack serve --mode development"
+    },
+    "dependencies": {
+        "@rod2ik/dvi2html": "^0.0.7-beta7",
+        "buffer": "^6.0.3",
+        "idb": "^8.0.1",
+        "pako": "^2.1.0",
+        "process": "^0.11.10",
+        "stream-browserify": "^3.0.0",
+        "threads": "^1.7.0"
+    },
+    "devDependencies": {
+        "@awmottaz/prettier-plugin-void-html": "^1.6.1",
+        "@stylistic/eslint-plugin": "^2.12.1",
+        "copy-webpack-plugin": "^12.0.2",
+        "css-loader": "^7.1.2",
+        "decompress": "^4.2.1",
+        "eslint": "^9.17.0",
+        "eslint-config-prettier": "^9.1.0",
+        "eslint-webpack-plugin": "^4.2.0",
+        "fonteditor-core": "^2.4.1",
+        "prettier": "^3.4.2",
+        "style-loader": "^4.0.0",
+        "webpack": "^5.97.1",
+        "webpack-cli": "^5.1.4",
+        "webpack-dev-server": "^5.2.0"
+    },
+    "overrides": {
+        "@awmottaz/prettier-plugin-void-html": {
+            "prettier": ">=3.4.2"
+        }
+    }
+}

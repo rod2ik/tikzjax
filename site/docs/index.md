@@ -36,6 +36,16 @@ Native compatibility with MkDocs includes:
     \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
     \draw[->, thick] (0,0) -- (0,3) node[above] {$y$};
     \draw[thick] (0,0) -- (3,2);
+    \node at (2,1.5) {$f(x)=\dfrac{3x-1}{2\sqrt{x}}$};
+\end{tikzpicture}
+</script>
+    
+<script type="text/tikz">
+    \begin{tikzpicture}
+    \draw[-{Stealth}, thick] (0,0) -- (4,0) node[right] {$x$};
+    \draw[-{Stealth}, thick] (0,0) -- (0,3) node[above] {$y$};
+    \draw[thick] (0,0) -- (3,2);
+    \node at (2,1.5) {$f(x)=\dfrac{3x-1}{2\sqrt{x}}$};
 \end{tikzpicture}
 </script>
 
@@ -50,9 +60,10 @@ Native compatibility with MkDocs includes:
 
     <script type="text/tikz">
     \begin{tikzpicture}
-        \draw[-{Stealth}, thick] (0,0) -- (4,0) node[right] {$x$};
-        \draw[-{Stealth}, thick] (0,0) -- (0,3) node[above] {$y$};
+        \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
+        \draw[->, thick] (0,0) -- (0,3) node[above] {$y$};
         \draw[thick] (0,0) -- (3,2);
+        \node at (2,1.5) {$f(x)=\dfrac{3x-1}{2\sqrt{x}}$};
     \end{tikzpicture}
     </script>
 
@@ -83,7 +94,6 @@ Native compatibility with MkDocs includes:
     </script>
     ```
 
-
     <script type="text/tikz">
     \begin{tikzpicture}
         \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
@@ -95,14 +105,6 @@ Native compatibility with MkDocs includes:
 !!! success
     AVANT
 
-    ```tikzjax
-    \begin{tikzpicture}
-        \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
-        \draw[->, thick] (0,0) -- (0,3) node[above] {$y$};
-        \draw[thick] (0,0) -- (3,2);
-    \end{tikzpicture}
-    ```
-
     <script type="text/tikz">
     \begin{tikzpicture}
         \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
@@ -110,6 +112,14 @@ Native compatibility with MkDocs includes:
         \draw[thick] (0,0) -- (3,2);
     \end{tikzpicture}
     </script>
+
+    ```tikzjax
+    \begin{tikzpicture}
+        \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
+        \draw[->, thick] (0,0) -- (0,3) node[above] {$y$};
+        \draw[thick] (0,0) -- (3,2);
+    \end{tikzpicture}
+    ```
 
     APRES
 

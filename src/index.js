@@ -799,6 +799,18 @@ const getTikzSources = (root = document) => {
 // =================================================
 // TEXT EXTRACTION
 // =================================================
+const decodeHtmlEntities = (text) => {
+    const raw = String(text || '');
+
+    if (!raw.includes('&')) return raw;
+
+    const textarea = document.createElement('textarea');
+
+    textarea.innerHTML = raw;
+
+    return textarea.value;
+};
+
 const normalizeTikzSourceText = (text) => {
     const raw = String(text || '').replace(/\r\n?/g, '\n');
     const trimmed = raw.trim();
@@ -826,7 +838,9 @@ const getTikzSourceText = (elt) => {
     if (!elt) return '';
 
     if (elt.tagName === 'SCRIPT') {
-        return normalizeTikzSourceText(elt.textContent || '');
+        return normalizeTikzSourceText(
+            decodeHtmlEntities(elt.textContent || '')
+        );
     }
 
     const code = elt.querySelector('code');

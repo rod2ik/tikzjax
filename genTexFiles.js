@@ -1,29 +1,40 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const pako = require('pako');
-const spawnSync = require('child_process').spawnSync;
+import fs from "fs";
+import pako from "pako";
+import { spawnSync } from "child_process";
 
-const inputFile = 'tex_files.json';
+const inputFile = "tex_files.json";
+const outputDir = "./dist/tex_files";
 
-fs.mkdirSync('./dist/tex_files', { recursive: true });
+fs.mkdirSync(outputDir, { recursive: true });
 
-const processedFiles = [];
+const processedFiles = new Set();
 
-const files = JSON.parse(fs.readFileSync(inputFile, 'utf8'));
+const files = JSON.parse(fs.readFileSync(inputFile, "utf8"));
 
 for (const texFile of files) {
-    if (!texFile || processedFiles.includes(texFile)) continue;
+    if (!texFile || processedFiles.has(texFile)) continue;
+
     console.log(`\tAttempting to locate ${texFile}.`);
 
-    let sysFile = spawnSync('kpsewhich', [texFile]).stdout.toString().trim();
-    if (sysFile == '') {
+    const result = spawnSync("kpsewhich", [texFile], {
+        encoding: "utf8"
+    });
+
+    const sysFile = result.stdout.trim();
+
+    if (!sysFile) {
         console.log(`\t\x1b[31mUnable to locate ${texFile}.\x1b[0m`);
         continue;
     }
 
-    processedFiles.push(texFile);
+    processedFiles.add(texFile);
 
     console.log(`\tResolved ${texFile} to ${sysFile}`);
-    fs.writeFileSync('dist/tex_files/' + texFile + '.gz', pako.gzip(fs.readFileSync(sysFile, 'utf8')));
+
+    const source = fs.readFileSync(sysFile);
+    const gzipped = pako.gzip(source);
+
+    fs.writeFileSync(`${outputDir}/${texFile}.gz`, gzipped);
 }
