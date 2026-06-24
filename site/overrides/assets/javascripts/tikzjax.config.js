@@ -1,7 +1,7 @@
 console.log("[TIKJAX.OPTIONS.JS] was loaded")
 window.TikzJaxOptions = {
     renderTimeout: 10000,
-    brokenImageSrc: "https://rod2ik.github.io/cdn/tikzjax/assets/broken-image-esquisse.svg",
+    brokenImageSrc: "https://rod2ik.github.io/cdn/tikzjax/assets/broken-image.svg",
 
     theme: {
         selector: "body",
@@ -13,6 +13,8 @@ window.TikzJaxOptions = {
     tex: {
         texPackages: {
             amsmath: "",
+            amsfonts: "",
+            amssymb: "",
             "tkz-tab": ""
         },
         tikzLibraries: [

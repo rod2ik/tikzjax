@@ -31,13 +31,13 @@ theme:
 nav:
   - Home: index.md
   - Installation: installation.md
+  - Usage:
+      - Basic Examples: basic-examples.md
+      - Advanced Examples: advanced-examples.md
   - Configuration:
       - Overview: configuration.md
-      - tikzjax.config.js file: tikzjax-config.md
-  - Usage:
-      - Sources and attributes: usage.md
-      - Advanced Examples: advanced-example.md
-      - Light/dark themes: themes.md
+      - Light/Dark themes: themes.md
+      - Fallback Error Images: fallback-error-images.md
   - Advanced:
       - Cache and performance: cache-performance.md
       - API Reference: api-reference.md
@@ -49,6 +49,12 @@ markdown_extensions:
   - attr_list
   - md_in_html
   - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+      options:
+        custom_icons:
+          - overrides/.icons
   - pymdownx.arithmatex:
       generic: true
       smart_dollar: false
@@ -63,6 +69,7 @@ markdown_extensions:
 extra_css:
   - assets/css/style.css
   - assets/css/columns.css
+  - assets/css/badges.css
 
 extra_javascript:
   - assets/javascripts/mathjax.js

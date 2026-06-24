@@ -1,0 +1,208 @@
+/* License: GNU GPLv3+, Rodrigo Schwencke (Copyleft) */
+/* BADGES - badges.css */
+/* Projet indépendant de massilia.js */
+
+:root {
+  --badges-radius: 7px;
+  --badges-padding-x: 0.5em;
+  --badges-font-weight: 500;
+  --badges-border-size: 2px;
+}
+
+/* ============================================================
+   BADGES JS
+   Les couleurs sont calculées par badges.js + htmlColors.js
+   ============================================================ */
+
+bd,
+bad,
+badge {
+  display: inline-block;
+  border-radius: var(--badges-radius);
+  padding: 0 var(--badges-padding-x);
+  font-weight: var(--badges-font-weight);
+  line-height: 1.55;
+  vertical-align: baseline;
+}
+
+/* Le contenu imbriqué, y compris les liens, hérite de la couleur JS */
+bd *,
+bad *,
+badge * {
+  color: inherit !important;
+}
+
+/* Optionnel : évite que les liens Material soient soulignés/colorés bizarrement */
+bd a,
+bad a,
+badge a {
+  color: inherit !important;
+  text-decoration-color: currentColor;
+}
+
+/* ============================================================
+   ANCIENNES BALISES EN VALEUR
+   Conservées si tu les utilises encore.
+   Sinon tu peux supprimer toute cette section.
+   ============================================================ */
+
+:root {
+  --env-color: #000;
+  --env-background-color: rgba(220, 220, 220, 0.6);
+  --env-border-color: rgba(0, 0, 0, 0.6);
+
+  --envpink-background-color: deeppink;
+  --envpink-border-color: #580833;
+
+  --envred-background-color: #ff0000;
+  --envred-border-color: #ab0000;
+
+  --envscarlet-background-color: #dc3545;
+  --envscarlet-border-color: #85202a;
+
+  --envyellow-background-color: #ffc107;
+  --envyellow-border-color: #d39f00;
+
+  --envgreen-background-color: #51ff00;
+  --envgreen-border-color: #3cbb01;
+
+  --envblue-background-color: #007bff;
+  --envblue-border-color: #014b9a;
+}
+
+envaleurshadow,
+envshadow,
+bashadow,
+basha {
+  display: inline-block;
+  border-radius: var(--badges-radius);
+  padding: 0 var(--badges-padding-x);
+  font-weight: var(--badges-font-weight);
+  color: var(--env-color);
+  background-color: rgba(220, 220, 220, 0.6);
+  border-bottom: var(--badges-border-size) solid var(--env-border-color);
+  border-right: var(--badges-border-size) solid var(--env-border-color);
+  box-shadow: 5px 5px 3px var(--env-border-color);
+}
+
+envaleur,
+env,
+envgris,
+bagrey,
+bagris {
+  display: inline-block;
+  border-radius: var(--badges-radius);
+  padding: 0 var(--badges-padding-x);
+  font-weight: var(--badges-font-weight);
+  color: var(--env-color);
+  background-color: var(--env-background-color);
+  border-bottom: var(--badges-border-size) solid var(--env-border-color);
+  border-right: var(--badges-border-size) solid var(--env-border-color);
+}
+
+envrose,
+bapink,
+barose {
+  display: inline-block;
+  border-radius: var(--badges-radius);
+  padding: 0 var(--badges-padding-x);
+  font-weight: var(--badges-font-weight);
+  color: var(--env-color);
+  background-color: var(--envpink-background-color);
+  border-bottom: var(--badges-border-size) solid var(--envpink-border-color);
+  border-right: var(--badges-border-size) solid var(--envpink-border-color);
+}
+
+bascarlet,
+baecarlate {
+  display: inline-block;
+  border-radius: var(--badges-radius);
+  padding: 0 var(--badges-padding-x);
+  font-weight: var(--badges-font-weight);
+  color: var(--env-color);
+  background-color: var(--envscarlet-background-color);
+  border-bottom: var(--badges-border-size) solid var(--envscarlet-border-color);
+  border-right: var(--badges-border-size) solid var(--envscarlet-border-color);
+}
+
+envrouge,
+bared,
+barouge {
+  display: inline-block;
+  border-radius: var(--badges-radius);
+  padding: 0 var(--badges-padding-x);
+  font-weight: var(--badges-font-weight);
+  color: var(--env-color);
+  background-color: var(--envred-background-color);
+  border-bottom: var(--badges-border-size) solid var(--envred-border-color);
+  border-right: var(--badges-border-size) solid var(--envred-border-color);
+}
+
+envjaune,
+bayellow,
+bajaune {
+  display: inline-block;
+  border-radius: var(--badges-radius);
+  padding: 0 var(--badges-padding-x);
+  font-weight: var(--badges-font-weight);
+  color: var(--env-color);
+  background-color: var(--envyellow-background-color);
+  border-bottom: var(--badges-border-size) solid var(--envyellow-border-color);
+  border-right: var(--badges-border-size) solid var(--envyellow-border-color);
+}
+
+envvert,
+bagreen,
+bavert {
+  display: inline-block;
+  border-radius: var(--badges-radius);
+  padding: 0 var(--badges-padding-x);
+  font-weight: var(--badges-font-weight);
+  color: var(--env-color);
+  background-color: var(--envgreen-background-color);
+  border-bottom: var(--badges-border-size) solid var(--envgreen-border-color);
+  border-right: var(--badges-border-size) solid var(--envgreen-border-color);
+}
+
+envbleu,
+bablue,
+bableu {
+  display: inline-block;
+  border-radius: var(--badges-radius);
+  padding: 0 var(--badges-padding-x);
+  font-weight: var(--badges-font-weight);
+  color: var(--env-color);
+  background-color: var(--envblue-background-color);
+  border-bottom: var(--badges-border-size) solid var(--envblue-border-color);
+  border-right: var(--badges-border-size) solid var(--envblue-border-color);
+}
+
+/* Nested content inside legacy badges */
+envaleurshadow *,
+envshadow *,
+bashadow *,
+basha *,
+envaleur *,
+env *,
+envgris *,
+bagrey *,
+bagris *,
+envrose *,
+bapink *,
+barose *,
+bascarlet *,
+baecarlate *,
+envrouge *,
+bared *,
+barouge *,
+envjaune *,
+bayellow *,
+bajaune *,
+envvert *,
+bagreen *,
+bavert *,
+envbleu *,
+bablue *,
+bableu * {
+  color: inherit !important;
+}

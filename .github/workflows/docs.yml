@@ -38,37 +38,11 @@ jobs:
       - name: Install MkDocs
         run: |
           python -m pip install --upgrade pip
-
-          cat > constraints.txt <<'EOF'
-          mkdocs>=1,<2.0.0
-          EOF
-
-          python -m pip install \
-            --constraint constraints.txt \
-            "mkdocs>=1,<2.0.0" \
-            "mkdocs-material" \
-            "pymdown-extensions"
-
-          python -m pip check
-
-          python -m mkdocs --version
-
-          python - <<'PY'
-          from importlib.metadata import version
-
-          mkdocs_version = version("mkdocs")
-
-          if not mkdocs_version.startswith("1."):
-              raise SystemExit(
-                  f"Erreur: MkDocs {mkdocs_version} est installé, "
-                  "mais MkDocs 1.x est obligatoire."
-              )
-
-          print(f"OK: MkDocs {mkdocs_version} est installé.")
-          PY
+          pip install "mkdocs>=1,<2" mkdocs-material pymdown-extensions
 
       - name: Build documentation
         working-directory: site
+        # run: mkdocs build --strict
         run: mkdocs build
 
       - name: Upload GitHub Pages artifact

@@ -11,25 +11,37 @@ Please refer to this **MkDocs demo site, with documentation** for more info: [ht
 * [kisone/tikzjax](https://github.com/kisonecat/tikzjax) by [Jim Fowler](https://github.com/kisonecat)
 * [drgrice1/tikzjax](https://github.com/drgrice1/tikzjax) by [Glenn Rice](https://github.com/drgrice1) 
 
-Please note that [rod2ik/tikzjax](https://github.com/rod2ik/tikzjax) has since then, been **massively refactored as an ESM project**, and more notably, **extended and integrated** with **maths variation tables** and **maths sign tables** from the [CTAN `tkz-tab` package](https://ctan.org/pkg/tkz-tab).  
+Please note, however, that [rod2ik/tikzjax](https://github.com/rod2ik/tikzjax) has been, since then been massively :
 
-Moreover, [rod2ik/tikzjax](https://github.com/rod2ik/tikzjax) adds a more convenient integration for custom websites with dark themes, and for documentation websites, notably a native integration with **MkDocs** and **Material Light/Dark themes**, with these additional characteristics:
+* **refactored as an ESM project**
+* **extended**, to render both **TikZ Figures** **AND** <bad>NEW</bad> `tkz-tab` macros for **math variations tables** / **math sign tables** :
+    * <bad>NEW</bad> a **global configuration file** `tikzjax.config.js` through `window.TikzJaxOptions`;  
+    * inside a **custom HTML Bloc**, using a `<script type="text/tikz">` tag syntax:
+        * <bad @dodgerblue>OLD</bad> automatic rendering of **TikZ** Figures (THE historical functionnality of [kisone/tikzjax](https://github.com/kisonecat/tikzjax))
+        * <bad>NEW</bad> ❗📢❗ automatic rendering of `tkz-tab` macros for **maths variations tables** / **math sign tables** ❗📢❗
+        * <bad>NEW</bad> Light/Dark Themes via the ***global customisation file*** 
+        * the `<script>` syntax is natively compatible inside an Mkdocs Markdown Page:
+            * <bad>NEW</bad> natively compatible with **Material Light/Dark Themes**
+            * <bad>NEW</bad> compatibility with **Material Admonitions**: collapsable or not
+            * <bad>NEW</bad> compatibility with **Material Content Tabs** 
+    * inside **MkDocs**, with **Material** (or without it..), using a `tikzjax` code bloc syntax, **natively**:
+        * <bad>NEW</bad> automatic rendering of **TikZ** Figures
+        * <bad>NEW</bad> ❗📢❗ automatic rendering of `tkz-tab` macros for **maths variations tables** / **math sign tables** ❗📢❗
+        * <bad>NEW</bad> Compatibility with **Material Light/Dark Themes** (possibly customizable via the ***global customisation file***)
+        * <bad>NEW</bad> compatibility with **Material Admonitions**: collapsable or not
+        * <bad>NEW</bad> compatibility with **Material Content Tabs** 
+    * **Other Documentation Sites**:
+        * Possibly all functionnalities of MkDocs, if your documentation tools uses python-markdown.
 
-- ❗📢❗ automatic SVG rendering of `tkz-tab` macros for **maths variation tables** and **maths sign tables** ❗📢❗
-- automatic SVG rendering of `<script type="text/tikz">` **HTML blocks**;
-- automatic SVG rendering of **Markdown Code blocks** using keywords: `tikzjax`, `tikz`, `language-tikzjax`, or `language-tikz`.  
-    Also note that native compatibility with MkDocs Material theme notably includes:
+All the latter syntaxes also offer:
 
-    - compatibility with **Material Admonitions**
-    - compatibility with **Material Content Tabs** 
-
-- a **global configuration file** `tikzjax.config.js` through `window.TikzJaxOptions`;
-- **per-table local overrides** through `data-*` attributes;
-- native and customizable **Light/Dark themes** support, including **Material for MkDocs**;
-- **browser-side cache** through IndexedDB;
-- **Spinner animation** for both tikz and tkz-tab figures and tables.
-- timeout, worker restart, retry handling, and 
-- A customizable **fallback error image**
+* <bad>NEW</bad> a **global configuration file** `tikzjax.config.js` through `window.TikzJaxOptions`;
+* <bad>NEW</bad> **per-table local overrides** through `data-*` attributes;
+* <bad>NEW</bad> native and customizable **Light/Dark themes** support, including **Material for MkDocs**;
+* <bad @chartreuse> HALF NEW</bad> **browser-side cache** through IndexedD ( <bad @dodgerblue>OLD</bad> for **TikZ Figures** and <bad>NEW</bad> for `tkz-tab` tables )
+* <bad @chartreuse> HALF NEW</bad> **Spinner animation** ( <bad @dodgerblue>OLD</bad> for **TikZ Figures** and <bad>NEW</bad> for `tkz-tab` tables )
+* <bad @chartreuse> HALF NEW</bad> timeout, worker restart, retry handling ( <bad @dodgerblue>OLD</bad> for **TikZ Figures** and <bad>NEW</bad> for `tkz-tab` tables )
+* <bad>NEW</bad> A customizable **fallback error image**
 
 ## Tikz Figures Basic Examples
 
@@ -146,7 +158,7 @@ renders as:
 
 ### 5. More Advanced Examples
 
-For more advanced exemples, please see the [Advanced Examples Page](./reference.md).
+For more advanced exemples, please see the [Advanced Examples Page](./advanced-examples.md).
 
 ## Intentionally invalid Tikz Code
 

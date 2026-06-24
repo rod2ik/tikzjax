@@ -1,8 +1,10 @@
 # Troubleshooting
 
+This page lists the most common issues and fixes.
+
 ## Nothing is displayed
 
-First check that files are loaded in the correct order.
+First check the loading order.
 
 ```html
 <script src="tikzjax.config.js"></script>
@@ -10,26 +12,42 @@ First check that files are loaded in the correct order.
 <script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.js"></script>
 ```
 
-Then open the browser console and the Network tab.
+The configuration file is optional, but when it exists, it must be loaded before `tikzjax.js`.
 
-Check that `tikzjax.js`, `run-tex.js`, `tex.wasm.gz`, and `core.dump.gz` are loaded, and that no CORS or CSP error blocks the resources.
+Then open the browser DevTools:
 
-## The error image is displayed
+* check the **Console** for JavaScript errors;
+* check the **Network** tab for missing or blocked files;
+* make sure `tikzjax.js`, `run-tex.js`, `tex.wasm.gz`, and `core.dump.gz` are loaded;
+* check that no CORS or CSP policy blocks the resources.
 
-This means TikZJax detected the block, but rendering failed.
+If you use MkDocs, make sure the CDN references are loaded in `overrides/main.html`, not only through `extra_css` or `extra_javascript`.
 
-Common causes:
+## The fallback error image is displayed
 
-- incomplete TikZ environment;
-- `\begin{tikzpicture}` without `\end{tikzpicture}`;
-- missing package;
-- missing TikZ library;
-- unavailable LaTeX command;
-- timeout exceeded.
+This means TikZJax detected the block, but the TeX rendering failed.
+
+Common causes include:
+
+* incomplete TikZ code;
+* `\begin{tikzpicture}` without `\end{tikzpicture}`;
+* missing LaTeX package;
+* missing TikZ library;
+* unavailable LaTeX command;
+* render timeout.
+
+Example of intentionally invalid code:
+
+````latex
+```tikzjax
+\begin{tikzpicture}
+    \draw (0,0) -- (2,2);
+```
+````
 
 ## A TikZ library is missing
 
-Add it globally:
+Add the library globally in `tikzjax.config.js`:
 
 ```js
 window.TikzJaxOptions = {
@@ -39,17 +57,19 @@ window.TikzJaxOptions = {
 };
 ```
 
-or locally:
+Or add it locally on one block:
 
 ```html
 <script type="text/tikz" data-tikz-libraries="arrows.meta,calc">
-...
+\begin{tikzpicture}
+    ...
+\end{tikzpicture}
 </script>
 ```
 
 ## A LaTeX package is missing
 
-Add it to `texPackages`.
+Add the package to `tex.texPackages`.
 
 ```js
 window.TikzJaxOptions = {
@@ -63,19 +83,99 @@ window.TikzJaxOptions = {
 };
 ```
 
+Package values are package options. Use an empty string when the package has no option.
+
+## A custom LaTeX command is missing
+
+Add it to the global preamble:
+
+```js
+window.TikzJaxOptions = {
+    tex: {
+        addToPreamble: String.raw`
+\newcommand{\R}{\mathbb{R}}
+`
+    }
+};
+```
+
+Or locally:
+
+```html
+<script
+  type="text/tikz"
+  data-add-to-preamble="\newcommand{\R}{\mathbb{R}}"
+>
+\begin{tikzpicture}
+    \node {$\R$};
+\end{tikzpicture}
+</script>
+```
+
+## MkDocs code blocks are not rendered
+
+The `<script type="text/tikz">` syntax works directly in Markdown.
+
+For fenced code blocks, make sure `pymdownx.superfences` is configured.
+
+```yaml
+markdown_extensions:
+  - pymdownx.superfences:
+      custom_fences:
+        - name: tikzjax
+          class: language-tikzjax
+          format: !!python/name:pymdownx.superfences.fence_code_format
+```
+
+Then use:
+
+````latex
+```tikzjax
+\begin{tikzpicture}
+    \draw (0,0) circle (1);
+\end{tikzpicture}
+```
+````
+
+The generated block should use one of these classes:
+
+* `language-tikzjax`
+* `tikzjax`
+* `language-tikz`
+* `tikz`
+
+## Blocks inside admonitions or tabs are not rendered
+
+TikZJax observes the DOM and should detect blocks inserted later, including blocks inside Material admonitions or content tabs.
+
+If a block is still not rendered:
+
+* check that the Markdown indentation is valid;
+* check that `pymdownx.superfences` is configured for `tikzjax` code blocks;
+* try the equivalent `<script type="text/tikz">` syntax;
+* open the Console and check for JavaScript errors.
+
 ## Drawings do not change after editing
 
-The IndexedDB cache may return an old version if the code and dataset are identical.
+TikZJax uses browser-side cache.
 
-Solutions:
+During debugging, disable cache locally:
 
-1. change the TikZ code or options;
-2. temporarily add `data-disable-cache="true"`;
-3. clear the site’s IndexedDB storage in DevTools.
+```html
+<script type="text/tikz" data-disable-cache="true">
+\begin{tikzpicture}
+    ...
+\end{tikzpicture}
+</script>
+```
+
+You can also clear the site storage in the browser DevTools, especially IndexedDB.
 
 ## Rendering takes too long
 
-Lower the timeout to diagnose, or increase it for complex figures.
+Complex figures or large `tkz-tab` tables may need more time.
+
+Increase the timeout:
 
 ```js
 window.TikzJaxOptions = {
@@ -83,20 +183,55 @@ window.TikzJaxOptions = {
 };
 ```
 
+You can also allow one retry:
+
+```js
+window.TikzJaxOptions = {
+    renderTimeout: 30000,
+    maxRetries: 1,
+    restartWorkerOnFail: true
+};
+```
+
 ## Dark mode renders colors poorly
 
-TikZJax mainly adapts black, white, and text elements generated in SVG. For highly colored figures, define colors explicitly in the TikZ code or provide theme-specific variants.
+TikZJax can adapt common black, white, and text colors in generated SVGs.
 
-## Blocks in MkDocs are not rendered
+For highly colored figures, define colors explicitly in the TikZ code, or provide separate light and dark variants when needed.
 
-Check that the block produces one of the recognized classes: `language-tikzjax`, `tikzjax`, `language-tikz`, or `tikz`.
+## The fallback image path is wrong
+
+If the error image itself is missing, set `brokenImageSrc`.
+
+```js
+window.TikzJaxOptions = {
+    brokenImageSrc: "https://rod2ik.github.io/cdn/tikzjax/assets/broken-image.svg"
+};
+```
 
 ## Enable engine logs
 
+For debugging, enable console output on a block:
+
 ```html
 <script type="text/tikz" data-show-console="true">
-...
+\begin{tikzpicture}
+    ...
+\end{tikzpicture}
 </script>
 ```
 
-This enables engine-side console output when that feature is available.
+This enables engine-side console output when available.
+
+## Quick checklist
+
+1. `tikzjax.config.js` is loaded before `tikzjax.js`.
+2. `fonts.css` is loaded.
+3. `tikzjax.js` is loaded.
+4. `run-tex.js`, `tex.wasm.gz`, and `core.dump.gz` are reachable.
+5. No CORS or CSP policy blocks the CDN files.
+6. The TikZ code contains a complete `tikzpicture` environment.
+7. Required packages and TikZ libraries are configured.
+8. MkDocs `tikzjax` code blocks are configured with `pymdownx.superfences`.
+9. Cache is disabled while debugging.
+10. The browser Console has been checked.

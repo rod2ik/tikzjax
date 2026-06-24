@@ -1,40 +1,46 @@
 # Installation
 
-## CDN installation
+In one word, the installation is a **CDN Installation**, both in :
+
+* Custom HTML Pages
+* MkDocs with Material Documentation Site
+* Other Documentation Sites
+
+## 1. Installation in Custom HTML Pages
+
+### 1.1 CDN Installation on Custom HTML Pages
 
 In a regular HTML page, load the font stylesheet first, then the TikZJax script.
 
-```html
-<link rel="stylesheet" href="https://rod2ik.github.io/cdn/tikzjax/fonts.css">
-<script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.js"></script>
-```
+=== "Without the optional global config file"
+    ```html
+    <link rel="stylesheet" href="https://rod2ik.github.io/cdn/tikzjax/fonts.css">
+    <script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.js"></script>
+    ```
+=== "With the optional global config file `tikzjax.config.js`"
+    ```html
+    <script src="tikzjax.config.js"></script>
+    <link rel="stylesheet" href="https://rod2ik.github.io/cdn/tikzjax/fonts.css">
+    <script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.js"></script>
+    ```
 
 TikZJax automatically infers its base URL from the loaded script URL. The files required by the TeX WebAssembly engine are therefore looked up next to `tikzjax.js`.
 
-The CDN must contain at least:
+!!! info
+    The CDN must contain at least:
 
-```text
-tikzjax.js
-run-tex.js
-tex.wasm.gz
-core.dump.gz
-fonts.css
-assets/broken-image.svg
-```
+    ```text
+    tikzjax.js
+    run-tex.js
+    tex.wasm.gz
+    core.dump.gz
+    fonts.css
+    assets/broken-image.svg
+    ```
 
-If you only plan to use TikJaX in your personnal pages (HTML Pages / MkDocs Pages / other Documentation Pages), you can safely ignore this information.
+    If you only plan to use TikJaX in your personnal pages (HTML Pages / MkDocs Pages / other Documentation Pages), you can safely ignore this information.
 
-## Optional global configuration file `tikzjax.config.js`
-
-The optional configuration file must be loaded before `tikzjax.js`.
-
-```html
-<script src="tikzjax.config.js"></script>
-<link rel="stylesheet" href="https://rod2ik.github.io/cdn/tikzjax/fonts.css">
-<script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.js"></script>
-```
-
-## Minimal Working HTML example
+### 1.2 Minimal Working HTML example
 
 This HTML code:
 
@@ -66,34 +72,101 @@ renders as:
 \end{tikzpicture}
 </script>
 
-## Installation in MkDocs
+## 2. Installation in MkDocs
 
-### Required CDN Files in `main.html`
+### 2.1 Configure CDN Files in `main.html`
 
-To be placed in
+!!! warning
+    * **TikzJax** CDN references (css  & javascript) **MUST** be loaded into your `main.html` file (if you have one, otherwise, create it).  
+    * **TikzJax** CDN references (css  & javascript) **CANNOT** be set on usual `extra_css` and `extra_javascript` entries on `mkdocs.yml`, because if done so, the loading order may not be precisely controlled.
 
+!!! success "file overrides/main.html"
+    === "WITHOUT optional global config file"
+        ````html
+        {% extends "base.html" %}
 
-In `mkdocs.yml`, add the optional configuration file and TikZJax to the extra JavaScript files.
+        {% block htmltitle %}
+        {{ super() }}
+        <title>{{ base_url }}</title>
+        {% endblock %}
 
-```yaml
-extra_javascript:
-  - tikzjax.config.js
-```
+        {% block content %}
+            {{ super() }}
+        {% endblock %}
 
-!!! important
-    It is important to note that **TikzJax** css  & javascript references to CDN **MUST** be loaded into the `main.html` file, for example inside your `overrides` directory (if you have one) in a specific order.  
-    They **CANNOT** be set on normal `extra_css` and `extra_javascript` entries on `mkdocs.yml`, as if so, the loading order may not be precisely controlled.
+        {% block libs %}
+            {{ super() }}    
 
-Hereafter are two config examples : 
+            <link rel="stylesheet" type="text/css" href="https://rod2ik.github.io/cdn/tikzjax/fonts.css">
+            <script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.js"></script>
+        {% endblock %}
 
-* With Material Light / Dark themes
-* Without Material Light / Dark themes
+        {% block footer scoped %}
+        {% include "partials/footer.html" with context %}
+        {% endblock %}
+        ````
 
-!!! info
-    Please note that, stricto sensu, loading **MathJax** as CDN, as well as the following `markdown_extensions` : `admonition`, `pymdownx.arithmatex`, `pymdownx.tabbed`, are NOT needed for the **TikZJax** project to work in MkDocs.  
-    However, they are often loaded together, and some examples on this site required them, so they are left as example configs.
+    === "WITH optional global config file"
+        Choose ( **AND ONLY ONE** ) from the followings, to add a reference towards the global config file `tikzjax.config.js`:
 
-### With Material Light and Dark themes
+        * YOU MAY place `tikzjax.config.js` reference inside your `main.html` file :
+
+            ````html
+            {% extends "base.html" %}
+
+            {% block htmltitle %}
+            {{ super() }}
+            <title>{{ base_url }}</title>
+            {% endblock %}
+
+            {% block content %}
+                {{ super() }}
+            {% endblock %}
+
+            {% block libs %}
+                {{ super() }}    
+
+                <script type="module" src="{{ base_url }}/local/path/to/your/tikzjax.config.js"></script>
+                <link rel="stylesheet" type="text/css" href="https://rod2ik.github.io/cdn/tikzjax/fonts.css">
+                <script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.js"></script>
+            {% endblock %}
+
+            {% block footer scoped %}
+            {% include "partials/footer.html" with context %}
+            {% endblock %}
+            ````
+        * YOU MAY ALSO place the optional config file reference to `tikzjax.config.js` (AND ONLY THIS FILE) under the `extra_javacript` entry of `mkdocs.yml` :
+
+            ```yaml
+            extra_javascript:
+            - local/path/to/your/tikzjax.config.js
+            ```
+
+### 2.2 `mkdocs.yml`: superfences
+!!! warning
+    * Please note that, stricto sensu, the following extensions ARE NOT REQUIRED for the **TikZJax** project to work in MkDocs (which should work perfectly without those) :
+        * loading **MathJax** as CDN, IS NOT REQUIRED (math formulas should render correctly inside math variations tables and math sign tables, without MathJaX)
+        * the following `markdown_extensions` ARE NOT REQUIRED : 
+            * `admonition`, 
+            * `pymdownx.details`,    (for Collapsible admonitions)
+            * `pymdownx.arithmatex`, (for Mathjax)
+            * `pymdownx.tabbed`,     (for Content Tabs)
+    * However, these are often loaded together, and some examples on this site require them all to test their compatibility with TikzJaX, so they are left as they are, as example configs.
+
+!!! success "Superfences Config for `tikzjax` bloc codes"
+    * TikZJax is already working with the `<script type="text/tikz">` syntax.
+    * However, if you wish to also use the `tikzjax` code block syntax inside MkDocs, then you MUST add a **superfences** entry in your `mkdocs.yml`:
+
+    ````yaml
+    markdown_extensions:
+      - pymdownx.superfences:   # REQUIRED for ```tikzjax ... ``` code block syntaxes
+          custom_fences:
+            - name: tikzjax
+              class: language-tikzjax
+              format: !!python/name:pymdownx.superfences.fence_code_format
+    ````
+
+Hereafter are some config examples , which all use an existing `overrides/main.html` file (if you have already none, otherwise, create it, you may customize your personal `custom_dir` in your `mkdocs.yml` as you wish):
 
 === "overrides/main.html"
     ````html
@@ -119,7 +192,7 @@ Hereafter are two config examples :
     {% include "partials/footer.html" with context %}
     {% endblock %}
     ````
-=== "mkdocs.yml"
+=== "mkdocs.yml, WITH Material Light/Dark Themes (with palette)"
     ````yaml
     site_name: yourSiteName
     site_description: yourDescription
@@ -175,86 +248,31 @@ Hereafter are two config examples :
     - assets/javascripts/tikzjax.config.js
     ````
 
-### Without Material Light and Dark themes
-
-=== "overrides/main.html"
-    ````html
-    {% extends "base.html" %}
-
-    {% block htmltitle %}
-    {{ super() }}
-    <title>{{ base_url }}</title>
-    {% endblock %}
-
-    {% block content %}
-        {{ super() }}
-    {% endblock %}
-
-    {% block libs %}
-        {{ super() }}    
-
-        <link rel="stylesheet" type="text/css" href="https://rod2ik.github.io/cdn/tikzjax/fonts.css">
-        <script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.js"></script>
-    {% endblock %}
-
-    {% block footer scoped %}
-    {% include "partials/footer.html" with context %}
-    {% endblock %}
-    ````
-=== "mkdocs.yml"
-    ````yaml
-    site_name: yourSiteName
-    site_description: yourDescription
-    site_url: yourSiteUrl
-    repo_url: yourRepoUrl
-
-    theme:
-      name: material
-      custom_dir: overrides
-      language: fr
-      features:
-        - navigation.sections
-        - navigation.top
-        - content.code.copy
-
-    nav:
-      - Home: index.md
-
-    markdown_extensions:
-      - admonition
-      - attr_list
-      - md_in_html
-      - pymdownx.details
-      - pymdownx.arithmatex:
-          generic: true
-          smart_dollar: false
-      - pymdownx.superfences:   # required for ```tikzjax ... ``` code block syntaxes
-          custom_fences:
-            - name: tikzjax
-              class: language-tikzjax
-              format: !!python/name:pymdownx.superfences.fence_code_format
-      - pymdownx.tabbed:
-          alternate_style: true
-
-    extra_javascript:
-    - assets/javascripts/mathjax.js
-    - https://cdn.jsdelivr.net/npm/mathjax@4.1.0/tex-mml-chtml.js
-    - assets/javascripts/tikzjax.config.js
-    ````
-
-
+!!! warning
+    Please note that all the `palette` bloc inside `mkdocs.yml` IS NOT REQUIRED.  
+    You MAY, OR NOT, use a palette. Of course, if no palette is defined,you lose Material Light/Dark Themes...
 
 If your theme or MkDocs setup blocks scripts, also check your CSP policy and theme options.
 
-## Minimal Markdown example
+### 2.3 Minimal Markdown `tikzjax` code block example
 
-````markdown
+````latex
 ```tikzjax
 \begin{tikzpicture}
-    \draw (0,0) circle (1);
+  \tkzTabInit{$x$/1, $f(x)$/2}{$-\infty$, $0$, $+\infty$}
+  \tkzTabVar{-/ $-\infty$, +/ $2$, -/ $-\infty$}
 \end{tikzpicture}
 ```
 ````
+
+renders as:
+
+```tikzjax
+\begin{tikzpicture}
+  \tkzTabInit{$x$/1, $f(x)$/2}{$-\infty$, $0$, $+\infty$}
+  \tkzTabVar{-/ $-\infty$, +/ $2$, -/ $-\infty$}
+\end{tikzpicture}
+```
 
 ## Recommended loading order
 

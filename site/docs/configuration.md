@@ -1,31 +1,34 @@
-# Configuration
+# `tikzjax.config.js` Examples
 
-TikZJax is configured with the global `window.TikzJaxOptions` object.
+This page provides simple configuration files you can copy and adapt.
 
-This file must be loaded before `tikzjax.js`.
+The configuration file must be loaded before `tikzjax.js`.
 
-```html
-<script src="tikzjax.config.js"></script>
-<script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.js"></script>
-```
+## 1. Minimal configuration
 
-## Complete example
+Use this if you only need standard TikZ figures.
 
 ```js
 window.TikzJaxOptions = {
-    renderTimeout: 10000,
+    tex: {
+        tikzLibraries: [
+            "arrows.meta"
+        ]
+    }
+};
+```
+
+## 2. Recommended MkDocs configuration
+
+Use this as a good default for a MkDocs site with Material theme.
+
+```js
+window.TikzJaxOptions = {
+    renderTimeout: 15000,
     maxRetries: 1,
     restartWorkerOnFail: true,
-    brokenImageSrc: "https://rod2ik.github.io/cdn/tikzjax/assets/broken-image-esquisse.svg",
 
-    theme: {
-        selector: "body",
-        attribute: "data-md-color-scheme",
-        darkValue: "slate",
-        lightValue: "default",
-        fallbackTheme: "light",
-        followSystemTheme: false
-    },
+    brokenImageSrc: "https://rod2ik.github.io/cdn/tikzjax/assets/broken-image.svg",
 
     tex: {
         texPackages: {
@@ -57,153 +60,116 @@ window.TikzJaxOptions = {
 };
 ```
 
-## General options
+## 3. `tkz-tab` focused configuration
 
-| Option | Type | Default | Description |
-|---|---:|---:|---|
-| `renderTimeout` | number | `15000` | Maximum time, in milliseconds, allowed for a TikZ render. |
-| `maxRetries` | number | `0` | Number of retry attempts after a render failure. |
-| `restartWorkerOnFail` | boolean | `true` | Restarts the TeX worker after a failure or timeout. |
-| `brokenImageSrc` | string | internal image | Image displayed when rendering fails. |
-
-The `renderTimeout`, `maxRetries`, and `restartWorkerOnFail` options can also be placed under `tex`.
-
-```js
-window.TikzJaxOptions = {
-    tex: {
-        renderTimeout: 20000,
-        maxRetries: 1,
-        restartWorkerOnFail: true
-    }
-};
-```
-
-## TeX options
-
-| Option | Type | Description |
-|---|---:|---|
-| `tex.texPackages` | object or JSON string | LaTeX packages injected with `\usepackage`. |
-| `tex.tikzLibraries` | array or string | TikZ libraries injected with `\usetikzlibrary`. |
-| `tex.addToPreamble` | string | Raw LaTeX preamble added before `\begin{document}`. |
-
-Example:
+Use this if your documentation mostly contains variation tables or sign tables.
 
 ```js
 window.TikzJaxOptions = {
     tex: {
         texPackages: {
             amsmath: "",
-            "tkz-tab": "",
-            xcolor: "dvipsnames"
+            "tkz-tab": ""
+        }
+    },
+
+    tkzTab: {
+        lineWidth: "1.2pt",
+        font: "\\Large",
+
+        lgt: 10,
+        espcl: 3.2,
+
+        variableRowHeight: 1.5,
+        signRowHeight: 2.5,
+        variationRowHeight: 2.5
+    }
+};
+```
+
+## 4. Configuration with custom LaTeX commands
+
+Use `String.raw` for LaTeX preambles. It avoids escaping every backslash.
+
+```js
+window.TikzJaxOptions = {
+    tex: {
+        texPackages: {
+            amsmath: "",
+            amssymb: "",
+            "tkz-tab": ""
         },
-        tikzLibraries: [
-            "arrows.meta",
-            "calc",
-            "positioning"
-        ],
+
         addToPreamble: String.raw`
 \newcommand{\R}{\mathbb{R}}
+\newcommand{\vect}[1]{\overrightarrow{#1}}
 `
     }
 };
 ```
 
-## LaTeX packages with options
+You can then use the commands in any TikZJax block.
 
-The package value corresponds to the options passed to `\usepackage`.
-
-```js
-texPackages: {
-    xcolor: "dvipsnames",
-    amsmath: "",
-    "tkz-tab": ""
-}
-```
-
-This conceptually produces:
-
-```tex
-\usepackage[dvipsnames]{xcolor}
-\usepackage{amsmath}
-\usepackage{tkz-tab}
-```
-
-The `amsmath` package is added by default in the worker to support common mathematical rendering.
-
-## TikZ libraries
-
-Libraries can be provided as an array:
-
-```js
-tikzLibraries: ["arrows.meta", "calc", "positioning"]
-```
-
-or as a string:
-
-```js
-tikzLibraries: "arrows.meta,calc,positioning"
-```
-
-## `tkzTab` options
-
-The `tkzTab` options generate global LaTeX macros. They help avoid repeating the same dimensions in every variation table.
-
-| JS option | Generated TeX macro |
-|---|---|
-| `lineWidth` | `\tikzjaxTkzTabLineWidth` |
-| `font` | `\tikzjaxTkzTabFont` |
-| `lgt` | `\tikzjaxTkzTabLgt` |
-| `firstColumnWidth` | `\tikzjaxTkzTabFirstColumnWidth` |
-| `espcl` | `\tikzjaxTkzTabEspcl` |
-| `variableRowHeight` | `\tikzjaxTkzTabVariableRowHeight` |
-| `signRowHeight` | `\tikzjaxTkzTabSignRowHeight` |
-| `variationRowHeight` | `\tikzjaxTkzTabVariationRowHeight` |
-| `imageRowHeight` | `\tikzjaxTkzTabImageRowHeight` |
-| `antecedentRowHeight` | `\tikzjaxTkzTabAntecedentRowHeight` |
-
-Example:
-
+````latex
 ```tikzjax
-\begin{tikzpicture}[line width=\tikzjaxTkzTabLineWidth, font=\tikzjaxTkzTabFont]
-    \tkzTabInit[
-        lgt=\tikzjaxTkzTabLgt,
-        espcl=\tikzjaxTkzTabEspcl,
-        lw=\tikzjaxTkzTabLineWidth
-    ]
-        {
-            $x$/\tikzjaxTkzTabVariableRowHeight,
-            Sign of $f'(x)$/\tikzjaxTkzTabSignRowHeight,
-            Variations of $f(x)$/\tikzjaxTkzTabVariationRowHeight
-        }
-        {$-\infty$, $0$, $+\infty$}
-    \tkzTabLine{,-,z,+,}
-    \tkzTabVar{+/ $+\infty$, -/ $0$, +/ $+\infty$}
+\begin{tikzpicture}
+    \node[draw, rounded corners, inner sep=6pt] {$f:\R\to\R$};
 \end{tikzpicture}
 ```
+````
 
-## Backward-compatible options
+## 5. Configuration for a non-MkDocs dark theme
 
-Some options can be placed directly at the root of `TikzJaxOptions`.
-
-```js
-window.TikzJaxOptions = {
-    texPackages: {
-        amsmath: "",
-        "tkz-tab": ""
-    },
-    tikzLibraries: "arrows.meta,calc",
-    addToPreamble: ""
-};
-```
-
-The recommended form is still:
+Use this when your site stores the current theme on an attribute or a class.
 
 ```js
 window.TikzJaxOptions = {
-    tex: {
-        texPackages: {},
-        tikzLibraries: [],
-        addToPreamble: ""
+    theme: {
+        selector: "html",
+        attribute: "data-theme",
+        darkValue: "dark",
+        lightValue: "light",
+        fallbackTheme: "light",
+        followSystemTheme: true
     }
 };
 ```
+
+For a class-based theme, use `darkClass` and `lightClass`.
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        selector: "body",
+        darkClass: "theme-dark",
+        lightClass: "theme-light",
+        fallbackTheme: "light"
+    }
+};
+```
+
+## 6. Local overrides still remain possible
+
+Global configuration defines defaults. A block can still override some options locally.
+
+```html
+<script
+  type="text/tikz"
+  data-tikz-libraries="decorations.pathmorphing"
+  data-disable-cache="true"
+>
+\begin{tikzpicture}
+    \draw[decorate, decoration=zigzag] (0,0) -- (4,0);
+\end{tikzpicture}
+</script>
+```
+
+## 7. Recommended loading order
+
+```html
+<script src="tikzjax.config.js"></script>
+<link rel="stylesheet" href="https://rod2ik.github.io/cdn/tikzjax/fonts.css">
+<script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.js"></script>
+```
+
+In MkDocs, keep the same order in your `overrides/main.html`.
