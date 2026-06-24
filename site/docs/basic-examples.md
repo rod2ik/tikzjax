@@ -10,6 +10,8 @@ For all configuration options, see [API Reference](api-reference.md).
 
 ### Direct Insertion in HTML
 
+A TIKZ CIRCLE:
+
 === "Rendering"
     <script type="text/tikz">
     \begin{tikzpicture}
@@ -25,7 +27,7 @@ For all configuration options, see [API Reference](api-reference.md).
     </script>
     ````
 
-AND :
+A TIKZ LINE :
 
 === "Rendering"
     <script type="text/tikz">
@@ -50,6 +52,8 @@ AND :
 
 ### in MkDocs Admonitions
 
+NOT COLLAPSIBLE :
+
 === "Rendering"
     !!! success
         <script type="text/tikz">
@@ -73,7 +77,7 @@ AND :
         </script>
     ```
 
-AND
+COLLAPSIBLE :
 
 === "Rendering"
     ??? success
@@ -136,7 +140,7 @@ AND
 
 #### Content Tabs in Admonitions
 
-NON COLLAPSIBLE ADMONITIONS :
+NON COLLAPSIBLE :
 
 === "Rendering"
     !!! success
@@ -201,7 +205,7 @@ NON COLLAPSIBLE ADMONITIONS :
                 </script>
     ````
 
-COLLAPSIBLE ADMONITIONS:
+COLLAPSIBLE :
 
 === "Rendering"
     ??? success
@@ -280,6 +284,8 @@ OR you can use a `tikzjax` code block, wich is more markdown-minded (and also mo
 
 ### `tikzjax` Code Block Insertion in MkDocs Markdown
 
+A TIKZ CIRCLE :
+
 === "Rendering"
     ```tikzjax
     \begin{tikzpicture}
@@ -297,7 +303,7 @@ OR you can use a `tikzjax` code block, wich is more markdown-minded (and also mo
     ```
     ````
 
-OTHER:
+A TIKZ LINE :
 
 === "Rendering"
     ```tikzjax
@@ -410,6 +416,8 @@ COLLAPSIBLE :
 
 #### Content Tabs in Admonitions
 
+NOT COLLAPSIBLE :
+
 === "Rendering"
     !!! success
         1. 
@@ -477,6 +485,7 @@ COLLAPSIBLE :
                 ```
     ````
 
+COLLAPSIBLE :
 
 === "Rendering"
     ??? success
@@ -605,8 +614,6 @@ In a MkDocs page, with the Material Theme (or without it..), use a fenced code b
 
 #### Root Content Tabs
 
-This code :
-
 === "Rendering"
     === "Question"
         Draw the variation table of $f(x)=x^3-3x^2+2$ on $\mathbb{R}$.
@@ -645,6 +652,8 @@ This code :
 
 ##### Content Tabs in Admonitions
 
+NOT COLLAPSIBLE :
+
 === "Rendering"
     !!! success
         Let $f$ be the function defined on $\mathbb{R}$ by:
@@ -762,8 +771,7 @@ This code :
                 ```
     ````
 
-
-This code :
+COLLAPSIBLE :
 
 === "Rendering"
     ??? success
