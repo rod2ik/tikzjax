@@ -41,3 +41,10 @@
   top: 0;
   left: 0;
 }
+
+/* ======================================================= */
+/*                EXTRA ADMONITIONS STYLES                 */
+/* ======================================================= */
+.md-typeset .admonition, .md-typeset details {
+  font-size: 0.8rem;
+}

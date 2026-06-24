@@ -1,14 +1,62 @@
 # Reference
 
-This page summarizes the available options and attributes.
+This page summarizes the available **global options** and **attributes**.
 
-## Global object
+## Global Options
+
+### Global object
 
 ```js
 window.TikzJaxOptions = {};
 ```
 
-## Global options
+!!! example
+    ```javascript
+    window.TikzJaxOptions = {
+        # Global Options
+        renderTimeout: 10000,
+        brokenImageSrc: "https://rod2ik.github.io/cdn/tikzjax/assets/broken-image-esquisse.svg",
+
+        theme: {
+            # theme Options
+            selector: "body",
+            attribute: "data-md-color-scheme",
+            darkValue: "slate",
+            lightValue: "default"
+        },
+
+        tex: {
+            # tex Options
+            texPackages: {
+                "tkz-tab": "",
+                amsmath: ""
+            },
+            tikzLibraries: [
+                "arrows.meta",
+                "calc",
+                "positioning"
+            ]
+        },
+
+        tkzTab: {
+            # tkzTab Options
+            lineWidth: "1.2pt",
+            font: "\\Large",
+
+            lgt: 10,
+            espcl: 3.2,
+
+            variableRowHeight: 1.2,
+            signRowHeight: 2.2,
+            variationRowHeight: 2.2,
+
+            imageRowHeight: 2.2,
+            antecedentRowHeight: 2.2
+        }
+    };
+    ```
+
+### Global options
 
 | Option | Type | Default |
 |---|---:|---:|
@@ -17,18 +65,10 @@ window.TikzJaxOptions = {};
 | `restartWorkerOnFail` | boolean | `true` |
 | `brokenImageSrc` | string | `assets/broken-image.svg` |
 
-## `tex` options
+### `theme` options
 
-| Option | Type | Example |
-|---|---:|---|
-| `tex.texPackages` | object or JSON string | `{ amsmath: "", "tkz-tab": "" }` |
-| `tex.tikzLibraries` | array or string | `["arrows.meta", "calc"]` |
-| `tex.addToPreamble` | string | `String.raw` template string |
-| `tex.renderTimeout` | number | `10000` |
-| `tex.maxRetries` | number | `1` |
-| `tex.restartWorkerOnFail` | boolean | `true` |
-
-## `theme` options
+The `theme` options are meant to help configure Light / Dark themes, in every **other documentation platforms**.  
+If you are using MkDocs, you shouldn't need to use them : Light/Dark Theme Detection should be automatic.
 
 | Option | Type | Description |
 |---|---:|---|
@@ -42,7 +82,22 @@ window.TikzJaxOptions = {};
 | `theme.defaultTheme` | `"light"` or `"dark"` | Default theme alias. |
 | `theme.followSystemTheme` | boolean | Uses `prefers-color-scheme` as a last resort. |
 
-## `tkzTab` options
+### `tex` options
+
+Allows **additional `tex` libraries** to be loaded.
+
+| Option | Type | Example |
+|---|---:|---|
+| `tex.texPackages` | object or JSON string | `{ amsmath: "", "tkz-tab": "" }` |
+| `tex.tikzLibraries` | array or string | `["arrows.meta", "calc"]` |
+| `tex.addToPreamble` | string | `String.raw` template string |
+| `tex.renderTimeout` | number | `10000` |
+| `tex.maxRetries` | number | `1` |
+| `tex.restartWorkerOnFail` | boolean | `true` |
+
+### `tkzTab` options
+
+Defines **Default `tkz-tab` macros values**.
 
 | Option | Macro |
 |---|---|
@@ -58,6 +113,9 @@ window.TikzJaxOptions = {};
 | `antecedentRowHeight` | `\tikzjaxTkzTabAntecedentRowHeight` |
 
 ## Local `data-*` attributes
+
+Allows **additional `tex-packages` and `tikz-libraries`** to be loaded as **attributes** when used with the `<script>` syntax.  
+And some other options, notably `width` and `height`.
 
 | HTML attribute | JS dataset | Description |
 |---|---|---|

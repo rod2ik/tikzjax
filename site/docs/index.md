@@ -31,325 +31,69 @@ Moreover, [rod2ik/tikzjax](https://github.com/rod2ik/tikzjax) adds a more conven
 - timeout, worker restart, retry handling, and 
 - A customizable **fallback error image**
 
-## Example Usage of `<script>` tags
+## Tikz Figures Basic Examples
 
-### 1. TikZ
+!!! info
+    There are two syntaxes for drawing **TikZ Figures** and/or tkz-tab **math variations tables** / **math sign tables**.
 
-#### Direct Insertion in HTML
+    * In HTML Pages, you can use **`<script>` tag**s syntax for both **TikZ Figures** and/or **maths variations tables / maths sign tables**
+    * In MkDocs Markdown Pages, you can use `tikzjax` **code blocks** syntax for both **TikZ Figures** and/or **maths variations tables / maths sign tables**
 
-!!! col __50
-    The classical tikzjax example:
+### 1. TikZ Figures Example with `<script>` tag
 
-    ```html
-    <script type="text/tikz">
-    \begin{tikzpicture}
-        \draw (0,0) circle (1in);
-    \end{tikzpicture}
-    </script>
-    ```
+In HTML Pages, to draw TikZ Figures, you can basically use this syntax, which was the original TikZ syntax developed by [kisone/tikzjax](https://github.com/kisonecat/tikzjax).
 
-    <script type="text/tikz">
-    \begin{tikzpicture}
-        \draw (0,0) circle (1in);
-    \end{tikzpicture}
-    </script>
-
-!!! col __50 clear
-    ```html
-    <script type="text/tikz">
-    \begin{tikzpicture}
-        \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
-        \draw[->, thick] (0,0) -- (0,3) node[above] {$y$};
-        \draw[thick] (0,0) -- (3,2);
-    \end{tikzpicture}
-    </script>
-    ```
-
-    <script type="text/tikz">
-    \begin{tikzpicture}
-        \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
-        \draw[->, thick] (0,0) -- (0,3) node[above] {$y$};
-        \draw[thick] (0,0) -- (3,2);
-        \node at (2,1.5) {$f(x)=\dfrac{3x-1}{2\sqrt{x}}$};
-    \end{tikzpicture}
-    </script>
-
-#### in MkDocs Admonitions
-
-!!! success
-    <script type="text/tikz">
-    \begin{tikzpicture}
-        \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
-        \draw[->, thick] (0,0) -- (0,3) node[above] {$y$};
-        \draw[thick] (0,0) -- (3,2);
-    \end{tikzpicture}
-    </script>
-
-??? success
-    <script type="text/tikz">
-    \begin{tikzpicture}
-        \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
-        \draw[->, thick] (0,0) -- (0,3) node[above] {$y$};
-        \draw[thick] (0,0) -- (3,2);
-    \end{tikzpicture}
-    </script>
-
-#### in MkDocs Content Tabs
-
-<script type="text/tikz">
-\begin{tikzpicture}[line width=1.2pt, font=\Large]
-    \tkzTabInit[lgt=8, espcl=4, lw=1.2pt]
-        {$x$/1.5 , Signe de $f'(x)=3x(x-2)$/1.5 , Variations de $f(x)=x^3-3x^2+2$/2.5}
-        {$-\infty$, $0$, $2$, $+\infty$}
-    \tkzTabLine{,+,z,-,z,+,}
-    \tkzTabVar{-/ $-\infty$, +/ $2$, -/ $-2$, +/ $+\infty$}
-\end{tikzpicture}
-</script>
-
-
-=== "Question"
-    Deduce the variation table of $f$ on $\mathbb{R}$.
-
-=== "Solution"
-    We deduce the variation table below. (see below)
-
-    Moreover, we compute:
-
-    $$
-    f(0)=2
-    $$
-
-    and:
-
-    $$
-    f(2)=-2
-    $$
-
-    Hence the variation table below :
-
-    <script type="text/tikz">
-    \begin{tikzpicture}[line width=1.2pt, font=\Large]
-        \tkzTabInit[lgt=8, espcl=4, lw=1.2pt]
-            {$x$/1.5 , Signe de $f'(x)=3x(x-2)$/1.5 , Variations de $f(x)=x^3-3x^2+2$/2.5}
-            {$-\infty$, $0$, $2$, $+\infty$}
-        \tkzTabLine{,+,z,-,z,+,}
-        \tkzTabVar{-/ $-\infty$, +/ $2$, -/ $-2$, +/ $+\infty$}
-    \end{tikzpicture}
-    </script>
-
-
-!!! note
-    Let $f$ be the function defined on $\mathbb{R}$ by:
-
-    $$
-    f(x)=x^3-3x^2+2
-    $$
-
-    1. 
-
-        === "Question"
-            Determine the derivative function $f'$ of $f$ on $\mathbb{R}$.
-
-        === "Solution"
-            We have:
-
-            $$
-            f(x)=x^3-3x^2+2
-            $$
-
-            We differentiate each term separately:
-
-            $$
-            \begin{align*}
-            f'(x) &= (x^3)'-(3x^2)'+(2)' \\
-                  &= 3x^2-3\times 2x+0 \\
-                  &= 3x^2-6x
-            \end{align*}
-            $$
-
-            We factor:
-
-            $$
-            f'(x)=3x(x-2)
-            $$
-
-            Finally:
-
-            $$
-            \boxed{f'(x)=3x(x-2)}
-            $$
-
-    2. 
-
-        === "Question"
-            Solve the inequality $f'(x)\geq 0$ on $\mathbb{R}$.
-
-        === "Solution"
-            We know that:
-
-            $$
-            f'(x)=3x(x-2)
-            $$
-
-            The roots of $f'$ are:
-
-            $$
-            x=0
-            \qquad
-            \text{and}
-            \qquad
-            x=2
-            $$
-
-            We study the sign of the product of factors.
-
-            Conclusion:
-
-            $$
-            \boxed{f'(x)\geq 0 \Longleftrightarrow x\in]-\infty;0]\cup[2;+\infty[}
-            $$
-
-    3. 
-
-        === "Question"
-            Deduce the variation table of $f$ on $\mathbb{R}$.
-
-        === "Solution"
-            We deduce the variation table below. (see below)
-
-            Moreover, we compute:
-
-            $$
-            f(0)=2
-            $$
-
-            and:
-
-            $$
-            f(2)=-2
-            $$
-
-            Hence the variation table below :
-
-            <script type="text/tikz">
-            \begin{tikzpicture}[line width=1.2pt, font=\Large]
-                \tkzTabInit[lgt=8, espcl=4, lw=1.2pt]
-                    {$x$/1.5 , Signe de $f'(x)=3x(x-2)$/1.5 , Variations de $f(x)=x^3-3x^2+2$/2.5}
-                    {$-\infty$, $0$, $2$, $+\infty$}
-                \tkzTabLine{,+,z,-,z,+,}
-                \tkzTabVar{-/ $-\infty$, +/ $2$, -/ $-2$, +/ $+\infty$}
-            \end{tikzpicture}
-            </script>
-
-!!! note
-    Let $f$ be the function defined on $\mathbb{R}$ by:
-
-    $$
-    f(x)=x^3-3x^2+2
-    $$
-
-    1. 
-
-        === "Question"
-            Determine the derivative function $f'$ of $f$ on $\mathbb{R}$.
-
-        === "Solution"
-            We have:
-
-            $$
-            f(x)=x^3-3x^2+2
-            $$
-
-            We differentiate each term separately:
-
-            $$
-            \begin{align*}
-            f'(x) &= (x^3)'-(3x^2)'+(2)' \\
-                  &= 3x^2-3\times 2x+0 \\
-                  &= 3x^2-6x
-            \end{align*}
-            $$
-
-            We factor:
-
-            $$
-            f'(x)=3x(x-2)
-            $$
-
-            Finally:
-
-            $$
-            \boxed{f'(x)=3x(x-2)}
-            $$
-
-    2. 
-
-        === "Question"
-            Solve the inequality $f'(x)\geq 0$ on $\mathbb{R}$.
-
-        === "Solution"
-            We know that:
-
-            $$
-            f'(x)=3x(x-2)
-            $$
-
-            The roots of $f'$ are:
-
-            $$
-            x=0
-            \qquad
-            \text{and}
-            \qquad
-            x=2
-            $$
-
-            We study the sign of the product of factors.
-
-            Conclusion:
-
-            $$
-            \boxed{f'(x)\geq 0 \Longleftrightarrow x\in]-\infty;0]\cup[2;+\infty[}
-            $$
-
-    3. 
-
-        === "Question"
-            Deduce the variation table of $f$ on $\mathbb{R}$.
-
-        === "Solution"
-            We deduce the variation table below. (see below)
-
-            Moreover, we compute:
-
-            $$
-            f(0)=2
-            $$
-
-            and:
-
-            $$
-            f(2)=-2
-            $$
-
-            Hence the variation table below :
-
-            ```tikzjax
-            \begin{tikzpicture}[line width=1.2pt, font=\Large]
-                \tkzTabInit[lgt=8, espcl=4, lw=1.2pt]
-                    {$x$/1.5 , Signe de $f'(x)=3x(x-2)$/1.5 , Variations de $f(x)=x^3-3x^2+2$/2.5}
-                    {$-\infty$, $0$, $2$, $+\infty$}
-                \tkzTabLine{,+,z,-,z,+,}
-                \tkzTabVar{-/ $-\infty$, +/ $2$, -/ $-2$, +/ $+\infty$}
-            \end{tikzpicture}
-            ```
-
-### 2. [tkz-tab](https://ctan.org/pkg/tkz-tab) CTAN package
+This code :
 
 ```html
 <script type="text/tikz">
+\begin{tikzpicture}
+    \draw (0,0) circle (1in);
+\end{tikzpicture}
+</script>
+```
+
+renders as
+
+<script type="text/tikz">
+\begin{tikzpicture}
+    \draw (0,0) circle (1in);
+\end{tikzpicture}
+</script>
+
+### 2. TikZ Figures Example with `tikzjax` code block
+
+In MkDocs Markdown Pages, to draw TikZ Figures, you can also use the syntax with `tikzjax` code blocks:
+
+This code :
+
+````html
+```tikzjax
+\begin{tikzpicture}
+    \draw (0,0) circle (1in);
+\end{tikzpicture}
+</script>
+```
+````
+
+renders as:
+
+<script type="text/tikz">
+\begin{tikzpicture}
+    \draw (0,0) circle (1in);
+\end{tikzpicture}
+</script>
+
+### 3. `tkz-tab` Basic Example with `<script>` tag
+
+In HTML Pages, to draw **tkz-tab** **math variation tables** / **math sign tables**, you can basically use this syntax :
+
+This code :
+
+```latex
+<script type="text/tikz">
 \begin{tikzpicture}[line width=1.2pt, font=\Large]
-    \tkzTabInit[lgt=5, espcl=4, lw=1.2pt]
+    \tkzTabInit[lgt=5, espcl=3, lw=1.2pt]
         {$x$/1.5 , $f'(x)=3x(x-2)$/1.5 , $f(x)=x^3-3x^2+2$/2.5}
         {$-\infty$, $0$, $2$, $+\infty$}
     \tkzTabLine{,+,z,-,z,+,}
@@ -357,10 +101,12 @@ Moreover, [rod2ik/tikzjax](https://github.com/rod2ik/tikzjax) adds a more conven
 \end{tikzpicture}
 </script>
 ```
+
+renders as:
 
 <script type="text/tikz">
 \begin{tikzpicture}[line width=1.2pt, font=\Large]
-    \tkzTabInit[lgt=5, espcl=4, lw=1.2pt]
+    \tkzTabInit[lgt=5, espcl=3, lw=1.2pt]
         {$x$/1.5 , $f'(x)=3x(x-2)$/1.5 , $f(x)=x^3-3x^2+2$/2.5}
         {$-\infty$, $0$, $2$, $+\infty$}
     \tkzTabLine{,+,z,-,z,+,}
@@ -368,75 +114,52 @@ Moreover, [rod2ik/tikzjax](https://github.com/rod2ik/tikzjax) adds a more conven
 \end{tikzpicture}
 </script>
 
-## Markdown example with MkDocs
+### 4. `tkz-tab` Basic Example with `tikzjax` code block
 
-In a MkDocs page, use a fenced code block with the `tikzjax` language.
+In MkDocs Markdown Pages, to draw **tkz-tab** **math variation tables** / **math sign tables**, you can basically use this syntax :
 
-````markdown
+This code :
+
+````latex
 ```tikzjax
-\begin{tikzpicture}
-\tkzTabInit{
-$x$/1,
-$f'(x)$/1,
-$f(x)$/2
-}{
-$-\infty$, $\dfrac 32$, $+\infty$
-}
-\tkzTabLine{,-,z,+,}
-\tkzTabVar{+/$+\infty$, -/$0$, +/$+\infty$}
+\begin{tikzpicture}[line width=1.2pt, font=\Large]
+    \tkzTabInit[lgt=5, espcl=3, lw=1.2pt]
+        {$x$/1.5 , $f'(x)=3x(x-2)$/1.5 , $f(x)=x^3-3x^2+2$/2.5}
+        {$-\infty$, $0$, $2$, $+\infty$}
+    \tkzTabLine{,+,z,-,z,+,}
+    \tkzTabVar{-/ $-\infty$, +/ $2$, -/ $-2$, +/ $+\infty$}
 \end{tikzpicture}
 ```
 ````
 
-```tikzjax
-\begin{tikzpicture}
-\tkzTabInit{
-$x$/1,
-$f'(x)$/1,
-$f(x)$/2
-}{
-$-\infty$, $\dfrac 32$, $+\infty$
-}
-\tkzTabLine{,-,z,+,}
-\tkzTabVar{+/$+\infty$, -/$0$, +/$+\infty$}
+renders as:
+
+<script type="text/tikz">
+\begin{tikzpicture}[line width=1.2pt, font=\Large]
+    \tkzTabInit[lgt=5, espcl=3, lw=1.2pt]
+        {$x$/1.5 , $f'(x)=3x(x-2)$/1.5 , $f(x)=x^3-3x^2+2$/2.5}
+        {$-\infty$, $0$, $2$, $+\infty$}
+    \tkzTabLine{,+,z,-,z,+,}
+    \tkzTabVar{-/ $-\infty$, +/ $2$, -/ $-2$, +/ $+\infty$}
 \end{tikzpicture}
-```
+</script>
 
-````markdown
-```tikzjax
-\begin{tikzpicture}
-    \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
-    \draw[->, thick] (0,0) -- (0,3) node[above] {$y$};
-    \draw[thick] (0,0) -- (3,2);
-\end{tikzpicture}
-```
-````
+### 5. More Advanced Examples
 
-## Variation table with `tkz-tab`
-
-When `tkz-tab` is enabled in the global configuration, the `\tikzjaxTkzTab...` macros make it easy to centralize the table style.
-
-```tikzjax
-\begin{tikzpicture}[line width=\tikzjaxTkzTabLineWidth, font=\tikzjaxTkzTabFont]
-    \tkzTabInit[
-        lgt=\tikzjaxTkzTabLgt,
-        espcl=\tikzjaxTkzTabEspcl,
-        lw=\tikzjaxTkzTabLineWidth
-    ]
-        {
-            $x$/\tikzjaxTkzTabVariableRowHeight,
-            Sign of $f'(x)=2x-4$/\tikzjaxTkzTabSignRowHeight,
-            Variations of $f(x)=x^2-4x+1$/\tikzjaxTkzTabVariationRowHeight
-        }
-        {$-\infty$, $2$, $+\infty$}
-    \tkzTabLine{,-,z,+,}
-    \tkzTabVar{+/ $+\infty$, -/ $-3$, +/ $+\infty$}
-\end{tikzpicture}
-```
+For more advanced exemples, please see the [Advanced Examples Page](./reference.md).
 
 ## Intentionally invalid Tikz Code
 
-The following block is intentionally incomplete. It lets you check that the configured error image is displayed properly.
+The following block is **intentionally wrong** (it has an **intentional syntax error**) to let you check the configured error image is displayed properly.
+
+````latex
+```tikzjax
+\begin{tikzpicture}
+    \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
+```
+````
+
+renders as:
 
 ```tikzjax
 \begin{tikzpicture}
