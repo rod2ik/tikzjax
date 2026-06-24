@@ -78,7 +78,6 @@ In `mkdocs.yml`, add the optional configuration file and TikZJax to the extra Ja
 ```yaml
 extra_javascript:
   - tikzjax.config.js
-
 ```
 
 !!! important
