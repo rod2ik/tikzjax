@@ -1,6 +1,6 @@
 {
     "name": "@rod2ik/tikzjax",
-    "version": "1.0.0-beta32",
+    "version": "1.0.0",
     "description": "TikZJax loader",
     "author": "Jim Fowler",
     "contributors": [
