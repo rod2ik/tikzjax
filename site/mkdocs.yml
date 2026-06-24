@@ -39,7 +39,7 @@ nav:
       - Light/Dark themes: themes.md
       - Fallback Error Images: fallback-error-images.md
   - Advanced:
-      - Cache and performance: cache-performance.md
+      - Cache and Performance: cache-performance.md
       - API Reference: api-reference.md
       - Architecture: architecture.md
       - Troubleshooting: troubleshooting.md

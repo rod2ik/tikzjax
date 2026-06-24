@@ -4,14 +4,17 @@
 
 [rod2ik/tikzjax](https://github.com/rod2ik/tikzjax), is a [GPLv3](https://opensource.org/license/gpl-3.0) opensource project, that natively renders **TikZ/LaTeX** AND **tkz-tab/LaTeX** for **maths variation tables** and **maths sign tables** , directly inside an HTML page AND/OR inside usual documentation websites, notably **MkDocs** with **Material theme**.
 
-Please refer to this **MkDocs demo site, with documentation** for more info: [https:/rod2ik.github.io/tikzjax](https:/rod2ik.github.io/tikzjax)
+Please refer to this **MkDocs demo site, with documentation** for thorough documentation and more info: [https:/rod2ik.github.io/tikzjax](https:/rod2ik.github.io/tikzjax)
 
 [rod2ik/tikzjax](https://github.com/rod2ik/tikzjax) is originally a fork from the great works 👏👏👏 of :
 
 * [kisone/tikzjax](https://github.com/kisonecat/tikzjax) by [Jim Fowler](https://github.com/kisonecat)
 * [drgrice1/tikzjax](https://github.com/drgrice1/tikzjax) by [Glenn Rice](https://github.com/drgrice1) 
 
-Please note, however, that [rod2ik/tikzjax](https://github.com/rod2ik/tikzjax) has been, since then been massively :
+Both latter projects are based on their own **web2js** and **dvi2html** projects.  
+Note that [rod2ik/tikzjax](https://github.com/rod2ik/tikzjax) is based on custom forks [rod2ik/web2js](https://github.com/rod2ik/web2js) and [rod2ik/dvi2html](https://github.com/rod2ik/dvi2html).
+
+Please also note, that [rod2ik/tikzjax](https://github.com/rod2ik/tikzjax) has been, since then been massively :
 
 * **refactored as an ESM project**
 * **extended**, to render both **TikZ Figures** **AND** <bad>NEW</bad> `tkz-tab` macros for **math variations tables** / **math sign tables** :
@@ -181,8 +184,12 @@ renders as:
 ## Where to go next
 
 - [Installation](installation.md): load TikZJax on a page or in MkDocs.
-- [Configuration](configuration.md): understand all global options.
-- [`tikzjax.config.js`](tikzjax-config.md): a complete configuration file you can adapt.
-- [Usage](usage.md): HTML tags, Markdown blocks, and `data-*` attributes.
+- [Basic Examples](basic-examples.md): for Basic Examples.
+- [Advanced Examples](advanced-examples.md): for Advanced Examples.
+- [Configuration Overview](configuration.md): understand all global options.
 - [Themes](themes.md): light/dark rendering and Material for MkDocs.
+- [Fallback Error Images](fallback-error-images.md): understand how to customize Fallback Error Images for broken codes.
+- [Cache and Performance](cache-performance.md): understand cache and performance issues.
+- [API Reference](api-reference.md): An exhaustive API-Reference.
+- [Architecture](architecture.md): Some Information about the Architecture of the Project. For Devs.
 - [Troubleshooting](troubleshooting.md): common issues and fixes.
