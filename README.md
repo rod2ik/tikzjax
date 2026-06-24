@@ -6,7 +6,7 @@
 
 | ⚠️ Documentation Link ⚠️ |
 |---|
-| Please refer to this **MkDocs demo site, with documentation** for thorough documentation and more info: [https:/rod2ik.github.io/tikzjax](https:/rod2ik.github.io/tikzjax) |
+| Please refer to this **MkDocs demo site, with documentation** for thorough documentation and more info: [https://rod2ik.github.io/tikzjax](https://rod2ik.github.io/tikzjax) |
 
 [rod2ik/tikzjax](https://github.com/rod2ik/tikzjax) is originally a fork from the great works 👏👏👏 of :
 
