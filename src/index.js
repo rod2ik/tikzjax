@@ -626,7 +626,7 @@ const getThemeForWrapper = (wrapper) => {
     const lightClass = themeOptions.lightClass || 'light';
     const attribute = themeOptions.attribute || 'data-theme';
 
-    let localThemeElement = null;
+    let localThemeElement;
 
     try {
         localThemeElement = wrapper.closest(

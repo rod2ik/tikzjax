@@ -1,90 +1,76 @@
 const path = require("path");
 const webpack = require("webpack");
 const CopyPlugin = require("copy-webpack-plugin");
-const TerserPlugin = require("terser-webpack-plugin");
 const ESLintPlugin = require("eslint-webpack-plugin");
 
-module.exports = (_env, argv) => {
-    process.env.NODE_ENV = argv.mode ?? "development";
+module.exports = (_env, argv = {}) => {
+const mode = argv.mode || "development";
 
-    const config = {
-        entry: {
-            tikzjax: "./src/index.js",
-            "run-tex": "./src/run-tex.js"
-        },
+process.env.NODE_ENV = mode;
 
-        output: {
-            path: path.resolve(__dirname, "dist"),
-            filename: "[name].js"
-        },
+return {
+    entry: {
+        tikzjax: "./src/index.js",
+        "run-tex": "./src/run-tex.js"
+    },
 
-        devServer: {
-            static: path.join(__dirname, "./public"),
-            port: 9090
-        },
+    output: {
+        path: path.resolve(__dirname, "dist"),
+        filename: "[name].js"
+    },
 
-        devtool: process.env.NODE_ENV === "development" ? "source-map" : false,
+    devServer: {
+        static: path.join(__dirname, "./public"),
+        port: 9090
+    },
 
-        module: {
-            rules: [
+    devtool: mode === "development" ? "source-map" : false,
+
+    module: {
+        rules: [
+            {
+                test: /\.css$/,
+                use: ["style-loader", "css-loader"]
+            }
+        ]
+    },
+
+    performance: {
+        hints: false
+    },
+
+    plugins: [
+        new CopyPlugin({
+            patterns: [
                 {
-                    test: /\.css$/,
-                    use: ["style-loader", "css-loader"]
+                    from: "./css/fonts.css",
+                    to: path.resolve(__dirname, "dist")
+                },
+                {
+                    from: "./core.dump.gz",
+                    to: path.resolve(__dirname, "dist"),
+                    noErrorOnMissing: true
+                },
+                {
+                    from: "./tex.wasm.gz",
+                    to: path.resolve(__dirname, "dist"),
+                    noErrorOnMissing: true
+                },
+                {
+                    from: "./assets/*.svg",
+                    to: path.resolve(__dirname, "dist", "assets", "[name][ext]"),
+                    noErrorOnMissing: true
                 }
             ]
-        },
+        }),
 
-        performance: {
-            hints: false
-        },
+        new webpack.ProvidePlugin({
+            process: "process/browser"
+        }),
 
-        optimization: {
-            minimizer: [
-                new TerserPlugin({
-                    terserOptions: {
-                        format: {
-                            comments: false
-                        }
-                    },
-                    extractComments: false
-                })
-            ]
-        },
-
-        plugins: [
-            new CopyPlugin({
-                patterns: [
-                    {
-                        from: "./css/fonts.css",
-                        to: path.resolve(__dirname, "dist")
-                    },
-                    {
-                        from: "./core.dump.gz",
-                        to: path.resolve(__dirname, "dist"),
-                        noErrorOnMissing: true
-                    },
-                    {
-                        from: "./tex.wasm.gz",
-                        to: path.resolve(__dirname, "dist"),
-                        noErrorOnMissing: true
-                    },
-                    {
-                        from: "./assets/*.svg",
-                        to: path.resolve(__dirname, "dist", "assets", "[name][ext]"),
-                        noErrorOnMissing: true
-                    }
-                ]
-            }),
-
-            new webpack.ProvidePlugin({
-                process: "process/browser"
-            }),
-
-            new ESLintPlugin({
-                configType: "flat"
-            })
-        ]
-    };
-
-    return config;
+        new ESLintPlugin({
+            configType: "flat"
+        })
+    ]
+};
 };

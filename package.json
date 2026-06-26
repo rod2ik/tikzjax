@@ -8,25 +8,19 @@
         "Rodrigo Schwencke"
     ],
     "license": "GPL-3.0+",
-
     "main": "tikzjax.js",
     "type": "module",
-
     "repository": {
         "type": "git",
         "url": "git+https://github.com/rod2ik/tikzjax.git"
     },
-
     "files": [
         "dist"
     ],
-
     "engines": {
         "node": ">=18"
     },
-
     "packageManager": "yarn@1.22.22",
-
     "dependencies": {
         "@rod2ik/dvi2html": "0.0.7-beta7",
         "buffer": "^6.0.3",
@@ -36,7 +30,6 @@
         "stream-browserify": "^3.0.0",
         "threads": "^1.7.0"
     },
-
     "devDependencies": {
         "@awmottaz/prettier-plugin-void-html": "^2.1.0",
         "@eslint/js": "^10.0.1",
@@ -55,30 +48,21 @@
         "webpack-cli": "^7.0.3",
         "webpack-dev-server": "^5.2.4"
     },
-
     "scripts": {
         "clean": "rm -rf dist",
-
         "lint": "eslint . --fix",
         "format": "prettier --write .",
-
         "build:core": "webpack --config webpack.config.cjs --mode production",
         "build:assets": "yarn install-fonts && yarn gen-tex-files",
         "build": "yarn build:core && yarn build:assets",
-
         "validate:dist": "node validate-dist.js",
-
         "build:full:check": "yarn clean && yarn build && yarn validate:dist",
         "bfc": "yarn build:full:check",
-
         "build:dev": "webpack --config webpack.config.cjs --mode development",
         "serve": "webpack serve --config webpack.config.cjs --mode development",
-
         "ci": "yarn lint && yarn build:full:check",
-
         "install-fonts": "node installFonts.mjs",
         "gen-tex-files": "node genTexFiles.js",
-
         "deploy:cdn": "node deployToCdn.js"
     }
 }
