@@ -6,7 +6,7 @@
 
 Please refer to this **MkDocs Documentation & Demo Site** for more thorough documentation and more info: [https:/rod2ik.github.io/tikzjax](https:/rod2ik.github.io/tikzjax)
 
-Example 1:
+Example 1: (Click on the Light/Dark Button to swap themes)
 
 <script type="text/tikz">
 \begin{tikzpicture}[line width=1.2pt, font=\Large]
@@ -18,7 +18,7 @@ Example 1:
 \end{tikzpicture}
 </script>
 
-Example 2:
+Example 2: (Click on the Light/Dark Button to swap themes)
 
 <script type="text/tikz">
 \begin{tikzpicture}[line width=1.2pt, font=\Large]

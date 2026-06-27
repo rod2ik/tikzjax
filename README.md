@@ -13,7 +13,7 @@ Example 1:
 ![](./example1-light.png)
 ![](./example1-dark.png)
 
-Example 1:
+Example 2:
 
 ![](./example2-light.png)
 ![](./example2-dark.png)
