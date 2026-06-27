@@ -43,35 +43,35 @@ Please note, that:
 Also note, that [![Repo](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-181717?logo=github&logoColor=white)](https://github.com/rod2ik/tikzjax) has, since then, been massively :
 
 * **refactored as an ESM project**
-* **extended**, to render both <bad @dodgerblue>OLD</bad>**TikZ Figures** <bad @red>AND</bad> <bad>NEW</bad> `tkz-tab` macros, **LaTeX** style, for **math variations tables** / **math sign tables** :
-    * <bad>NEW</bad> a **global configuration file** `tikzjax.config.js` through `window.TikzJaxOptions`;  
+* **extended**, to render both <bad @dodgerblue>OLD</bad>**TikZ Figures** <bad @red>AND</bad> <bad @chartreuse>NEW</bad> `tkz-tab` macros, **LaTeX** style, for **math variations tables** / **math sign tables** :
+    * <bad @chartreuse>NEW</bad> a **global configuration file** `tikzjax.config.js` through `window.TikzJaxOptions`;  
     * inside a **custom HTML Bloc**, using a `<script type="text/tikz">` tag syntax:
         * <bad @dodgerblue>OLD</bad> automatic rendering of **TikZ** Figures (THE historical functionnality of [kisone/tikzjax](https://github.com/kisonecat/tikzjax))
-        * <bad>NEW</bad> ❗📢❗:warning: automatic rendering of `tkz-tab` macros, **LaTeX** style, for **maths variations tables** / **math sign tables** :warning:❗📢❗
-        * <bad>NEW</bad> Light/Dark Themes via the ***global customisation file***, or direct configuration. 
+        * <bad @chartreuse>NEW</bad> ❗📢❗:warning: automatic rendering of `tkz-tab` macros, **LaTeX** style, for **maths variations tables** / **math sign tables** :warning:❗📢❗
+        * <bad @chartreuse>NEW</bad> Light/Dark Themes via the ***global customisation file***, or direct configuration. 
         * the `<script>` syntax is also natively compatible inside an **Mkdocs Markdown** Page:
-            * <bad>NEW</bad> natively $100\%$ compatible with **Material Light/Dark Themes**
-            * <bad>NEW</bad> natively $100\%$ compatible with **Material Admonitions** (collapsible, or not)
-            * <bad>NEW</bad> natively $100\%$ compatible with **Material Content Tabs** (inside Admonitions, or not)
+            * <bad @chartreuse>NEW</bad> natively $100\%$ compatible with **Material Light/Dark Themes**
+            * <bad @chartreuse>NEW</bad> natively $100\%$ compatible with **Material Admonitions** (collapsible, or not)
+            * <bad @chartreuse>NEW</bad> natively $100\%$ compatible with **Material Content Tabs** (inside Admonitions, or not)
     * inside **MkDocs**, with **Material** (or without it..), using a **`tikzjax` code bloc** syntax, **natively**:
-        * <bad>NEW</bad> automatic rendering of **TikZ** Figures  
+        * <bad @chartreuse>NEW</bad> automatic rendering of **TikZ** Figures  
         (you could already this, but only via the `<script>` syntax, with kisone/tikzjax)
-        * <bad>NEW</bad> ❗📢❗ automatic rendering of `tkz-tab` macros for **maths variations tables** / **math sign tables** ❗📢❗
-        * <bad>NEW</bad> Compatibility with **Material Light/Dark Themes** (possibly customizable via the ***global customisation file***)
-        * <bad>NEW</bad> compatibility with **Material Admonitions**: collapsable or not
-        * <bad>NEW</bad> compatibility with **Material Content Tabs** 
+        * <bad @chartreuse>NEW</bad> ❗📢❗ automatic rendering of `tkz-tab` macros for **maths variations tables** / **math sign tables** ❗📢❗
+        * <bad @chartreuse>NEW</bad> Compatibility with **Material Light/Dark Themes** (possibly customizable via the ***global customisation file***)
+        * <bad @chartreuse>NEW</bad> compatibility with **Material Admonitions**: collapsable or not
+        * <bad @chartreuse>NEW</bad> compatibility with **Material Content Tabs** 
     * **Other Documentation Sites**:
         * Possibly all functionnalities of MkDocs, if your documentation tools uses python-markdown.
 
 All the latter syntaxes also offer:
 
-* <bad>NEW</bad> a **global configuration file** `tikzjax.config.js` through `window.TikzJaxOptions`
-* <bad @dodgerblue>OLD</bad> **per-table local overrides** through `data-*` attributes
-* <bad>NEW</bad> native and customizable **Light/Dark themes** support for **Custom HTML blocs**, <bad @red>AND</bad> **Material for MkDocs**
-* <bad @dodgerblue>OLD</bad> **browser-side cache** through IndexedD
-* <bad @dodgerblue>OLD</bad> **Spinner animation**
-* <bad @dodgerblue>OLD</bad> timeout, worker restart, retry handling
-* <bad>NEW</bad> A customizable **fallback error image**
+* <bad @chartreuse>NEW</bad> a **global configuration file** `tikzjax.config.js` through `window.TikzJaxOptions`
+* <bad @dodgerblue>OLD</bad> <bad @darkorange>EXTENDED TO TKZ-TAB</bad> **per-table local overrides** through `data-*` attributes
+* <bad @chartreuse>NEW</bad> native and customizable **Light/Dark themes** support for **Custom HTML blocs**, <bad @red>AND</bad> **Material for MkDocs**
+* <bad @dodgerblue>OLD</bad> <bad @darkorange>EXTENDED TO TKZ-TAB</bad> **browser-side cache** through IndexedD
+* <bad @dodgerblue>OLD</bad> <bad @darkorange>EXTENDED TO TKZ-TAB</bad> **Spinner animation**
+* <bad @dodgerblue>OLD</bad> <bad @darkorange>EXTENDED TO TKZ-TAB</bad> timeout, worker restart, retry handling
+* <bad @chartreuse>NEW</bad> A customizable **fallback error image**
 
 ## Tikz Figures Basic Examples
 

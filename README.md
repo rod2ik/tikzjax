@@ -54,9 +54,9 @@ Also note, that [![Repo](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-18
 All the latter syntaxes also offer:
 
 * [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) a **global configuration file** `tikzjax.config.js` through `window.TikzJaxOptions`
-* [![](https://img.shields.io/badge/OLD-blue)](https://github.com/rod2ik/tikzjax) **per-table local overrides** through `data-*` attributes
+* [![](https://img.shields.io/badge/OLD-blue)](https://github.com/rod2ik/tikzjax) [![](https://img.shields.io/badge/EXTENDED%20TO%20TKZ--TAB-orange)](https://github.com/rod2ik/tikzjax) **per-table local overrides** through `data-*` attributes
 * [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) native and customizable **Light/Dark themes** support for **Custom HTML blocs**, [![](https://img.shields.io/badge/AND-critical)](https://github.com/rod2ik/tikzjax) **Material for MkDocs**
-* [![](https://img.shields.io/badge/OLD-blue)](https://github.com/rod2ik/tikzjax) **browser-side cache** through IndexedD
-* [![](https://img.shields.io/badge/OLD-blue)](https://github.com/rod2ik/tikzjax) **Spinner animation**
-* [![](https://img.shields.io/badge/OLD-blue)](https://github.com/rod2ik/tikzjax) timeout, worker restart, retry handling
+* [![](https://img.shields.io/badge/OLD-blue)](https://github.com/rod2ik/tikzjax) [![](https://img.shields.io/badge/EXTENDED%20TO%20TKZ--TAB-orange)](https://github.com/rod2ik/tikzjax) **browser-side cache** through IndexedD
+* [![](https://img.shields.io/badge/OLD-blue)](https://github.com/rod2ik/tikzjax) [![](https://img.shields.io/badge/EXTENDED%20TO%20TKZ--TAB-orange)](https://github.com/rod2ik/tikzjax) **Spinner animation**
+* [![](https://img.shields.io/badge/OLD-blue)](https://github.com/rod2ik/tikzjax) [![](https://img.shields.io/badge/EXTENDED%20TO%20TKZ--TAB-orange)](https://github.com/rod2ik/tikzjax) timeout, worker restart, retry handling
 * [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) A customizable **fallback error image**
