@@ -35,7 +35,6 @@ Example 2:
 * [kisone/tikzjax](https://github.com/kisonecat/tikzjax) by [Jim Fowler](https://github.com/kisonecat)
 * [drgrice1/tikzjax](https://github.com/drgrice1/tikzjax) by [Glenn Rice](https://github.com/drgrice1) 
 
-
 Please note, that:
 
 * Both latter projects are based on their own **web2js** and **dvi2html** projects.  
