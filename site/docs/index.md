@@ -2,33 +2,61 @@
 
 ## Introduction
 
-[rod2ik/tikzjax](https://github.com/rod2ik/tikzjax), is a [GPLv3](https://opensource.org/license/gpl-3.0) opensource project, that natively renders **TikZ/LaTeX** AND **tkz-tab/LaTeX** for **maths variation tables** and **maths sign tables** , directly inside an HTML page AND/OR inside usual documentation websites, notably **MkDocs** with **Material theme**.
+[![Repo](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-181717?logo=github&logoColor=white)](https://github.com/rod2ik/tikzjax) is a [![License: GPL v3+](https://img.shields.io/badge/License-GPLv3%2B-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) opensource project, that natively renders **TikZ/LaTeX** AND **tkz-tab/LaTeX** for **maths variation tables** and **maths sign tables** , directly inside an HTML page AND/OR inside usual documentation websites, notably **MkDocs** with **Material theme**.
 
-Please refer to this **MkDocs demo site, with documentation** for thorough documentation and more info: [https:/rod2ik.github.io/tikzjax](https:/rod2ik.github.io/tikzjax)
+Please refer to this **MkDocs Documentation & Demo Site** for more thorough documentation and more info: [https:/rod2ik.github.io/tikzjax](https:/rod2ik.github.io/tikzjax)
 
-[rod2ik/tikzjax](https://github.com/rod2ik/tikzjax) is originally a fork from the great works 👏👏👏 of :
+Example 1:
+
+<script type="text/tikz">
+\begin{tikzpicture}[line width=1.2pt, font=\Large]
+    \tkzTabInit[lgt=6, espcl=3, lw=1.2pt]
+        {$x$/1.5 , $f'(x)=3(x+1)(x-2)$/1.5 , $f(x)=x^3-3x^2-6x+1$/2.5}
+        {$-\infty$, $-1$, $2$, $+\infty$}
+    \tkzTabLine{,+,z,-,z,+,}
+    \tkzTabVar{-/$-\infty$, +/$3$, -/$-15$, +/$+\infty$}
+\end{tikzpicture}
+</script>
+
+Example 2:
+
+<script type="text/tikz">
+\begin{tikzpicture}[line width=1.2pt, font=\Large]
+    \tkzTabInit[lgt=6, espcl=2.5, lw=1.2pt]
+        {$x$/1.5 , $f'(x)=\dfrac{(x-1)(x-3)}{(x-2)^2}$/1.8 , $f(x)=x+1+\dfrac{1}{x-2}$/3}
+        {$-\infty$, $1$, $2$, $3$, $+\infty$}
+    \tkzTabLine{,+,z,-,d,-,z,+,}
+    \tkzTabVar{-/$-\infty$, +/$1$, -D+/$-\infty$ / $+\infty$, -/$5$, +/$+\infty$}
+\end{tikzpicture}
+</script>
+
+[![Repo](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-181717?logo=github&logoColor=white)](https://github.com/rod2ik/tikzjax) is originally a fork from the great works 👏👏👏 of :
 
 * [kisone/tikzjax](https://github.com/kisonecat/tikzjax) by [Jim Fowler](https://github.com/kisonecat)
 * [drgrice1/tikzjax](https://github.com/drgrice1/tikzjax) by [Glenn Rice](https://github.com/drgrice1) 
 
-Both latter projects are based on their own **web2js** and **dvi2html** projects.  
-Note that [rod2ik/tikzjax](https://github.com/rod2ik/tikzjax) is based on custom forks [rod2ik/web2js](https://github.com/rod2ik/web2js) and [rod2ik/dvi2html](https://github.com/rod2ik/dvi2html).
 
-Please also note, that [rod2ik/tikzjax](https://github.com/rod2ik/tikzjax) has been, since then been massively :
+Please note, that:
+
+* Both latter projects are based on their own **web2js** and **dvi2html** projects.  
+* [![Repo](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-181717?logo=github&logoColor=white)](https://github.com/rod2ik/tikzjax) is based on its own custom forks [rod2ik/web2js](https://github.com/rod2ik/web2js) and [rod2ik/dvi2html](https://github.com/rod2ik/dvi2html).
+
+Also note, that [![Repo](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-181717?logo=github&logoColor=white)](https://github.com/rod2ik/tikzjax) has, since then, been massively :
 
 * **refactored as an ESM project**
-* **extended**, to render both **TikZ Figures** **AND** <bad>NEW</bad> `tkz-tab` macros for **math variations tables** / **math sign tables** :
+* **extended**, to render both <bad @dodgerblue>OLD</bad>**TikZ Figures** <bad @red>AND</bad> <bad>NEW</bad> `tkz-tab` macros, **LaTeX** style, for **math variations tables** / **math sign tables** :
     * <bad>NEW</bad> a **global configuration file** `tikzjax.config.js` through `window.TikzJaxOptions`;  
     * inside a **custom HTML Bloc**, using a `<script type="text/tikz">` tag syntax:
         * <bad @dodgerblue>OLD</bad> automatic rendering of **TikZ** Figures (THE historical functionnality of [kisone/tikzjax](https://github.com/kisonecat/tikzjax))
-        * <bad>NEW</bad> ❗📢❗ automatic rendering of `tkz-tab` macros for **maths variations tables** / **math sign tables** ❗📢❗
-        * <bad>NEW</bad> Light/Dark Themes via the ***global customisation file*** 
-        * the `<script>` syntax is natively compatible inside an Mkdocs Markdown Page:
-            * <bad>NEW</bad> natively compatible with **Material Light/Dark Themes**
-            * <bad>NEW</bad> compatibility with **Material Admonitions**: collapsable or not
-            * <bad>NEW</bad> compatibility with **Material Content Tabs** 
-    * inside **MkDocs**, with **Material** (or without it..), using a `tikzjax` code bloc syntax, **natively**:
-        * <bad>NEW</bad> automatic rendering of **TikZ** Figures
+        * <bad>NEW</bad> ❗📢❗:warning: automatic rendering of `tkz-tab` macros, **LaTeX** style, for **maths variations tables** / **math sign tables** :warning:❗📢❗
+        * <bad>NEW</bad> Light/Dark Themes via the ***global customisation file***, or direct configuration. 
+        * the `<script>` syntax is also natively compatible inside an **Mkdocs Markdown** Page:
+            * <bad>NEW</bad> natively $100\%$ compatible with **Material Light/Dark Themes**
+            * <bad>NEW</bad> natively $100\%$ compatible with **Material Admonitions** (collapsible, or not)
+            * <bad>NEW</bad> natively $100\%$ compatible with **Material Content Tabs** (inside Admonitions, or not)
+    * inside **MkDocs**, with **Material** (or without it..), using a **`tikzjax` code bloc** syntax, **natively**:
+        * <bad>NEW</bad> automatic rendering of **TikZ** Figures  
+        (you could already this, but only via the `<script>` syntax, with kisone/tikzjax)
         * <bad>NEW</bad> ❗📢❗ automatic rendering of `tkz-tab` macros for **maths variations tables** / **math sign tables** ❗📢❗
         * <bad>NEW</bad> Compatibility with **Material Light/Dark Themes** (possibly customizable via the ***global customisation file***)
         * <bad>NEW</bad> compatibility with **Material Admonitions**: collapsable or not
@@ -38,12 +66,12 @@ Please also note, that [rod2ik/tikzjax](https://github.com/rod2ik/tikzjax) has b
 
 All the latter syntaxes also offer:
 
-* <bad>NEW</bad> a **global configuration file** `tikzjax.config.js` through `window.TikzJaxOptions`;
-* <bad>NEW</bad> **per-table local overrides** through `data-*` attributes;
-* <bad>NEW</bad> native and customizable **Light/Dark themes** support, including **Material for MkDocs**;
-* <bad @chartreuse> HALF NEW</bad> **browser-side cache** through IndexedD ( <bad @dodgerblue>OLD</bad> for **TikZ Figures** and <bad>NEW</bad> for `tkz-tab` tables )
-* <bad @chartreuse> HALF NEW</bad> **Spinner animation** ( <bad @dodgerblue>OLD</bad> for **TikZ Figures** and <bad>NEW</bad> for `tkz-tab` tables )
-* <bad @chartreuse> HALF NEW</bad> timeout, worker restart, retry handling ( <bad @dodgerblue>OLD</bad> for **TikZ Figures** and <bad>NEW</bad> for `tkz-tab` tables )
+* <bad>NEW</bad> a **global configuration file** `tikzjax.config.js` through `window.TikzJaxOptions`
+* <bad @dodgerblue>OLD</bad> **per-table local overrides** through `data-*` attributes
+* <bad>NEW</bad> native and customizable **Light/Dark themes** support for **Custom HTML blocs**, <bad @red>AND</bad> **Material for MkDocs**
+* <bad @dodgerblue>OLD</bad> **browser-side cache** through IndexedD
+* <bad @dodgerblue>OLD</bad> **Spinner animation**
+* <bad @dodgerblue>OLD</bad> timeout, worker restart, retry handling
 * <bad>NEW</bad> A customizable **fallback error image**
 
 ## Tikz Figures Basic Examples
