@@ -10,13 +10,13 @@
 
 Example 1:
 
-![](./example1-light.png)
-![](./example1-dark.png)
+![](https://raw.githubusercontent.com/rod2ik/tikzjax/main/assets/example1-light.png)
+![](https://raw.githubusercontent.com/rod2ik/tikzjax/main/assets/example1-dark.png)
 
 Example 2:
 
-![](./example2-light.png)
-![](./example2-dark.png)
+![](https://raw.githubusercontent.com/rod2ik/tikzjax/main/assets/example2-light.png)
+![](https://raw.githubusercontent.com/rod2ik/tikzjax/main/assets/example2-dark.png)
 
 [![Repo](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-181717?logo=github&logoColor=white)](https://github.com/rod2ik/tikzjax) is originally a fork from the great works 👏👏👏 of :
 
@@ -40,7 +40,7 @@ Also note, that [![Repo](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-18
         * the `<script>` syntax is also natively compatible inside an **Mkdocs Markdown** Page:
             * [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) natively 100% compatible with **Material Light/Dark Themes**
             * [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) natively 100% compatible with **Material Admonitions** (collapsible, or not)
-            * [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) natively 100% compatible with **Material Content Tabs** (inside Admonitions, or not)
+            * [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) natively 100$% compatible with **Material Content Tabs** (inside Admonitions, or not)
     * inside **MkDocs**, with **Material** (or without it..), using a **`tikzjax` code bloc** syntax, **natively**:
         * [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) automatic rendering of **TikZ** Figures  
         (you could already this, but only via the `<script>` syntax, with kisone/tikzjax)
