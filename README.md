@@ -39,7 +39,7 @@ Also note, that [![Repo](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-18
         * [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) Light/Dark Themes via the ***global customisation file***, or direct configuration. 
         * the `<script>` syntax is also natively compatible inside an **Mkdocs Markdown** Page:
             * [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) natively $100\%$ compatible with **Material Light/Dark Themes**
-            * [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) natively $100\%$ compatible with **Material Admonitions** (collapsible, or not)
+            * [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) natively $100%$ compatible with **Material Admonitions** (collapsible, or not)
             * [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) natively $100\%$ compatible with **Material Content Tabs** (inside Admonitions, or not)
     * inside **MkDocs**, with **Material** (or without it..), using a **`tikzjax` code bloc** syntax, **natively**:
         * [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) automatic rendering of **TikZ** Figures  
