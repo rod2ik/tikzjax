@@ -131,9 +131,9 @@ The page shows how to integrate on your custom project.
             {% endblock %}
 
             {% block libs %}
-                {{ super() }}    
+                {{ super() }}
 
-                <script type="module" src="{{ base_url }}/local/path/to/your/tikzjax.config.js"></script>
+                <script src="{{ 'local/path/to/your/tikzjax.config.js' | url }}"></script>
                 <link rel="stylesheet" type="text/css" href="https://rod2ik.github.io/cdn/tikzjax/fonts.css">
                 <script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.js"></script>
             {% endblock %}
@@ -142,7 +142,7 @@ The page shows how to integrate on your custom project.
             {% include "partials/footer.html" with context %}
             {% endblock %}
             ````
-        * YOU MAY ALSO place the optional config file reference to `tikzjax.config.js` (AND ONLY THIS FILE) under the `extra_javacript` entry of `mkdocs.yml` :
+        * YOU MAY ALSO (LESS SAFE) place the optional config file reference to `tikzjax.config.js` (AND ONLY THIS FILE) under the `extra_javacript` entry of `mkdocs.yml` :
 
             ```yaml
             extra_javascript:
