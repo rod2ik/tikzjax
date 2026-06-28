@@ -12,14 +12,14 @@ In one word, the installation is a **CDN Installation**, both in :
 
 In a regular HTML page, load the font stylesheet first, then the TikZJax script.
 
-=== "Without the optional global config file"
+=== "WITHOUT the optional global config file"
     ```html
     <link rel="stylesheet" href="https://rod2ik.github.io/cdn/tikzjax/fonts.css">
     <script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.js"></script>
     ```
-=== "With the optional global config file `tikzjax.config.js`"
+=== "WITH the optional global config file `tikzjax.config.js`"
     ```html
-    <script src="tikzjax.config.js"></script>
+    <script src="/path/to/your/local/tikzjax.config.js"></script>
     <link rel="stylesheet" href="https://rod2ik.github.io/cdn/tikzjax/fonts.css">
     <script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.js"></script>
     ```
@@ -150,15 +150,6 @@ The page shows how to integrate on your custom project.
             ```
 
 ### 2.2 `mkdocs.yml`: superfences
-!!! warning
-    * Please note that, stricto sensu, the following extensions ARE NOT REQUIRED for the **TikZJax** project to work in MkDocs (which should work perfectly without those) :
-        * loading **MathJax** as CDN, IS NOT REQUIRED (math formulas should render correctly inside math variations tables and math sign tables, without MathJaX)
-        * the following `markdown_extensions` ARE NOT REQUIRED : 
-            * `admonition`, 
-            * `pymdownx.details`,    (for Collapsible admonitions)
-            * `pymdownx.arithmatex`, (for Mathjax)
-            * `pymdownx.tabbed`,     (for Content Tabs)
-    * However, these are often loaded together, and some examples on this site require them all to test their compatibility with TikzJaX, so they are left as they are, as example configs.
 
 !!! success "Superfences Config for `tikzjax` bloc codes"
     * TikZJax is already working with the `<script type="text/tikz">` syntax.
@@ -173,7 +164,17 @@ The page shows how to integrate on your custom project.
               format: !!python/name:pymdownx.superfences.fence_code_format
     ````
 
-Hereafter are some config examples , which all use an existing `overrides/main.html` file (if you have already none, otherwise, create it, you may customize your personal `custom_dir` in your `mkdocs.yml` as you wish):
+Hereafter are some config examples for `mkdocs.yml`, which all use an existing `overrides/main.html` file (if you have already none, otherwise, create it, you may customize your personal `custom_dir` in your `mkdocs.yml` as you wish):
+
+!!! warning
+    * Please note that, stricto sensu, the following extensions ARE NOT REQUIRED for the **TikZJax** project to work in MkDocs (which should work perfectly without those) :
+        * loading **MathJax** as CDN, IS NOT REQUIRED (math formulas should render correctly inside math variations tables and math sign tables, without MathJaX)
+        * the following `markdown_extensions` ARE NOT REQUIRED : 
+            * `admonition`, 
+            * `pymdownx.details`,    (for Collapsible admonitions)
+            * `pymdownx.arithmatex`, (for Mathjax)
+            * `pymdownx.tabbed`,     (for Content Tabs)
+    * However, these are often loaded together, and some examples on this site require them all to test their compatibility with TikzJaX, so they are left as they are, as example configs.
 
 === "overrides/main.html"
     ````html
@@ -198,6 +199,27 @@ Hereafter are some config examples , which all use an existing `overrides/main.h
     {% block footer scoped %}
     {% include "partials/footer.html" with context %}
     {% endblock %}
+    ````
+=== "mkdocs.yml, Minimal"
+    ````yaml
+    site_name: yourSiteName
+    site_url: yourSiteUrl
+    theme:
+      name: material
+      custom_dir: overrides
+      language: fr
+    nav:
+      - Home: index.md
+
+    markdown_extensions:
+      - pymdownx.superfences:   # required for ```tikzjax ... ``` code block syntaxes
+          custom_fences:
+            - name: tikzjax
+              class: language-tikzjax
+              format: !!python/name:pymdownx.superfences.fence_code_format
+
+    extra_javascript:
+    - assets/javascripts/tikzjax.config.js
     ````
 === "mkdocs.yml, WITH Material Light/Dark Themes (with palette)"
     ````yaml
