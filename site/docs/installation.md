@@ -72,6 +72,13 @@ renders as:
 \end{tikzpicture}
 </script>
 
+### 1.3 Custom HTML Page Rendering
+
+If you want to see how [rod2ik/TikZJax](https://github.com/rod2ik/tikzjax) is rendered, and can be configured with Light/Dark themes, on a TOTALLY CUSTOM HTML PAGE, completely independently of MkDocs, please have a look to this more complex page : [Custom HTML Page](./custom.html).
+
+Note that in this case, Light and Dark themes are stored on `localStorage`, thus locally, on your web Browser.
+The page shows how to integrate on your custom project.
+
 ## 2. Installation in MkDocs
 
 ### 2.1 Configure CDN Files in `main.html`

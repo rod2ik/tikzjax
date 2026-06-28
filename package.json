@@ -1,7 +1,26 @@
 {
     "name": "@rod2ik/tikzjax",
-    "version": "1.0.2",
-    "description": "TikZJax loader",
+    "version": "1.0.3",
+    "description": "TikZ AND tkz-tab loader in custom HTML pages and MkDocs Material, with Light/Dark Themes",
+    "keywords": [
+        "tikz",
+        "tikzjax",
+        "latex",
+        "tex",
+        "pgf",
+        "svg",
+        "math",
+        "diagram",
+        "diagrams",
+        "graphics",
+        "browser",
+        "webassembly",
+        "wasm",
+        "mkdocs",
+        "mkdocs-material",
+        "tkz-tab",
+        "variation-table"
+    ],
     "author": "Jim Fowler",
     "contributors": [
         "Glenn Rice",
