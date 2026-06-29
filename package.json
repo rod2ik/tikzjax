@@ -1,6 +1,6 @@
 {
     "name": "@rod2ik/tikzjax",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "description": "TikZ AND tkz-tab loader in custom HTML pages and MkDocs Material, with Light/Dark Themes",
     "keywords": [
         "tikz",
@@ -11,6 +11,8 @@
         "pgf",
         "svg",
         "math",
+        "maths",
+        "mathematics",
         "diagram",
         "diagrams",
         "graphics",
@@ -20,12 +22,16 @@
         "mkdocs",
         "mkdocs-material",
         "variation",
+        "variations",
         "sign",
         "table",
+        "tables",
         "variation-table",
         "math-variation-table",
+        "maths-variation-tables",
         "sign-table",
-        "math-sign-table"
+        "math-sign-table",
+        "maths-sign-tables"
     ],
     "author": "Jim Fowler",
     "contributors": [

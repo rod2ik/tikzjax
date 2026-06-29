@@ -374,7 +374,7 @@ const createBrokenImageElement = () => {
 const createBrokenImage = () => {
     const wrapper = document.createElement('span');
 
-    wrapper.className = 'tikzjax-wrapper tikzjax-broken-wrapper';
+    wrapper.className = 'tikzjax-wrapper tikzjax-broken-wrapper mathjax_ignore';
 
     wrapper.style.display = 'block';
     wrapper.style.width = '100%';
@@ -422,6 +422,37 @@ const isWhiteValue = (value) => {
         v === 'rgb(255,255,255)' ||
         v === 'rgb(255, 255, 255)'
     );
+};
+
+const isTransparentValue = (value) => {
+    if (!value) return true;
+
+    const v = value.trim().toLowerCase();
+
+    return (
+        v === 'transparent' ||
+        v === 'initial' ||
+        v === 'inherit' ||
+        /^rgba\(\s*0\s*,\s*0\s*,\s*0\s*,\s*0(?:\.0+)?\s*\)$/.test(v) ||
+        /^rgba\(.*?,\s*0(?:\.0+)?\s*\)$/.test(v)
+    );
+};
+
+const getEffectiveBackgroundColor = (element, fallbackTheme = 'light') => {
+    let node = element;
+
+    while (node) {
+        const computed = window.getComputedStyle(node);
+        const backgroundColor = computed.backgroundColor;
+
+        if (backgroundColor && !isTransparentValue(backgroundColor)) {
+            return backgroundColor;
+        }
+
+        node = node.parentElement;
+    }
+
+    return fallbackTheme === 'dark' ? '#000000' : '#ffffff';
 };
 
 const isTextNode = (node) => {
@@ -475,6 +506,11 @@ const normalizeStyleForTheme = (styleText, node) => {
         );
     }
 
+    result = result.replace(
+        /stroke\s*:\s*(white|#ffffff|#fff|rgb\(255,\s*255,\s*255\))\b/gi,
+        'stroke: var(--tikzjax-background-color)'
+    );
+
     return result;
 };
 
@@ -506,6 +542,8 @@ const normalizeSvgForTheme = (svg) => {
 
                 if (isBlackValue(stroke)) {
                     node.setAttribute('stroke', 'currentColor');
+                } else if (isWhiteValue(stroke)) {
+                    node.setAttribute('stroke', 'var(--tikzjax-background-color)');
                 }
             }
 
@@ -658,9 +696,12 @@ const getThemeForWrapper = (wrapper) => {
 
 const applyThemeToTikz = (root = document) => {
     getTikzWrappers(root).forEach((wrapper) => {
-        const isDark = getThemeForWrapper(wrapper) === 'dark';
+        const theme = getThemeForWrapper(wrapper);
+        const isDark = theme === 'dark';
+        const backgroundColor = getEffectiveBackgroundColor(wrapper, theme);
 
         wrapper.style.color = isDark ? '#ffffff' : '#000000';
+        wrapper.style.setProperty('--tikzjax-background-color', backgroundColor);
 
         wrapper.querySelectorAll('svg').forEach((svg) => {
             normalizeSvgForTheme(svg);
@@ -945,7 +986,7 @@ const handleMkDocsTabsInteraction = (event) => {
 // =================================================
 const wrapSvg = (svg) => {
     const wrapper = document.createElement('span');
-    wrapper.className = 'tikzjax-wrapper';
+    wrapper.className = 'tikzjax-wrapper mathjax_ignore';
 
     wrapper.appendChild(svg);
 
@@ -1015,7 +1056,7 @@ const processTikzSources = async (sources) => {
         const loader = createLoader(elt.dataset || {});
 
         const wrapper = document.createElement('span');
-        wrapper.className = 'tikzjax-wrapper tikzjax-loading';
+        wrapper.className = 'tikzjax-wrapper tikzjax-loading mathjax_ignore';
         wrapper.style.display = 'inline-flex';
         wrapper.style.alignItems = 'center';
         wrapper.style.justifyContent = 'center';

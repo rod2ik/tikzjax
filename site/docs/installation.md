@@ -149,11 +149,13 @@ The page shows how to integrate on your custom project.
             - local/path/to/your/tikzjax.config.js
             ```
 
-### 2.2 `mkdocs.yml`: superfences
+### 2.2 `mkdocs.yml` & Superfences
 
 !!! success "Superfences Config for `tikzjax` bloc codes"
+    If you already added the 2/3 CDN config lines to your `main.html`, then :
+
     * TikZJax is already working with the `<script type="text/tikz">` syntax.
-    * However, if you wish to also use the `tikzjax` code block syntax inside MkDocs, then you MUST add a **superfences** entry in your `mkdocs.yml`:
+    * However, IF you also wish to use the `tikzjax` code block syntax inside MkDocs, then you MUST add a **superfences** entry in your `mkdocs.yml`. So, technically, Adding the following config lines for superfences in `mkdocs.yml` is OPTIONAL : TO BE ADDED ONLY IF YOU PLAN TO USE tikzjax code blocks inside markdown pages :
 
     ````yaml
     markdown_extensions:
@@ -166,9 +168,15 @@ The page shows how to integrate on your custom project.
 
 Hereafter are some config examples for `mkdocs.yml`, which all use an existing `overrides/main.html` file (if you have already none, otherwise, create it, you may customize your personal `custom_dir` in your `mkdocs.yml` as you wish):
 
-!!! warning
-    * Please note that, stricto sensu, the following extensions ARE NOT REQUIRED for the **TikZJax** project to work in MkDocs (which should work perfectly without those) :
-        * loading **MathJax** as CDN, IS NOT REQUIRED (math formulas should render correctly inside math variations tables and math sign tables, without MathJaX)
+!!! danger "Minimal `mkdocs.yml` & MathJax Conflicts"
+    * Please note that, stricto sensu, the following extensions ARE NOT REQUIRED for the **TikZJax** project to work in MkDocs :
+        * **MathJax** is **NOT REQUIRED** stricto sensu. Adding **MathJax** configs in `mkdocs.yml` **IS OPTIONAL AND TOTALLY INDEPENDANT** of [![Repo](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-181717?logo=github&logoColor=white)](https://github.com/rod2ik/tikzjax) : 
+            * Mathjax is for rendering Maths **OUTSIDE** maths variations/sign tables
+            * TikZJax is for rendering Maths **INSIDE** maths variations/sign tables
+            * Mathjax and TikZJax **config files** **ARE TOTALLY INDEPENDANT** of one another, and **DO NOT CONFLICT** because their config params are place in different JS objects (*window.MathJax* vs *window.TikzJaxOptions*)
+            * MathJax normally ignores `script`, `pre`, `code` tags, so there really should be no conflict with `<script type="text/tikz">...</script>` syntax.
+            TikZJax renderings have been isolated from MathJax renderings, via the addition of a `mathjax_ignore` class in TikZJax script tags, as the [MathsJax Documentation](https://docs.mathjax.org/en/v4.0/options/document.html) recommends: this prevents the TikZJax wrapper from being read by MathJax.
+
         * the following `markdown_extensions` ARE NOT REQUIRED : 
             * `admonition`, 
             * `pymdownx.details`,    (for Collapsible admonitions)

@@ -69,8 +69,8 @@ markdown_extensions:
 
 extra_css:
   - assets/css/style.css
-  - assets/css/columns.css
-  - assets/css/badges.css
+  # - assets/css/columns.css
+  # - assets/css/badges.css
 
 extra_javascript:
   - assets/javascripts/mathjax.js
