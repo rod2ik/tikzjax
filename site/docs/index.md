@@ -47,7 +47,7 @@ Also note, that [![Repo](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-18
     * <bad @chartreuse>NEW</bad> a **global configuration file** `tikzjax.config.js` through `window.TikzJaxOptions`;  
     * inside a **custom HTML Bloc**, using a `<script type="text/tikz">` tag syntax:
         * <bad @dodgerblue>OLD</bad> automatic rendering of **TikZ** Figures (THE historical functionnality of [kisone/tikzjax](https://github.com/kisonecat/tikzjax))
-        * <bad @chartreuse>NEW</bad> ❗📢❗:warning: automatic rendering of `tkz-tab` macros, **LaTeX** style, for **maths variations tables** / **math sign tables** :warning:❗📢❗
+        * <bad @chartreuse>NEW</bad> ❗📢❗⚠️ automatic rendering of `tkz-tab` macros, **LaTeX** style, for **maths variations tables** / **math sign tables** ⚠️❗📢❗
         * <bad @chartreuse>NEW</bad> Light/Dark Themes via the ***global customisation file***, or direct configuration. 
         * the `<script>` syntax is also natively compatible inside an **Mkdocs Markdown** Page:
             * <bad @chartreuse>NEW</bad> natively $100\%$ compatible with **Material Light/Dark Themes**
@@ -56,7 +56,7 @@ Also note, that [![Repo](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-18
     * inside **MkDocs**, with **Material** (or without it..), using a **`tikzjax` code bloc** syntax, **natively**:
         * <bad @chartreuse>NEW</bad> automatic rendering of **TikZ** Figures  
         (you could already this, but only via the `<script>` syntax, with kisone/tikzjax)
-        * <bad @chartreuse>NEW</bad> ❗📢❗ automatic rendering of `tkz-tab` macros for **maths variations tables** / **math sign tables** ❗📢❗
+        * <bad @chartreuse>NEW</bad> ❗📢❗⚠️ automatic rendering of `tkz-tab` macros for **maths variations tables** / **math sign tables** ⚠️❗📢❗
         * <bad @chartreuse>NEW</bad> Compatibility with **Material Light/Dark Themes** (possibly customizable via the ***global customisation file***)
         * <bad @chartreuse>NEW</bad> compatibility with **Material Admonitions**: collapsable or not
         * <bad @chartreuse>NEW</bad> compatibility with **Material Content Tabs** 
