@@ -114,9 +114,10 @@ The page shows how to integrate on your custom project.
         ````
 
     === "WITH optional global config file"
-        Choose ( **AND ONLY ONE** ) from the followings, to add a reference towards the global config file `tikzjax.config.js`:
+        Choose one ( **AND ONLY ONE** ) from the followings, to add a reference towards the global config file `tikzjax.config.js`. 
 
         * YOU MAY place `tikzjax.config.js` reference inside your `main.html` file :
+            ⚠️ IMPORTANT : `tikzjax.config.js` file **MUST BE LOADED BEFORE** main `tikzjax.js` file (,and CSS) ⚠️
 
             ````html
             {% extends "base.html" %}
@@ -133,6 +134,7 @@ The page shows how to integrate on your custom project.
             {% block libs %}
                 {{ super() }}
 
+                <!-- IMPORTANT : `tikzjax.config.js` file MUST BE LOADED BEFORE main `tikzjax.js` file (,and CSS) -->
                 <script src="{{ 'local/path/to/your/tikzjax.config.js' | url }}"></script>
                 <link rel="stylesheet" type="text/css" href="https://rod2ik.github.io/cdn/tikzjax/fonts.css">
                 <script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.js"></script>
@@ -142,7 +144,7 @@ The page shows how to integrate on your custom project.
             {% include "partials/footer.html" with context %}
             {% endblock %}
             ````
-        * YOU MAY ALSO (LESS SAFE) place the optional config file reference to `tikzjax.config.js` (AND ONLY THIS FILE) under the `extra_javacript` entry of `mkdocs.yml` :
+        * YOU MAY ALSO (LESS SAFE) place the optional config file reference to `tikzjax.config.js` (it SHOULD work) under the `extra_javacript` entry of `mkdocs.yml` :
 
             ```yaml
             extra_javascript:

@@ -35,7 +35,7 @@ Also note, that [![Repo](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-18
     * [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) a **global configuration file** `tikzjax.config.js` through `window.TikzJaxOptions`;  
     * inside a **custom HTML Bloc**, using a `<script type="text/tikz">` tag syntax:
         * [![](https://img.shields.io/badge/OLD-blue)](https://github.com/rod2ik/tikzjax) automatic rendering of **TikZ** Figures (THE historical functionnality of [kisone/tikzjax](https://github.com/kisonecat/tikzjax))
-        * [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) ❗📢❗:warning: automatic rendering of `tkz-tab` macros, **LaTeX** style, for **maths variations tables** / **math sign tables** :warning:❗📢❗
+        * [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) ❗📢❗⚠️ automatic rendering of `tkz-tab` macros, **LaTeX** style, for **maths variations tables** / **math sign tables** ⚠️❗📢❗
         * [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) Light/Dark Themes via the ***global customisation file***, or direct configuration. 
         * the `<script>` syntax is also natively compatible inside an **Mkdocs Markdown** Page:
             * [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) natively 100% compatible with **Material Light/Dark Themes**
@@ -44,7 +44,7 @@ Also note, that [![Repo](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-18
     * inside **MkDocs**, with **Material** (or without it..), using a **`tikzjax` code bloc** syntax, **natively**:
         * [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) automatic rendering of **TikZ** Figures  
         (you could already this, but only via the `<script>` syntax, with kisone/tikzjax)
-        * [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) ❗📢❗ automatic rendering of `tkz-tab` macros for **maths variations tables** / **math sign tables** ❗📢❗
+        * [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) ❗📢❗⚠️ automatic rendering of `tkz-tab` macros for **maths variations tables** / **math sign tables** ⚠️❗📢❗
         * [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) Compatibility with **Material Light/Dark Themes** (possibly customizable via the ***global customisation file***)
         * [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) compatibility with **Material Admonitions**: collapsable or not
         * [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) compatibility with **Material Content Tabs** 
