@@ -4,9 +4,10 @@
 
 [![Repo](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-181717?logo=github&logoColor=white)](https://github.com/rod2ik/tikzjax) is a [![License: GPL v3+](https://img.shields.io/badge/License-GPLv3%2B-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) opensource project, that natively renders **TikZ/LaTeX** AND **tkz-tab/LaTeX** for **maths variation tables** and **maths sign tables** , directly inside an HTML page AND/OR inside usual documentation websites, notably **MkDocs** with **Material theme**. Star this project, if you like it 🫶🫶🫶 !
 
-| ⚠️ Documentation Link ⚠️ |
+| ⚠️ Documentation Link & Testing Site ⚠️ |
 |---|
 | Please refer to this **MkDocs Documentation & Demo Site** for more thorough documentation and more info: [https://rod2ik.github.io/tikzjax](https://rod2ik.github.io/tikzjax) |
+| A MINIMAL MKDOCS TIKZJAX TESTING REPOSITORY : [https://github.com/rod2ik/minimal-mkdocs-tikzjax](https://github.com/rod2ik/minimal-mkdocs-tikzjax) <br/> Clone It. Test it locally. |
 
 Example 1:
 
@@ -60,3 +61,7 @@ All the latter syntaxes also offer:
 * [![](https://img.shields.io/badge/OLD-blue)](https://github.com/rod2ik/tikzjax) [![](https://img.shields.io/badge/EXTENDED%20TO%20TKZ--TAB-orange)](https://github.com/rod2ik/tikzjax) **Spinner animation**
 * [![](https://img.shields.io/badge/OLD-blue)](https://github.com/rod2ik/tikzjax) [![](https://img.shields.io/badge/EXTENDED%20TO%20TKZ--TAB-orange)](https://github.com/rod2ik/tikzjax) timeout, worker restart, retry handling
 * [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) A customizable **fallback error image**
+
+## License
+
+This project is Opensource: [![License: GPL v3+](https://img.shields.io/badge/License-GPLv3%2B-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
