@@ -12,9 +12,11 @@
 {% block libs %}
     {{ super() }}    
 
+    <!-- <script src="{{ 'assets/javascripts/tikzjax.config.js' | url }}"></script> -->
     <link rel="stylesheet" type="text/css" href="https://rod2ik.github.io/cdn/tikzjax/fonts.css">
     <script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.js"></script>
-    <script type="module" src="{{ base_url }}/assets/javascripts/badges.js"></script>
+    <script src="{{ 'assets/javascripts/dynabadges.config.js' | url }}"></script>
+    <script type="module" src="{{ 'assets/javascripts/dynabadges.js' | url }}"></script>
 
 {% endblock %}
 

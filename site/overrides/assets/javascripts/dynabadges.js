@@ -1,5 +1,5 @@
 /* License: GNU GPLv3+, Rodrigo Schwencke (Copyleft) */
-/* BADGES - badges.js */
+/* DYNABADGES - dynabadges.js */
 /* Projet indépendant de massilia.js */
 
 import htmlColors, { conf, standardColorNames } from "./htmlColors.js";
@@ -9,11 +9,65 @@ const color = htmlColors;
 /*
  * Les mots reconnus comme balises HTML de badge.
  *
- * Pour ajouter une nouvelle balise, ajoute simplement le mot ici :
+ * Par défaut :
  *
- * export const BADGE_TAG_NAMES = ["bd", "bad", "badge", "tag"];
+ *   <bd>Texte</bd>
+ *   <bad>Texte</bad>
+ *   <badge>Texte</badge>
+ *
+ * On peut aussi les personnaliser via dynabadges.config.js :
+ *
+ * window.DYNABADGES_CONF = {
+ *   badges: {
+ *     tagNames: ["bd", "bad", "badge", "pastille"]
+ *   }
+ * };
+ *
+ * ou localement, avant le chargement de dynabadges.js :
+ *
+ * window.DYNABADGES_PAGE_CONF = {
+ *   badges: {
+ *     tagNames: ["bd", "bad", "badge", "pastille"]
+ *   }
+ * };
  */
-export const BADGE_TAG_NAMES = ["bd", "bad", "badge"];
+const DEFAULT_BADGE_TAG_NAMES = ["bd", "bad", "badge"];
+
+function isValidTagName(tagName) {
+  return (
+    typeof tagName === "string" &&
+    /^[a-z][a-z0-9-]*$/i.test(tagName.trim())
+  );
+}
+
+function getConfiguredBadgeTagNames(cfg = {}) {
+  const configuredTagNames =
+    cfg.badges &&
+    typeof cfg.badges === "object" &&
+    Array.isArray(cfg.badges.tagNames)
+      ? cfg.badges.tagNames
+      : cfg.badges &&
+          typeof cfg.badges === "object" &&
+          Array.isArray(cfg.badges.tags)
+        ? cfg.badges.tags
+        : Array.isArray(cfg.tagNames)
+          ? cfg.tagNames
+          : Array.isArray(cfg.tags)
+            ? cfg.tags
+            : DEFAULT_BADGE_TAG_NAMES;
+
+  const tagNames = configuredTagNames
+    .map((tagName) => String(tagName).trim().toLowerCase())
+    .filter(isValidTagName);
+
+  if (tagNames.length === 0) {
+    return DEFAULT_BADGE_TAG_NAMES;
+  }
+
+  return [...new Set(tagNames)];
+}
+
+export const BADGE_TAG_NAMES = getConfiguredBadgeTagNames(conf || {});
 
 /*
  * Index dans htmlColors :
@@ -26,8 +80,22 @@ const BORDER_DARK = 3;
 const TEXT_LIGHT = 4;
 const TEXT_DARK = 5;
 
+/*
+ * Sélecteur compatible avec deux cas :
+ *
+ * 1. MkDocs / Material :
+ *    .md-typeset bad
+ *
+ * 2. Page HTML classique :
+ *    bad
+ *
+ * Les balises personnalisées configurées dans tagNames sont incluses ici.
+ */
 const BADGE_SELECTOR = BADGE_TAG_NAMES
-  .map((tagName) => `.md-typeset ${tagName}`)
+  .flatMap((tagName) => [
+    tagName,
+    `.md-typeset ${tagName}`
+  ])
   .join(", ");
 
 const IGNORED_ATTRIBUTES = new Set([
@@ -38,6 +106,8 @@ const IGNORED_ATTRIBUTES = new Set([
   "role",
   "tabindex"
 ]);
+
+const BADGE_DATA_ATTRIBUTE = "data-dynabadge";
 
 /* ============================================================
    VALEURS PAR DÉFAUT
@@ -79,7 +149,9 @@ const BADGES_DEFAULTS = {
 
     /*
      * null = calcul automatique depuis la couleur from.
+     *
      * Tu peux mettre une couleur :
+     *
      *   border: "black"
      *   border: "@deeppink"
      *   text: "white"
@@ -90,15 +162,55 @@ const BADGES_DEFAULTS = {
   }
 };
 
+const BADGES_STYLE_DEFAULTS = {
+  /*
+   * Classe ajoutée automatiquement à chaque badge traité.
+   *
+   * Le CSS utilise aussi data-dynabadge, donc changer className
+   * n'oblige pas à modifier dynabadges.css.
+   */
+  className: "dynabadge",
+
+  /*
+   * Variables CSS principales.
+   */
+  display: "inline-block",
+  radius: "7px",
+  paddingX: "0.5em",
+  paddingY: "0",
+  fontWeight: "500",
+  fontSize: "inherit",
+  fontFamily: "inherit",
+  lineHeight: "1.55",
+  verticalAlign: "baseline",
+  whiteSpace: "normal",
+  boxDecorationBreak: "clone",
+  borderSize: "2px",
+  borderStyle: "solid"
+};
+
 let DEFAULT = BADGES_DEFAULTS.color;
 let DEFAULT_GRADIENT = { ...BADGES_DEFAULTS.gradient };
+let BADGE_CLASS_NAME = BADGES_STYLE_DEFAULTS.className;
 
 let observerReady = false;
 
 /* ============================================================
-   CONFIG OPTIONNELLE
+   CONFIGURATION
    ============================================================ */
 
+/*
+ * htmlColors.js exporte un objet conf déjà fusionné.
+ *
+ * Ordre de priorité côté htmlColors.js :
+ *
+ * 1. valeurs internes par défaut
+ * 2. window.DYNABADGES_CONF
+ * 3. JSON <script data-badges-config>
+ * 4. window.DYNABADGES_PAGE_CONF
+ *
+ * Ici, dynabadges.js consomme simplement ce conf final.
+ */
 function setDefaultsFromConf(cfg = {}) {
   if (!cfg.badges || typeof cfg.badges !== "object") {
     return;
@@ -127,7 +239,134 @@ function setDefaultsFromConf(cfg = {}) {
     if (typeof DEFAULT_GRADIENT.to === "string") {
       DEFAULT_GRADIENT.to = DEFAULT_GRADIENT.to.toLowerCase();
     }
+
+    if (typeof DEFAULT_GRADIENT.border === "string") {
+      DEFAULT_GRADIENT.border = DEFAULT_GRADIENT.border.toLowerCase();
+    }
+
+    if (typeof DEFAULT_GRADIENT.text === "string") {
+      DEFAULT_GRADIENT.text = DEFAULT_GRADIENT.text.toLowerCase();
+    }
   }
+}
+
+function getConfigValue(config, key, fallback) {
+  const value = config[key];
+
+  if (value === null || value === undefined) {
+    return fallback;
+  }
+
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    return trimmed || fallback;
+  }
+
+  return String(value);
+}
+
+function setCssVariable(name, value) {
+  if (
+    typeof document === "undefined" ||
+    !document.documentElement
+  ) {
+    return;
+  }
+
+  document.documentElement.style.setProperty(name, value);
+}
+
+function setStyleOptionsFromConf(cfg = {}) {
+  const badgesConfig =
+    cfg.badges && typeof cfg.badges === "object"
+      ? cfg.badges
+      : {};
+
+  const styleConfig =
+    badgesConfig.style && typeof badgesConfig.style === "object"
+      ? badgesConfig.style
+      : {};
+
+  if (
+    typeof badgesConfig.className === "string" &&
+    badgesConfig.className.trim()
+  ) {
+    BADGE_CLASS_NAME = badgesConfig.className.trim();
+  } else if (
+    typeof styleConfig.className === "string" &&
+    styleConfig.className.trim()
+  ) {
+    BADGE_CLASS_NAME = styleConfig.className.trim();
+  }
+
+  setCssVariable(
+    "--dynabadges-display",
+    getConfigValue(styleConfig, "display", BADGES_STYLE_DEFAULTS.display)
+  );
+
+  setCssVariable(
+    "--dynabadges-radius",
+    getConfigValue(styleConfig, "radius", BADGES_STYLE_DEFAULTS.radius)
+  );
+
+  setCssVariable(
+    "--dynabadges-padding-x",
+    getConfigValue(styleConfig, "paddingX", BADGES_STYLE_DEFAULTS.paddingX)
+  );
+
+  setCssVariable(
+    "--dynabadges-padding-y",
+    getConfigValue(styleConfig, "paddingY", BADGES_STYLE_DEFAULTS.paddingY)
+  );
+
+  setCssVariable(
+    "--dynabadges-font-weight",
+    getConfigValue(styleConfig, "fontWeight", BADGES_STYLE_DEFAULTS.fontWeight)
+  );
+
+  setCssVariable(
+    "--dynabadges-font-size",
+    getConfigValue(styleConfig, "fontSize", BADGES_STYLE_DEFAULTS.fontSize)
+  );
+
+  setCssVariable(
+    "--dynabadges-font-family",
+    getConfigValue(styleConfig, "fontFamily", BADGES_STYLE_DEFAULTS.fontFamily)
+  );
+
+  setCssVariable(
+    "--dynabadges-line-height",
+    getConfigValue(styleConfig, "lineHeight", BADGES_STYLE_DEFAULTS.lineHeight)
+  );
+
+  setCssVariable(
+    "--dynabadges-vertical-align",
+    getConfigValue(styleConfig, "verticalAlign", BADGES_STYLE_DEFAULTS.verticalAlign)
+  );
+
+  setCssVariable(
+    "--dynabadges-white-space",
+    getConfigValue(styleConfig, "whiteSpace", BADGES_STYLE_DEFAULTS.whiteSpace)
+  );
+
+  setCssVariable(
+    "--dynabadges-box-decoration-break",
+    getConfigValue(
+      styleConfig,
+      "boxDecorationBreak",
+      BADGES_STYLE_DEFAULTS.boxDecorationBreak
+    )
+  );
+
+  setCssVariable(
+    "--dynabadges-border-size",
+    getConfigValue(styleConfig, "borderSize", BADGES_STYLE_DEFAULTS.borderSize)
+  );
+
+  setCssVariable(
+    "--dynabadges-border-style",
+    getConfigValue(styleConfig, "borderStyle", BADGES_STYLE_DEFAULTS.borderStyle)
+  );
 }
 
 /* ============================================================
@@ -391,6 +630,18 @@ function cssAngle(value) {
    APPLICATION CSS
    ============================================================ */
 
+function markAsDynabadge(badge) {
+  if (!badge || !badge.setAttribute) {
+    return;
+  }
+
+  badge.setAttribute(BADGE_DATA_ATTRIBUTE, "");
+
+  if (BADGE_CLASS_NAME && badge.classList) {
+    badge.classList.add(BADGE_CLASS_NAME);
+  }
+}
+
 function resetBadgeVisualState(badge) {
   /*
    * Évite qu'un ancien background gradient reste mélangé
@@ -417,8 +668,11 @@ function setGradientBackground(badge, angle, from, to) {
 function setBorderColor(badge, value) {
   if (!value) return;
 
-  badge.style.borderBottom = `2px solid ${value}`;
-  badge.style.borderRight = `2px solid ${value}`;
+  badge.style.borderBottom =
+    `var(--dynabadges-border-size, 2px) var(--dynabadges-border-style, solid) ${value}`;
+
+  badge.style.borderRight =
+    `var(--dynabadges-border-size, 2px) var(--dynabadges-border-style, solid) ${value}`;
 }
 
 function setTextColor(badge, value) {
@@ -461,7 +715,7 @@ function applyNamedDynamicBadge(badge, dynamicAttributeName) {
   const palette = getDynamicPalette(paletteName);
 
   if (!palette) {
-    console.warn(`[badges] Couleur dynamique inconnue : @${paletteName}`);
+    console.warn(`[dynabadges] Couleur dynamique inconnue : @${paletteName}`);
     applyDefaultDynamicBadge(badge);
     return;
   }
@@ -470,7 +724,7 @@ function applyNamedDynamicBadge(badge, dynamicAttributeName) {
 }
 
 /*
- * Nouvelle syntaxe dynamique Light/Dark manuelle :
+ * Syntaxe dynamique Light/Dark manuelle :
  *
  * <bd @deeppink @blue>Texte</bd>
  * <bad @deeppink @blue>Texte</bad>
@@ -496,7 +750,7 @@ function applyManualLightDarkBadge(badge, attributes) {
 
   if (!lightPalette || !darkPalette) {
     console.warn(
-      `[badges] Couleurs Light/Dark inconnues : @${lightName} @${darkName}`
+      `[dynabadges] Couleurs Light/Dark inconnues : @${lightName} @${darkName}`
     );
     applyDefaultDynamicBadge(badge);
     return;
@@ -595,7 +849,11 @@ function getDefaultGradientColors() {
         BORDER_DARK
       )
     : dynamic
-      ? normalizeDynamicColor(`@${DEFAULT_GRADIENT.from}`, BORDER_LIGHT, BORDER_DARK)
+      ? normalizeDynamicColor(
+          `@${DEFAULT_GRADIENT.from}`,
+          BORDER_LIGHT,
+          BORDER_DARK
+        )
       : normalizeStaticColor(DEFAULT_GRADIENT.from, BORDER_LIGHT);
 
   const text = DEFAULT_GRADIENT.text
@@ -606,7 +864,11 @@ function getDefaultGradientColors() {
         TEXT_DARK
       )
     : dynamic
-      ? normalizeDynamicColor(`@${DEFAULT_GRADIENT.from}`, TEXT_LIGHT, TEXT_DARK)
+      ? normalizeDynamicColor(
+          `@${DEFAULT_GRADIENT.from}`,
+          TEXT_LIGHT,
+          TEXT_DARK
+        )
       : normalizeStaticColor(DEFAULT_GRADIENT.from, TEXT_LIGHT);
 
   return {
@@ -692,7 +954,17 @@ function applyGradientBadge(badge, attributes) {
    ROUTEUR PRINCIPAL
    ============================================================ */
 
+function isBadgeElement(element) {
+  if (!element || !element.tagName) {
+    return false;
+  }
+
+  return BADGE_TAG_NAMES.includes(element.tagName.toLowerCase());
+}
+
 function applyBadge(badge) {
+  markAsDynabadge(badge);
+
   const attributes = getBadgeAttributes(badge);
 
   /*
@@ -727,7 +999,7 @@ function applyBadge(badge) {
   const secondAttribute = attributes[1];
 
   /*
-   * Nouvelle syntaxe :
+   * Syntaxe Light/Dark manuelle :
    *
    * <bad @deeppink @blue>Texte</bad>
    *
@@ -751,7 +1023,7 @@ function applyBadge(badge) {
    * <bad @deeppink>Texte</bad>
    * <badge @deeppink>Texte</badge>
    */
-  if (firstAttribute.startsWith("@")) {
+  if (firstAttribute && firstAttribute.startsWith("@")) {
     applyNamedDynamicBadge(badge, firstAttribute);
     return;
   }
@@ -773,7 +1045,17 @@ function applyBadge(badge) {
    ============================================================ */
 
 export function update_badges(root = document) {
-  root.querySelectorAll(BADGE_SELECTOR).forEach(applyBadge);
+  if (!root) {
+    return;
+  }
+
+  if (isBadgeElement(root)) {
+    applyBadge(root);
+  }
+
+  if (typeof root.querySelectorAll === "function") {
+    root.querySelectorAll(BADGE_SELECTOR).forEach(applyBadge);
+  }
 }
 
 export function updateBadges(root = document) {
@@ -817,6 +1099,7 @@ function installThemeObserver() {
 
 export function init(root = document) {
   setDefaultsFromConf(conf || {});
+  setStyleOptionsFromConf(conf || {});
   update_badges(root);
   installThemeObserver();
 }

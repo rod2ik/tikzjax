@@ -1,5 +1,5 @@
 /* License: GNU GPLv3+, Rodrigo Schwencke (Copyleft) */
-/* BADGES - htmlColors.js */
+/* DYNABADGES - htmlColors.js */
 /* Projet indépendant de massilia.js */
 
 /*
@@ -21,7 +21,7 @@
  *      "#ffffff"  // TextDark
  *    ]
  *
- * Avec badges.js :
+ * Avec dynabadges.js :
  *
  * SANS @ :
  *   <bad deeppink>Texte</bad>
@@ -265,51 +265,54 @@ export const standardColorNames = new Set(Object.keys(STANDARD_COLOR_DEFINITIONS
 /**
  * Configuration optionnelle, indépendante de massilia.js.
  *
- * Exemple possible AVANT badges.js :
+ * Ordre de priorité, du moins prioritaire au plus prioritaire :
  *
- * window.BADGES_CONF = {
- *   paletteOptions: {
- *     backgroundCorrectionAmount: 0.30,
- *     borderCorrectionAmount: 0.40,
- *     minContrastRatio: 4.5,
- *     textLight: "#000000",
- *     textDark: "#ffffff"
- *   },
- *
- *   badges: {
- *     default: "deeppink",
- *
- *     gradient: {
- *       from: "deeppink",
- *       to: "blue",
- *       angle: "90deg",
- *       dynamic: true,
- *       border: null,
- *       text: null
- *     }
- *   },
- *
- *   colors: {
- *     // Génération automatique :
- *     fluo: "#ccff00",
- *
- *     // Contrôle manuel absolu :
- *     perso: ["#ffee00", "#442200", "#aa9900", "#ffcc66", "#111111", "#ffffff"],
- *
- *     // Contrôle manuel absolu en chaîne :
- *     demo1: "ff0000 0000ff b0b000 fdfd75 0000ff ff0000"
- *   }
- * };
+ * 1. valeurs internes par défaut
+ * 2. window.DYNABADGES_CONF       // configuration globale recommandée
+ * 3. JSON <script data-badges-config>
+ * 4. window.DYNABADGES_PAGE_CONF  // surcharge locale prioritaire
  */
-function getBadgesConf() {
-  if (
-    typeof globalThis !== "undefined" &&
-    globalThis.BADGES_CONF &&
-    typeof globalThis.BADGES_CONF === "object"
-  ) {
-    return globalThis.BADGES_CONF;
-  }
 
+function isPlainObject(value) {
+  return (
+    value !== null &&
+    typeof value === "object" &&
+    !Array.isArray(value)
+  );
+}
+
+function deepMerge(...objects) {
+  const result = {};
+
+  objects.forEach((object) => {
+    if (!isPlainObject(object)) {
+      return;
+    }
+
+    Object.entries(object).forEach(([key, value]) => {
+      if (isPlainObject(value) && isPlainObject(result[key])) {
+        result[key] = deepMerge(result[key], value);
+        return;
+      }
+
+      if (isPlainObject(value)) {
+        result[key] = deepMerge(value);
+        return;
+      }
+
+      if (Array.isArray(value)) {
+        result[key] = value.slice();
+        return;
+      }
+
+      result[key] = value;
+    });
+  });
+
+  return result;
+}
+
+function getJsonBadgesConf() {
   if (typeof document === "undefined") {
     return {};
   }
@@ -325,19 +328,36 @@ function getBadgesConf() {
   try {
     return JSON.parse(tag.textContent || "{}");
   } catch (error) {
-    console.warn("[badges] Configuration JSON invalide.", error);
+    console.warn("[dynabadges] Configuration JSON invalide.", error);
     return {};
   }
 }
 
-function getPaletteOptions(cfg = {}) {
-  const globalOptions =
+function getBadgesConf() {
+  const fileConfig =
     typeof globalThis !== "undefined" &&
-    globalThis.BADGES_PALETTE_OPTIONS &&
-    typeof globalThis.BADGES_PALETTE_OPTIONS === "object"
-      ? globalThis.BADGES_PALETTE_OPTIONS
+    globalThis.DYNABADGES_CONF &&
+    typeof globalThis.DYNABADGES_CONF === "object"
+      ? globalThis.DYNABADGES_CONF
       : {};
 
+  const jsonConfig = getJsonBadgesConf();
+
+  const pageConfig =
+    typeof globalThis !== "undefined" &&
+    globalThis.DYNABADGES_PAGE_CONF &&
+    typeof globalThis.DYNABADGES_PAGE_CONF === "object"
+      ? globalThis.DYNABADGES_PAGE_CONF
+      : {};
+
+  return deepMerge(
+    fileConfig,
+    jsonConfig,
+    pageConfig
+  );
+}
+
+function getPaletteOptions(cfg = {}) {
   const configOptions =
     cfg.paletteOptions && typeof cfg.paletteOptions === "object"
       ? cfg.paletteOptions
@@ -347,7 +367,6 @@ function getPaletteOptions(cfg = {}) {
 
   return {
     ...DEFAULT_PALETTE_OPTIONS,
-    ...globalOptions,
     ...configOptions
   };
 }
@@ -532,7 +551,7 @@ function normalizeManualPalette(value) {
 
   if (parts.length !== 6) {
     console.warn(
-      "[badges] Une palette manuelle doit contenir exactement 6 valeurs :",
+      "[dynabadges] Une palette manuelle doit contenir exactement 6 valeurs :",
       value
     );
     return null;

@@ -155,7 +155,7 @@ The page shows how to integrate on your custom project.
     If you already added the 2/3 CDN config lines to your `main.html`, then :
 
     * TikZJax is already working with the `<script type="text/tikz">` syntax.
-    * However, IF you also wish to use the `tikzjax` code block syntax inside MkDocs, then you MUST add a **superfences** entry in your `mkdocs.yml`. So, technically, Adding the following config lines for superfences in `mkdocs.yml` is OPTIONAL : TO BE ADDED ONLY IF YOU PLAN TO USE tikzjax code blocks inside markdown pages :
+    * However, IF you ADDITIONNALLY and OPTIONNALLY wish to use the `tikzjax` code block syntax inside MkDocs, then you MUST add a **superfences** entry in your `mkdocs.yml`. So, technically, Adding the following config lines for superfences in `mkdocs.yml` is OPTIONAL : TO BE ADDED ONLY IF YOU PLAN TO USE tikzjax code blocks inside markdown pages :
 
     ````yaml
     markdown_extensions:
@@ -166,23 +166,26 @@ The page shows how to integrate on your custom project.
               format: !!python/name:pymdownx.superfences.fence_code_format
     ````
 
-Hereafter are some config examples for `mkdocs.yml`, which all use an existing `overrides/main.html` file (if you have already none, otherwise, create it, you may customize your personal `custom_dir` in your `mkdocs.yml` as you wish):
+Hereafter are some config examples for `mkdocs.yml`, which all use an existing `overrides/main.html` file. If you don't have one, create it: note that, of course, you may customize your personal `custom_dir` entry in your `mkdocs.yml` as you wish (it does not HAVE to be named `overrides`):
 
-!!! danger "Minimal `mkdocs.yml` & MathJax Conflicts"
-    * Please note that, stricto sensu, the following extensions ARE NOT REQUIRED for the **TikZJax** project to work in MkDocs :
-        * **MathJax** is **NOT REQUIRED** stricto sensu. Adding **MathJax** configs in `mkdocs.yml` **IS OPTIONAL AND TOTALLY INDEPENDANT** of [![Repo](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-181717?logo=github&logoColor=white)](https://github.com/rod2ik/tikzjax) : 
-            * Mathjax is for rendering Maths **OUTSIDE** maths variations/sign tables
-            * TikZJax is for rendering Maths **INSIDE** maths variations/sign tables
-            * Mathjax and TikZJax **config files** **ARE TOTALLY INDEPENDANT** of one another, and **DO NOT CONFLICT** because their config params are place in different JS objects (*window.MathJax* vs *window.TikzJaxOptions*)
-            * MathJax normally ignores `script`, `pre`, `code` tags, so there really should be no conflict with `<script type="text/tikz">...</script>` syntax.
-            TikZJax renderings have been isolated from MathJax renderings, via the addition of a `mathjax_ignore` class in TikZJax script tags, as the [MathsJax Documentation](https://docs.mathjax.org/en/v4.0/options/document.html) recommends: this prevents the TikZJax wrapper from being read by MathJax.
+!!! danger "Minimal `mkdocs.yml`"
+    Please note that, stricto sensu, the following functionnalities are **TOTALLY OPTIONNAL** for TikZJax :
 
-        * the following `markdown_extensions` ARE NOT REQUIRED : 
-            * `admonition`, 
-            * `pymdownx.details`,    (for Collapsible admonitions)
-            * `pymdownx.arithmatex`, (for Mathjax)
-            * `pymdownx.tabbed`,     (for Content Tabs)
-    * However, these are often loaded together, and some examples on this site require them all to test their compatibility with TikzJaX, so they are left as they are, as example configs.
+    * <bad>MathJax</bad> :  
+    MathJaX **IS NOT REQUIRED** for **TikzJax** in MkDocs (nor in a standalone custom HTML page).  
+    Therefore, adding **MathJax** configs in `mkdocs.yml` **IS TOTALLY OPTIONAL** for [![Repo](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-181717?logo=github&logoColor=white)](https://github.com/rod2ik/tikzjax)
+    * <bad>Other `markdown_extensions`</bad> :  
+    The following `markdown_extensions` **ARE NOT REQUIRED** for [![Repo](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-181717?logo=github&logoColor=white)](https://github.com/rod2ik/tikzjax) :
+        * `admonition`, 
+        * `pymdownx.details`,    (for Collapsible admonitions)
+        * `pymdownx.arithmatex`, (for Mathjax)
+        * `pymdownx.tabbed`,     (for Content Tabs)
+        
+        However, these are often loaded together, and some examples on this site require them all to test their compatibility with TikzJaX, so an example of a more advanced `mkdocs.yml` has been left/added therefater.
+    * <bad>Material Light/Dark Themes, with Palette</bad> :  
+    The whole `palette` entry inside `mkdocs.yml` **IS NOT REQUIRED**.  
+    You MAY, OR NOT, use a palette for Light/Dark Material Themes.  
+    Of course, if no palette is defined,you lose Material Light/Dark Themes...hence you lose TikZJax Light/Dark themes too.
 
 === "overrides/main.html"
     ````html
@@ -220,7 +223,7 @@ Hereafter are some config examples for `mkdocs.yml`, which all use an existing `
       - Home: index.md
 
     markdown_extensions:
-      - pymdownx.superfences:   # required for ```tikzjax ... ``` code block syntaxes
+      - pymdownx.superfences:   # REQUIRED (only) for ```tikzjax ... ``` code block syntaxes
           custom_fences:
             - name: tikzjax
               class: language-tikzjax
@@ -285,13 +288,96 @@ Hereafter are some config examples for `mkdocs.yml`, which all use an existing `
     - assets/javascripts/tikzjax.config.js
     ````
 
-!!! warning
-    Please note that all the `palette` bloc inside `mkdocs.yml` IS NOT REQUIRED.  
-    You MAY, OR NOT, use a palette. Of course, if no palette is defined,you lose Material Light/Dark Themes...
+### 2.3 TikZJax Interferences with other Librairies & Extensions
+
+We saw that MathJax, Arithmatex, etc.. are NOT REQUIRED, but, in case they *are* activated, what are their interferences with TikZJax ?
+
+#### 2.3.1 TikZJax Interferences with MathJax
+
+Let's repeat that, stricto sensu, MathJax **IS NOT REQUIRED** for **TikZJax**.  
+Therefore, adding **MathJax** configs in `mkdocs.yml` **IS TOTALLY OPTIONAL AND INDEPENDENT** of [![Repo](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-181717?logo=github&logoColor=white)](https://github.com/rod2ik/tikzjax):
+
+* **MathJax** should render maths **OUTSIDE** maths variation/sign tables.
+* **TikZJax** should render maths **INSIDE** maths variation/sign tables.
+
+However, if not treated carefully, it seems legitimate to think that some problems could arise between MathJax and TikZJax:
+
+* So, what prevents both TikZJax syntaxes from interfering with MathJax ?
+* Sometimes MathJax can be launched again in modern sites,
+* need to be  some agressive MathJaX configurations
+
+Here are some precisions & answers:
+
+<clear>
+
+1. 
+
+    **MathJax and TikZJax config files are totally independent** of one another and **do not conflict** with each other, because their config parameters are placed in different JavaScript objects: `window.MathJax` vs `window.TikzJaxOptions`.
+
+2. 
+
+    By default, at runtime, the [MathJax documentation](https://docs.mathjax.org/en/v4.0/options/document.html) states that the list of tags in the `skipHtmlTags` entry (customizable in MathJax config file), are those *"whose contents should not be processed by MathJax"*, and are by default:  
+
+    <center>
+    `script`, `noscript`, `style`, `textarea`, `pre`, `code`, `math`, `select`, `option`, `mjx-container`.
+    </center>
+
+    So, **at runtime**, this protects both TikZJax syntaxes from colliding with MathJax:
+
+    * <bad>Script syntax is protected</bad> At runtime, MathJax should not conflict with `<script type="text/tikz">...</script>` tags, because `script` is skipped by default.
+
+    * <bad>TikZJax code block syntax is protected</bad> At runtime, MkDocs / Markdown first parses this syntax to HTML, usually something like:
+
+        ```html
+        <pre><code class="language-tikzjax">
+        \begin{tikzpicture}
+        ...
+        \end{tikzpicture}
+        </code></pre>
+        ```
+
+        These blocks should then also be ignored by MathJax, because `pre` and `code` are skipped by default. Finally, TikZJax parses the HTML source and replaces it with an SVG.
+
+3. 
+
+    Additionally, both TikZJax syntaxes (script syntax and `tikzjax` code block syntax) are protected after TikZJax rendering, with MathJax's `mathjax_ignore` class, which is the recommended way for MathJax to *"mark elements whose contents should not be processed by MathJax again"*. This is useful because MathJax may sometimes be launched again in modern sites, or because of aggressive MathJax configs. This prevents the TikZJax wrapper from being read or parsed again by MathJax, and thus protects the DOM.
+
+</clear>
+
+#### 2.3.2 Interference with Arithmatex
+
+In the project, some functions exist specifically to prevent **TikZJax** from interfering with **Arithmatex**, notably `cleanMkDocsMaterialTextArtifacts`.
+
+This function notably cleans up **Arithmatex** wrappers, removes some `<span>` elements, converts `\(...\)` back into `$...$`, converts `\[...\]` back into `$$...$$`, and decodes HTML entities several times. This cleanup is applied specifically to `SCRIPT` sources inside `getTikzSourceText()`.
+
+#### 2.3.3 Interference with Admonitions
+
+Admonitions do not usually create a direct source-text conflict with TikZJax. They are mainly containers around content. TikZJax can still find `script[type="text/tikz"]` sources and TikZ `<pre>` code blocks inside admonitions, because it scans nested DOM content.
+
+#### 2.3.4 Interference with Collapsible Admonitions (`pymdownx.details`)
+
+To prevent the risk that TikZJax misses content that is initially hidden or inside a collapsible container, the **TikZJax** code has a `MutationObserver` that watches added nodes, finds `script[type="text/tikz"]`, finds TikZ `<pre>` blocks, and then schedules processing.
+
+It also does a delayed second scan after 300 ms to give MkDocs / Material time to finish inserting content.
+
+#### 2.3.5 Interference with Content Tabs (`pymdownx.tabbed`)
+
+Tab content might be inserted, moved, revealed, or activated after the first TikZJax scan. Therefore, it needs to be rescanned.
+
+This is why TikZJax has specific functions to deal with content tabs: `isMkDocsTabbedElement`, `scheduleMkDocsTabsRescan`, and `handleMkDocsTabsInteraction`.
+
+TikZJax detects tab-related containers and listens to tab interactions with:
+
+```javascript
+document.addEventListener('change', handleMkDocsTabsInteraction, true);
+document.addEventListener('click', handleMkDocsTabsInteraction, true);
+```
+
+When a tab interaction is detected, `scheduleMkDocsTabsRescan()` runs again and calls `processTikzSources(getTikzSources(document))`.
 
 If your theme or MkDocs setup blocks scripts, also check your CSP policy and theme options.
 
-### 2.3 Minimal Markdown `tikzjax` code block example
+### 2.4 Minimal Markdown `tikzjax` code block example
 
 ````latex
 ```tikzjax
@@ -311,7 +397,7 @@ renders as:
 \end{tikzpicture}
 ```
 
-## Recommended loading order
+## 3. Recommended loading order
 
 1. `tikzjax.config.js`
 2. `fonts.css`
@@ -319,3 +405,6 @@ renders as:
 4. the page content containing TikZ blocks
 
 In practice, TikZJax also observes the DOM: if TikZ blocks are added after the initial page load, they are automatically detected and rendered.
+
+
+

@@ -69,10 +69,11 @@ markdown_extensions:
 
 extra_css:
   - assets/css/style.css
-  # - assets/css/columns.css
-  # - assets/css/badges.css
+  - assets/css/columns.css
+  - assets/css/dynabadges.css
 
 extra_javascript:
   - assets/javascripts/mathjax.js
   - https://cdn.jsdelivr.net/npm/mathjax@4.1.0/tex-mml-chtml.js
   - assets/javascripts/tikzjax.config.js
+  - assets/javascripts/dynabadges.config.js

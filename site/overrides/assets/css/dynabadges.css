@@ -1,47 +1,91 @@
 /* License: GNU GPLv3+, Rodrigo Schwencke (Copyleft) */
-/* BADGES - badges.css */
-/* Projet indépendant de massilia.js */
+/* DYNABADGES - dynabadges.css */
 
 :root {
-  --badges-radius: 7px;
-  --badges-padding-x: 0.5em;
-  --badges-font-weight: 500;
-  --badges-border-size: 2px;
+  /*
+   * Variables DynaBadges modernes.
+   *
+   * Ces valeurs peuvent être surchargées automatiquement depuis :
+   *
+   * window.DYNABADGES_CONF.badges.style
+   * window.DYNABADGES_PAGE_CONF.badges.style
+   */
+  --dynabadges-display: inline-block;
+  --dynabadges-radius: 7px;
+  --dynabadges-padding-x: 0.5em;
+  --dynabadges-padding-y: 0;
+  --dynabadges-font-weight: 500;
+  --dynabadges-font-size: inherit;
+  --dynabadges-font-family: inherit;
+  --dynabadges-line-height: 1.55;
+  --dynabadges-vertical-align: baseline;
+  --dynabadges-white-space: normal;
+  --dynabadges-box-decoration-break: clone;
+  --dynabadges-border-size: 2px;
+  --dynabadges-border-style: solid;
+
+  /*
+   * Aliases historiques.
+   * Conservés pour les anciennes règles CSS ci-dessous.
+   */
+  --badges-radius: var(--dynabadges-radius);
+  --badges-padding-x: var(--dynabadges-padding-x);
+  --badges-font-weight: var(--dynabadges-font-weight);
+  --badges-border-size: var(--dynabadges-border-size);
 }
 
 /* ============================================================
-   BADGES JS
-   Les couleurs sont calculées par badges.js + htmlColors.js
+   DYNABADGES
+
+   Les couleurs sont calculées par dynabadges.js + htmlColors.js.
+
+   Important :
+   - bd, bad, badge sont stylés immédiatement par CSS.
+   - les balises personnalisées ajoutées dans badges.tagNames
+     sont stylées automatiquement dès que dynabadges.js leur ajoute
+     l'attribut data-dynabadge.
    ============================================================ */
 
 bd,
 bad,
-badge {
-  display: inline-block;
-  border-radius: var(--badges-radius);
-  padding: 0 var(--badges-padding-x);
-  font-weight: var(--badges-font-weight);
-  line-height: 1.55;
-  vertical-align: baseline;
+badge,
+.dynabadge,
+[data-dynabadge] {
+  display: var(--dynabadges-display);
+  border-radius: var(--dynabadges-radius);
+  padding: var(--dynabadges-padding-y) var(--dynabadges-padding-x);
+  font-weight: var(--dynabadges-font-weight);
+  font-size: var(--dynabadges-font-size);
+  font-family: var(--dynabadges-font-family);
+  line-height: var(--dynabadges-line-height);
+  vertical-align: var(--dynabadges-vertical-align);
+  white-space: var(--dynabadges-white-space);
+  -webkit-box-decoration-break: var(--dynabadges-box-decoration-break);
+  box-decoration-break: var(--dynabadges-box-decoration-break);
 }
 
 /* Le contenu imbriqué, y compris les liens, hérite de la couleur JS */
 bd *,
 bad *,
-badge * {
+badge *,
+.dynabadge *,
+[data-dynabadge] * {
   color: inherit !important;
 }
 
 /* Optionnel : évite que les liens Material soient soulignés/colorés bizarrement */
 bd a,
 bad a,
-badge a {
+badge a,
+.dynabadge a,
+[data-dynabadge] a {
   color: inherit !important;
   text-decoration-color: currentColor;
 }
 
 /* ============================================================
    ANCIENNES BALISES EN VALEUR
+
    Conservées si tu les utilises encore.
    Sinon tu peux supprimer toute cette section.
    ============================================================ */
