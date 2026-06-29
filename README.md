@@ -34,7 +34,7 @@ Also note, that [![Repo](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-18
 * **refactored as an ESM project**
 * **extended**, to render both [![](https://img.shields.io/badge/OLD-blue)](https://github.com/rod2ik/tikzjax) **TikZ Figures** [![](https://img.shields.io/badge/AND-critical)](https://github.com/rod2ik/tikzjax) [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) `tkz-tab` macros, **LaTeX** style, for **math variations tables** / **math sign tables** :
     * [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) a **global configuration file** `tikzjax.config.js` through `window.TikzJaxOptions`;  
-    * inside a **custom HTML Bloc**, using a `<script type="text/tikz">` tag syntax:
+    * inside a **custom Standalone HTML Bloc**, using a `<script type="text/tikz">` tag syntax:
         * [![](https://img.shields.io/badge/OLD-blue)](https://github.com/rod2ik/tikzjax) automatic rendering of **TikZ** Figures (THE historical functionnality of [kisone/tikzjax](https://github.com/kisonecat/tikzjax))
         * [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) ❗📢❗⚠️ automatic rendering of `tkz-tab` macros, **LaTeX** style, for **maths variations tables** / **math sign tables** ⚠️❗📢❗
         * [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) Light/Dark Themes via the ***global customisation file***, or direct configuration. 
@@ -56,7 +56,7 @@ All the latter syntaxes also offer:
 
 * [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) a **global configuration file** `tikzjax.config.js` through `window.TikzJaxOptions`
 * [![](https://img.shields.io/badge/OLD-blue)](https://github.com/rod2ik/tikzjax) [![](https://img.shields.io/badge/EXTENDED%20TO%20TKZ--TAB-orange)](https://github.com/rod2ik/tikzjax) **per-table local overrides** through `data-*` attributes
-* [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) native and customizable **Light/Dark themes** support for **Custom HTML blocs**, [![](https://img.shields.io/badge/AND-critical)](https://github.com/rod2ik/tikzjax) **Material for MkDocs**
+* [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) native and customizable **Light/Dark themes** support for **Custom Standalone HTML blocs**, [![](https://img.shields.io/badge/AND-critical)](https://github.com/rod2ik/tikzjax) **Material for MkDocs**
 * [![](https://img.shields.io/badge/OLD-blue)](https://github.com/rod2ik/tikzjax) [![](https://img.shields.io/badge/EXTENDED%20TO%20TKZ--TAB-orange)](https://github.com/rod2ik/tikzjax) **browser-side cache** through IndexedD
 * [![](https://img.shields.io/badge/OLD-blue)](https://github.com/rod2ik/tikzjax) [![](https://img.shields.io/badge/EXTENDED%20TO%20TKZ--TAB-orange)](https://github.com/rod2ik/tikzjax) **Spinner animation**
 * [![](https://img.shields.io/badge/OLD-blue)](https://github.com/rod2ik/tikzjax) [![](https://img.shields.io/badge/EXTENDED%20TO%20TKZ--TAB-orange)](https://github.com/rod2ik/tikzjax) timeout, worker restart, retry handling

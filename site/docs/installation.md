@@ -2,15 +2,15 @@
 
 In one word, the installation is a **CDN Installation**, both in :
 
-* Custom HTML Pages
+* Custom Standalone HTML Pages
 * MkDocs with Material Documentation Site
 * Other Documentation Sites
 
-## 1. Installation in Custom HTML Pages
+## 1. Installation in Custom Standalone HTML Pages
 
-### 1.1 CDN Installation on Custom HTML Pages
+### 1.1 CDN Installation on Custom Standalone HTML Pages
 
-In a regular HTML page, load the font stylesheet first, then the TikZJax script.
+In a regular Standalone HTML page, load the font stylesheet first, then the TikZJax script.
 
 === "WITHOUT the optional global config file"
     ```html
@@ -40,7 +40,7 @@ TikZJax automatically infers its base URL from the loaded script URL. The files 
 
     If you only plan to use TikJaX in your personnal pages (HTML Pages / MkDocs Pages / other Documentation Pages), you can safely ignore this information.
 
-### 1.2 Minimal Working HTML example
+### 1.2 Minimal Working Standalone HTML example
 
 This HTML code:
 
@@ -72,12 +72,12 @@ renders as:
 \end{tikzpicture}
 </script>
 
-### 1.3 Custom HTML Page Rendering
+### 1.3 Custom Standalone HTML Page Rendering
 
-If you want to see how [rod2ik/TikZJax](https://github.com/rod2ik/tikzjax) is rendered, and can be configured with Light/Dark themes, on a TOTALLY CUSTOM HTML PAGE, completely independently of MkDocs, please have a look to this more complex page : [Custom HTML Page](./custom.html).
+If you want to see how [rod2ik/TikZJax](https://github.com/rod2ik/tikzjax) is rendered, and can be configured with Light/Dark themes, on a **TOTALLY CUSTOM STANDALONE HTML PAGE**, completely independently of MkDocs, please have a look to this more complex page : [Custom Standalone HTML Page](./custom.html).
 
 Note that in this case, Light and Dark themes are stored on `localStorage`, thus locally, on your web Browser.
-The page shows how to integrate on your custom project.
+The page shows how to integrate TikZJax on your custom standalone Web project.
 
 ## 2. Installation in MkDocs
 
