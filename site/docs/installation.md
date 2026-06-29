@@ -8,9 +8,9 @@ In one word, the installation is a **CDN Installation**, both in :
 
 ## 1. Installation in Custom Standalone HTML Pages
 
-### 1.1 CDN Installation on Custom Standalone HTML Pages
+### 1.1 CDN Installation in Custom Standalone HTML Pages
 
-In a regular Standalone HTML page, load the font stylesheet first, then the TikZJax script.
+In a regular Standalone HTML Page, load the font stylesheet first, then the TikZJax script.
 
 === "WITHOUT the optional global config file"
     ```html
@@ -40,9 +40,9 @@ TikZJax automatically infers its base URL from the loaded script URL. The files 
 
     If you only plan to use TikJaX in your personnal pages (HTML Pages / MkDocs Pages / other Documentation Pages), you can safely ignore this information.
 
-### 1.2 Minimal Working Standalone HTML example
+### 1.2 Minimal Working Standalone HTML Page Example
 
-This HTML code:
+This Minimal Working HTML Page Example:
 
 ```html
 <!doctype html>
@@ -72,7 +72,7 @@ renders as:
 \end{tikzpicture}
 </script>
 
-### 1.3 Custom Standalone HTML Page Rendering
+### 1.3 Custom Standalone HTML Page
 
 If you want to see how [rod2ik/TikZJax](https://github.com/rod2ik/tikzjax) is rendered, and can be configured with Light/Dark themes, on a **TOTALLY CUSTOM STANDALONE HTML PAGE**, completely independently of MkDocs, please have a look to this more complex page : [Custom Standalone HTML Page](./custom.html).
 
@@ -213,7 +213,7 @@ Hereafter are some config examples for `mkdocs.yml`, which all use an existing `
     {% include "partials/footer.html" with context %}
     {% endblock %}
     ````
-=== "mkdocs.yml, Minimal"
+=== "Minimal `mkdocs.yml`"
     ````yaml
     site_name: yourSiteName
     site_url: yourSiteUrl
@@ -232,9 +232,9 @@ Hereafter are some config examples for `mkdocs.yml`, which all use an existing `
               format: !!python/name:pymdownx.superfences.fence_code_format
 
     extra_javascript:
-    - assets/javascripts/tikzjax.config.js
+    - local/path/to/your/tikzjax.config.js
     ````
-=== "mkdocs.yml, WITH Material Light/Dark Themes (with palette)"
+=== "Advanced `mkdocs.yml` WITH Material Light/Dark Themes (`palette`)"
     ````yaml
     site_name: yourSiteName
     site_description: yourDescription
@@ -276,7 +276,7 @@ Hereafter are some config examples for `mkdocs.yml`, which all use an existing `
       - pymdownx.arithmatex:
           generic: true
           smart_dollar: false
-      - pymdownx.superfences:   # required for ```tikzjax ... ``` code block syntaxes
+      - pymdownx.superfences:   # REQUIRED (only) for ```tikzjax ... ``` code block syntaxes
           custom_fences:
             - name: tikzjax
               class: language-tikzjax
@@ -285,9 +285,9 @@ Hereafter are some config examples for `mkdocs.yml`, which all use an existing `
           alternate_style: true
 
     extra_javascript:
-    - assets/javascripts/mathjax.js
+    - local/path/to/your/mathjax.js
     - https://cdn.jsdelivr.net/npm/mathjax@4.1.0/tex-mml-chtml.js
-    - assets/javascripts/tikzjax.config.js
+    - local/path/to/your/tikzjax.config.js
     ````
 
 ### 2.3 TikZJax Interferences with other Librairies & Extensions

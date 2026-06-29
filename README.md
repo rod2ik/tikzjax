@@ -2,7 +2,7 @@
 
 ## Introduction
 
-[![Repo](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-181717?logo=github&logoColor=white)](https://github.com/rod2ik/tikzjax) is a [![License: GPL v3+](https://img.shields.io/badge/License-GPLv3%2B-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) opensource project, that natively renders **TikZ/LaTeX** AND **tkz-tab/LaTeX** for **maths variation tables** and **maths sign tables** , directly inside an HTML page AND/OR inside usual documentation websites, notably **MkDocs** with **Material theme**. Star this project, if you like it 🫶🫶🫶 !
+[![Repo](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-181717?logo=github&logoColor=white)](https://github.com/rod2ik/tikzjax) is a [![License: GPL v3+](https://img.shields.io/badge/License-GPLv3%2B-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) opensource project, that natively renders **TikZ/LaTeX** AND **tkz-tab/LaTeX** for **maths variation tables** and **maths sign tables** , directly inside a Custom Standalone HTML Page AND/OR inside usual Documentation websites, notably **MkDocs** with **Material theme**. Star this project, if you like it 🫶🫶🫶 !
 
 | ⚠️ Documentation Link & Testing Site ⚠️ |
 |---|
@@ -34,7 +34,7 @@ Also note, that [![Repo](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-18
 * **refactored as an ESM project**
 * **extended**, to render both [![](https://img.shields.io/badge/OLD-blue)](https://github.com/rod2ik/tikzjax) **TikZ Figures** [![](https://img.shields.io/badge/AND-critical)](https://github.com/rod2ik/tikzjax) [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) `tkz-tab` macros, **LaTeX** style, for **math variations tables** / **math sign tables** :
     * [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) a **global configuration file** `tikzjax.config.js` through `window.TikzJaxOptions`;  
-    * inside a **custom Standalone HTML Bloc**, using a `<script type="text/tikz">` tag syntax:
+    * inside a **Custom Standalone HTML Page**, using a `<script type="text/tikz">` tag syntax:
         * [![](https://img.shields.io/badge/OLD-blue)](https://github.com/rod2ik/tikzjax) automatic rendering of **TikZ** Figures (THE historical functionnality of [kisone/tikzjax](https://github.com/kisonecat/tikzjax))
         * [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) ❗📢❗⚠️ automatic rendering of `tkz-tab` macros, **LaTeX** style, for **maths variations tables** / **math sign tables** ⚠️❗📢❗
         * [![](https://img.shields.io/badge/NEW-success)](https://github.com/rod2ik/tikzjax) Light/Dark Themes via the ***global customisation file***, or direct configuration. 
