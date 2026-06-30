@@ -1,6 +1,6 @@
-# Installation TikZJax on MkDocs
+# Installation on an MkDocs Site
 
-In one word, the installation on MkDocs is (also) a **CDN Installation** (like we did in a Custom Standalone HTML Page) :
+In one word, the installation of **TikZJax** on an MkDocs Site is (also) a **CDN Installation** (like we did in a Custom Standalone HTML Page) , but of course the CDN scripts must be placed on specific locations:
 
 !!! success "INSTALLATION SUMMARY"
     * <bed @vert>REQUIRED</bad> Add 2 or 3 script lines in your `main.html`

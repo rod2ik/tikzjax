@@ -1,6 +1,6 @@
-# Installation TikZJax on Custom Standalone HTML Pages
+# Installation on a Custom Standalone HTML Page
 
-This page details how to install TikZJax on a Custom Standalone HTML Page.
+This page details how to install **TikZJax** on a **Custom Standalone HTML Page**.
 
 ## 1. Installation on a Custom Standalone HTML Page
 
