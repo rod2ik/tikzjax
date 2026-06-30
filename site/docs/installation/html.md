@@ -80,9 +80,9 @@ YOU CAN SEE THE RENDERING IN THIS **MINIMAL STANDALONE HTML PAGE HERE**:
     <script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.js" defer></script>
     ```
 
-### 1.3 Advanced Custom Standalone HTML Page
+### 1.3 Advanced Standalone HTML Page
 
-If you want to see how [rod2ik/TikZJax](https://github.com/rod2ik/tikzjax) is rendered, and can be configured with Light/Dark themes, on a **TOTALLY CUSTOM STANDALONE HTML PAGE**, completely independently of MkDocs, please have a look to this more complex page : [Custom Standalone HTML Page](./custom.html).
+If you want to see how [rod2ik/TikZJax](https://github.com/rod2ik/tikzjax) is rendered, and can be configured with Light/Dark themes, on a **TOTALLY CUSTOM STANDALONE HTML PAGE**, completely independently of MkDocs, please have a look to this more complex page : [Advanced Standalone HTML Page](./advanced.html).
 
 Note that in this case, Light and Dark themes are stored on `localStorage`, thus locally, on your web Browser.
 The page shows how to integrate TikZJax on your custom standalone Web project.

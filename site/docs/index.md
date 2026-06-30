@@ -212,7 +212,7 @@ renders as:
 
 ## Where to go next
 
-- [Installation](installation.md): load TikZJax on a page or in MkDocs.
+- [Installation](installation/index.md): load TikZJax on a Standalone HTML page, or in MkDocs.
 - [Basic Examples](basic-examples.md): for Basic Examples.
 - [Advanced Examples](advanced-examples.md): for Advanced Examples.
 - [Configuration Overview](configuration.md): understand all global options.

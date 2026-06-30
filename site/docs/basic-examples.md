@@ -2,7 +2,7 @@
 
 This page shows the basic ways to write TikZJax blocks.
 
-For installation details, see [Installation](installation.md).  
+For installation details, see [Installation](installation/index.md).  
 For advanced examples, see [Advanced Examples](advanced-examples.md).  
 For all configuration options, see [API Reference](api-reference.md).
 
