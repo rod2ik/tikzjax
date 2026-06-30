@@ -1,87 +1,31 @@
-# Installation
+# Installation TikZJax on MkDocs
 
-In one word, the installation is a **CDN Installation**, both in :
+In one word, the installation on MkDocs is (also) a **CDN Installation** (like we did in a Custom Standalone HTML Page) :
 
-* Custom Standalone HTML Pages
-* MkDocs with Material Documentation Site
-* Other Documentation Sites
+!!! success "INSTALLATION SUMMARY"
+    * <bed @vert>REQUIRED</bad> Add 2 or 3 script lines in your `main.html`
 
-## 1. Installation in Custom Standalone HTML Pages
+        ```html
+        <!-- IMPORTANT : `tikzjax.config.js` file MUST BE LOADED BEFORE main `tikzjax.js` file (,and CSS) -->
+        <script src="{{ 'local/path/to/your/tikzjax.config.js' | url }}"></script>     <!-- Relative to your `docs_dir` folder -->
+        <link rel="stylesheet" type="text/css" href="https://rod2ik.github.io/cdn/tikzjax/fonts.css">
+        <script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.js"></script>
+        ```
 
-### 1.1 CDN Installation in Custom Standalone HTML Pages
+    * <bad>OPTIONAL</bad> Add a Superfences config in your `mkdocs.yml` file. (ONLY NEEDED, IF YOU PLAN TO USE THE `tikzjax` code bloc syntax)
 
-In a regular Standalone HTML Page, load the font stylesheet first, then the TikZJax script.
+        ````yaml
+            markdown_extensions:
+            - pymdownx.superfences:   # REQUIRED for ```tikzjax ... ``` code block syntaxes
+                custom_fences:
+                    - name: tikzjax
+                    class: language-tikzjax
+                    format: !!python/name:pymdownx.superfences.fence_code_format
+        ````
 
-=== "WITHOUT the optional global config file"
-    ```html
-    <link rel="stylesheet" href="https://rod2ik.github.io/cdn/tikzjax/fonts.css">
-    <script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.js"></script>
-    ```
-=== "WITH the optional global config file `tikzjax.config.js`"
-    ```html
-    <script src="/path/to/your/local/tikzjax.config.js"></script>
-    <link rel="stylesheet" href="https://rod2ik.github.io/cdn/tikzjax/fonts.css">
-    <script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.js"></script>
-    ```
+If you want more precisions, please refer to the following more detailed instructions:
 
-TikZJax automatically infers its base URL from the loaded script URL. The files required by the TeX WebAssembly engine are therefore looked up next to `tikzjax.js`.
-
-!!! info
-    The CDN must contain at least:
-
-    ```text
-    tikzjax.js
-    run-tex.js
-    tex.wasm.gz
-    core.dump.gz
-    fonts.css
-    assets/broken-image.svg
-    ```
-
-    If you only plan to use TikJaX in your personnal pages (HTML Pages / MkDocs Pages / other Documentation Pages), you can safely ignore this information.
-
-### 1.2 Minimal Working Standalone HTML Page Example
-
-This Minimal Working HTML Page Example:
-
-```html
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="https://rod2ik.github.io/cdn/tikzjax/fonts.css">
-    <script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.js" defer></script>
-</head>
-<body>
-    <script type="text/tikz">
-    \begin{tikzpicture}
-      \tkzTabInit{$x$/1, $f(x)$/2}{$-\infty$, $0$, $+\infty$}
-      \tkzTabVar{-/ $-\infty$, +/ $2$, -/ $-\infty$}
-    \end{tikzpicture}
-    </script>
-</body>
-</html>
-```
-
-renders as:
-
-<script type="text/tikz">
-\begin{tikzpicture}
-  \tkzTabInit{$x$/1, $f(x)$/2}{$-\infty$, $0$, $+\infty$}
-  \tkzTabVar{-/ $-\infty$, +/ $2$, -/ $-\infty$}
-\end{tikzpicture}
-</script>
-
-### 1.3 Custom Standalone HTML Page
-
-If you want to see how [rod2ik/TikZJax](https://github.com/rod2ik/tikzjax) is rendered, and can be configured with Light/Dark themes, on a **TOTALLY CUSTOM STANDALONE HTML PAGE**, completely independently of MkDocs, please have a look to this more complex page : [Custom Standalone HTML Page](./custom.html).
-
-Note that in this case, Light and Dark themes are stored on `localStorage`, thus locally, on your web Browser.
-The page shows how to integrate TikZJax on your custom standalone Web project.
-
-## 2. Installation in MkDocs
-
-### 2.1 Configure CDN Files in `main.html`
+## 1. Configure CDN Files in `main.html`
 
 !!! warning
     * **TikzJax** CDN references (css  & javascript) **MUST** be loaded into your `main.html` file (if you have one, otherwise, create it).  
@@ -135,7 +79,7 @@ The page shows how to integrate TikZJax on your custom standalone Web project.
                 {{ super() }}
 
                 <!-- IMPORTANT : `tikzjax.config.js` file MUST BE LOADED BEFORE main `tikzjax.js` file (,and CSS) -->
-                <script src="{{ 'local/path/to/your/tikzjax.config.js' | url }}"></script>
+                <script src="{{ 'local/path/to/your/tikzjax.config.js' | url }}"></script>    <!-- Relative to your `docs_dir` folder -->
                 <link rel="stylesheet" type="text/css" href="https://rod2ik.github.io/cdn/tikzjax/fonts.css">
                 <script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.js"></script>
             {% endblock %}
@@ -151,7 +95,7 @@ The page shows how to integrate TikZJax on your custom standalone Web project.
             - local/path/to/your/tikzjax.config.js
             ```
 
-### 2.2 `mkdocs.yml` & Superfences
+## 2. `mkdocs.yml` & Superfences
 
 !!! success "Superfences Config for `tikzjax` bloc codes"
     If you already added the 2/3 CDN config lines to your `main.html`, then :
@@ -294,7 +238,7 @@ Hereafter are some config examples for `mkdocs.yml`, which all use an existing `
 !!! info "`local/path/to/your/tikzjax.config.js` is the path relative to your `docs_dir` folder"
     `local/path/to/your/tikzjax.config.js` is the path relative to your `docs_dir` folder, leading to your `tikzjax.config.js` file
 
-### 2.3 Minimal Markdown `tikzjax` code block example
+## 3. Minimal Markdown `tikzjax` code block Example
 
 ````latex
 ```tikzjax
@@ -314,11 +258,22 @@ renders as:
 \end{tikzpicture}
 ```
 
-### 2.4 TikZJax Interferences with other Librairies & Extensions
+## 4. Recommended loading order
+
+The libraries and configs should be loarded in this recommended order:
+
+1. `tikzjax.config.js` : LOAD TIKZJAX CONFIG FILE FIRST
+2. `fonts.css`
+3. `tikzjax.js`
+4. the page content containing TikZ blocks
+
+In practice, TikZJax also observes the DOM: if TikZ blocks are added after the initial page load, they are automatically detected and rendered.
+
+## 5. TikZJax Interferences with other Librairies & MkDocs Extensions
 
 We saw that MathJax, Arithmatex, etc.. are NOT REQUIRED, but, in case they *are* activated, what are their interferences with TikZJax ?
 
-#### 2.4.1 TikZJax Interferences with MathJax
+### 5.1. TikZJax Interferences with MathJax
 
 Let's repeat that, stricto sensu, MathJax **IS NOT REQUIRED** for **TikZJax**.  
 Therefore, adding **MathJax** configs in `mkdocs.yml` **IS TOTALLY OPTIONAL AND INDEPENDENT** of [![Repo](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-181717?logo=github&logoColor=white)](https://github.com/rod2ik/tikzjax):
@@ -370,23 +325,23 @@ Here are some precisions & answers:
 
 </clear>
 
-#### 2.4.2 Interference with Arithmatex
+### 5.2. Interference with Arithmatex
 
 In the project, some functions exist specifically to prevent **TikZJax** from interfering with **Arithmatex**, notably `cleanMkDocsMaterialTextArtifacts`.
 
 This function notably cleans up **Arithmatex** wrappers, removes some `<span>` elements, converts `\(...\)` back into `$...$`, converts `\[...\]` back into `$$...$$`, and decodes HTML entities several times. This cleanup is applied specifically to `SCRIPT` sources inside `getTikzSourceText()`.
 
-#### 2.4.3 Interference with Admonitions
+### 5.3. Interference with Admonitions
 
 Admonitions do not usually create a direct source-text conflict with TikZJax. They are mainly containers around content. TikZJax can still find `script[type="text/tikz"]` sources and TikZ `<pre>` code blocks inside admonitions, because it scans nested DOM content.
 
-#### 2.4.4 Interference with Collapsible Admonitions (`pymdownx.details`)
+### 5.4. Interference with Collapsible Admonitions (`pymdownx.details`)
 
 To prevent the risk that TikZJax misses content that is initially hidden or inside a collapsible container, the **TikZJax** code has a `MutationObserver` that watches added nodes, finds `script[type="text/tikz"]`, finds TikZ `<pre>` blocks, and then schedules processing.
 
 It also does a delayed second scan after 300 ms to give MkDocs / Material time to finish inserting content.
 
-#### 2.4.5 Interference with Content Tabs (`pymdownx.tabbed`)
+### 5.5. Interference with Content Tabs (`pymdownx.tabbed`)
 
 Tab content might be inserted, moved, revealed, or activated after the first TikZJax scan. Therefore, it needs to be rescanned.
 
@@ -402,15 +357,4 @@ document.addEventListener('click', handleMkDocsTabsInteraction, true);
 When a tab interaction is detected, `scheduleMkDocsTabsRescan()` runs again and calls `processTikzSources(getTikzSources(document))`.
 
 If your theme or MkDocs setup blocks scripts, also check your CSP policy and theme options.
-
-## 3. Recommended loading order
-
-1. `tikzjax.config.js`
-2. `fonts.css`
-3. `tikzjax.js`
-4. the page content containing TikZ blocks
-
-In practice, TikZJax also observes the DOM: if TikZ blocks are added after the initial page load, they are automatically detected and rendered.
-
-
 

@@ -30,8 +30,12 @@ theme:
 
 nav:
   - Home: index.md
-  - Installation: installation.md
-  - Custom HTML Page Example: custom.html
+  - Installation:
+      - Start: installation/index.md
+      - On Custom Standalone HTML: installation/html.md
+      - Minimal Standalone HTML Page: installation/minimal.html
+      - Advanced Standalone HTML Page: installation/advanced.html
+      - On an MkDocs Site: installation/mkdocs.md
   - Usage:
       - Basic Examples: basic-examples.md
       - Advanced Examples: advanced-examples.md
