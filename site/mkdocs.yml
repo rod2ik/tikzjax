@@ -31,7 +31,7 @@ theme:
 nav:
   - Home: index.md
   - Installation:
-      - Start: installation/index.md
+      - Start Page: installation/index.md
       - On Custom Standalone HTML: installation/html.md
       - Minimal Standalone HTML Page: installation/minimal.html
       - Advanced Standalone HTML Page: installation/advanced.html
