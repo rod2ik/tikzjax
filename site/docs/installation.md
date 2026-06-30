@@ -291,8 +291,8 @@ Hereafter are some config examples for `mkdocs.yml`, which all use an existing `
     - local/path/to/your/tikzjax.config.js    # relative to your `docs_dir` folder
     ````
 
-!!! info "`local/path/to/your/tikzjax.config.js` is the relative path to your `docs_dir` folder"
-    `local/path/to/your/tikzjax.config.js` is the relative path to your `docs_dir` folder, leading to your `tikzjax.config.js` file
+!!! info "`local/path/to/your/tikzjax.config.js` is the path relative to your `docs_dir` folder"
+    `local/path/to/your/tikzjax.config.js` is the path relative to your `docs_dir` folder, leading to your `tikzjax.config.js` file
 
 ### 2.3 Minimal Markdown `tikzjax` code block example
 
