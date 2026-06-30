@@ -178,6 +178,7 @@ Hereafter are some config examples for `mkdocs.yml`, which all use an existing `
     Therefore, adding **MathJax** configs in `mkdocs.yml` **IS TOTALLY OPTIONAL** for [![Repo](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-181717?logo=github&logoColor=white)](https://github.com/rod2ik/tikzjax)
     * <bad>Other `markdown_extensions`</bad> :  
     The following `markdown_extensions` **ARE NOT REQUIRED** for [![Repo](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-181717?logo=github&logoColor=white)](https://github.com/rod2ik/tikzjax) :
+    
         * `admonition`, 
         * `pymdownx.details`,    (for Collapsible admonitions)
         * `pymdownx.arithmatex`, (for Mathjax)
@@ -232,7 +233,7 @@ Hereafter are some config examples for `mkdocs.yml`, which all use an existing `
               format: !!python/name:pymdownx.superfences.fence_code_format
 
     extra_javascript:
-    - local/path/to/your/tikzjax.config.js
+    - local/path/to/your/tikzjax.config.js    # relative to your `docs_dir` folder
     ````
 === "Advanced `mkdocs.yml` WITH Material Light/Dark Themes (`palette`)"
     ````yaml
@@ -285,16 +286,39 @@ Hereafter are some config examples for `mkdocs.yml`, which all use an existing `
           alternate_style: true
 
     extra_javascript:
-    - local/path/to/your/mathjax.js
+    - local/path/to/your/mathjax.js           # relative to your `docs_dir` folder
     - https://cdn.jsdelivr.net/npm/mathjax@4.1.0/tex-mml-chtml.js
-    - local/path/to/your/tikzjax.config.js
+    - local/path/to/your/tikzjax.config.js    # relative to your `docs_dir` folder
     ````
 
-### 2.3 TikZJax Interferences with other Librairies & Extensions
+!!! info "`local/path/to/your/tikzjax.config.js` is the relative path to your `docs_dir` folder"
+    `local/path/to/your/tikzjax.config.js` is the relative path to your `docs_dir` folder, leading to your `tikzjax.config.js` file
+
+### 2.3 Minimal Markdown `tikzjax` code block example
+
+````latex
+```tikzjax
+\begin{tikzpicture}
+  \tkzTabInit{$x$/1, $f(x)$/2}{$-\infty$, $0$, $+\infty$}
+  \tkzTabVar{-/ $-\infty$, +/ $2$, -/ $-\infty$}
+\end{tikzpicture}
+```
+````
+
+renders as:
+
+```tikzjax
+\begin{tikzpicture}
+  \tkzTabInit{$x$/1, $f(x)$/2}{$-\infty$, $0$, $+\infty$}
+  \tkzTabVar{-/ $-\infty$, +/ $2$, -/ $-\infty$}
+\end{tikzpicture}
+```
+
+### 2.4 TikZJax Interferences with other Librairies & Extensions
 
 We saw that MathJax, Arithmatex, etc.. are NOT REQUIRED, but, in case they *are* activated, what are their interferences with TikZJax ?
 
-#### 2.3.1 TikZJax Interferences with MathJax
+#### 2.4.1 TikZJax Interferences with MathJax
 
 Let's repeat that, stricto sensu, MathJax **IS NOT REQUIRED** for **TikZJax**.  
 Therefore, adding **MathJax** configs in `mkdocs.yml` **IS TOTALLY OPTIONAL AND INDEPENDENT** of [![Repo](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-181717?logo=github&logoColor=white)](https://github.com/rod2ik/tikzjax):
@@ -346,23 +370,23 @@ Here are some precisions & answers:
 
 </clear>
 
-#### 2.3.2 Interference with Arithmatex
+#### 2.4.2 Interference with Arithmatex
 
 In the project, some functions exist specifically to prevent **TikZJax** from interfering with **Arithmatex**, notably `cleanMkDocsMaterialTextArtifacts`.
 
 This function notably cleans up **Arithmatex** wrappers, removes some `<span>` elements, converts `\(...\)` back into `$...$`, converts `\[...\]` back into `$$...$$`, and decodes HTML entities several times. This cleanup is applied specifically to `SCRIPT` sources inside `getTikzSourceText()`.
 
-#### 2.3.3 Interference with Admonitions
+#### 2.4.3 Interference with Admonitions
 
 Admonitions do not usually create a direct source-text conflict with TikZJax. They are mainly containers around content. TikZJax can still find `script[type="text/tikz"]` sources and TikZ `<pre>` code blocks inside admonitions, because it scans nested DOM content.
 
-#### 2.3.4 Interference with Collapsible Admonitions (`pymdownx.details`)
+#### 2.4.4 Interference with Collapsible Admonitions (`pymdownx.details`)
 
 To prevent the risk that TikZJax misses content that is initially hidden or inside a collapsible container, the **TikZJax** code has a `MutationObserver` that watches added nodes, finds `script[type="text/tikz"]`, finds TikZ `<pre>` blocks, and then schedules processing.
 
 It also does a delayed second scan after 300 ms to give MkDocs / Material time to finish inserting content.
 
-#### 2.3.5 Interference with Content Tabs (`pymdownx.tabbed`)
+#### 2.4.5 Interference with Content Tabs (`pymdownx.tabbed`)
 
 Tab content might be inserted, moved, revealed, or activated after the first TikZJax scan. Therefore, it needs to be rescanned.
 
@@ -378,26 +402,6 @@ document.addEventListener('click', handleMkDocsTabsInteraction, true);
 When a tab interaction is detected, `scheduleMkDocsTabsRescan()` runs again and calls `processTikzSources(getTikzSources(document))`.
 
 If your theme or MkDocs setup blocks scripts, also check your CSP policy and theme options.
-
-### 2.4 Minimal Markdown `tikzjax` code block example
-
-````latex
-```tikzjax
-\begin{tikzpicture}
-  \tkzTabInit{$x$/1, $f(x)$/2}{$-\infty$, $0$, $+\infty$}
-  \tkzTabVar{-/ $-\infty$, +/ $2$, -/ $-\infty$}
-\end{tikzpicture}
-```
-````
-
-renders as:
-
-```tikzjax
-\begin{tikzpicture}
-  \tkzTabInit{$x$/1, $f(x)$/2}{$-\infty$, $0$, $+\infty$}
-  \tkzTabVar{-/ $-\infty$, +/ $2$, -/ $-\infty$}
-\end{tikzpicture}
-```
 
 ## 3. Recommended loading order
 
