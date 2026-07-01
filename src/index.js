@@ -10,13 +10,17 @@ if (document.currentScript === undefined) {
     document.currentScript = scripts[scripts.length - 1];
 }
 
-const url = new URL(document.currentScript.src);
+const url = new URL(document.currentScript.src, document.baseURI);
+const assetBaseUrl = new URL('.', url).href.replace(/\/$/, '');
+
+const resolveAssetUrl = (path) =>
+    new URL(path, `${assetBaseUrl}/`).href;
 
 // =================================================
 // OPTIONS
 // =================================================
 const DEFAULT_BROKEN_IMAGE_SRC =
-    new URL('assets/broken-image.svg', url).href;
+    resolveAssetUrl('assets/broken-image.svg');
 
 const getOptions = () => window.TikzJaxOptions || {};
 
@@ -999,9 +1003,9 @@ const wrapSvg = (svg) => {
 // WORKER
 // =================================================
 const initializeWorker = async () => {
-    const root = url.href.replace(/\/tikzjax\.js(?:\?.*)?$/, '');
+    const root = assetBaseUrl;
 
-    const tex = await spawn(new Worker(`${root}/run-tex.js`));
+    const tex = await spawn(new Worker(resolveAssetUrl('run-tex.js')));
 
     Thread.events(tex).subscribe((event) => {
         if (event.type === 'message' && typeof event.data === 'string') {
