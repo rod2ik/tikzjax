@@ -1,6 +1,6 @@
 {
     "name": "@rod2ik/tikzjax",
-    "version": "1.0.9",
+    "version": "1.1.0",
     "description": "TikZ AND tkz-tab loader in custom HTML pages and MkDocs Material, with Light/Dark Themes",
     "keywords": [
         "tikz",
@@ -39,7 +39,11 @@
         "Rodrigo Schwencke"
     ],
     "license": "GPL-3.0+",
-    "main": "tikzjax.js",
+    "style": "dist/fonts.css",
+    "main": "dist/tikzjax.js",
+    "browser": "dist/tikzjax.js",
+    "jsdelivr": "dist/tikzjax.js",
+    "unpkg": "dist/tikzjax.js",
     "type": "module",
     "repository": {
         "type": "git",
