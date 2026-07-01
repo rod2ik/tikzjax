@@ -66,13 +66,11 @@ module.exports = (_env, argv = {}) => {
                     },
                     {
                         from: "./core.dump.gz",
-                        to: path.resolve(__dirname, "dist"),
-                        noErrorOnMissing: true
+                        to: path.resolve(__dirname, "dist")
                     },
                     {
                         from: "./tex.wasm.gz",
-                        to: path.resolve(__dirname, "dist"),
-                        noErrorOnMissing: true
+                        to: path.resolve(__dirname, "dist")
                     },
                     {
                         from: "./assets/*.svg",

@@ -44,11 +44,59 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
+      - name: Download required runtime assets
+        run: |
+          curl -fL https://rod2ik.github.io/cdn/tikzjax/core.dump.gz -o core.dump.gz
+          curl -fL https://rod2ik.github.io/cdn/tikzjax/tex.wasm.gz -o tex.wasm.gz
+          ls -lh core.dump.gz tex.wasm.gz
+
       - name: Build and validate dist
         run: yarn bfc
 
+      - name: Verify required dist files
+        run: |
+          test -f dist/run-tex.js
+          test -f dist/run-tex.min.js
+          test -f dist/tikzjax.js
+          test -f dist/tikzjax.min.js
+          test -f dist/fonts.css
+          test -f dist/fonts.min.css
+          test -f dist/tex.wasm.gz
+          test -f dist/core.dump.gz
+
       - name: Check package contents
-        run: npm pack --dry-run
+        run: |
+          npm pack --dry-run
+          npm pack --json > pack.json
+          node - <<'NODE'
+          const fs = require("fs");
+
+          const pack = JSON.parse(fs.readFileSync("pack.json", "utf8"))[0];
+          const files = new Set(pack.files.map((file) => file.path));
+
+          const required = [
+            "dist/run-tex.js",
+            "dist/run-tex.min.js",
+            "dist/tikzjax.js",
+            "dist/tikzjax.min.js",
+            "dist/fonts.css",
+            "dist/fonts.min.css",
+            "dist/tex.wasm.gz",
+            "dist/core.dump.gz"
+          ];
+
+          const missing = required.filter((file) => !files.has(file));
+
+          if (missing.length) {
+            console.error("Missing files from npm package:");
+            for (const file of missing) {
+              console.error(`- ${file}`);
+            }
+            process.exit(1);
+          }
+
+          console.log("All required files are present in the npm package.");
+          NODE
 
       - name: Publish to npm
         run: npm publish --access public
