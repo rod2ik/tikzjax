@@ -10,8 +10,24 @@ if (document.currentScript === undefined) {
     document.currentScript = scripts[scripts.length - 1];
 }
 
+const getOptions = () => window.TikzJaxOptions || {};
+
 const url = new URL(document.currentScript.src, document.baseURI);
-const assetBaseUrl = new URL('.', url).href.replace(/\/$/, '');
+
+const normalizeBaseUrl = (value, base = document.baseURI) =>
+    new URL(value || '.', base).href.replace(/\/$/, '');
+
+const getConfiguredAssetBaseUrl = () => {
+    const options = getOptions();
+
+    if (options.assetBaseUrl) {
+        return normalizeBaseUrl(options.assetBaseUrl);
+    }
+
+    return normalizeBaseUrl('.', url);
+};
+
+const assetBaseUrl = getConfiguredAssetBaseUrl();
 
 const resolveAssetUrl = (path) =>
     new URL(path, `${assetBaseUrl}/`).href;
@@ -21,8 +37,6 @@ const resolveAssetUrl = (path) =>
 // =================================================
 const DEFAULT_BROKEN_IMAGE_SRC =
     resolveAssetUrl('assets/broken-image.svg');
-
-const getOptions = () => window.TikzJaxOptions || {};
 
 const getThemeOptions = () => {
     const options = getOptions();
@@ -297,6 +311,7 @@ let observer;
 let themeObserver;
 let themeRaf = null;
 let mkDocsTabsRescanTimer = null;
+let workerBlobUrl = null;
 
 // =================================================
 // TIMEOUT / FAILURE SAFETY
@@ -1002,10 +1017,84 @@ const wrapSvg = (svg) => {
 // =================================================
 // WORKER
 // =================================================
+const getWorkerOptions = () => {
+    const options = getOptions();
+    const workerOptions = options.worker || {};
+
+    const configuredWorkerUrl =
+        options.workerUrl ||
+        workerOptions.url ||
+        'run-tex.js';
+
+    const configuredWorkerMode =
+        options.workerMode ||
+        workerOptions.mode ||
+        'auto';
+
+    const workerMode = String(configuredWorkerMode).toLowerCase();
+
+    if (!['auto', 'direct', 'blob'].includes(workerMode)) {
+        console.warn(
+            `TikZJax: invalid workerMode "${configuredWorkerMode}". Falling back to "auto".`
+        );
+    }
+
+    return {
+        workerUrl: resolveAssetUrl(configuredWorkerUrl),
+        workerMode: ['auto', 'direct', 'blob'].includes(workerMode) ? workerMode : 'auto'
+    };
+};
+
+const isSameOriginUrl = (value) =>
+    new URL(value, document.baseURI).origin === window.location.origin;
+
+const createDirectWorker = (workerUrl) =>
+    new Worker(workerUrl);
+
+const createBlobWorker = async (workerUrl) => {
+    const response = await fetch(workerUrl);
+
+    if (!response.ok) {
+        throw new Error(
+            `TikZJax: unable to load worker ${workerUrl}: ${response.status} ${response.statusText}`
+        );
+    }
+
+    const workerSource = await response.text();
+
+    if (workerBlobUrl) {
+        URL.revokeObjectURL(workerBlobUrl);
+    }
+
+    workerBlobUrl = URL.createObjectURL(
+        new Blob([workerSource], { type: 'application/javascript' })
+    );
+
+    return new Worker(workerBlobUrl);
+};
+
+const createWorker = async () => {
+    const { workerUrl, workerMode } = getWorkerOptions();
+
+    if (workerMode === 'direct') {
+        return createDirectWorker(workerUrl);
+    }
+
+    if (workerMode === 'blob') {
+        return createBlobWorker(workerUrl);
+    }
+
+    if (isSameOriginUrl(workerUrl)) {
+        return createDirectWorker(workerUrl);
+    }
+
+    return createBlobWorker(workerUrl);
+};
+
 const initializeWorker = async () => {
     const root = assetBaseUrl;
 
-    const tex = await spawn(new Worker(resolveAssetUrl('run-tex.js')));
+    const tex = await spawn(await createWorker());
 
     Thread.events(tex).subscribe((event) => {
         if (event.type === 'message' && typeof event.data === 'string') {
@@ -1279,6 +1368,11 @@ const shutdown = async () => {
 
     if (texWorker) {
         await Thread.terminate(await texWorker);
+    }
+
+    if (workerBlobUrl) {
+        URL.revokeObjectURL(workerBlobUrl);
+        workerBlobUrl = null;
     }
 };
 
