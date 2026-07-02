@@ -10,6 +10,6 @@ In one word, the installation of **TikZJax** is a **CDN Installation** in all ca
 
 For further precisions, please refer to these install pages :
 
-* [Installation on a Custom Santalone HTML Page](html.md)
+* [Installation on a Custom Santalone HTML Page](html.md) 
 * [Installation on an MkDocs Site](mkdocs.md)
 * Installation on Other Documentation Sites : Have a look to the global configuration file `tikzjax.config.js` page, and adapt configs for Light/Dark themes
