@@ -10,14 +10,11 @@
 {% endblock %}
 
 {% block libs %}
-    {{ super() }}    
+    {{ super() }}
 
     <!-- <script src="{{ 'assets/javascripts/tikzjax.config.js' | url }}"></script> -->
-    <!-- <link rel="stylesheet" type="text/css" href="https://rod2ik.github.io/cdn/tikzjax/fonts.css">
-    <script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.js"></script>
-     -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.8/dist/fonts.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.8/dist/tikzjax.min.js"></script>
 
     <script src="{{ 'assets/javascripts/dynabadges.config.js' | url }}"></script>
     <script type="module" src="{{ 'assets/javascripts/dynabadges.js' | url }}"></script>
@@ -27,4 +24,3 @@
 {% block footer scoped %}
   {% include "partials/footer.html" with context %}
 {% endblock %}
-
