@@ -50,6 +50,17 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
+      - name: Prepare required build runtime assets
+        run: |
+          test -f cdn-runtime/tikzjax/core.dump.gz
+          test -f cdn-runtime/tikzjax/tex.wasm.gz
+
+          cp -f cdn-runtime/tikzjax/core.dump.gz core.dump.gz
+          cp -f cdn-runtime/tikzjax/tex.wasm.gz tex.wasm.gz
+
+          echo "Required build runtime assets copied to repository root:"
+          ls -lh core.dump.gz tex.wasm.gz
+
       - name: Build and validate dist
         run: yarn bfc
 
