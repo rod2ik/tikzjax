@@ -1,54 +1,84 @@
 # Installation on a Custom Standalone HTML Page
 
-This page details how to install **TikZJax** on a **Custom Standalone HTML Page**.
+This page explains how to install **TikZJax** on a custom standalone HTML page.
 
-## 1. Installation on a Custom Standalone HTML Page
+## 1. CDN installation
 
-### 1.1 CDN Installation on a Custom Standalone HTML Page
+On a regular standalone HTML page, load the stylesheet first, then the TikZJax script.
 
-In a regular Standalone HTML Page, load the `font.css` stylesheet first, then the TikZJax script ( `tikjax.js` )
+Recommended jsDelivr installation:
 
-=== "WITHOUT the optional global config file"
-    ```html
-    <link rel="stylesheet" href="https://rod2ik.github.io/cdn/tikzjax/fonts.css">
-    <script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.js"></script>
-    ```
-=== "WITH the optional global config file `tikzjax.config.js`"
-    ```html
-    <script src="./path/to/your/local/tikzjax.config.js"></script>    <!-- Relative to THIS HTML file -->
-    <link rel="stylesheet" href="https://rod2ik.github.io/cdn/tikzjax/fonts.css">
-    <script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.js"></script>
-    ```
+=== "Without a global config file"
 
-TikZJax automatically infers its base URL from the loaded script URL. The files required by the TeX WebAssembly engine are therefore looked up next to `tikzjax.js`.
+````
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js"></script>
+```
+````
+
+=== "With a global config file"
+
+````
+```html
+<script src="./path/to/your/local/tikzjax.config.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js"></script>
+```
+````
+
+Equivalent unpkg installation:
+
+```html
+<link rel="stylesheet" href="https://unpkg.com/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
+<script src="https://unpkg.com/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js"></script>
+```
+
+TikZJax automatically infers its base URL from the loaded script URL. Runtime files are therefore loaded from the same `dist/` directory as `tikzjax.min.js`.
 
 !!! info
-    The CDN must contain at least:
+    The npm/CDN package contains the runtime files required by TikZJax:
 
+    ````
     ```text
     tikzjax.js
+    tikzjax.min.js
     run-tex.js
+    run-tex.min.js
     tex.wasm.gz
     core.dump.gz
+    tex_files/
     fonts.css
+    fonts.min.css
     assets/broken-image.svg
     ```
 
-    If you only plan to use TikJaX in your personnal pages (HTML Pages / MkDocs Pages / other Documentation Pages), you can safely ignore this information.
+    If you use jsDelivr or unpkg, you normally do not need to manage these files manually.
+    ````
 
-### 1.2 Minimal Working Standalone HTML Page Example
+## 2. Minimal working standalone HTML page
 
-This Minimal Working HTML Page Example (no custom global configuration file here) should work :
+This minimal standalone HTML page uses jsDelivr and does not require a custom configuration file.
 
 ```html
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="https://rod2ik.github.io/cdn/tikzjax/fonts.css">
-    <script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js"></script>
 </head>
+
 <body>
+    <h1>Minimal Standalone HTML Page</h1>
+
+    <script type="text/tikz">
+    \begin{tikzpicture}
+      \draw (0,0) -- (2,1);
+    \end{tikzpicture}
+    </script>
+
     <script type="text/tikz">
     \begin{tikzpicture}
       \tkzTabInit{$x$/1, $f(x)$/2}{$-\infty$, $0$, $+\infty$}
@@ -56,10 +86,13 @@ This Minimal Working HTML Page Example (no custom global configuration file here
     \end{tikzpicture}
     </script>
 </body>
+
 </html>
 ```
 
-renders as:
+It renders both a regular TikZ figure and a `tkz-tab` variation table.
+
+Rendered example:
 
 <script type="text/tikz">
 \begin{tikzpicture}
@@ -68,33 +101,135 @@ renders as:
 \end{tikzpicture}
 </script>
 
-YOU CAN SEE THE RENDERING IN THIS **MINIMAL STANDALONE HTML PAGE HERE**:
+You can see the complete minimal standalone HTML page here:
 
-[https://rod2ik.github.io/tikzjax/installation/minimal.html](https://rod2ik.github.io/tikzjax/installation/minimal.html)
-
-!!! info
-    If the scripts don't load, and the table does NOT render, you may need to add a `defer`: 
-
-    ```html
-    <link rel="stylesheet" href="https://rod2ik.github.io/cdn/tikzjax/fonts.css">
-    <script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.js" defer></script>
-    ```
-
-### 1.3 Advanced Standalone HTML Page
-
-If you want to see how [rod2ik/TikZJax](https://github.com/rod2ik/tikzjax) is rendered, and can be configured with Light/Dark themes, on a **TOTALLY CUSTOM STANDALONE HTML PAGE**, completely independently of MkDocs, please have a look to this more complex page : [Advanced Standalone HTML Page](./advanced.html).
-
-Note that in this case, Light and Dark themes are stored on `localStorage`, thus locally, on your web Browser.
-The page shows how to integrate TikZJax on your custom standalone Web project.
-
-YOU CAN SEE THE RENDERING IN THIS **ADVANCED STANDALONE HTML PAGE HERE**:
-
-[https://rod2ik.github.io/tikzjax/installation/advanced.html](https://rod2ik.github.io/tikzjax/installation/advanced.html)
+[Minimal Standalone HTML Page](https://rod2ik.github.io/tikzjax/installation/minimal.html)
 
 !!! info
-    If the scripts don't load, and the table does NOT render, you may need to add a `defer`: 
+    If your page loads TikZJax before the document body is ready, you can add `defer` to the script:
 
+    ````
     ```html
-    <link rel="stylesheet" href="https://rod2ik.github.io/cdn/tikzjax/fonts.css">
-    <script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.js" defer></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js" defer></script>
     ```
+    ````
+
+## 3. Using a local configuration file
+
+A custom configuration file must be loaded before `tikzjax.min.js`.
+
+```html
+<script src="./tikzjax.config.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js"></script>
+```
+
+Example `tikzjax.config.js`:
+
+```js
+window.TikzJaxOptions = {
+    renderTimeout: 15000,
+    maxRetries: 1,
+    restartWorkerOnFail: true,
+
+    tex: {
+        texPackages: {
+            amsmath: "",
+            "tkz-tab": ""
+        },
+        tikzLibraries: [
+            "arrows.meta",
+            "calc",
+            "positioning"
+        ]
+    }
+};
+```
+
+## 4. Custom asset base URL
+
+Use `assetBaseUrl` when the main script is loaded from one place but the runtime assets are served from another place.
+
+```html
+<script>
+window.TikzJaxOptions = {
+    assetBaseUrl: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist"
+};
+</script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js"></script>
+```
+
+For normal jsDelivr or unpkg usage, this option is not required because TikZJax automatically resolves the runtime path.
+
+## 5. Same-origin installation
+
+You can also serve all files from your own domain.
+
+```html
+<script>
+window.TikzJaxOptions = {
+    assetBaseUrl: "/vendor/tikzjax",
+    workerMode: "direct"
+};
+</script>
+
+<link rel="stylesheet" href="/vendor/tikzjax/fonts.min.css">
+<script src="/vendor/tikzjax/tikzjax.min.js"></script>
+```
+
+Your server should expose:
+
+```text
+/vendor/tikzjax/tikzjax.min.js
+/vendor/tikzjax/run-tex.js
+/vendor/tikzjax/fonts.min.css
+/vendor/tikzjax/tex.wasm.gz
+/vendor/tikzjax/core.dump.gz
+/vendor/tikzjax/tex_files/
+/vendor/tikzjax/assets/broken-image.svg
+```
+
+Use `workerMode: "direct"` when the worker file is served from the same origin as the page.
+
+## 6. Worker mode on standalone pages
+
+The default worker mode is `"auto"`.
+
+```js
+window.TikzJaxOptions = {
+    workerMode: "auto"
+};
+```
+
+| Mode       | Description                                                                          |
+| ---------- | ------------------------------------------------------------------------------------ |
+| `"auto"`   | Uses a direct Worker for same-origin files and a Blob Worker for cross-origin files. |
+| `"blob"`   | Always creates a Blob Worker. Useful for CDN-hosted worker scripts.                  |
+| `"direct"` | Always creates a direct Worker. Best for same-origin installations.                  |
+
+For most standalone pages using jsDelivr or unpkg, keep the default `"auto"` mode.
+
+## 7. Advanced standalone HTML page
+
+If you want to see how [@rod2ik/tikzjax](https://github.com/rod2ik/tikzjax) can be configured with light and dark themes on a fully custom standalone HTML page, see:
+
+[Advanced Standalone HTML Page](./advanced.html)
+
+In this example, the light/dark theme is stored in `localStorage`, independently of MkDocs.
+
+You can see the rendered page here:
+
+[Advanced Standalone HTML Page](https://rod2ik.github.io/tikzjax/installation/advanced.html)
+
+!!! info
+    If the script loads too early and the table does not render, you can add `defer`:
+
+    ````
+    ```html
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js" defer></script>
+    ```
+    ````

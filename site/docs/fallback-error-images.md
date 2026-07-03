@@ -2,16 +2,22 @@
 
 TikZJax displays a fallback image when a TikZ or `tkz-tab` block is detected, but rendering fails.
 
-This usually happens when the TikZ code contains an error, when a LaTeX package is missing, when a TikZ library is missing, or when rendering times out.
+This usually happens when:
+
+* the TikZ code contains a syntax error;
+* a LaTeX package is missing;
+* a TikZ library is missing;
+* rendering times out;
+* the TeX worker fails.
 
 The fallback image is configured with the `brokenImageSrc` option.
 
 ## 1. Default fallback image
 
-By default, TikZJax uses:
+By default, TikZJax uses the fallback image bundled in the package:
 
 ```text
-broken-image.svg
+dist/assets/broken-image.svg
 ```
 
 If you want to keep the default image, you do not need to configure anything.
@@ -20,41 +26,68 @@ If you want to keep the default image, you do not need to configure anything.
 window.TikzJaxOptions = {};
 ```
 
-You may also set it explicitly:
+You may also set it explicitly with jsDelivr:
 
 ```js
 window.TikzJaxOptions = {
-    brokenImageSrc: "./img/broken-image.svg"
+    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/assets/broken-image.svg"
+};
+```
+
+Or with unpkg:
+
+```js
+window.TikzJaxOptions = {
+    brokenImageSrc: "https://unpkg.com/@rod2ik/tikzjax@1.1.7/dist/assets/broken-image.svg"
 };
 ```
 
 ## 2. Available fallback images
 
-The following fallback images are available.
+The following fallback images are available in the package.
 
-They are assumed to be stored in the `./img` folder, next to this Markdown file.
+| Name       | CDN path                                   |
+| ---------- | ------------------------------------------ |
+| Default    | `dist/assets/broken-image.svg`             |
+| Gradient   | `dist/assets/broken-image-degrade.svg`     |
+| Emoji      | `dist/assets/broken-image-emoji.svg`       |
+| Clean      | `dist/assets/broken-image-epuree.svg`      |
+| Sketch     | `dist/assets/broken-image-esquisse.svg`    |
+| Material   | `dist/assets/broken-image-materielle.svg`  |
+| Minimalist | `dist/assets/broken-image-minimaliste.svg` |
+| Modern     | `dist/assets/broken-image-moderne.svg`     |
 
-| Name       | File                           | Preview                                                          |
-| ---------- | ------------------------------ | ---------------------------------------------------------------- |
-| Default    | `broken-image.svg`             | ![Default fallback image](./img/broken-image.svg)                |
-| Gradient   | `broken-image-degrade.svg`     | ![Gradient fallback image](./img/broken-image-degrade.svg)       |
-| Emoji      | `broken-image-emoji.svg`       | ![Emoji fallback image](./img/broken-image-emoji.svg)            |
-| Clean      | `broken-image-epuree.svg`      | ![Clean fallback image](./img/broken-image-epuree.svg)           |
-| Sketch     | `broken-image-esquisse.svg`    | ![Sketch fallback image](./img/broken-image-esquisse.svg)        |
-| Material   | `broken-image-materielle.svg`  | ![Material fallback image](./img/broken-image-materielle.svg)    |
-| Minimalist | `broken-image-minimaliste.svg` | ![Minimalist fallback image](./img/broken-image-minimaliste.svg) |
-| Modern     | `broken-image-moderne.svg`     | ![Modern fallback image](./img/broken-image-moderne.svg)         |
+If this documentation site also stores local preview files in `./img`, you can display them with Markdown:
+
+| Name       | Preview                                                          |
+| ---------- | ---------------------------------------------------------------- |
+| Default    | ![Default fallback image](./img/broken-image.svg)                |
+| Gradient   | ![Gradient fallback image](./img/broken-image-degrade.svg)       |
+| Emoji      | ![Emoji fallback image](./img/broken-image-emoji.svg)            |
+| Clean      | ![Clean fallback image](./img/broken-image-epuree.svg)           |
+| Sketch     | ![Sketch fallback image](./img/broken-image-esquisse.svg)        |
+| Material   | ![Material fallback image](./img/broken-image-materielle.svg)    |
+| Minimalist | ![Minimalist fallback image](./img/broken-image-minimaliste.svg) |
+| Modern     | ![Modern fallback image](./img/broken-image-moderne.svg)         |
 
 ## 3. Configuration
 
 Choose one image and set `brokenImageSrc` in `tikzjax.config.js`.
 
-The configuration file must be loaded before `tikzjax.js`.
+The configuration file must be loaded before `tikzjax.min.js`.
 
 ```html
-<script src="/path/to/you/local/tikzjax.config.js"></script>
-<link rel="stylesheet" href="https://rod2ik.github.io/cdn/tikzjax/fonts.css">
-<script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.js"></script>
+<script src="/path/to/your/local/tikzjax.config.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js"></script>
+```
+
+Equivalent unpkg loading:
+
+```html
+<script src="/path/to/your/local/tikzjax.config.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
+<script src="https://unpkg.com/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js"></script>
 ```
 
 ## 4. Examples
@@ -63,7 +96,7 @@ The configuration file must be loaded before `tikzjax.js`.
 
 ```js
 window.TikzJaxOptions = {
-    brokenImageSrc: "https://rod2ik.github.io/cdn/tikzjax/assets/broken-image.svg"
+    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/assets/broken-image.svg"
 };
 ```
 
@@ -71,7 +104,7 @@ window.TikzJaxOptions = {
 
 ```js
 window.TikzJaxOptions = {
-    brokenImageSrc: "https://rod2ik.github.io/cdn/tikzjax/assets/broken-image-degrade.svg"
+    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/assets/broken-image-degrade.svg"
 };
 ```
 
@@ -79,7 +112,7 @@ window.TikzJaxOptions = {
 
 ```js
 window.TikzJaxOptions = {
-    brokenImageSrc: "https://rod2ik.github.io/cdn/tikzjax/assets/broken-image-emoji.svg"
+    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/assets/broken-image-emoji.svg"
 };
 ```
 
@@ -87,7 +120,7 @@ window.TikzJaxOptions = {
 
 ```js
 window.TikzJaxOptions = {
-    brokenImageSrc: "https://rod2ik.github.io/cdn/tikzjax/assets/broken-image-epuree.svg"
+    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/assets/broken-image-epuree.svg"
 };
 ```
 
@@ -95,7 +128,7 @@ window.TikzJaxOptions = {
 
 ```js
 window.TikzJaxOptions = {
-    brokenImageSrc: "https://rod2ik.github.io/cdn/tikzjax/assets/broken-image-esquisse.svg"
+    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/assets/broken-image-esquisse.svg"
 };
 ```
 
@@ -103,7 +136,7 @@ window.TikzJaxOptions = {
 
 ```js
 window.TikzJaxOptions = {
-    brokenImageSrc: "https://rod2ik.github.io/cdn/tikzjax/assets/broken-image-materielle.svg"
+    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/assets/broken-image-materielle.svg"
 };
 ```
 
@@ -111,7 +144,7 @@ window.TikzJaxOptions = {
 
 ```js
 window.TikzJaxOptions = {
-    brokenImageSrc: "https://rod2ik.github.io/cdn/tikzjax/assets/broken-image-minimaliste.svg"
+    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/assets/broken-image-minimaliste.svg"
 };
 ```
 
@@ -119,17 +152,39 @@ window.TikzJaxOptions = {
 
 ```js
 window.TikzJaxOptions = {
-    brokenImageSrc: "https://rod2ik.github.io/cdn/tikzjax/assets/broken-image-moderne.svg"
+    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/assets/broken-image-moderne.svg"
 };
 ```
 
-### 4.9 Custom Images
+### 4.9 Use a custom image
 
-You can of course use your own custom images as fallback error images.  
-You only need to use a value for the key `brokenImageSrc` :
+You can use your own image as a fallback error image.
 
-* any internet URL leading to an image
-* your own custom relative path ( relatively to where you placed your `tikzjac.config.js` )
+`brokenImageSrc` can be:
+
+* an absolute URL;
+* a root-relative path;
+* a relative path resolved from the current page.
+
+Examples:
+
+```js
+window.TikzJaxOptions = {
+    brokenImageSrc: "/assets/images/tikz-error.svg"
+};
+```
+
+```js
+window.TikzJaxOptions = {
+    brokenImageSrc: "./img/broken-image.svg"
+};
+```
+
+```js
+window.TikzJaxOptions = {
+    brokenImageSrc: "https://example.com/assets/tikz-error.svg"
+};
+```
 
 ## 5. Complete example
 
@@ -139,7 +194,7 @@ window.TikzJaxOptions = {
     maxRetries: 1,
     restartWorkerOnFail: true,
 
-    brokenImageSrc: "https://rod2ik.github.io/cdn/tikzjax/assets/broken-image-moderne.svg",
+    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/assets/broken-image-moderne.svg",
 
     tex: {
         texPackages: {
@@ -160,19 +215,22 @@ window.TikzJaxOptions = {
 You can test the configured fallback image with intentionally invalid TikZ code.
 
 === "Rendering"
-    ```tikzjax
+`tikzjax
     \begin{tikzpicture}
         \draw (0,0) -- (2,2);
-    ```
+    `
+
 === ":fa-markdown: Markdown"
-    ````latex
-    # Any broken `TikZ` or `tkz-tab` code
-    
-    ```tikzjax
-    \begin{tikzpicture}
-        \draw (0,0) -- (2,2);
-    ```
-    ````
+````latex
+# Any broken TikZ or tkz-tab code
+
+`````
+```tikzjax
+\begin{tikzpicture}
+    \draw (0,0) -- (2,2);
+```
+````
+`````
 
 This block is missing `\end{tikzpicture}`, so TikZJax should display the configured fallback image.
 
@@ -182,11 +240,19 @@ This block is missing `\end{tikzpicture}`, so TikZJax should display the configu
 
 Check that the path is correct.
 
-For example, if this Markdown file is next to the `img` folder, this path is valid:
+For example, this path uses the package default image from jsDelivr:
 
 ```js
 window.TikzJaxOptions = {
-    brokenImageSrc: "https://rod2ik.github.io/cdn/tikzjax/assets/broken-image.svg"
+    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/assets/broken-image.svg"
+};
+```
+
+And this path uses the package default image from unpkg:
+
+```js
+window.TikzJaxOptions = {
+    brokenImageSrc: "https://unpkg.com/@rod2ik/tikzjax@1.1.7/dist/assets/broken-image.svg"
 };
 ```
 
@@ -196,12 +262,34 @@ Open the browser DevTools and check the Network tab.
 
 Make sure the SVG file is reachable and that no CSP or server rule blocks it.
 
+If you use a Content Security Policy, make sure `img-src` allows the image location.
+
+For jsDelivr or unpkg:
+
+```http
+img-src 'self' https://cdn.jsdelivr.net https://unpkg.com data: blob:;
+```
+
 ### The default image is displayed instead of the selected one
 
-Check that `tikzjax.config.js` is loaded before `tikzjax.js`.
+Check that `tikzjax.config.js` is loaded before `tikzjax.min.js`.
 
 ```html
 <script src="/path/to/your/local/tikzjax.config.js"></script>
-<link rel="stylesheet" href="https://rod2ik.github.io/cdn/tikzjax/fonts.css">
-<script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js"></script>
+```
+
+Also check that no later script overwrites `window.TikzJaxOptions`.
+
+### The image works locally but not in MkDocs
+
+Check the final generated URL in the browser.
+
+For MkDocs, local paths are relative to the generated page URL, not necessarily to the Markdown source file. For reliable paths, use a root-relative path or a CDN URL:
+
+```js
+window.TikzJaxOptions = {
+    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/assets/broken-image.svg"
+};
 ```

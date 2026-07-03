@@ -2,15 +2,15 @@
 
 This page shows the basic ways to write TikZJax blocks.
 
-For installation details, see [Installation](installation/index.md).  
-For advanced examples, see [Advanced Examples](advanced-examples.md).  
+For installation details, see [Installation](installation/index.md).
+For advanced examples, see [Advanced Examples](advanced-examples.md).
 For all configuration options, see [API Reference](api-reference.md).
 
-## 1. Tikz Usage with `<script>` tags
+## 1. TikZ usage with `<script>` tags
 
-### Direct Insertion in HTML
+### Direct insertion in HTML
 
-A TIKZ CIRCLE:
+A TikZ circle:
 
 === "Rendering"
     <script type="text/tikz">
@@ -18,41 +18,42 @@ A TIKZ CIRCLE:
         \draw (0,0) circle (1in);
     \end{tikzpicture}
     </script>
+
 === ":fa-html5: HTML5"
     ````html
     <script type="text/tikz">
     \begin{tikzpicture}
         \draw (0,0) circle (1in);
+    \end{tikzpicture}     </script>
+    ````
+
+A TikZ line:
+
+=== "Rendering"
+    <script type="text/tikz">
+    \begin{tikzpicture}
+        \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
+        \draw[->, thick] (0,0) -- (0,3) node[above] {$y$};
+        \draw[thick] (0,0) -- (3,2);
+        \node at (1.5,1.7) {$y=\dfrac 13 x$};
+    \end{tikzpicture}
+    </script>
+
+=== ":fa-html5: HTML5"
+    ````html     
+    <script type="text/tikz">
+    \begin{tikzpicture}
+        \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
+        \draw[->, thick] (0,0) -- (0,3) node[above] {$y$};
+        \draw[thick] (0,0) -- (3,2);
+        \node at (1.5,1.7) {$y=\dfrac 13 x$};
     \end{tikzpicture}
     </script>
     ````
 
-A TIKZ LINE :
+### In MkDocs admonitions
 
-=== "Rendering"
-    <script type="text/tikz">
-    \begin{tikzpicture}
-        \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
-        \draw[->, thick] (0,0) -- (0,3) node[above] {$y$};
-        \draw[thick] (0,0) -- (3,2);
-        \node at (1.5,1.7) {$y=\dfrac 13 x$};
-    \end{tikzpicture}
-    </script>
-=== ":fa-html5: HTML5"
-    ```html
-    <script type="text/tikz">
-    \begin{tikzpicture}
-        \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
-        \draw[->, thick] (0,0) -- (0,3) node[above] {$y$};
-        \draw[thick] (0,0) -- (3,2);
-        \node at (1.5,1.7) {$y=\dfrac 13 x$};
-    \end{tikzpicture}
-    </script>
-    ```
-
-### in MkDocs Admonitions
-
-NOT COLLAPSIBLE :
+Non-collapsible:
 
 === "Rendering"
     !!! success
@@ -64,8 +65,9 @@ NOT COLLAPSIBLE :
             \node at (1.5,1.7) {$y=\dfrac 13 x$};
         \end{tikzpicture}
         </script>
+
 === ":fa-markdown: Markdown"
-    ```html
+    ````html
     !!! success
         <script type="text/tikz">
         \begin{tikzpicture}
@@ -75,9 +77,9 @@ NOT COLLAPSIBLE :
             \node at (1.5,1.7) {$y=\dfrac 13 x$};
         \end{tikzpicture}
         </script>
-    ```
+    ````
 
-COLLAPSIBLE :
+Collapsible:
 
 === "Rendering"
     ??? success
@@ -89,28 +91,30 @@ COLLAPSIBLE :
             \node at (1.5,1.7) {$y=\dfrac 13 x$};
         \end{tikzpicture}
         </script>
+
 === ":fa-markdown: Markdown"
-    ```html
+    ````html
     ??? success
-        <script type="text/tikz">
+    <script type="text/tikz">
         \begin{tikzpicture}
             \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
             \draw[->, thick] (0,0) -- (0,3) node[above] {$y$};
             \draw[thick] (0,0) -- (3,2);
             \node at (1.5,1.7) {$y=\dfrac 13 x$};
         \end{tikzpicture}
-        </script>
-    ```
+    </script>
+    ````
 
-### in MkDocs Content Tabs
+### In MkDocs Content Tabs
 
 #### Root Content Tabs
 
 === "Rendering"
     === "Question"
-        Draw an orthonormal frame with a function $f(x)=\dfrac 13 x$
+        Draw an orthonormal frame with a function $f(x)=\dfrac 13 x$.
+
     === "Solution"
-        Here is the orthononal frame and function:
+        Here is the orthonormal frame and function:
 
         <script type="text/tikz">
         \begin{tikzpicture}
@@ -120,13 +124,14 @@ COLLAPSIBLE :
             \node at (1.5,1.7) {$y=\dfrac 13 x$};
         \end{tikzpicture}
         </script>
+
 === ":fa-markdown: Markdown"
     ````markdown
     === "Question"
-        Draw an orthonormal frame with a function $f(x)=\dfrac 13 x$
+        Draw an orthonormal frame with a function $f(x)=\dfrac 13 x$.
 
     === "Solution"
-        Here is the orthononal frame and function:
+        Here is the orthonormal frame and function:
 
         <script type="text/tikz">
         \begin{tikzpicture}
@@ -138,18 +143,19 @@ COLLAPSIBLE :
         </script>
     ````
 
-#### Content Tabs in Admonitions
+#### Content Tabs in admonitions
 
-NON COLLAPSIBLE :
+Non-collapsible:
 
 === "Rendering"
     !!! success
         1. 
 
             === "Question"
-                Draw a circle
+                Draw a circle.
+
             === "Solution"
-                Here is a circle
+                Here is a circle:
 
                 <script type="text/tikz">
                 \begin{tikzpicture}
@@ -160,9 +166,10 @@ NON COLLAPSIBLE :
         2. 
 
             === "Question"
-                Draw an orthonormal frame with a function $f(x)=\dfrac 13 x$
+                Draw an orthonormal frame with a function $f(x)=\dfrac 13 x$.
+
             === "Solution"
-                Here is the orthononal frame and function:
+                Here is the orthonormal frame and function:
 
                 <script type="text/tikz">
                 \begin{tikzpicture}
@@ -172,15 +179,17 @@ NON COLLAPSIBLE :
                     \node at (1.5,1.7) {$y=\dfrac 13 x$};
                 \end{tikzpicture}
                 </script>
+
 === ":fa-markdown: Markdown"
     ````markdown
     !!! success
         1. 
 
             === "Question"
-                Draw a circle
+                Draw a circle.
+
             === "Solution"
-                Here is a circle
+                Here is a circle:
 
                 <script type="text/tikz">
                 \begin{tikzpicture}
@@ -191,9 +200,10 @@ NON COLLAPSIBLE :
         2. 
 
             === "Question"
-                Draw an orthonormal frame with a function $f(x)=\dfrac 13 x$
+                Draw an orthonormal frame with a function $f(x)=\dfrac 13 x$.
+
             === "Solution"
-                Here is the orthononal frame and function:
+                Here is the orthonormal frame and function:
 
                 <script type="text/tikz">
                 \begin{tikzpicture}
@@ -205,17 +215,17 @@ NON COLLAPSIBLE :
                 </script>
     ````
 
-COLLAPSIBLE :
+Collapsible:
 
 === "Rendering"
     ??? success
         1. 
 
             === "Question"
-                Draw a circle
+                Draw a circle.
 
             === "Solution"
-                Here is a circle
+                Here is a circle:
 
                 <script type="text/tikz">
                 \begin{tikzpicture}
@@ -226,10 +236,10 @@ COLLAPSIBLE :
         2. 
 
             === "Question"
-                Draw an orthonormal frame with a function $f(x)=\dfrac 13 x$
+                Draw an orthonormal frame with a function $f(x)=\dfrac 13 x$.
 
             === "Solution"
-                Here is the orthogonal frame and function:
+                Here is the orthonormal frame and function:
 
                 <script type="text/tikz">
                 \begin{tikzpicture}
@@ -239,16 +249,17 @@ COLLAPSIBLE :
                     \node at (1.5,1.7) {$y=\dfrac 13 x$};
                 \end{tikzpicture}
                 </script>
+
 === ":fa-markdown: Markdown"
     ````markdown
     ??? success
         1. 
 
             === "Question"
-                Draw a circle
+                Draw a circle.
 
             === "Solution"
-                Here is a circle
+                Here is a circle:
 
                 <script type="text/tikz">
                 \begin{tikzpicture}
@@ -259,10 +270,10 @@ COLLAPSIBLE :
         2. 
 
             === "Question"
-                Draw an orthonormal frame with a function $f(x)=\dfrac 13 x$
+                Draw an orthonormal frame with a function $f(x)=\dfrac 13 x$.
 
             === "Solution"
-                Here is the orthogonal frame and function:
+                Here is the orthonormal frame and function:
 
                 <script type="text/tikz">
                 \begin{tikzpicture}
@@ -274,17 +285,17 @@ COLLAPSIBLE :
                 </script>
     ````
 
-## 2. TikZ Usage in MkDocs Markdown
+## 2. TikZ usage in MkDocs Markdown
 
 ### Compatible with the `<script>` tag
 
-Please note that ANY latter syntax with the `<script>` tag is compatible and can be written directly in a MkDocs Markdown page.
+Any example using the `<script type="text/tikz">` syntax can be written directly in an MkDocs Markdown page.
 
-OR you can use a `tikzjax` code block, wich is more markdown-minded (and also more stable in mkdocs, just in case).
+You can also use a fenced `tikzjax` code block, which is more Markdown-oriented and convenient inside MkDocs.
 
-### `tikzjax` Code Block Insertion in MkDocs Markdown
+### `tikzjax` code block insertion in MkDocs Markdown
 
-A TIKZ CIRCLE :
+A TikZ circle:
 
 === "Rendering"
     ```tikzjax
@@ -292,8 +303,9 @@ A TIKZ CIRCLE :
         \draw (0,0) circle (1in);
     \end{tikzpicture}
     ```
+
 === ":fa-markdown: Markdown"
-    The classical tikzjax example:
+    The classical TikZJax example:
 
     ````latex
     ```tikzjax
@@ -303,7 +315,7 @@ A TIKZ CIRCLE :
     ```
     ````
 
-A TIKZ LINE :
+A TikZ line:
 
 === "Rendering"
     ```tikzjax
@@ -314,6 +326,7 @@ A TIKZ LINE :
         \node at (1.5,1.7) {$y=\dfrac 13 x$};
     \end{tikzpicture}
     ```
+
 === ":fa-markdown: Markdown"
     ````latex
     ```tikzjax
@@ -322,27 +335,54 @@ A TIKZ LINE :
         \draw[->, thick] (0,0) -- (0,3) node[above] {$y$};
         \draw[thick] (0,0) -- (3,2);
         \node at (1.5,1.7) {$y=\dfrac 13 x$};
-    \end{tikzpicture}
+    \end{tikzpicture}     ```
     ```
     ````
 
-### in MkDocs Admonitions
+### In MkDocs admonitions
 
-NON COLLAPSIBLE :
+Non-collapsible:
 
 === "Rendering"
     !!! success
         ```tikzjax
-        \begin{tikzpicture}
-            \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
-            \draw[->, thick] (0,0) -- (0,3) node[above] {$y$};
-            \draw[thick] (0,0) -- (3,2);
-            \node at (1.5,1.7) {$y=\dfrac 13 x$};
-        \end{tikzpicture}
+            \begin{tikzpicture}
+                \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
+                \draw[->, thick] (0,0) -- (0,3) node[above] {$y$};
+                \draw[thick] (0,0) -- (3,2);
+                \node at (1.5,1.7) {$y=\dfrac 13 x$};
+            \end{tikzpicture}
         ```
+
 === ":fa-markdown: Markdown"
     ````latex
-    !!! success
+        !!! success
+            ```tikzjax
+            \begin{tikzpicture}
+                \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
+                \draw[->, thick] (0,0) -- (0,3) node[above] {$y$};
+                \draw[thick] (0,0) -- (3,2);
+                \node at (1.5,1.7) {$y=\dfrac 13 x$};
+            \end{tikzpicture}
+            ```
+    ````
+
+Collapsible:
+
+=== "Rendering"
+    ??? success
+        ```tikzjax
+            \begin{tikzpicture}
+                \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
+                \draw[->, thick] (0,0) -- (0,3) node[above] {$y$};
+                \draw[thick] (0,0) -- (3,2);
+                \node at (1.5,1.7) {$y=\dfrac 13 x$};
+            \end{tikzpicture}
+        ```
+
+=== ":fa-markdown: Markdown"
+    ````latex
+    ??? success
         ```tikzjax
         \begin{tikzpicture}
             \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
@@ -353,40 +393,16 @@ NON COLLAPSIBLE :
         ```
     ````
 
-COLLAPSIBLE :
-
-=== "Rendering"
-    ??? success
-        ```tikzjax
-        \begin{tikzpicture}
-            \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
-            \draw[->, thick] (0,0) -- (0,3) node[above] {$y$};
-            \draw[thick] (0,0) -- (3,2);
-            \node at (1.5,1.7) {$y=\dfrac 13 x$};
-        \end{tikzpicture}
-        ```
-=== ":fa-markdown: Markdown"
-    ````latex
-    ??? success
-        ```tikzjax
-        \begin{tikzpicture}
-            \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
-            \draw[->, thick] (0,0) -- (0,3) node[above] {$y$};
-            \draw[thick] (0,0) -- (3,2);
-            \node at (1.5,1.7) {$y=\dfrac 13 x$};
-        \end{tikzpicture}
-        ```
-    ````
-
-### in MkDocs Content Tabs
+### In MkDocs Content Tabs
 
 #### Root Content Tabs
 
 === "Rendering"
     === "Question"
-        Draw an orthonormal frame with a function $f(x)=\dfrac 13 x$
+        Draw an orthonormal frame with a function $f(x)=\dfrac 13 x$.
+
     === "Solution"
-        Here is the orthononal frame and function:
+        Here is the orthonormal frame and function:
 
         ```tikzjax
         \begin{tikzpicture}
@@ -396,13 +412,15 @@ COLLAPSIBLE :
             \node at (1.5,1.7) {$y=\dfrac 13 x$};
         \end{tikzpicture}
         ```
+
 === ":fa-markdown: Markdown"
     ````markdown
     === "Question"
-        Draw an orthonormal frame with a function $f(x)=\dfrac 13 x$
-    === "Solution"
-        Here is the orthononal frame and function:
+        Draw an orthonormal frame with a function $f(x)=\dfrac 13 x$.
 
+    === "Solution"
+        Here is the orthonormal frame and function:  
+        
         ```tikzjax
         \begin{tikzpicture}
             \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
@@ -411,22 +429,21 @@ COLLAPSIBLE :
             \node at (1.5,1.7) {$y=\dfrac 13 x$};
         \end{tikzpicture}
         ```
-    
     ````
 
 #### Content Tabs in Admonitions
 
-NOT COLLAPSIBLE :
+Non-collapsible:
 
 === "Rendering"
     !!! success
         1. 
 
             === "Question"
-                Draw a circle
+                Draw a circle.
 
             === "Solution"
-                Here is a circle
+                Here is a circle:
 
                 ```tikzjax
                 \begin{tikzpicture}
@@ -437,10 +454,10 @@ NOT COLLAPSIBLE :
         2. 
 
             === "Question"
-                Draw an orthonormal frame with a function $f(x)=\dfrac 13 x$
+                Draw an orthonormal frame with a function $f(x)=\dfrac 13 x$.
 
             === "Solution"
-                Here is the orthononal frame and function:
+                Here is the orthonormal frame and function:
 
                 ```tikzjax
                 \begin{tikzpicture}
@@ -450,16 +467,17 @@ NOT COLLAPSIBLE :
                     \node at (1.5,1.7) {$y=\dfrac 13 x$};
                 \end{tikzpicture}
                 ```
+
 === ":fa-markdown: Markdown"
     ````markdown
     !!! success
         1. 
 
             === "Question"
-                Draw a circle
+                Draw a circle.
 
             === "Solution"
-                Here is a circle
+                Here is a circle:
 
                 ```tikzjax
                 \begin{tikzpicture}
@@ -470,10 +488,10 @@ NOT COLLAPSIBLE :
         2. 
 
             === "Question"
-                Draw an orthonormal frame with a function $f(x)=\dfrac 13 x$
+                Draw an orthonormal frame with a function $f(x)=\dfrac 13 x$.
 
             === "Solution"
-                Here is the orthononal frame and function:
+                Here is the orthonormal frame and function:
 
                 ```tikzjax
                 \begin{tikzpicture}
@@ -485,17 +503,17 @@ NOT COLLAPSIBLE :
                 ```
     ````
 
-COLLAPSIBLE :
+Collapsible:
 
 === "Rendering"
     ??? success
         1. 
 
             === "Question"
-                Draw a circle
+                Draw a circle.
 
             === "Solution"
-                Here is a circle
+                Here is a circle:
 
                 ```tikzjax
                 \begin{tikzpicture}
@@ -506,10 +524,10 @@ COLLAPSIBLE :
         2. 
 
             === "Question"
-                Draw an orthonormal frame with a function $f(x)=\dfrac 13 x$
+                Draw an orthonormal frame with a function $f(x)=\dfrac 13 x$.
 
             === "Solution"
-                Here is the orthononal frame and function:
+                Here is the orthonormal frame and function:
 
                 ```tikzjax
                 \begin{tikzpicture}
@@ -519,16 +537,17 @@ COLLAPSIBLE :
                     \node at (1.5,1.7) {$y=\dfrac 13 x$};
                 \end{tikzpicture}
                 ```
+
 === ":fa-markdown: Markdown"
     ````markdown
     ??? success
         1. 
 
             === "Question"
-                Draw a circle
+                Draw a circle.
 
             === "Solution"
-                Here is a circle
+                Here is a circle:
 
                 ```tikzjax
                 \begin{tikzpicture}
@@ -539,10 +558,10 @@ COLLAPSIBLE :
         2. 
 
             === "Question"
-                Draw an orthonormal frame with a function $f(x)=\dfrac 13 x$
+                Draw an orthonormal frame with a function $f(x)=\dfrac 13 x$.
 
             === "Solution"
-                Here is the orthononal frame and function:
+                Here is the orthonormal frame and function:
 
                 ```tikzjax
                 \begin{tikzpicture}
@@ -554,9 +573,9 @@ COLLAPSIBLE :
                 ```
     ````
 
-## 3. [tkz-tab](https://ctan.org/pkg/tkz-tab) Usage with `<script>` tags
+## 3. [`tkz-tab`](https://ctan.org/pkg/tkz-tab) usage with `<script>` tags
 
-In a General HTML Page, you can directly use a `<script>` tag to automatically render `tkz-tab` macros.
+In a general HTML page, you can directly use a `<script>` tag to automatically render `tkz-tab` macros.
 
 === "Rendering"
     <script type="text/tikz">
@@ -568,10 +587,11 @@ In a General HTML Page, you can directly use a `<script>` tag to automatically r
         \tkzTabVar{-/ $-\infty$, +/ $2$, -/ $-2$, +/ $+\infty$}
     \end{tikzpicture}
     </script>
+
 === ":fa-markdown: Markdown"
     ```latex
     <script type="text/tikz">
-    \begin{tikzpicture}[line width=1.2pt, font=\Large]
+        \begin{tikzpicture}[line width=1.2pt, font=\Large]
         \tkzTabInit[lgt=5, espcl=3, lw=1.2pt]
             {$x$/1.5 , $f'(x)=3x(x-2)$/1.5 , $f(x)=x^3-3x^2+2$/2.5}
             {$-\infty$, $0$, $2$, $+\infty$}
@@ -581,11 +601,11 @@ In a General HTML Page, you can directly use a `<script>` tag to automatically r
     </script>
     ```
 
-## 4. [tkz-tab](https://ctan.org/pkg/tkz-tab) Usage with `tikjax` Code blocks
+## 4. [`tkz-tab`](https://ctan.org/pkg/tkz-tab) usage with `tikzjax` code blocks
 
-### `tikjax` Code Block Insertion in MkDocs Markdown
+### `tikzjax` code block insertion in MkDocs Markdown
 
-In a MkDocs page, with the Material Theme (or without it..), use a fenced code block with the `tikzjax` language to automatically render `tkz-tab` macros.
+In an MkDocs page, with or without the Material theme, use a fenced code block with the `tikzjax` language to automatically render `tkz-tab` macros.
 
 === "Rendering"
     ```tikzjax
@@ -597,6 +617,7 @@ In a MkDocs page, with the Material Theme (or without it..), use a fenced code b
         \tkzTabVar{-/ $-\infty$, +/ $2$, -/ $-2$, +/ $+\infty$}
     \end{tikzpicture}
     ```
+
 === ":fa-markdown: Markdown"
     ````latex
     ```tikzjax
@@ -606,11 +627,11 @@ In a MkDocs page, with the Material Theme (or without it..), use a fenced code b
             {$-\infty$, $0$, $2$, $+\infty$}
         \tkzTabLine{,+,z,-,z,+,}
         \tkzTabVar{-/ $-\infty$, +/ $2$, -/ $-2$, +/ $+\infty$}
-    \end{tikzpicture}
+    \end{tikzpicture}     ```
     ```
     ````
 
-### in MkDocs Content Tabs
+### In MkDocs Content Tabs
 
 #### Root Content Tabs
 
@@ -619,7 +640,7 @@ In a MkDocs page, with the Material Theme (or without it..), use a fenced code b
         Draw the variation table of $f(x)=x^3-3x^2+2$ on $\mathbb{R}$.
 
     === "Solution"
-        The variation table can be found below :
+        The variation table can be found below:
 
         ```tikzjax
         \begin{tikzpicture}[line width=1.2pt, font=\Large]
@@ -630,14 +651,15 @@ In a MkDocs page, with the Material Theme (or without it..), use a fenced code b
             \tkzTabVar{-/ $-\infty$, +/ $2$, -/ $-2$, +/ $+\infty$}
         \end{tikzpicture}
         ```
+
 === ":fa-markdown: Markdown"
     ````markdown
     === "Question"
         Draw the variation table of $f(x)=x^3-3x^2+2$ on $\mathbb{R}$.
 
     === "Solution"
-        The variation table can be found below :
-
+        The variation table can be found below:
+        
         ```tikzjax
         \begin{tikzpicture}[line width=1.2pt, font=\Large]
             \tkzTabInit[lgt=6, espcl=3, lw=1.2pt]
@@ -647,12 +669,11 @@ In a MkDocs page, with the Material Theme (or without it..), use a fenced code b
             \tkzTabVar{-/ $-\infty$, +/ $2$, -/ $-2$, +/ $+\infty$}
         \end{tikzpicture}
         ```
-        
     ````
 
-##### Content Tabs in Admonitions
+#### Content Tabs in Admonitions
 
-NOT COLLAPSIBLE :
+Non-collapsible:
 
 === "Rendering"
     !!! success
@@ -666,6 +687,7 @@ NOT COLLAPSIBLE :
 
             === "Question"
                 Determine the derivative function $f'$ of $f$ on $\mathbb{R}$.
+
             === "Solution"
                 We have:
 
@@ -699,8 +721,9 @@ NOT COLLAPSIBLE :
 
             === "Question"
                 Deduce the variation table of $f$ on $\mathbb{R}$.
+
             === "Solution"
-                The variation table can be found below :
+                The variation table can be found below:
 
                 ```tikzjax
                 \begin{tikzpicture}[line width=1.2pt, font=\Large]
@@ -711,6 +734,7 @@ NOT COLLAPSIBLE :
                     \tkzTabVar{-/ $-\infty$, +/ $2$, -/ $-2$, +/ $+\infty$}
                 \end{tikzpicture}
                 ```
+
 === ":fa-markdown: Markdown"
     ````markdown
     !!! success
@@ -724,6 +748,7 @@ NOT COLLAPSIBLE :
 
             === "Question"
                 Determine the derivative function $f'$ of $f$ on $\mathbb{R}$.
+
             === "Solution"
                 We have:
 
@@ -757,8 +782,9 @@ NOT COLLAPSIBLE :
 
             === "Question"
                 Deduce the variation table of $f$ on $\mathbb{R}$.
+
             === "Solution"
-                The variation table can be found below :
+                The variation table can be found below:
 
                 ```tikzjax
                 \begin{tikzpicture}[line width=1.2pt, font=\Large]
@@ -771,7 +797,7 @@ NOT COLLAPSIBLE :
                 ```
     ````
 
-COLLAPSIBLE :
+Collapsible:
 
 === "Rendering"
     ??? success
@@ -785,6 +811,7 @@ COLLAPSIBLE :
 
             === "Question"
                 Determine the derivative function $f'$ of $f$ on $\mathbb{R}$.
+
             === "Solution"
                 We have:
 
@@ -818,8 +845,9 @@ COLLAPSIBLE :
 
             === "Question"
                 Deduce the variation table of $f$ on $\mathbb{R}$.
+
             === "Solution"
-                The variation table can be found below :
+                The variation table can be found below:
 
                 ```tikzjax
                 \begin{tikzpicture}[line width=1.2pt, font=\Large]
@@ -830,6 +858,7 @@ COLLAPSIBLE :
                     \tkzTabVar{-/ $-\infty$, +/ $2$, -/ $-2$, +/ $+\infty$}
                 \end{tikzpicture}
                 ```
+
 === ":fa-markdown: Markdown"
     ````markdown
     ??? success
@@ -843,6 +872,7 @@ COLLAPSIBLE :
 
             === "Question"
                 Determine the derivative function $f'$ of $f$ on $\mathbb{R}$.
+
             === "Solution"
                 We have:
 
@@ -876,8 +906,9 @@ COLLAPSIBLE :
 
             === "Question"
                 Deduce the variation table of $f$ on $\mathbb{R}$.
+
             === "Solution"
-                The variation table can be found below :
+                The variation table can be found below:
 
                 ```tikzjax
                 \begin{tikzpicture}[line width=1.2pt, font=\Large]
@@ -890,7 +921,7 @@ COLLAPSIBLE :
                 ```
     ````
 
-## Error test
+## 5. Error test
 
 This block is intentionally broken. It should display the configured error image.
 
@@ -899,6 +930,7 @@ This block is intentionally broken. It should display the configured error image
     \begin{tikzpicture}
         \draw (0,0) -- (2,2);
     ```
+
 === ":fa-markdown: Markdown"
     ````markdown
     ```tikzjax
@@ -907,7 +939,7 @@ This block is intentionally broken. It should display the configured error image
     ```
     ````
 
-## 9. What to try next
+## 6. What to try next
 
 * Use [Advanced Examples](advanced-examples.md) for local preambles, TikZ libraries, cache options, and reusable `tkz-tab` macros.
 * Use [API Reference](api-reference.md) for all global options and `data-*` attributes.

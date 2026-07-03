@@ -20,7 +20,37 @@ In particular, it can:
 
 This works best for usual mathematical figures, variation tables, sign tables, axes, labels, and simple diagrams.
 
-## 2. What TikZJax can and cannot adapt
+## 2. Configuration location
+
+Theme configuration is defined in the global TikZJax configuration object:
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        fallbackTheme: "light"
+    }
+};
+```
+
+If you use a separate configuration file, it must be loaded before `tikzjax.min.js`.
+
+Example with jsDelivr:
+
+```html
+<script src="tikzjax.config.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js"></script>
+```
+
+Equivalent example with unpkg:
+
+```html
+<script src="tikzjax.config.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
+<script src="https://unpkg.com/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js"></script>
+```
+
+## 3. What TikZJax can and cannot adapt
 
 TikZJax mainly adapts standard black, white, and text-like SVG elements.
 
@@ -36,13 +66,13 @@ For example, this kind of drawing usually adapts well:
 \end{tikzpicture}
 ```
 
-But if your drawing uses many explicit colors, you should choose colors that work in both themes, or provide separate light and dark versions.
+If your drawing uses many explicit colors, you should choose colors that work in both themes, or provide separate light and dark versions.
 
-## 3. Material for MkDocs
+## 4. Material for MkDocs
 
 Material for MkDocs usually stores the current color scheme on the `body` element with the `data-md-color-scheme` attribute.
 
-A typical configuration is:
+A typical TikZJax configuration is:
 
 ```js
 window.TikzJaxOptions = {
@@ -51,7 +81,8 @@ window.TikzJaxOptions = {
         attribute: "data-md-color-scheme",
         darkValue: "slate",
         lightValue: "default",
-        fallbackTheme: "light"
+        fallbackTheme: "light",
+        followSystemTheme: true
     }
 };
 ```
@@ -79,7 +110,7 @@ theme:
         name: Switch to light mode
 ```
 
-## 4. Attribute-based themes
+## 5. Attribute-based themes
 
 Use this when your site stores the theme in an HTML attribute.
 
@@ -98,12 +129,15 @@ window.TikzJaxOptions = {
         attribute: "data-theme",
         darkValue: "dark",
         lightValue: "light",
-        fallbackTheme: "light"
+        fallbackTheme: "light",
+        followSystemTheme: true
     }
 };
 ```
 
-This also works with other attributes, for example:
+This also works with other attributes.
+
+Example with Bootstrap-style theme storage:
 
 ```html
 <html data-bs-theme="dark">
@@ -116,12 +150,13 @@ window.TikzJaxOptions = {
         attribute: "data-bs-theme",
         darkValue: "dark",
         lightValue: "light",
-        fallbackTheme: "light"
+        fallbackTheme: "light",
+        followSystemTheme: true
     }
 };
 ```
 
-## 5. Class-based themes
+## 6. Class-based themes
 
 Use this when your site stores the theme as a CSS class.
 
@@ -157,7 +192,7 @@ window.TikzJaxOptions = {
 };
 ```
 
-## 6. Automatic compatibility
+## 7. Automatic compatibility
 
 Even without explicit configuration, TikZJax can recognize common theme conventions.
 
@@ -170,7 +205,7 @@ Typical examples include:
 
 Explicit configuration is still recommended when you know exactly how your site stores its theme.
 
-## 7. Default theme
+## 8. Default theme
 
 Use `fallbackTheme` when no theme can be detected from the DOM.
 
@@ -192,7 +227,17 @@ window.TikzJaxOptions = {
 };
 ```
 
-## 8. Follow the system theme
+`defaultTheme` can also be used as an alias for the default theme:
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        defaultTheme: "light"
+    }
+};
+```
+
+## 9. Follow the system theme
 
 Use `followSystemTheme` to fall back to the browser or operating system preference.
 
@@ -207,7 +252,7 @@ window.TikzJaxOptions = {
 
 If no theme is detected in the DOM, TikZJax uses `prefers-color-scheme`.
 
-## 9. Dynamic theme changes
+## 10. Dynamic theme changes
 
 TikZJax observes theme changes and updates already-rendered SVGs when the detected theme changes.
 
@@ -219,7 +264,7 @@ TikZJax watches:
 * `body`;
 * the element matched by `theme.selector`, when configured.
 
-## 10. Colored figures
+## 11. Colored figures
 
 For highly colored figures, define colors explicitly in the TikZ code.
 
@@ -255,9 +300,18 @@ For important diagrams, you may prefer to provide two separate versions:
 </div>
 ```
 
-Then control visibility with your own CSS.
+Then control visibility with your own CSS:
 
-## 11. Recommended configuration
+```css
+html[data-theme="light"] .only-dark,
+html[data-theme="dark"] .only-light {
+    display: none;
+}
+```
+
+Adapt the selectors to your own theme system.
+
+## 12. Recommended configurations
 
 For most MkDocs Material sites, this is enough:
 
@@ -289,7 +343,21 @@ window.TikzJaxOptions = {
 };
 ```
 
-## 12. Troubleshooting
+For class-based themes:
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        selector: "body",
+        darkClass: "dark",
+        lightClass: "light",
+        fallbackTheme: "light",
+        followSystemTheme: true
+    }
+};
+```
+
+## 13. Troubleshooting
 
 ### The SVG stays black in dark mode
 
@@ -307,7 +375,21 @@ or:
 <html data-theme="dark">
 ```
 
-Then configure `theme.selector`, `theme.attribute`, `theme.darkValue`, and `theme.lightValue`.
+Then configure:
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        selector: "body",
+        attribute: "data-md-color-scheme",
+        darkValue: "slate",
+        lightValue: "default",
+        fallbackTheme: "light"
+    }
+};
+```
+
+Adapt `selector`, `attribute`, `darkValue`, and `lightValue` to your site.
 
 ### Explicit colors do not change
 
@@ -320,3 +402,21 @@ Use colors that work in both themes, or provide separate light and dark versions
 Check that the theme attribute or class really changes on `html`, `body`, or the configured `theme.selector`.
 
 If your site stores the theme somewhere else, configure `theme.selector` accordingly.
+
+### The theme is detected incorrectly
+
+Set an explicit configuration instead of relying on automatic detection.
+
+Example:
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        selector: "html",
+        attribute: "data-theme",
+        darkValue: "dark",
+        lightValue: "light",
+        fallbackTheme: "light"
+    }
+};
+```

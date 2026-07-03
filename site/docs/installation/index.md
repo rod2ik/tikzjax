@@ -1,15 +1,15 @@
 # Installation of TikZJax
 
-You can install [rod2ik/TikZJax](https://github.com/rod2ik/tikzjax) on any of these :
+You can install [@rod2ik/tikzjax](https://github.com/rod2ik/tikzjax) in several environments:
 
-* A Custom Standalone HTML Page
-* An MkDocs Site with Material
-* Other Documentation Sites
+* a custom standalone HTML page;
+* an MkDocs site with Material;
+* another documentation site or static website.
 
-In one word, the installation of **TikZJax** is a **CDN Installation** in all cases.
+In most cases, TikZJax is installed from a CDN.
 
-For further precisions, please refer to these install pages :
+For detailed instructions, see:
 
-* [Installation on a Custom Santalone HTML Page](html.md) 
+* [Installation on a Custom Standalone HTML Page](html.md)
 * [Installation on an MkDocs Site](mkdocs.md)
-* Installation on Other Documentation Sites : Have a look to the global configuration file `tikzjax.config.js` page, and adapt configs for Light/Dark themes
+* Installation on other documentation sites: see the global `tikzjax.config.js` configuration examples and adapt the theme options to your own light/dark mode system.

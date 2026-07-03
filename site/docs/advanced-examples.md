@@ -12,14 +12,8 @@ Use `data-tikz-libraries` when a block needs extra TikZ libraries.
 This example uses `arrows.meta`, `calc`, and `positioning`.
 
 ```html
-<script
-  type="text/tikz"
-  data-tikz-libraries="arrows.meta,calc,positioning"
->
-\begin{tikzpicture}[
-    node distance=2.2cm,
-    every node/.style={draw, rounded corners, inner sep=5pt}
-]
+<script type="text/tikz" data-tikz-libraries="arrows.meta,calc,positioning">
+\begin{tikzpicture}[node distance=2.2cm, every node/.style={draw, rounded corners, inner sep=5pt}]
     \node (A) {$A$};
     \node[right=of A] (B) {$B$};
     \node[below=of $(A)!0.5!(B)$] (C) {$C$};
@@ -33,14 +27,8 @@ This example uses `arrows.meta`, `calc`, and `positioning`.
 
 renders as:
 
-<script
-  type="text/tikz"
-  data-tikz-libraries="arrows.meta,calc,positioning"
->
-\begin{tikzpicture}[
-    node distance=2.2cm,
-    every node/.style={draw, rounded corners, inner sep=5pt}
-]
+<script type="text/tikz" data-tikz-libraries="arrows.meta,calc,positioning">
+\begin{tikzpicture}[node distance=2.2cm, every node/.style={draw, rounded corners, inner sep=5pt}]
     \node (A) {$A$};
     \node[right=of A] (B) {$B$};
     \node[below=of $(A)!0.5!(B)$] (C) {$C$};
@@ -56,10 +44,7 @@ renders as:
 Use `data-tex-packages` when a single block needs extra LaTeX packages.
 
 ```html
-<script
-  type="text/tikz"
-  data-tex-packages='{"xcolor":"dvipsnames"}'
->
+<script type="text/tikz" data-tex-packages='{"xcolor":"dvipsnames"}'>
 \begin{tikzpicture}
     \draw[very thick, NavyBlue] (0,0) rectangle (4,2);
     \draw[fill=Goldenrod!30, draw=Goldenrod] (1,1) circle (0.45);
@@ -70,10 +55,7 @@ Use `data-tex-packages` when a single block needs extra LaTeX packages.
 
 renders as:
 
-<script
-  type="text/tikz"
-  data-tex-packages='{"xcolor":"dvipsnames"}'
->
+<script type="text/tikz" data-tex-packages='{"xcolor":"dvipsnames"}'>
 \begin{tikzpicture}
     \draw[very thick, NavyBlue] (0,0) rectangle (4,2);
     \draw[fill=Goldenrod!30, draw=Goldenrod] (1,1) circle (0.45);
@@ -251,39 +233,9 @@ renders as:
 \end{tikzpicture}
 </script>
 
-## 8. Accessible SVG label
+## 8. Listen for rendered SVGs
 
-Use `data-aria-label` when the generated SVG needs an explicit accessible label.
-
-```html
-<script
-  type="text/tikz"
-  data-aria-label="Graph of a line in an orthonormal coordinate system"
->
-\begin{tikzpicture}
-    \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
-    \draw[->, thick] (0,0) -- (0,3) node[above] {$y$};
-    \draw[thick] (0,0) -- (3,2);
-\end{tikzpicture}
-</script>
-```
-
-renders as:
-
-<script
-  type="text/tikz"
-  data-aria-label="Graph of a line in an orthonormal coordinate system"
->
-\begin{tikzpicture}
-    \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
-    \draw[->, thick] (0,0) -- (0,3) node[above] {$y$};
-    \draw[thick] (0,0) -- (3,2);
-\end{tikzpicture}
-</script>
-
-## 9. Listen for rendered SVGs
-
-TikZJax dispatches a `tikzjax-load-finished` event after a SVG has been rendered.
+TikZJax dispatches a `tikzjax-load-finished` event after an SVG has been rendered.
 
 ```js
 document.addEventListener("tikzjax-load-finished", function (event) {
@@ -295,9 +247,9 @@ document.addEventListener("tikzjax-load-finished", function (event) {
 
 This is useful when you want to post-process rendered SVGs, collect metrics, or integrate TikZJax with custom frontend code.
 
-## 10. Debug one block with engine logs
+## 9. Debug one block with engine logs
 
-Use `data-show-console="true"` when you need engine-side logs for one block.
+Use `data-show-console="true"` when you need TeX engine logs for one block.
 
 ```html
 <script type="text/tikz" data-show-console="true">
@@ -314,3 +266,235 @@ renders as:
     \draw[thick] (0,0) circle (1);
 \end{tikzpicture}
 </script>
+
+When supported by the runtime, TeX logs are printed in the browser console.
+
+## 10. Custom broken image
+
+Use `brokenImageSrc` to customize the fallback image displayed when rendering fails.
+
+```js
+window.TikzJaxOptions = {
+    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/assets/broken-image.svg"
+};
+```
+
+You can also point to your own image:
+
+```js
+window.TikzJaxOptions = {
+    brokenImageSrc: "/assets/images/tikz-error.svg"
+};
+```
+
+## 11. Longer render timeout and automatic retry
+
+Some complex diagrams may take longer to render. You can increase the timeout and retry once after a failure.
+
+```js
+window.TikzJaxOptions = {
+    renderTimeout: 30000,
+    maxRetries: 1,
+    restartWorkerOnFail: true
+};
+```
+
+The same options may also be placed under `tex`:
+
+```js
+window.TikzJaxOptions = {
+    tex: {
+        renderTimeout: 30000,
+        maxRetries: 1,
+        restartWorkerOnFail: true
+    }
+};
+```
+
+## 12. Clear the TikZJax cache manually
+
+TikZJax stores rendered SVGs in IndexedDB.
+
+When debugging, you can clear the cache from the browser console:
+
+```js
+indexedDB.deleteDatabase("TikzJax");
+location.reload();
+```
+
+You can also disable cache only for one block:
+
+```html
+<script type="text/tikz" data-disable-cache="true">
+\begin{tikzpicture}
+    \draw (0,0) -- (2,1);
+\end{tikzpicture}
+</script>
+```
+
+## 13. Explicit jsDelivr runtime base URL
+
+In normal jsDelivr usage, TikZJax automatically resolves runtime files from the same `dist/` directory as `tikzjax.min.js`.
+
+This explicit configuration is equivalent to the default behavior:
+
+```html
+<script>
+window.TikzJaxOptions = {
+    assetBaseUrl: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist",
+    workerMode: "auto"
+};
+</script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js"></script>
+```
+
+Runtime files are loaded from:
+
+```text
+https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/run-tex.js
+https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/tex.wasm.gz
+https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/core.dump.gz
+https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/tex_files/
+```
+
+## 14. Explicit unpkg runtime base URL
+
+The same setup can be used with unpkg.
+
+```html
+<script>
+window.TikzJaxOptions = {
+    assetBaseUrl: "https://unpkg.com/@rod2ik/tikzjax@1.1.7/dist",
+    workerMode: "auto"
+};
+</script>
+
+<link rel="stylesheet" href="https://unpkg.com/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
+<script src="https://unpkg.com/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js"></script>
+```
+
+## 15. Same-origin deployment with direct Worker mode
+
+For strict deployments, serve all TikZJax files from your own domain and use `workerMode: "direct"`.
+
+```html
+<script>
+window.TikzJaxOptions = {
+    assetBaseUrl: "/vendor/tikzjax",
+    workerMode: "direct"
+};
+</script>
+
+<link rel="stylesheet" href="/vendor/tikzjax/fonts.min.css">
+<script src="/vendor/tikzjax/tikzjax.min.js"></script>
+```
+
+Your site should expose:
+
+```text
+/vendor/tikzjax/tikzjax.min.js
+/vendor/tikzjax/run-tex.js
+/vendor/tikzjax/fonts.min.css
+/vendor/tikzjax/tex.wasm.gz
+/vendor/tikzjax/core.dump.gz
+/vendor/tikzjax/tex_files/
+/vendor/tikzjax/assets/broken-image.svg
+```
+
+Use this mode when your Content Security Policy does not allow `blob:` workers.
+
+## 16. Custom worker URL
+
+Use `workerUrl` if `run-tex.js` is not located directly inside `assetBaseUrl`.
+
+```js
+window.TikzJaxOptions = {
+    assetBaseUrl: "/vendor/tikzjax",
+    workerUrl: "/vendor/tikzjax/workers/run-tex.js",
+    workerMode: "direct"
+};
+```
+
+Nested form:
+
+```js
+window.TikzJaxOptions = {
+    assetBaseUrl: "/vendor/tikzjax",
+    worker: {
+        url: "/vendor/tikzjax/workers/run-tex.js",
+        mode: "direct"
+    }
+};
+```
+
+Root-level `workerUrl` and `workerMode` take precedence over nested `worker.url` and `worker.mode`.
+
+## 17. Worker modes
+
+TikZJax supports three worker modes.
+
+```js
+window.TikzJaxOptions = {
+    workerMode: "auto"
+};
+```
+
+| Mode       | Description                                                                          |
+| ---------- | ------------------------------------------------------------------------------------ |
+| `"auto"`   | Uses a direct Worker for same-origin files and a Blob Worker for cross-origin files. |
+| `"blob"`   | Always creates a Blob Worker. Useful for CDN-hosted worker scripts.                  |
+| `"direct"` | Always creates a direct Worker. Best for same-origin installations.                  |
+
+Recommended choices:
+
+| Situation                                    | Recommended mode                  |
+| -------------------------------------------- | --------------------------------- |
+| jsDelivr or unpkg on a normal page           | `"auto"`                          |
+| CDN script with CSP allowing `blob:` workers | `"auto"` or `"blob"`              |
+| Fully local same-origin deployment           | `"direct"`                        |
+| Strict CSP without `blob:` workers           | `"direct"` with same-origin files |
+
+## 18. CSP example for CDN usage
+
+For jsDelivr or unpkg with Blob Worker support, a typical CSP should allow the CDN, WebAssembly, and Blob Workers.
+
+```http
+Content-Security-Policy:
+  default-src 'self';
+  script-src 'self' https://cdn.jsdelivr.net https://unpkg.com 'wasm-unsafe-eval';
+  style-src 'self' https://cdn.jsdelivr.net https://unpkg.com 'unsafe-inline';
+  worker-src 'self' blob:;
+  connect-src 'self' https://cdn.jsdelivr.net https://unpkg.com;
+  img-src 'self' https://cdn.jsdelivr.net https://unpkg.com data: blob:;
+  font-src 'self' https://cdn.jsdelivr.net https://unpkg.com;
+  object-src 'none';
+  base-uri 'self';
+```
+
+## 19. CSP example for same-origin usage
+
+For same-origin files with direct Worker mode:
+
+```http
+Content-Security-Policy:
+  default-src 'self';
+  script-src 'self' 'wasm-unsafe-eval';
+  style-src 'self' 'unsafe-inline';
+  worker-src 'self';
+  connect-src 'self';
+  img-src 'self' data:;
+  font-src 'self';
+  object-src 'none';
+  base-uri 'self';
+```
+
+Use this together with:
+
+```js
+window.TikzJaxOptions = {
+    assetBaseUrl: "/vendor/tikzjax",
+    workerMode: "direct"
+};
+```

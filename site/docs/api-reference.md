@@ -12,22 +12,55 @@ TikZJax reads its global configuration from:
 window.TikzJaxOptions = {};
 ```
 
-The configuration file must be loaded before `tikzjax.js`.
+The configuration object must be defined before loading `tikzjax.js` or `tikzjax.min.js`.
+
+Recommended CDN usage with minified files:
 
 ```html
-<script src="tikzjax.config.js"></script>
-<link rel="stylesheet" href="https://rod2ik.github.io/cdn/tikzjax/fonts.css">
-<script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js"></script>
+```
+
+Equivalent unpkg usage:
+
+```html
+<link rel="stylesheet" href="https://unpkg.com/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
+<script src="https://unpkg.com/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js"></script>
+```
+
+For debugging, you may use the non-minified files:
+
+```html
+<script>
+window.TikzJaxOptions = {
+    renderTimeout: 20000,
+    maxRetries: 1
+};
+</script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/fonts.css">
+<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/tikzjax.js"></script>
 ```
 
 ## 2. Complete structure
 
+This example shows the supported global configuration structure. You do not need to define every option.
+
 ```js
 window.TikzJaxOptions = {
+    assetBaseUrl: undefined,
+    workerMode: "auto",
+    workerUrl: "run-tex.js",
+
+    worker: {
+        mode: "auto",
+        url: "run-tex.js"
+    },
+
     renderTimeout: 15000,
     maxRetries: 0,
     restartWorkerOnFail: true,
-    brokenImageSrc: "https://rod2ik.github.io/cdn/tikzjax/assets/broken-image.svg",
+    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/assets/broken-image.svg",
 
     theme: {
         selector: "body",
@@ -77,14 +110,19 @@ window.TikzJaxOptions = {
 
 ## 3. Root options
 
-| Option                | Type      | Default                 | Description                                         |
-| --------------------- | --------- | ----------------------- | --------------------------------------------------- |
-| `renderTimeout`       | `number`  | `15000`                 | Maximum rendering time in milliseconds.             |
-| `maxRetries`          | `number`  | `0`                     | Number of retry attempts after a render failure.    |
-| `restartWorkerOnFail` | `boolean` | `true`                  | Restarts the TeX worker after a failure or timeout. |
-| `brokenImageSrc`      | `string`  | internal fallback image | Image displayed when rendering fails.               |
+| Option                | Type                           | Default                    | Description                                                                                                                            |
+| --------------------- | ------------------------------ | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `assetBaseUrl`        | `string`                       | directory of loaded script | Base URL used to load runtime assets such as `run-tex.js`, `tex.wasm.gz`, `core.dump.gz`, `tex_files/`, and `assets/broken-image.svg`. |
+| `workerMode`          | `"auto"`, `"direct"`, `"blob"` | `"auto"`                   | Controls how the TeX Web Worker is created.                                                                                            |
+| `workerUrl`           | `string`                       | `"run-tex.js"`             | Worker file URL or path. Relative paths are resolved against `assetBaseUrl`.                                                           |
+| `worker.mode`         | `"auto"`, `"direct"`, `"blob"` | `"auto"`                   | Nested form of `workerMode`. Root `workerMode` takes precedence.                                                                       |
+| `worker.url`          | `string`                       | `"run-tex.js"`             | Nested form of `workerUrl`. Root `workerUrl` takes precedence.                                                                         |
+| `renderTimeout`       | `number`                       | `15000`                    | Maximum rendering time in milliseconds.                                                                                                |
+| `maxRetries`          | `number`                       | `0`                        | Number of retry attempts after a render failure.                                                                                       |
+| `restartWorkerOnFail` | `boolean`                      | `true`                     | Restarts the TeX worker after a failure or timeout.                                                                                    |
+| `brokenImageSrc`      | `string`                       | internal fallback image    | Image displayed when rendering fails.                                                                                                  |
 
-The same worker options may also be placed under `tex`.
+The same render-safety options may also be placed under `tex`.
 
 ```js
 window.TikzJaxOptions = {
@@ -96,7 +134,228 @@ window.TikzJaxOptions = {
 };
 ```
 
-## 4. `theme` options
+## 4. CDN and runtime asset options
+
+TikZJax needs several runtime files in addition to the main script and CSS file.
+
+When loaded from jsDelivr or unpkg, the default behavior is usually enough:
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js"></script>
+```
+
+TikZJax will resolve runtime assets relative to the loaded script directory:
+
+```text
+https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/run-tex.js
+https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/tex.wasm.gz
+https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/core.dump.gz
+https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/tex_files/
+https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/assets/broken-image.svg
+```
+
+### 4.1 `assetBaseUrl`
+
+Use `assetBaseUrl` when the main script is loaded from one location but the runtime assets are served from another location.
+
+```html
+<script>
+window.TikzJaxOptions = {
+    assetBaseUrl: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist"
+};
+</script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js"></script>
+```
+
+Local same-origin example:
+
+```html
+<script>
+window.TikzJaxOptions = {
+    assetBaseUrl: "/vendor/tikzjax"
+};
+</script>
+
+<link rel="stylesheet" href="/vendor/tikzjax/fonts.min.css">
+<script src="/vendor/tikzjax/tikzjax.min.js"></script>
+```
+
+In this case, the following files should exist:
+
+```text
+/vendor/tikzjax/tikzjax.min.js
+/vendor/tikzjax/run-tex.js
+/vendor/tikzjax/fonts.min.css
+/vendor/tikzjax/tex.wasm.gz
+/vendor/tikzjax/core.dump.gz
+/vendor/tikzjax/tex_files/
+/vendor/tikzjax/assets/broken-image.svg
+```
+
+## 5. Worker options
+
+TikZJax renders TeX inside a Web Worker. Worker loading is controlled by `workerMode`, `workerUrl`, and the nested `worker` object.
+
+### 5.1 `workerMode: "auto"`
+
+This is the default mode.
+
+```js
+window.TikzJaxOptions = {
+    workerMode: "auto"
+};
+```
+
+Behavior:
+
+| Situation                  | Behavior                                                     |
+| -------------------------- | ------------------------------------------------------------ |
+| Worker URL is same-origin  | TikZJax uses a direct Worker.                                |
+| Worker URL is cross-origin | TikZJax fetches the worker script and creates a Blob Worker. |
+
+This mode is recommended for most users.
+
+### 5.2 `workerMode: "blob"`
+
+This forces Blob Worker mode.
+
+```js
+window.TikzJaxOptions = {
+    workerMode: "blob"
+};
+```
+
+This is useful when the worker script is served from jsDelivr or unpkg and the page itself is served from another origin.
+
+Blob Worker mode requires the browser to be allowed to create `blob:` workers.
+
+Typical CSP requirement:
+
+```http
+worker-src 'self' blob:;
+connect-src 'self' https://cdn.jsdelivr.net https://unpkg.com;
+```
+
+### 5.3 `workerMode: "direct"`
+
+This forces direct Worker mode.
+
+```js
+window.TikzJaxOptions = {
+    assetBaseUrl: "/vendor/tikzjax",
+    workerMode: "direct"
+};
+```
+
+Direct mode is useful for strict same-origin deployments or CSP policies that do not allow `blob:` workers.
+
+In direct mode, the worker should normally be served from the same origin as the page:
+
+```text
+https://example.com/vendor/tikzjax/run-tex.js
+```
+
+Direct cross-origin Workers are blocked by many browsers, even if the worker script itself is accessible as a normal script.
+
+### 5.4 `workerUrl`
+
+Use `workerUrl` to override the worker script location.
+
+```js
+window.TikzJaxOptions = {
+    assetBaseUrl: "/vendor/tikzjax",
+    workerUrl: "/vendor/tikzjax/run-tex.js",
+    workerMode: "direct"
+};
+```
+
+Nested form:
+
+```js
+window.TikzJaxOptions = {
+    assetBaseUrl: "/vendor/tikzjax",
+    worker: {
+        url: "/vendor/tikzjax/run-tex.js",
+        mode: "direct"
+    }
+};
+```
+
+Root options take precedence over nested options:
+
+```js
+window.TikzJaxOptions = {
+    workerMode: "blob",
+    worker: {
+        mode: "direct"
+    }
+};
+```
+
+In this example, `"blob"` wins.
+
+## 6. Content Security Policy
+
+TikZJax uses WebAssembly and a Web Worker.
+
+### 6.1 CDN with Blob Worker
+
+For jsDelivr or unpkg usage, a typical CSP is:
+
+```http
+Content-Security-Policy:
+  default-src 'self';
+  script-src 'self' https://cdn.jsdelivr.net https://unpkg.com 'wasm-unsafe-eval';
+  style-src 'self' https://cdn.jsdelivr.net https://unpkg.com 'unsafe-inline';
+  worker-src 'self' blob:;
+  connect-src 'self' https://cdn.jsdelivr.net https://unpkg.com;
+  img-src 'self' https://cdn.jsdelivr.net https://unpkg.com data: blob:;
+  font-src 'self' https://cdn.jsdelivr.net https://unpkg.com;
+  object-src 'none';
+  base-uri 'self';
+```
+
+### 6.2 Local same-origin deployment
+
+For a local same-origin deployment with direct Worker mode:
+
+```http
+Content-Security-Policy:
+  default-src 'self';
+  script-src 'self' 'wasm-unsafe-eval';
+  style-src 'self' 'unsafe-inline';
+  worker-src 'self';
+  connect-src 'self';
+  img-src 'self' data:;
+  font-src 'self';
+  object-src 'none';
+  base-uri 'self';
+```
+
+Example configuration:
+
+```html
+<script>
+window.TikzJaxOptions = {
+    assetBaseUrl: "/vendor/tikzjax",
+    workerMode: "direct"
+};
+</script>
+
+<link rel="stylesheet" href="/vendor/tikzjax/fonts.min.css">
+<script src="/vendor/tikzjax/tikzjax.min.js"></script>
+```
+
+Notes:
+
+* `worker-src blob:` is required for Blob Worker mode.
+* `'wasm-unsafe-eval'` is usually required because TikZJax uses `WebAssembly.instantiate`.
+* `style-src 'unsafe-inline'` may be required because the bundled CSS is injected by the JavaScript bundle.
+
+## 7. `theme` options
 
 Theme options configure light/dark rendering.
 
@@ -142,7 +401,7 @@ window.TikzJaxOptions = {
 };
 ```
 
-## 5. `tex` options
+## 8. `tex` options
 
 | Option                    | Type                              | Description                                     |
 | ------------------------- | --------------------------------- | ----------------------------------------------- |
@@ -153,7 +412,22 @@ window.TikzJaxOptions = {
 | `tex.maxRetries`          | `number`                          | Same as root `maxRetries`.                      |
 | `tex.restartWorkerOnFail` | `boolean`                         | Same as root `restartWorkerOnFail`.             |
 
-### 5.1 `tex.texPackages`
+Legacy root aliases are also supported:
+
+```js
+window.TikzJaxOptions = {
+    texPackages: {
+        amsmath: "",
+        "tkz-tab": ""
+    },
+    tikzLibraries: "arrows.meta,calc",
+    addToPreamble: "\\newcommand{\\R}{\\mathbb{R}}"
+};
+```
+
+The recommended form is to place these options under `tex`.
+
+### 8.1 `tex.texPackages`
 
 Package values are the options passed to `\usepackage`.
 
@@ -179,7 +453,7 @@ This conceptually produces:
 \usepackage{tkz-tab}
 ```
 
-### 5.2 `tex.tikzLibraries`
+### 8.2 `tex.tikzLibraries`
 
 You can use an array:
 
@@ -205,7 +479,7 @@ window.TikzJaxOptions = {
 };
 ```
 
-### 5.3 `tex.addToPreamble`
+### 8.3 `tex.addToPreamble`
 
 Use this for global LaTeX commands.
 
@@ -220,7 +494,7 @@ window.TikzJaxOptions = {
 };
 ```
 
-## 6. `tkzTab` options
+## 9. `tkzTab` options
 
 The `tkzTab` options generate reusable LaTeX macros for variation tables and sign tables.
 
@@ -257,22 +531,21 @@ Example:
 \end{tikzpicture}
 ```
 
-## 7. Local `data-*` attributes
+## 10. Local `data-*` attributes
 
 Local attributes are placed on a `<script type="text/tikz">` block.
 
-| HTML attribute         | Dataset key     | Description                                          |
-| ---------------------- | --------------- | ---------------------------------------------------- |
-| `data-tex-packages`    | `texPackages`   | Local LaTeX packages as JSON.                        |
-| `data-tikz-libraries`  | `tikzLibraries` | Local TikZ libraries, comma-separated.               |
-| `data-add-to-preamble` | `addToPreamble` | Local preamble appended after the global preamble.   |
-| `data-disable-cache`   | `disableCache`  | Disables IndexedDB cache for this block.             |
-| `data-width`           | `width`         | Loader width in TeX points.                          |
-| `data-height`          | `height`        | Loader height in TeX points.                         |
-| `data-show-console`    | `showConsole`   | Enables TeX console output, when supported.          |
-| `data-aria-label`      | `ariaLabel`     | Adds an accessible label/title to the generated SVG. |
+| HTML attribute         | Dataset key     | Description                                        |
+| ---------------------- | --------------- | -------------------------------------------------- |
+| `data-tex-packages`    | `texPackages`   | Local LaTeX packages as JSON.                      |
+| `data-tikz-libraries`  | `tikzLibraries` | Local TikZ libraries, comma-separated.             |
+| `data-add-to-preamble` | `addToPreamble` | Local preamble appended after the global preamble. |
+| `data-disable-cache`   | `disableCache`  | Disables IndexedDB cache for this block.           |
+| `data-width`           | `width`         | Loader width in TeX points.                        |
+| `data-height`          | `height`        | Loader height in TeX points.                       |
+| `data-show-console`    | `showConsole`   | Enables TeX console output, when supported.        |
 
-### 7.1 Local packages
+### 10.1 Local packages
 
 ```html
 <script
@@ -285,7 +558,7 @@ Local attributes are placed on a `<script type="text/tikz">` block.
 </script>
 ```
 
-### 7.2 Local TikZ libraries
+### 10.2 Local TikZ libraries
 
 ```html
 <script
@@ -298,7 +571,7 @@ Local attributes are placed on a `<script type="text/tikz">` block.
 </script>
 ```
 
-### 7.3 Local preamble
+### 10.3 Local preamble
 
 ```html
 <script
@@ -311,7 +584,7 @@ Local attributes are placed on a `<script type="text/tikz">` block.
 </script>
 ```
 
-### 7.4 Disable cache locally
+### 10.4 Disable cache locally
 
 ```html
 <script type="text/tikz" data-disable-cache="true">
@@ -321,7 +594,7 @@ Local attributes are placed on a `<script type="text/tikz">` block.
 </script>
 ```
 
-### 7.5 Loader size
+### 10.5 Loader size
 
 ```html
 <script type="text/tikz" data-width="120" data-height="80">
@@ -331,7 +604,21 @@ Local attributes are placed on a `<script type="text/tikz">` block.
 </script>
 ```
 
-## 8. Configuration merging rules
+### 10.6 Show TeX console output
+
+Use this when debugging LaTeX errors.
+
+```html
+<script type="text/tikz" data-show-console="true">
+\begin{tikzpicture}
+    \draw (0,0) -- (2,1);
+\end{tikzpicture}
+</script>
+```
+
+When supported by the TeX runtime, TeX logs are printed in the browser console.
+
+## 11. Configuration merging rules
 
 TikZJax merges global and local options.
 
@@ -345,11 +632,11 @@ TikZJax merges global and local options.
 | Local preamble        | Appended after the global preamble.                                                                  |
 | Local cache option    | Applies only to the current block.                                                                   |
 
-## 9. Recognized source blocks
+## 12. Recognized source blocks
 
 TikZJax recognizes two source families.
 
-### 9.1 HTML syntax
+### 12.1 HTML syntax
 
 ```html
 <script type="text/tikz">
@@ -359,7 +646,7 @@ TikZJax recognizes two source families.
 </script>
 ```
 
-### 9.2 Markdown fenced blocks
+### 12.2 Markdown fenced blocks
 
 In MkDocs, fenced blocks are converted to HTML by the Markdown engine.
 
@@ -380,7 +667,7 @@ Recognized classes include:
 | `language-tikz`    | ` ```tikz `                |
 | `tikz`             | custom fenced block output |
 
-## 10. CSS helper classes
+## 13. CSS helper classes
 
 Some CSS classes can be applied to the parent container.
 
@@ -401,9 +688,9 @@ Example:
 </div>
 ```
 
-## 11. Render completion event
+## 14. Render completion event
 
-After a SVG has been generated, TikZJax dispatches:
+After an SVG has been generated, TikZJax dispatches:
 
 ```text
 tikzjax-load-finished
@@ -418,19 +705,62 @@ document.addEventListener("tikzjax-load-finished", function (event) {
 });
 ```
 
-## 12. Cache behavior
+## 15. Cache behavior
 
-TikZJax caches rendered SVGs in the browser.
+TikZJax caches rendered SVGs in IndexedDB.
 
 A block is rendered again if:
 
 * the TikZ source changes;
 * one of its relevant `data-*` attributes changes;
 * cache is disabled with `data-disable-cache="true"`;
-* the browser cache or IndexedDB storage is cleared.
+* the browser cache or IndexedDB storage is cleared;
+* the effective global TeX options included in the dataset change.
 
-## 13. Dynamically added content
+To clear the TikZJax cache manually from the browser console:
+
+```js
+indexedDB.deleteDatabase("TikzJax");
+location.reload();
+```
+
+## 16. Dynamically added content
 
 TikZJax observes the DOM. TikZ blocks added after the initial page load are detected automatically.
 
 No manual render call is required for normal MkDocs pages, Material tabs, or dynamically inserted content.
+
+TikZJax also listens to tab interactions commonly used by Material for MkDocs and rescans after a short delay when tabbed content becomes visible.
+
+## 17. Runtime files included in the npm package
+
+The npm package includes the runtime files required by the browser renderer.
+
+Important files include:
+
+```text
+dist/tikzjax.js
+dist/tikzjax.min.js
+dist/run-tex.js
+dist/run-tex.min.js
+dist/fonts.css
+dist/fonts.min.css
+dist/tex.wasm.gz
+dist/core.dump.gz
+dist/tex_files/
+dist/assets/broken-image.svg
+```
+
+For CDN use, prefer the minified files:
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js"></script>
+```
+
+For debugging, use the non-minified files:
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/fonts.css">
+<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/tikzjax.js"></script>
+```
