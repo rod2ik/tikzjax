@@ -42,12 +42,40 @@ jobs:
 
       - name: Build documentation
         working-directory: site
-        run: mkdocs build
+        run: mkdocs build --clean --site-dir ../_site
+
+      - name: Inspect generated site
+        run: |
+          echo "Generated site size:"
+          du -sh _site
+
+          echo ""
+          echo "Number of files:"
+          find _site -type f | wc -l
+
+          echo ""
+          echo "Largest files:"
+          find _site -type f -exec du -h {} + | sort -hr | head -30
+
+          echo ""
+          echo "Files larger than 50 MB:"
+          find _site -type f -size +50M -print -exec ls -lh {} \;
+
+          echo ""
+          echo "Symbolic links:"
+          find _site -type l -print
+
+      - name: Fail if generated site contains symbolic links
+        run: |
+          if find _site -type l | grep .; then
+            echo "GitHub Pages artifacts must not contain symbolic links."
+            exit 1
+          fi
 
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v5
         with:
-          path: site/site
+          path: _site
 
   deploy:
     name: Deploy to GitHub Pages
