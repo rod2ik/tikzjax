@@ -10,28 +10,39 @@ let code;
 let urlRoot;
 
 const loadDecompress = async (file) => {
-    const response = await fetch(`${urlRoot}/${file}`);
+    const url = `${urlRoot}/${file}`;
+    const response = await fetch(url);
 
-    if (response.ok) {
-        const reader = response.body.getReader();
-        const inflate = new pako.Inflate();
-
-        while (true) {
-            const { done, value } = await reader.read();
-
-            if (done) break;
-
-            inflate.push(value);
-        }
-
-        reader.releaseLock();
-
-        if (inflate.err) throw new Error(inflate.err);
-
-        return inflate.result;
+    if (!response.ok) {
+        throw new Error(`Unable to load ${file} from ${url}. File not available.`);
     }
 
-    throw new Error(`Unable to load ${file}. File not available.`);
+    const reader = response.body.getReader();
+    const inflate = new pako.Inflate();
+
+    while (true) {
+        const { done, value } = await reader.read();
+
+        if (done) break;
+
+        inflate.push(value);
+    }
+
+    reader.releaseLock();
+
+    if (inflate.err) {
+        throw new Error(`Unable to decompress ${file}: ${inflate.msg || inflate.err}`);
+    }
+
+    return inflate.result;
+};
+
+const readTexLog = () => {
+    try {
+        return Buffer.from(library.readFileSync('input.log')).toString();
+    } catch {
+        return 'No TeX log file was available.';
+    }
 };
 
 expose({
@@ -42,8 +53,6 @@ expose({
     },
 
     async texify(input, dataset) {
-        // Set up the tex input file.
-        // const texPackages = dataset.texPackages ? JSON.parse(dataset.texPackages) : {};
         const texPackages = {
             ...(dataset.texPackages ? JSON.parse(dataset.texPackages) : {})
         };
@@ -63,7 +72,6 @@ expose({
 
         library.writeFileSync('input.tex', Buffer.from(input));
 
-        // Set up the tex web assembly.
         const memory = new WebAssembly.Memory({
             initial: library.pages,
             maximum: library.pages
@@ -83,16 +91,21 @@ expose({
             }
         });
 
-        // Execute the tex web assembly.
         await library.executeAsync(wasm.instance.exports);
 
-        // Extract the generated dvi file.
-        const dvi = library.readFileSync('input.dvi').buffer;
+        let dvi;
 
-        // Clean up the library for the next run.
+        try {
+            dvi = library.readFileSync('input.dvi').buffer;
+        } catch (error) {
+            throw new Error(
+                'TikZJax: TeX did not produce input.dvi.\n\n' + readTexLog(),
+                { cause: error }
+            );
+        }
+
         library.deleteEverything();
 
-        // Use dvi2html to convert the dvi to svg.
         let html = '';
 
         const page = new Writable({
