@@ -7,7 +7,6 @@ The installation is still a CDN installation, as with a standalone HTML page, bu
 !!! success "Installation summary"
     **Required:** add the TikZJax stylesheet and script to your `overrides/main.html`.
 
-    `````
     ```html
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js"></script>
@@ -31,16 +30,13 @@ The installation is still a CDN installation, as with a standalone HTML page, bu
             class: language-tikzjax
             format: !!python/name:pymdownx.superfences.fence_code_format
     ````
-    `````
 
 ## 1. Configure CDN files in `overrides/main.html`
 
 !!! warning
     TikZJax CDN references should be loaded from your MkDocs template, usually `overrides/main.html`.
 
-    ```
     Avoid putting the main TikZJax script directly in `extra_javascript` unless you have verified the final loading order. The configuration file must be defined before `tikzjax.min.js`.
-    ```
 
 ### 1.1 Without a global config file
 
