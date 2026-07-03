@@ -18,10 +18,16 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
+
+      - name: Checkout known-good CDN runtime
+        uses: actions/checkout@v6
+        with:
+          repository: rod2ik/cdn
+          path: cdn-runtime
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: "24"
           registry-url: "https://registry.npmjs.org"
@@ -44,14 +50,26 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Download required runtime assets
-        run: |
-          curl -fL https://rod2ik.github.io/cdn/tikzjax/core.dump.gz -o core.dump.gz
-          curl -fL https://rod2ik.github.io/cdn/tikzjax/tex.wasm.gz -o tex.wasm.gz
-          ls -lh core.dump.gz tex.wasm.gz
-
       - name: Build and validate dist
         run: yarn bfc
+
+      - name: Replace TeX runtime with known-good CDN runtime
+        run: |
+          test -f cdn-runtime/tikzjax/core.dump.gz
+          test -f cdn-runtime/tikzjax/tex.wasm.gz
+          test -d cdn-runtime/tikzjax/tex_files
+          test -f cdn-runtime/tikzjax/tex_files/l3backend-dvips.def.gz
+
+          rm -rf dist/tex_files
+          cp -f cdn-runtime/tikzjax/core.dump.gz dist/core.dump.gz
+          cp -f cdn-runtime/tikzjax/tex.wasm.gz dist/tex.wasm.gz
+          cp -R cdn-runtime/tikzjax/tex_files dist/tex_files
+
+          echo "Known-good CDN runtime copied into dist:"
+          ls -lh dist/core.dump.gz dist/tex.wasm.gz
+
+          echo "Sample TeX runtime files:"
+          find dist/tex_files -type f | sort | head -20
 
       - name: Verify required dist files
         run: |
@@ -63,11 +81,19 @@ jobs:
           test -f dist/fonts.min.css
           test -f dist/tex.wasm.gz
           test -f dist/core.dump.gz
+          test -d dist/tex_files
+          test -f dist/tex_files/l3backend-dvips.def.gz
+
+          count="$(find dist/tex_files -type f | wc -l)"
+          echo "TeX runtime file count: $count"
+
+          test "$count" -gt 100
 
       - name: Check package contents
         run: |
           npm pack --dry-run
           npm pack --json > pack.json
+
           node - <<'NODE'
           const fs = require("fs");
 
@@ -82,16 +108,30 @@ jobs:
             "dist/fonts.css",
             "dist/fonts.min.css",
             "dist/tex.wasm.gz",
-            "dist/core.dump.gz"
+            "dist/core.dump.gz",
+            "dist/tex_files/l3backend-dvips.def.gz"
           ];
 
           const missing = required.filter((file) => !files.has(file));
 
           if (missing.length) {
             console.error("Missing files from npm package:");
+
             for (const file of missing) {
               console.error(`- ${file}`);
             }
+
+            process.exit(1);
+          }
+
+          const texRuntimeFiles = pack.files
+            .map((file) => file.path)
+            .filter((file) => file.startsWith("dist/tex_files/"));
+
+          console.log(`TeX runtime files in npm package: ${texRuntimeFiles.length}`);
+
+          if (texRuntimeFiles.length <= 100) {
+            console.error("The npm package does not contain enough TeX runtime files.");
             process.exit(1);
           }
 
