@@ -13,6 +13,11 @@ misc
 public/fonts
 public/tex_files
 
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
 # MkDocs documentation build/cache
 site/site/
 site/.cache/
