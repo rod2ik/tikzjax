@@ -89,5 +89,5 @@ extra_css:
 extra_javascript:
   - assets/javascripts/mathjax.js
   - https://cdn.jsdelivr.net/npm/mathjax@4.1.0/tex-mml-chtml.js
-  - assets/javascripts/tikzjax.config.js
+  # - assets/javascripts/tikzjax.config.js
   - assets/javascripts/dynabadges.config.js

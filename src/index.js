@@ -30,7 +30,13 @@ const cloneTikzJaxOptionValue = (value) => {
     }
 
     if (isPlainObject(value)) {
-        return mergeTikzJaxOptions({}, value);
+        const result = {};
+
+        Object.entries(value).forEach(([key, item]) => {
+            result[key] = cloneTikzJaxOptionValue(item);
+        });
+
+        return result;
     }
 
     return value;
