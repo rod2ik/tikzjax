@@ -3,7 +3,7 @@ console.log("[TIKZJAX.CONFIG] was loaded");
 window.TikzJaxOptions = {
     renderTimeout: 10000,
 
-    brokenImageSrc: "https://rod2ik.github.io/cdn/tikzjax/assets/broken-image.svg",
+    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image.svg",
 
     tex: {
         texPackages: {
