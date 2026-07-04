@@ -1,6 +1,6 @@
 {
     "name": "@rod2ik/tikzjax",
-    "version": "1.1.9",
+    "version": "1.1.10",
     "description": "TikZ AND tkz-tab loader in custom HTML pages and MkDocs Material, with Light/Dark Themes",
     "keywords": [
         "tikz",

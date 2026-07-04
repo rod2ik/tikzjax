@@ -3,7 +3,7 @@ name: Create GitHub Release
 on:
   push:
     tags:
-      - "*"
+      - "v*"
 
 permissions:
   contents: write
@@ -21,26 +21,21 @@ jobs:
         run: |
           TAG_NAME="${GITHUB_REF_NAME}"
 
-          PACKAGE_VERSION="$(python - <<'PY'
-import json
-from pathlib import Path
-
-package = json.loads(Path("package.json").read_text(encoding="utf-8"))
-print(str(package.get("version", "")).strip())
-PY
-)"
+          PACKAGE_VERSION="$(python3 -c 'import json; print(str(json.load(open("package.json", encoding="utf-8")).get("version", "")).strip())')"
+          EXPECTED_TAG="v${PACKAGE_VERSION}"
 
           echo "Tag name: ${TAG_NAME}"
           echo "package.json version: ${PACKAGE_VERSION}"
+          echo "Expected tag: ${EXPECTED_TAG}"
 
           if [ -z "${PACKAGE_VERSION}" ]; then
             echo "package.json does not contain a valid version."
             exit 1
           fi
 
-          if [ "${TAG_NAME}" != "${PACKAGE_VERSION}" ]; then
-            echo "The pushed tag must match package.json version exactly."
-            echo "Expected tag: ${PACKAGE_VERSION}"
+          if [ "${TAG_NAME}" != "${EXPECTED_TAG}" ]; then
+            echo "The pushed tag must match package.json version with a leading v."
+            echo "Expected tag: ${EXPECTED_TAG}"
             echo "Actual tag:   ${TAG_NAME}"
             exit 1
           fi
