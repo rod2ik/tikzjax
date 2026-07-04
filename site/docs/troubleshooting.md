@@ -12,16 +12,16 @@ Recommended jsDelivr loading:
 
 ```html
 <script src="tikzjax.config.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
-<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
 ```
 
 Equivalent unpkg loading:
 
 ```html
 <script src="tikzjax.config.js"></script>
-<link rel="stylesheet" href="https://unpkg.com/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
-<script src="https://unpkg.com/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
+<script src="https://unpkg.com/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
 ```
 
 Then open the browser DevTools:
@@ -264,7 +264,7 @@ jsDelivr:
 
 ```js
 window.TikzJaxOptions = {
-    assetBaseUrl: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist"
+    assetBaseUrl: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist"
 };
 ```
 
@@ -272,7 +272,7 @@ unpkg:
 
 ```js
 window.TikzJaxOptions = {
-    assetBaseUrl: "https://unpkg.com/@rod2ik/tikzjax@1.1.7/dist"
+    assetBaseUrl: "https://unpkg.com/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist"
 };
 ```
 
@@ -364,7 +364,7 @@ If the error image itself is missing, set `brokenImageSrc`.
 
 ```js
 window.TikzJaxOptions = {
-    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/assets/broken-image.svg"
+    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image.svg"
 };
 ```
 
@@ -372,7 +372,7 @@ Equivalent unpkg path:
 
 ```js
 window.TikzJaxOptions = {
-    brokenImageSrc: "https://unpkg.com/@rod2ik/tikzjax@1.1.7/dist/assets/broken-image.svg"
+    brokenImageSrc: "https://unpkg.com/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image.svg"
 };
 ```
 

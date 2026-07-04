@@ -9,29 +9,23 @@ On a regular standalone HTML page, load the stylesheet first, then the TikZJax s
 Recommended jsDelivr installation:
 
 === "Without a global config file"
-
-````
-```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
-<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js"></script>
-```
-````
+    ```html
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
+    ```
 
 === "With a global config file"
-
-````
-```html
-<script src="./path/to/your/local/tikzjax.config.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
-<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js"></script>
-```
-````
+    ```html
+    <script src="./path/to/your/local/tikzjax.config.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
+    ```
 
 Equivalent unpkg installation:
 
 ```html
-<link rel="stylesheet" href="https://unpkg.com/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
-<script src="https://unpkg.com/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
+<script src="https://unpkg.com/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
 ```
 
 TikZJax automatically infers its base URL from the loaded script URL. Runtime files are therefore loaded from the same `dist/` directory as `tikzjax.min.js`.
@@ -39,7 +33,6 @@ TikZJax automatically infers its base URL from the loaded script URL. Runtime fi
 !!! info
     The npm/CDN package contains the runtime files required by TikZJax:
 
-    ````
     ```text
     tikzjax.js
     tikzjax.min.js
@@ -54,7 +47,6 @@ TikZJax automatically infers its base URL from the loaded script URL. Runtime fi
     ```
 
     If you use jsDelivr or unpkg, you normally do not need to manage these files manually.
-    ````
 
 ## 2. Minimal working standalone HTML page
 
@@ -66,8 +58,8 @@ This minimal standalone HTML page uses jsDelivr and does not require a custom co
 
 <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
 </head>
 
 <body>
@@ -108,12 +100,10 @@ You can see the complete minimal standalone HTML page here:
 !!! info
     If your page loads TikZJax before the document body is ready, you can add `defer` to the script:
 
-    ````
     ```html
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js" defer></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js" defer></script>
     ```
-    ````
 
 ## 3. Using a local configuration file
 
@@ -121,8 +111,8 @@ A custom configuration file must be loaded before `tikzjax.min.js`.
 
 ```html
 <script src="./tikzjax.config.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
-<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
 ```
 
 Example `tikzjax.config.js`:
@@ -154,12 +144,12 @@ Use `assetBaseUrl` when the main script is loaded from one place but the runtime
 ```html
 <script>
 window.TikzJaxOptions = {
-    assetBaseUrl: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist"
+    assetBaseUrl: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist"
 };
 </script>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
-<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
 ```
 
 For normal jsDelivr or unpkg usage, this option is not required because TikZJax automatically resolves the runtime path.
@@ -227,9 +217,7 @@ You can see the rendered page here:
 !!! info
     If the script loads too early and the table does not render, you can add `defer`:
 
-    ````
     ```html
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js" defer></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js" defer></script>
     ```
-    ````

@@ -50,6 +50,12 @@ nav:
       - Architecture: architecture.md
       - Troubleshooting: troubleshooting.md
 
+plugins:
+  - search
+
+hooks:
+  - postprocess_tikzjax_version.py
+
 markdown_extensions:
   - admonition
   - attr_list

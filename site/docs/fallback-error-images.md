@@ -30,7 +30,7 @@ You may also set it explicitly with jsDelivr:
 
 ```js
 window.TikzJaxOptions = {
-    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/assets/broken-image.svg"
+    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image.svg"
 };
 ```
 
@@ -38,7 +38,7 @@ Or with unpkg:
 
 ```js
 window.TikzJaxOptions = {
-    brokenImageSrc: "https://unpkg.com/@rod2ik/tikzjax@1.1.7/dist/assets/broken-image.svg"
+    brokenImageSrc: "https://unpkg.com/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image.svg"
 };
 ```
 
@@ -78,16 +78,16 @@ The configuration file must be loaded before `tikzjax.min.js`.
 
 ```html
 <script src="/path/to/your/local/tikzjax.config.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
-<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
 ```
 
 Equivalent unpkg loading:
 
 ```html
 <script src="/path/to/your/local/tikzjax.config.js"></script>
-<link rel="stylesheet" href="https://unpkg.com/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
-<script src="https://unpkg.com/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
+<script src="https://unpkg.com/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
 ```
 
 ## 4. Examples
@@ -96,7 +96,7 @@ Equivalent unpkg loading:
 
 ```js
 window.TikzJaxOptions = {
-    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/assets/broken-image.svg"
+    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image.svg"
 };
 ```
 
@@ -104,7 +104,7 @@ window.TikzJaxOptions = {
 
 ```js
 window.TikzJaxOptions = {
-    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/assets/broken-image-degrade.svg"
+    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image-degrade.svg"
 };
 ```
 
@@ -112,7 +112,7 @@ window.TikzJaxOptions = {
 
 ```js
 window.TikzJaxOptions = {
-    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/assets/broken-image-emoji.svg"
+    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image-emoji.svg"
 };
 ```
 
@@ -120,7 +120,7 @@ window.TikzJaxOptions = {
 
 ```js
 window.TikzJaxOptions = {
-    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/assets/broken-image-epuree.svg"
+    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image-epuree.svg"
 };
 ```
 
@@ -128,7 +128,7 @@ window.TikzJaxOptions = {
 
 ```js
 window.TikzJaxOptions = {
-    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/assets/broken-image-esquisse.svg"
+    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image-esquisse.svg"
 };
 ```
 
@@ -136,7 +136,7 @@ window.TikzJaxOptions = {
 
 ```js
 window.TikzJaxOptions = {
-    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/assets/broken-image-materielle.svg"
+    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image-materielle.svg"
 };
 ```
 
@@ -144,7 +144,7 @@ window.TikzJaxOptions = {
 
 ```js
 window.TikzJaxOptions = {
-    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/assets/broken-image-minimaliste.svg"
+    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image-minimaliste.svg"
 };
 ```
 
@@ -152,7 +152,7 @@ window.TikzJaxOptions = {
 
 ```js
 window.TikzJaxOptions = {
-    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/assets/broken-image-moderne.svg"
+    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image-moderne.svg"
 };
 ```
 
@@ -194,7 +194,7 @@ window.TikzJaxOptions = {
     maxRetries: 1,
     restartWorkerOnFail: true,
 
-    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/assets/broken-image-moderne.svg",
+    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image-moderne.svg",
 
     tex: {
         texPackages: {
@@ -244,7 +244,7 @@ For example, this path uses the package default image from jsDelivr:
 
 ```js
 window.TikzJaxOptions = {
-    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/assets/broken-image.svg"
+    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image.svg"
 };
 ```
 
@@ -252,7 +252,7 @@ And this path uses the package default image from unpkg:
 
 ```js
 window.TikzJaxOptions = {
-    brokenImageSrc: "https://unpkg.com/@rod2ik/tikzjax@1.1.7/dist/assets/broken-image.svg"
+    brokenImageSrc: "https://unpkg.com/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image.svg"
 };
 ```
 
@@ -276,8 +276,8 @@ Check that `tikzjax.config.js` is loaded before `tikzjax.min.js`.
 
 ```html
 <script src="/path/to/your/local/tikzjax.config.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/fonts.min.css">
-<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/tikzjax.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
 ```
 
 Also check that no later script overwrites `window.TikzJaxOptions`.
@@ -290,6 +290,6 @@ For MkDocs, local paths are relative to the generated page URL, not necessarily 
 
 ```js
 window.TikzJaxOptions = {
-    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@1.1.7/dist/assets/broken-image.svg"
+    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image.svg"
 };
 ```
