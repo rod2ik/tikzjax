@@ -67,20 +67,34 @@ The main browser-side script is built from the source code in `src/index.js`.
 
 It is responsible for:
 
-* detecting TikZ sources in the page;
-* detecting `<script type="text/tikz">` blocks;
-* detecting MkDocs fenced `tikzjax` code blocks;
-* replacing each source with a temporary loader;
-* building the final rendering options;
-* merging global options and local `data-*` attributes;
-* managing the IndexedDB cache;
-* creating the TeX worker;
-* restarting the worker when needed;
-* applying light/dark theme handling to rendered SVGs;
-* observing the DOM to render dynamically added blocks;
-* rescanning MkDocs tabs and delayed content;
-* displaying a fallback error image if rendering fails;
-* dispatching the `tikzjax-load-finished` event after rendering.
+- detecting TikZ sources in the page;
+- detecting `<script type="text/tikz">` blocks;
+- detecting MkDocs fenced `tikzjax` code blocks;
+- replacing each source with a temporary loader;
+- building the final rendering options;
+- merging global options, partial global options, and local `data-*` attributes;
+- managing the IndexedDB cache;
+- creating the TeX worker;
+- restarting the worker when needed;
+- applying light/dark theme handling to rendered SVGs;
+- observing the DOMsrc/index.js`.
+
+It is responsible for:
+
+- detecting TikZ sources in the page;
+- detecting `<script type="text/tikz">` blocks;
+- detecting MkDocs fenced `tikzjax` code blocks;
+- replacing each source with a temporary loader;
+- building the final rendering options;
+- merging global options, partial global options, and local `data-*` attributes;
+- managing the IndexedDB cache;
+- creating the TeX worker;
+- restarting the worker when needed;
+- applying light/dark theme handling to rendered SVGs;
+- observing the DOM to render dynamically added blocks;
+- rescanning MkDocs tabs and delayed content;
+- displaying a fallback error image if rendering fails;
+- dispatching the `tikzjax-load-finished` event after rendering.
 
 ## 4. Role of `run-tex.js`
 
@@ -88,18 +102,18 @@ It is responsible for:
 
 It is responsible for:
 
-* loading `tex.wasm.gz`;
-* loading `core.dump.gz`;
-* loading TeX support files from `tex_files/`;
-* decompressing runtime assets with `pako`;
-* injecting `input.tex` into the TeX environment;
-* adding LaTeX packages;
-* adding TikZ libraries;
-* adding global and local preamble content;
-* running the TeX WebAssembly engine;
-* reading the generated `input.dvi`;
-* converting DVI output to SVG/HTML with `@rod2ik/dvi2html`;
-* returning the generated HTML to the main thread.
+- loading `tex.wasm.gz`;
+- loading `core.dump.gz`;
+- loading TeX support files from `tex_files/`;
+- decompressing runtime assets with `pako`;
+- injecting `input.tex` into the TeX environment;
+- adding LaTeX packages;
+- adding TikZ libraries;
+- adding global and local preamble content;
+- running the TeX WebAssembly engine;
+- reading the generated `input.dvi`;
+- converting DVI output to SVG/HTML with `@rod2ik/dvi2html`;
+- returning the generated HTML to the main thread.
 
 The worker keeps TeX execution isolated from the main page.
 
@@ -130,50 +144,96 @@ Conceptually, the generated document looks like this:
 
 The exact document depends on:
 
-* global `window.TikzJaxOptions`;
-* local `data-*` attributes;
-* configured LaTeX packages;
-* configured TikZ libraries;
-* configured `tkz-tab` options;
-* custom preamble content.
+- global `window.TikzJaxOptions`;
+- later partial global configuration;
+- local `data-*` attributes;
+- configured LaTeX packages;
+- configured TikZ libraries;
+- configured `tkz-tab` options;
+- custom preamble content.
 
-## 6. Global and local configuration
+## 6. Global, partial global, and local configuration
 
 Global configuration is defined with:
 
 ```js
 window.TikzJaxOptions = {
-    renderTimeout: 15000,
-    maxRetries: 1,
+    renderTimeout: 10000,
+    maxRetries: 0,
     restartWorkerOnFail: true,
+
+    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image.svg",
 
     tex: {
         texPackages: {
             amsmath: "",
+            amsfonts: "",
+            amssymb: "",
             "tkz-tab": ""
         },
-        tikzLibraries: ["arrows.meta", "calc", "positioning"],
-        addToPreamble: ""
+        tikzLibraries: [
+            "arrows.meta",
+            "calc",
+            "positioning"
+        ]
     }
 };
 ```
 
-Local block options can override or extend global options.
+TikZJax merges configuration in this order:
+
+```text
+default TikZJax options
+< global configuration
+< later partial global configuration
+< local diagram configuration
+```
+
+The merge is deep:
+
+- plain objects are merged recursively;
+- arrays are merged without duplicate entries;
+- strings, numbers, and booleans are replaced by the later value;
+- local options affect only the current diagram.
+
+A later partial global configuration can update one option without erasing the previous configuration.
+
+Example:
+
+```js
+window.TikzJaxOptions = {
+    brokenImageSrc: "/assets/images/custom-tikz-error.svg"
+};
+```
+
+This changes only `brokenImageSrc`.
+
+It does not erase previous options such as `tex.texPackages`, `tex.tikzLibraries`, or `tkzTab`.
+
+Local block options can override or extend global options for one diagram.
 
 Example:
 
 ```html
 <script
   type="text/tikz"
-  data-tikz-libraries="arrows.meta,calc"
+  data-tikz-libraries="decorations.pathreplacing"
   data-tex-packages='{"xcolor":"dvipsnames"}'
   data-disable-cache="true"
 >
 \begin{tikzpicture}
     \draw[very thick, NavyBlue] (0,0) -- (3,1);
+    \draw[decorate, decoration={brace, amplitude=6pt}] (0,-0.4) -- (3,-0.4);
 \end{tikzpicture}
 </script>
 ```
+
+In this example:
+
+- `xcolor` is added to the global TeX packages;
+- `decorations.pathreplacing` is added to the global TikZ libraries;
+- cache is disabled only for this block;
+- the global configuration is not mutated.
 
 ## 7. Runtime asset resolution
 
@@ -262,11 +322,11 @@ A same-origin deployment should expose:
 
 TikZJax supports three worker modes.
 
-| Mode       | Description                                                                                        |
-| ---------- | -------------------------------------------------------------------------------------------------- |
-| `"auto"`   | Default mode. Uses a direct Worker for same-origin files and a Blob Worker for cross-origin files. |
-| `"blob"`   | Always creates a Blob Worker. Useful for CDN-hosted worker scripts.                                |
-| `"direct"` | Always creates a direct Worker. Best for same-origin deployments.                                  |
+| Mode | Description |
+| --- | --- |
+| `"auto"` | Default mode. Uses a direct Worker for same-origin files and a Blob Worker for cross-origin files. |
+| `"blob"` | Always creates a Blob Worker. Useful for CDN-hosted worker scripts. |
+| `"direct"` | Always creates a direct Worker. Best for same-origin deployments. |
 
 Default configuration:
 
@@ -317,16 +377,16 @@ Database: TikzJax
 Object store: svgImages
 ```
 
-The cache key is built from the final rendering input, including:
+The cache key is built from the effective rendering input, including:
 
-* TikZ source code;
-* final dataset;
-* packages;
-* libraries;
-* preamble;
-* local rendering options.
+- TikZ source code;
+- effective dataset;
+- merged TeX packages;
+- merged TikZ libraries;
+- global and local preamble content;
+- relevant local rendering options.
 
-If the source or options change, the diagram is rendered again.
+If the source or relevant options change, the diagram is rendered again.
 
 To bypass the cache for one block:
 
@@ -351,11 +411,11 @@ TikZJax observes the page after the initial load.
 
 This is useful for:
 
-* MkDocs Material content tabs;
-* collapsible admonitions;
-* dynamically inserted content;
-* client-side navigation;
-* delayed Markdown rendering.
+- MkDocs Material content tabs;
+- collapsible admonitions;
+- dynamically inserted content;
+- client-side navigation;
+- delayed Markdown rendering.
 
 TikZJax can rescan the DOM and render newly detected TikZ blocks.
 
@@ -375,17 +435,17 @@ After SVG generation, TikZJax adapts common colors for light/dark themes.
 
 It can normalize:
 
-* black fills;
-* black strokes;
-* text color;
-* some white backgrounds.
+- black fills;
+- black strokes;
+- text color;
+- some white backgrounds.
 
 Theme detection can use:
 
-* attributes such as `data-theme`;
-* attributes such as `data-md-color-scheme`;
-* CSS classes such as `dark` or `theme-dark`;
-* explicit configuration through `window.TikzJaxOptions.theme`.
+- attributes such as `data-theme`;
+- attributes such as `data-md-color-scheme`;
+- CSS classes such as `dark` or `theme-dark`;
+- explicit configuration through `window.TikzJaxOptions.theme`.
 
 Example for Material for MkDocs:
 
@@ -413,15 +473,41 @@ window.TikzJaxOptions = {
 };
 ```
 
+It can also be configured locally for one diagram:
+
+```html
+<script
+  type="text/tikz"
+  data-broken-image-src="/assets/images/local-tikz-error.svg"
+>
+\begin{tikzpicture}
+    \ThisCommandDoesNotExist
+\end{tikzpicture}
+</script>
+```
+
+Fallback priority is:
+
+```text
+default broken image
+< global brokenImageSrc
+< partial global brokenImageSrc
+< local data-broken-image-src
+```
+
 Typical failure causes include:
 
-* invalid TikZ code;
-* missing `\end{tikzpicture}`;
-* missing LaTeX package;
-* missing TikZ library;
-* TeX timeout;
-* worker failure;
-* blocked runtime assets.
+- invalid TikZ code;
+- invalid LaTeX command;
+- missing LaTeX package;
+- missing TikZ library;
+- TeX timeout;
+- worker failure;
+- blocked runtime assets.
+
+If a local fallback image is defined, it affects only the current diagram.
+
+It does not change the global fallback image.
 
 ## 15. Cleanup
 
@@ -429,9 +515,9 @@ After each render, the worker cleans the virtual file system.
 
 When the page unloads, TikZJax can:
 
-* disconnect observers;
-* cancel scheduled theme updates;
-* clear pending render work;
-* terminate the worker.
+- disconnect observers;
+- cancel scheduled theme updates;
+- clear pending render work;
+- terminate the worker.
 
 This helps avoid leaking memory when pages are dynamically updated or navigated.
