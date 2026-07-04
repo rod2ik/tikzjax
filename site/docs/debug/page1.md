@@ -1,6 +1,8 @@
 # TikZJax local configuration tests
 
-These tests verify that local per-diagram options do not erase the global configuration.
+This page tests the merge between the global configuration and local per-diagram options.
+
+It does not modify `window.TikzJaxOptions` inside the page.
 
 Expected priority:
 
@@ -9,18 +11,28 @@ Expected priority:
 
 ---
 
-## Test 1 — Global configuration only
+## Test 1 — Global TeX packages only
 
-This table uses only the global configuration from `tikzjax.config.js`.
+This diagram uses only the global configuration.
 
-Expected result if it works: the variation table is rendered.
+It does not use `tkz-tab`.
 
-If it fails: the global configuration is not loaded correctly, or `tkz-tab` is not available.
+It checks that global TeX packages such as `amsmath` and `amsfonts` are available.
+
+Expected result if it works: a formula with `\mathbb{R}` and an aligned equation is rendered.
+
+If it fails: the global `texPackages` configuration is probably not loaded correctly.
 
 <script type="text/tikz" data-disable-cache="true">
 \begin{tikzpicture}
-    \tkzTabInit{$x$/1, $f(x)$/2}{$-\infty$, $0$, $+\infty$}
-    \tkzTabVar{-/ $-\infty$, +/ $2$, -/ $-\infty$}
+    \node at (0,0) {$\mathbb{R}$};
+
+    \node at (0,-1.2) {$
+        \begin{aligned}
+            f(x) &= x^2 + 1 \\
+            f'(x) &= 2x
+        \end{aligned}
+    $};
 \end{tikzpicture}
 </script>
 
@@ -28,16 +40,24 @@ If it fails: the global configuration is not loaded correctly, or `tkz-tab` is n
 
 ## Test 2 — Local texPackages must not erase global texPackages
 
-This diagram adds only one local TeX package with `data-tex-packages`.
+This diagram adds one local TeX package with `data-tex-packages`.
 
-Expected result if it works: the variation table is rendered.
+It still uses global TeX packages such as `amsmath` and `amsfonts`.
 
-If it fails: the local `data-tex-packages` erased the global `texPackages`, so `tkz-tab` disappeared.
+Expected result if it works: the formula is rendered, `\mathbb{R}` appears, and the aligned equation appears.
+
+If it fails: the local `data-tex-packages` value probably erased the global `texPackages`.
 
 <script type="text/tikz" data-disable-cache="true" data-tex-packages='{"xcolor": ""}'>
 \begin{tikzpicture}
-    \tkzTabInit{$x$/1, $g(x)$/2}{$-\infty$, $1$, $+\infty$}
-    \tkzTabVar{-/ $-\infty$, +/ $5$, -/ $-\infty$}
+    \node at (0,0) {\textcolor{blue}{$\mathbb{R}$}};
+
+    \node at (0,-1.2) {$
+        \begin{aligned}
+            g(x) &= x^3 - x \\
+            g'(x) &= 3x^2 - 1
+        \end{aligned}
+    $};
 \end{tikzpicture}
 </script>
 
@@ -45,11 +65,14 @@ If it fails: the local `data-tex-packages` erased the global `texPackages`, so `
 
 ## Test 3 — Local tikzLibraries must not erase global tikzLibraries
 
-This diagram uses `arrows.meta` from the global configuration and `decorations.pathreplacing` from the local configuration.
+This diagram uses:
+
+- `arrows.meta` from the global configuration;
+- `decorations.pathreplacing` from the local configuration.
 
 Expected result if it works: both the `Stealth` arrow and the decorative brace are rendered.
 
-If it fails: the local `data-tikz-libraries` erased the global `tikzLibraries`.
+If it fails: the local `data-tikz-libraries` value probably erased the global `tikzLibraries`.
 
 <script type="text/tikz" data-disable-cache="true" data-tikz-libraries="decorations.pathreplacing">
 \begin{tikzpicture}[line width=1.2pt]
@@ -64,9 +87,9 @@ If it fails: the local `data-tikz-libraries` erased the global `tikzLibraries`.
 
 ---
 
-## Test 4 — Local fallback image for one broken diagram
+## Test 4 — Local fallback image overrides global fallback image
 
-This diagram is intentionally broken with an unknown command.
+This diagram is intentionally broken.
 
 It defines a local fallback image with `data-broken-image-src`.
 
@@ -88,15 +111,23 @@ If it fails: if the global fallback image is displayed instead, the local `data-
 
 ## Test 5 — Global configuration still works after a local fallback
 
-This table is rendered after the previous broken diagram.
+This diagram is rendered after the previous broken diagram.
 
-Expected result if it works: the variation table is rendered normally.
+It does not define any local fallback image.
+
+Expected result if it works: the formula is rendered normally.
 
 If it fails: the local fallback configuration probably polluted or damaged the global configuration.
 
 <script type="text/tikz" data-disable-cache="true">
 \begin{tikzpicture}
-    \tkzTabInit{$x$/1, $h(x)$/2}{$-\infty$, $2$, $+\infty$}
-    \tkzTabVar{-/ $-\infty$, +/ $8$, -/ $-\infty$}
+    \node at (0,0) {$\mathbb{N} \subset \mathbb{R}$};
+
+    \node at (0,-1.2) {$
+        \begin{aligned}
+            h(x) &= x^2 - 4x + 3 \\
+            h'(x) &= 2x - 4
+        \end{aligned}
+    $};
 \end{tikzpicture}
 </script>
