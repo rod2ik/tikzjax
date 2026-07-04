@@ -8,16 +8,16 @@ The installation is still a CDN installation, as with a standalone HTML page, bu
     **Required:** add the TikZJax stylesheet and script to your `overrides/main.html`.
 
     ```html
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@{{ tikzjax_version }}/dist/fonts.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@{{ tikzjax_version }}/dist/tikzjax.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
     ```
 
     **Optional but recommended:** add a global configuration file before loading TikZJax.
 
     ```html
     <script src="{{ 'local/path/to/your/tikzjax.config.js' | url }}"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@{{ tikzjax_version }}/dist/fonts.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@{{ tikzjax_version }}/dist/tikzjax.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
     ```
 
     **Optional:** add a Superfences configuration in `mkdocs.yml` if you want to use fenced `tikzjax` code blocks.
@@ -61,8 +61,8 @@ overrides/main.html
 {% block libs %}
     {{ super() }}
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@{{ tikzjax_version }}/dist/fonts.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@{{ tikzjax_version }}/dist/tikzjax.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
 {% endblock %}
 
 {% block footer scoped %}
@@ -92,8 +92,8 @@ The configuration file must be loaded before `tikzjax.min.js`.
     {{ super() }}
 
     <script src="{{ 'local/path/to/your/tikzjax.config.js' | url }}"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@{{ tikzjax_version }}/dist/fonts.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@{{ tikzjax_version }}/dist/tikzjax.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
 {% endblock %}
 
 {% block footer scoped %}
@@ -126,22 +126,22 @@ then use:
 Recommended jsDelivr loading:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@{{ tikzjax_version }}/dist/fonts.min.css">
-<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@{{ tikzjax_version }}/dist/tikzjax.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
 ```
 
 Equivalent unpkg loading:
 
 ```html
-<link rel="stylesheet" href="https://unpkg.com/@rod2ik/tikzjax@{{ tikzjax_version }}/dist/fonts.min.css">
-<script src="https://unpkg.com/@rod2ik/tikzjax@{{ tikzjax_version }}/dist/tikzjax.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
+<script src="https://unpkg.com/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
 ```
 
 For debugging only, you may use the non-minified files:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@{{ tikzjax_version }}/dist/fonts.css">
-<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@{{ tikzjax_version }}/dist/tikzjax.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.css">
+<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.js"></script>
 ```
 
 For production documentation, prefer:
@@ -205,8 +205,8 @@ This Superfences configuration is only required for the fenced `tikzjax` Markdow
 {% block libs %}
     {{ super() }}
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@{{ tikzjax_version }}/dist/fonts.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@{{ tikzjax_version }}/dist/tikzjax.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
 {% endblock %}
 
 {% block footer scoped %}
@@ -255,8 +255,8 @@ markdown_extensions:
     {{ super() }}
 
     <script src="{{ 'javascripts/tikzjax.config.js' | url }}"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@{{ tikzjax_version }}/dist/fonts.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@{{ tikzjax_version }}/dist/tikzjax.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
 {% endblock %}
 
 {% block footer scoped %}
@@ -272,7 +272,7 @@ window.TikzJaxOptions = {
     maxRetries: 1,
     restartWorkerOnFail: true,
 
-    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@{{ tikzjax_version }}/dist/assets/broken-image.svg",
+    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image.svg",
 
     tex: {
         texPackages: {
@@ -426,12 +426,12 @@ However, if you serve the main script from one place and runtime assets from ano
 ```html
 <script>
 window.TikzJaxOptions = {
-    assetBaseUrl: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@{{ tikzjax_version }}/dist"
+    assetBaseUrl: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist"
 };
 </script>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@{{ tikzjax_version }}/dist/fonts.min.css">
-<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@{{ tikzjax_version }}/dist/tikzjax.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
 ```
 
 Runtime files include:

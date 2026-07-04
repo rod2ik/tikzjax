@@ -275,7 +275,7 @@ Use `brokenImageSrc` to customize the fallback image displayed when rendering fa
 
 ```js
 window.TikzJaxOptions = {
-    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@{{ tikzjax_version }}/dist/assets/broken-image.svg"
+    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image.svg"
 };
 ```
 
@@ -341,22 +341,22 @@ This explicit configuration is equivalent to the default behavior:
 ```html
 <script>
 window.TikzJaxOptions = {
-    assetBaseUrl: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@{{ tikzjax_version }}/dist",
+    assetBaseUrl: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist",
     workerMode: "auto"
 };
 </script>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@{{ tikzjax_version }}/dist/fonts.min.css">
-<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@{{ tikzjax_version }}/dist/tikzjax.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
 ```
 
 Runtime files are loaded from:
 
 ```text
-https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@{{ tikzjax_version }}/dist/run-tex.js
-https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@{{ tikzjax_version }}/dist/tex.wasm.gz
-https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@{{ tikzjax_version }}/dist/core.dump.gz
-https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@{{ tikzjax_version }}/dist/tex_files/
+https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/run-tex.js
+https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tex.wasm.gz
+https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/core.dump.gz
+https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tex_files/
 ```
 
 ## 14. Explicit unpkg runtime base URL
@@ -366,13 +366,13 @@ The same setup can be used with unpkg.
 ```html
 <script>
 window.TikzJaxOptions = {
-    assetBaseUrl: "https://unpkg.com/@rod2ik/tikzjax@{{ tikzjax_version }}/dist",
+    assetBaseUrl: "https://unpkg.com/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist",
     workerMode: "auto"
 };
 </script>
 
-<link rel="stylesheet" href="https://unpkg.com/@rod2ik/tikzjax@{{ tikzjax_version }}/dist/fonts.min.css">
-<script src="https://unpkg.com/@rod2ik/tikzjax@{{ tikzjax_version }}/dist/tikzjax.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
+<script src="https://unpkg.com/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
 ```
 
 ## 15. Same-origin deployment with direct Worker mode
