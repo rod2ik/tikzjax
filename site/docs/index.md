@@ -1,44 +1,5 @@
 # rod2ik/TikZJax
 
-## Test config locale
-
-This example defines a local `data-tex-packages` value with only `xcolor`.
-
-If local options erased global options, this diagram would fail because `tkz-tab` would no longer be available.
-
-<script type="text/tikz" data-tex-packages='{"xcolor": ""}'>
-\begin{tikzpicture}
-    \tkzTabInit{$x$/1, $f(x)$/2}{$-\infty$, $0$, $+\infty$}
-    \tkzTabVar{-/ $-\infty$, +/ $2$, -/ $-\infty$}
-\end{tikzpicture}
-</script>
-
-If local libraries erased global libraries, the `Stealth` arrow tip would fail.
-
-<script type="text/tikz" data-tikz-libraries="decorations.pathreplacing">
-\begin{tikzpicture}[line width=1.2pt]
-    \draw[-{Stealth[length=4mm]}, thick] (0,0) -- (4,0)
-        node[midway, above] {$arrows.meta$ from global config};
-
-    \draw[decorate, decoration={brace, amplitude=6pt}]
-        (0,-0.5) -- (4,-0.5)
-        node[midway, below=8pt] {$decorations.pathreplacing$ from local config};
-\end{tikzpicture}
-</script>
-
-If local preamble erased the global tkzTab preamble, the global tkz-tab styling could be lost.
-
-<script type="text/tikz" data-add-to-preamble="\def\LocalTestMacro{Local macro works}">
-\begin{tikzpicture}
-    \node at (0,0) {$\LocalTestMacro$};
-
-    \begin{scope}[yshift=-1.5cm]
-        \tkzTabInit{$x$/1, $g(x)$/2}{$-\infty$, $1$, $+\infty$}
-        \tkzTabVar{-/ $-\infty$, +/ $3$, -/ $-\infty$}
-    \end{scope}
-\end{tikzpicture}
-</script>
-
 ## Introduction
 
 [![Repo](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-181717?logo=github&logoColor=white)](https://github.com/rod2ik/tikzjax) is a [![License: GPL v3+](https://img.shields.io/badge/License-GPLv3%2B-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) opensource project, that natively renders **TikZ/LaTeX** AND **tkz-tab/LaTeX** for **maths variation tables** and **maths sign tables** , directly inside an HTML page AND/OR inside usual documentation websites, notably **MkDocs** with **Material theme**. 

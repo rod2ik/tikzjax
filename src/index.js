@@ -20,8 +20,54 @@ const isPlainObject = (value) => {
     return Object.prototype.toString.call(value) === '[object Object]';
 };
 
+const hasOwn = (object, key) => {
+    return Object.prototype.hasOwnProperty.call(object || {}, key);
+};
+
+const cloneTikzJaxOptionValue = (value) => {
+    if (Array.isArray(value)) {
+        return value.map((item) => cloneTikzJaxOptionValue(item));
+    }
+
+    if (isPlainObject(value)) {
+        return mergeTikzJaxOptions({}, value);
+    }
+
+    return value;
+};
+
+const getMergeKey = (value) => {
+    if (isPlainObject(value) || Array.isArray(value)) {
+        try {
+            return JSON.stringify(value);
+        } catch {
+            return String(value);
+        }
+    }
+
+    return `${typeof value}:${String(value)}`;
+};
+
+const mergeArrayOptions = (base = [], extra = []) => {
+    const result = [];
+    const seen = new Set();
+
+    [...base, ...extra].forEach((value) => {
+        const key = getMergeKey(value);
+
+        if (seen.has(key)) {
+            return;
+        }
+
+        seen.add(key);
+        result.push(cloneTikzJaxOptionValue(value));
+    });
+
+    return result;
+};
+
 const mergeTikzJaxOptions = (base = {}, extra = {}) => {
-    const result = isPlainObject(base) ? { ...base } : {};
+    const result = isPlainObject(base) ? cloneTikzJaxOptionValue(base) : {};
 
     if (!isPlainObject(extra)) {
         return result;
@@ -30,12 +76,17 @@ const mergeTikzJaxOptions = (base = {}, extra = {}) => {
     Object.entries(extra).forEach(([key, value]) => {
         const existingValue = result[key];
 
+        if (Array.isArray(existingValue) && Array.isArray(value)) {
+            result[key] = mergeArrayOptions(existingValue, value);
+            return;
+        }
+
         if (isPlainObject(existingValue) && isPlainObject(value)) {
             result[key] = mergeTikzJaxOptions(existingValue, value);
             return;
         }
 
-        result[key] = value;
+        result[key] = cloneTikzJaxOptionValue(value);
     });
 
     return result;
@@ -137,44 +188,93 @@ const getThemeOptions = () => {
     return options.theme || {};
 };
 
-const getRenderTimeout = () => {
-    const options = getOptions();
-    const texOptions = options.tex || {};
-    const timeout = options.renderTimeout || texOptions.renderTimeout || 15000;
-    const parsed = Number(timeout);
+const parseNumberOption = (value, fallback, minimum = Number.NEGATIVE_INFINITY) => {
+    const parsed = Number(value);
 
-    return Number.isFinite(parsed) && parsed > 0 ? parsed : 15000;
+    return Number.isFinite(parsed) && parsed >= minimum ? parsed : fallback;
 };
 
-const getMaxRetries = () => {
-    const options = getOptions();
-    const texOptions = options.tex || {};
-    const retries = options.maxRetries ?? texOptions.maxRetries ?? 0;
-    const parsed = Number(retries);
+const parseBooleanOption = (value, fallback = false) => {
+    if (value === undefined || value === null) {
+        return fallback;
+    }
 
-    return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
+    if (typeof value === 'boolean') {
+        return value;
+    }
+
+    if (typeof value === 'number') {
+        return value !== 0;
+    }
+
+    const normalized = String(value).trim().toLowerCase();
+
+    if (['', 'true', '1', 'yes', 'on'].includes(normalized)) {
+        return true;
+    }
+
+    if (['false', '0', 'no', 'off'].includes(normalized)) {
+        return false;
+    }
+
+    return fallback;
 };
 
-const shouldRestartWorkerOnFail = () => {
+const getRenderTimeout = (dataset = {}) => {
     const options = getOptions();
     const texOptions = options.tex || {};
+    const timeout =
+        dataset.renderTimeout ??
+        options.renderTimeout ??
+        texOptions.renderTimeout ??
+        15000;
 
-    return options.restartWorkerOnFail ?? texOptions.restartWorkerOnFail ?? true;
+    return parseNumberOption(timeout, 15000, 1);
 };
 
-const getBrokenImageSrc = () => {
+const getMaxRetries = (dataset = {}) => {
+    const options = getOptions();
+    const texOptions = options.tex || {};
+    const retries =
+        dataset.maxRetries ??
+        options.maxRetries ??
+        texOptions.maxRetries ??
+        0;
+
+    return parseNumberOption(retries, 0, 0);
+};
+
+const shouldRestartWorkerOnFail = (dataset = {}) => {
+    const options = getOptions();
+    const texOptions = options.tex || {};
+    const value =
+        dataset.restartWorkerOnFail ??
+        options.restartWorkerOnFail ??
+        texOptions.restartWorkerOnFail ??
+        true;
+
+    return parseBooleanOption(value, true);
+};
+
+const getBrokenImageSrc = (dataset = {}) => {
     const options = getOptions();
 
-    return options.brokenImageSrc || DEFAULT_BROKEN_IMAGE_SRC;
+    return (
+        dataset.brokenImageSrc ||
+        options.brokenImageSrc ||
+        DEFAULT_BROKEN_IMAGE_SRC
+    );
 };
 
 const parseJsonObject = (value) => {
     if (!value) return {};
 
-    if (typeof value === 'object') return value;
+    if (isPlainObject(value)) return value;
 
     try {
-        return JSON.parse(value);
+        const parsed = JSON.parse(value);
+
+        return isPlainObject(parsed) ? parsed : {};
     } catch (error) {
         console.warn('TikZJax: unable to parse JSON option:', value, error);
         return {};
@@ -208,8 +308,7 @@ const createTexMacro = (macroName, value) => {
     return `\\def\\${macroName}{${String(value)}}\n`;
 };
 
-const getTkzTabPreamble = () => {
-    const options = getOptions();
+const getTkzTabPreamble = (options = getOptions()) => {
     const tkzTab = options.tkzTab || {};
 
     if (!tkzTab || typeof tkzTab !== 'object') {
@@ -273,15 +372,14 @@ const getTkzTabPreamble = () => {
     return preamble;
 };
 
-const getGlobalTexDataset = () => {
-    const options = getOptions();
+const getTexDatasetFromOptions = (options = getOptions()) => {
     const tex = options.tex || {};
     const dataset = {};
 
     const texPackages = tex.texPackages || options.texPackages;
     const tikzLibraries = tex.tikzLibraries || options.tikzLibraries;
     const addToPreamble = tex.addToPreamble || options.addToPreamble;
-    const tkzTabPreamble = getTkzTabPreamble();
+    const tkzTabPreamble = getTkzTabPreamble(options);
 
     if (texPackages) {
         dataset.texPackages = stringifyTexPackages(texPackages);
@@ -300,39 +398,143 @@ const getGlobalTexDataset = () => {
     return dataset;
 };
 
-const mergeTexPackages = (globalPackages, localPackages) => {
-    const globalObject = parseJsonObject(globalPackages);
-    const localObject = parseJsonObject(localPackages);
+const normalizeTexPackagesOption = (value) => {
+    if (!value) return undefined;
 
-    const merged = {
-        ...globalObject,
-        ...localObject
-    };
+    if (isPlainObject(value)) return value;
 
-    return Object.keys(merged).length ? JSON.stringify(merged) : undefined;
+    if (typeof value === 'string') {
+        const parsed = parseJsonObject(value);
+
+        return Object.keys(parsed).length ? parsed : value;
+    }
+
+    return value;
 };
 
-const mergeTikzLibraries = (globalLibraries, localLibraries) => {
-    const libraries = [];
+const normalizeTikzLibrariesOption = (value) => {
+    if (!value) return undefined;
 
-    const appendLibraries = (value) => {
-        if (!value) return;
+    if (Array.isArray(value)) return value;
 
-        String(value)
+    if (typeof value === 'string') {
+        return value
             .split(',')
             .map((library) => library.trim())
-            .filter(Boolean)
-            .forEach((library) => {
-                if (!libraries.includes(library)) {
-                    libraries.push(library);
-                }
-            });
+            .filter(Boolean);
+    }
+
+    return value;
+};
+
+const getLocalOptionsFromDataset = (dataset = {}) => {
+    const localOptions = {};
+
+    const mergeLocalOptions = (value) => {
+        if (!isPlainObject(value)) {
+            return;
+        }
+
+        Object.assign(
+            localOptions,
+            mergeTikzJaxOptions(localOptions, value)
+        );
     };
 
-    appendLibraries(globalLibraries);
-    appendLibraries(localLibraries);
+    mergeLocalOptions(parseJsonObject(dataset.options));
+    mergeLocalOptions(parseJsonObject(dataset.tikzjaxOptions));
 
-    return libraries.length ? libraries.join(',') : undefined;
+    const texOption = parseJsonObject(dataset.tex);
+
+    if (Object.keys(texOption).length) {
+        localOptions.tex = mergeTikzJaxOptions(
+            localOptions.tex || {},
+            texOption
+        );
+    }
+
+    if (hasOwn(dataset, 'texPackages')) {
+        localOptions.tex = mergeTikzJaxOptions(localOptions.tex || {}, {
+            texPackages: normalizeTexPackagesOption(dataset.texPackages)
+        });
+    }
+
+    if (hasOwn(dataset, 'tikzLibraries')) {
+        localOptions.tex = mergeTikzJaxOptions(localOptions.tex || {}, {
+            tikzLibraries: normalizeTikzLibrariesOption(dataset.tikzLibraries)
+        });
+    }
+
+    if (hasOwn(dataset, 'addToPreamble')) {
+        localOptions.tex = mergeTikzJaxOptions(localOptions.tex || {}, {
+            addToPreamble: dataset.addToPreamble
+        });
+    }
+
+    const tkzTabOption = parseJsonObject(dataset.tkzTab);
+
+    if (Object.keys(tkzTabOption).length) {
+        localOptions.tkzTab = mergeTikzJaxOptions(
+            localOptions.tkzTab || {},
+            tkzTabOption
+        );
+    }
+
+    [
+        'renderTimeout',
+        'maxRetries',
+        'restartWorkerOnFail',
+        'brokenImageSrc',
+        'disableCache',
+        'width',
+        'height'
+    ].forEach((key) => {
+        if (hasOwn(dataset, key)) {
+            localOptions[key] = dataset[key];
+        }
+    });
+
+    return localOptions;
+};
+
+const getMergedOptionsForDataset = (dataset = {}) => {
+    return mergeTikzJaxOptions(
+        getOptions(),
+        getLocalOptionsFromDataset(dataset)
+    );
+};
+
+const copyOptionToDataset = (dataset, options, key) => {
+    if (hasOwn(options, key)) {
+        dataset[key] = options[key];
+    }
+};
+
+const copyRenderOptionsToDataset = (dataset, options) => {
+    const texOptions = options.tex || {};
+
+    if (hasOwn(options, 'renderTimeout')) {
+        dataset.renderTimeout = options.renderTimeout;
+    } else if (hasOwn(texOptions, 'renderTimeout')) {
+        dataset.renderTimeout = texOptions.renderTimeout;
+    }
+
+    if (hasOwn(options, 'maxRetries')) {
+        dataset.maxRetries = options.maxRetries;
+    } else if (hasOwn(texOptions, 'maxRetries')) {
+        dataset.maxRetries = texOptions.maxRetries;
+    }
+
+    if (hasOwn(options, 'restartWorkerOnFail')) {
+        dataset.restartWorkerOnFail = options.restartWorkerOnFail;
+    } else if (hasOwn(texOptions, 'restartWorkerOnFail')) {
+        dataset.restartWorkerOnFail = texOptions.restartWorkerOnFail;
+    }
+
+    copyOptionToDataset(dataset, options, 'brokenImageSrc');
+    copyOptionToDataset(dataset, options, 'disableCache');
+    copyOptionToDataset(dataset, options, 'width');
+    copyOptionToDataset(dataset, options, 'height');
 };
 
 const cleanInternalDataset = (dataset) => {
@@ -343,38 +545,31 @@ const cleanInternalDataset = (dataset) => {
     return cleaned;
 };
 
+const cleanLocalDatasetForWorker = (dataset) => {
+    const cleaned = { ...dataset };
+
+    delete cleaned.options;
+    delete cleaned.tikzjaxOptions;
+    delete cleaned.tex;
+    delete cleaned.texPackages;
+    delete cleaned.tikzLibraries;
+    delete cleaned.addToPreamble;
+    delete cleaned.tkzTab;
+
+    return cleaned;
+};
+
 const getTikzDataset = (elt) => {
-    const globalDataset = getGlobalTexDataset();
     const localDataset = cleanInternalDataset(Object.assign({}, elt.dataset || {}));
+    const mergedOptions = getMergedOptionsForDataset(localDataset);
+    const texDataset = getTexDatasetFromOptions(mergedOptions);
 
     const dataset = {
-        ...globalDataset,
-        ...localDataset
+        ...texDataset,
+        ...cleanLocalDatasetForWorker(localDataset)
     };
 
-    const texPackages = mergeTexPackages(
-        globalDataset.texPackages,
-        localDataset.texPackages
-    );
-
-    if (texPackages) {
-        dataset.texPackages = texPackages;
-    }
-
-    const tikzLibraries = mergeTikzLibraries(
-        globalDataset.tikzLibraries,
-        localDataset.tikzLibraries
-    );
-
-    if (tikzLibraries) {
-        dataset.tikzLibraries = tikzLibraries;
-    }
-
-    if (globalDataset.addToPreamble || localDataset.addToPreamble) {
-        dataset.addToPreamble =
-            (globalDataset.addToPreamble || '') +
-            (localDataset.addToPreamble || '');
-    }
+    copyRenderOptionsToDataset(dataset, mergedOptions);
 
     return dataset;
 };
@@ -455,11 +650,11 @@ const createDefaultBrokenImageSvg = () => {
     return svg;
 };
 
-const createBrokenImageElement = () => {
+const createBrokenImageElement = (dataset = {}) => {
     const img = document.createElement('img');
 
     img.className = 'tikzjax-broken-image';
-    img.src = getBrokenImageSrc();
+    img.src = getBrokenImageSrc(dataset);
     img.alt = '';
     img.setAttribute('aria-hidden', 'true');
 
@@ -483,7 +678,7 @@ const createBrokenImageElement = () => {
     return img;
 };
 
-const createBrokenImage = () => {
+const createBrokenImage = (dataset = {}) => {
     const wrapper = document.createElement('span');
 
     wrapper.className = 'tikzjax-wrapper tikzjax-broken-wrapper mathjax_ignore';
@@ -495,7 +690,7 @@ const createBrokenImage = () => {
     wrapper.style.textAlign = 'center';
     wrapper.style.verticalAlign = 'middle';
 
-    const img = createBrokenImageElement();
+    const img = createBrokenImageElement(dataset);
 
     img.style.marginLeft = 'auto';
     img.style.marginRight = 'auto';
@@ -1239,7 +1434,7 @@ const processTikzSources = async (sources) => {
             elt.closest('script') ||
             elt;
 
-        const loader = createLoader(elt.dataset || {});
+        const loader = createLoader(elt.tikzjaxDataset || elt.dataset || {});
 
         const wrapper = document.createElement('span');
         wrapper.className = 'tikzjax-wrapper tikzjax-loading mathjax_ignore';
@@ -1247,8 +1442,8 @@ const processTikzSources = async (sources) => {
         wrapper.style.alignItems = 'center';
         wrapper.style.justifyContent = 'center';
         wrapper.style.verticalAlign = 'middle';
-        wrapper.style.minWidth = `${parseFloat(elt.dataset.width) || 75}pt`;
-        wrapper.style.minHeight = `${parseFloat(elt.dataset.height) || 75}pt`;
+        wrapper.style.minWidth = `${parseFloat(elt.tikzjaxDataset?.width) || 75}pt`;
+        wrapper.style.minHeight = `${parseFloat(elt.tikzjaxDataset?.height) || 75}pt`;
 
         container.replaceWith(wrapper);
         wrapper.appendChild(loader);
@@ -1263,19 +1458,19 @@ const processTikzSources = async (sources) => {
     const failRender = async (elt, error) => {
         console.warn('TikZJax rendering failed:', error);
 
-        const brokenImage = createBrokenImage();
+        const brokenImage = createBrokenImage(elt.tikzjaxDataset || {});
 
         if (elt.tikzjaxLoader) {
             elt.tikzjaxLoader.replaceWith(brokenImage);
         }
 
-        if (shouldRestartWorkerOnFail()) {
+        if (shouldRestartWorkerOnFail(elt.tikzjaxDataset || {})) {
             await restartWorker();
         }
     };
 
     const renderWithSafety = async (text, dataset) => {
-        const timeout = getRenderTimeout();
+        const timeout = getRenderTimeout(dataset);
 
         return withTimeout(
             texWorker.texify(text, dataset),
@@ -1289,7 +1484,7 @@ const processTikzSources = async (sources) => {
         const cacheKey = JSON.stringify(dataset) + '\n' + text;
 
         try {
-            const cached = dataset.disableCache ? undefined : await getItem(cacheKey);
+            const cached = parseBooleanOption(dataset.disableCache, false) ? undefined : await getItem(cacheKey);
 
             let html;
 
@@ -1297,7 +1492,7 @@ const processTikzSources = async (sources) => {
                 html = cached;
             } else {
                 let lastError = null;
-                const maxRetries = getMaxRetries();
+                const maxRetries = getMaxRetries(dataset);
 
                 for (let attempt = 0; attempt <= maxRetries; attempt += 1) {
                     try {
@@ -1306,7 +1501,7 @@ const processTikzSources = async (sources) => {
                     } catch (error) {
                         lastError = error;
 
-                        if (attempt < maxRetries && shouldRestartWorkerOnFail()) {
+                        if (attempt < maxRetries && shouldRestartWorkerOnFail(dataset)) {
                             await restartWorker();
                         }
                     }
@@ -1316,7 +1511,7 @@ const processTikzSources = async (sources) => {
                     throw lastError || new Error('TikZJax rendering failed.');
                 }
 
-                if (!dataset.disableCache) {
+                if (!parseBooleanOption(dataset.disableCache, false)) {
                     await setItem(cacheKey, html);
                 }
             }

@@ -2,6 +2,8 @@ console.log("[TIKZJAX.CONFIG] was loaded");
 
 window.TikzJaxOptions = {
     renderTimeout: 10000,
+    maxRetries: 0,
+    restartWorkerOnFail: true,
 
     brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image.svg",
 

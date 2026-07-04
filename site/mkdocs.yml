@@ -49,6 +49,9 @@ nav:
       - API Reference: api-reference.md
       - Architecture: architecture.md
       - Troubleshooting: troubleshooting.md
+  - DEBUG:
+      - Page1: debug/page1.md
+      - Page2: debug/page2.md
 
 plugins:
   - search
