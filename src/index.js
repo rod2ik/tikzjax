@@ -10,7 +10,100 @@ if (document.currentScript === undefined) {
     document.currentScript = scripts[scripts.length - 1];
 }
 
-const getOptions = () => window.TikzJaxOptions || {};
+// =================================================
+// OPTIONS MERGE HELPERS
+// =================================================
+const TIKZJAX_OPTIONS_STORE_KEY = '__TikzJaxOptionsStore';
+const TIKZJAX_OPTIONS_API_INSTALLED_KEY = '__TikzJaxOptionsApiInstalled';
+
+const isPlainObject = (value) => {
+    return Object.prototype.toString.call(value) === '[object Object]';
+};
+
+const mergeTikzJaxOptions = (base = {}, extra = {}) => {
+    const result = isPlainObject(base) ? { ...base } : {};
+
+    if (!isPlainObject(extra)) {
+        return result;
+    }
+
+    Object.entries(extra).forEach(([key, value]) => {
+        const existingValue = result[key];
+
+        if (isPlainObject(existingValue) && isPlainObject(value)) {
+            result[key] = mergeTikzJaxOptions(existingValue, value);
+            return;
+        }
+
+        result[key] = value;
+    });
+
+    return result;
+};
+
+const getOptionsStore = () => {
+    if (!isPlainObject(window[TIKZJAX_OPTIONS_STORE_KEY])) {
+        window[TIKZJAX_OPTIONS_STORE_KEY] = {};
+    }
+
+    return window[TIKZJAX_OPTIONS_STORE_KEY];
+};
+
+const getOptions = () => getOptionsStore();
+
+const installTikzJaxOptionsApi = () => {
+    const existingOptions = isPlainObject(window.TikzJaxOptions)
+        ? window.TikzJaxOptions
+        : {};
+
+    if (window[TIKZJAX_OPTIONS_API_INSTALLED_KEY] !== true) {
+        window[TIKZJAX_OPTIONS_STORE_KEY] = mergeTikzJaxOptions(
+            getOptionsStore(),
+            existingOptions
+        );
+
+        try {
+            Object.defineProperty(window, 'TikzJaxOptions', {
+                configurable: true,
+                enumerable: true,
+                get() {
+                    return getOptionsStore();
+                },
+                set(value) {
+                    if (!isPlainObject(value)) {
+                        console.warn('TikZJax: TikzJaxOptions expects a plain object.');
+                        return;
+                    }
+
+                    window[TIKZJAX_OPTIONS_STORE_KEY] = mergeTikzJaxOptions(
+                        getOptionsStore(),
+                        value
+                    );
+                }
+            });
+
+            window[TIKZJAX_OPTIONS_API_INSTALLED_KEY] = true;
+        } catch (error) {
+            console.warn('TikZJax: unable to install TikzJaxOptions merge API.', error);
+            window.TikzJaxOptions = window[TIKZJAX_OPTIONS_STORE_KEY];
+        }
+    } else if (Object.getOwnPropertyDescriptor(window, 'TikzJaxOptions')?.set) {
+        window.TikzJaxOptions = existingOptions;
+    }
+
+    window.TikzJaxConfigure = (options = {}) => {
+        if (!isPlainObject(options)) {
+            console.warn('TikZJax: TikzJaxConfigure expects a plain object.');
+            return getOptionsStore();
+        }
+
+        window.TikzJaxOptions = options;
+
+        return getOptionsStore();
+    };
+};
+
+installTikzJaxOptionsApi();
 
 const url = new URL(document.currentScript.src, document.baseURI);
 

@@ -1,0 +1,72 @@
+name: Create GitHub Release
+
+on:
+  push:
+    tags:
+      - "*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Create release from tag
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Validate tag against package.json version
+        run: |
+          TAG_NAME="${GITHUB_REF_NAME}"
+
+          PACKAGE_VERSION="$(python - <<'PY'
+import json
+from pathlib import Path
+
+package = json.loads(Path("package.json").read_text(encoding="utf-8"))
+print(str(package.get("version", "")).strip())
+PY
+)"
+
+          echo "Tag name: ${TAG_NAME}"
+          echo "package.json version: ${PACKAGE_VERSION}"
+
+          if [ -z "${PACKAGE_VERSION}" ]; then
+            echo "package.json does not contain a valid version."
+            exit 1
+          fi
+
+          if [ "${TAG_NAME}" != "${PACKAGE_VERSION}" ]; then
+            echo "The pushed tag must match package.json version exactly."
+            echo "Expected tag: ${PACKAGE_VERSION}"
+            echo "Actual tag:   ${TAG_NAME}"
+            exit 1
+          fi
+
+      - name: Create release notes from tagged commit
+        run: |
+          TAG_NAME="${GITHUB_REF_NAME}"
+
+          {
+            echo "Release ${TAG_NAME}"
+            echo ""
+            echo "Commit:"
+            echo ""
+            git log -1 --pretty=format:"%h - %s%n%n%b"
+          } > release-notes.md
+
+          echo "Release notes:"
+          cat release-notes.md
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG_NAME="${GITHUB_REF_NAME}"
+
+          gh release create "${TAG_NAME}" \
+            --title "${TAG_NAME}" \
+            --notes-file release-notes.md \
+            --verify-tag
