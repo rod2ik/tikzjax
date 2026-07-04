@@ -1,14 +1,9 @@
-console.log("[TIKJAX.OPTIONS.JS] was loaded")
+console.log("[TIKZJAX.CONFIG] was loaded");
+
 window.TikzJaxOptions = {
     renderTimeout: 10000,
-    brokenImageSrc: "https://rod2ik.github.io/cdn/tikzjax/assets/broken-image.svg",
 
-    theme: {
-        selector: "body",
-        attribute: "data-md-color-scheme",
-        darkValue: "slate",
-        lightValue: "default"
-    },
+    brokenImageSrc: "https://rod2ik.github.io/cdn/tikzjax/assets/broken-image.svg",
 
     tex: {
         texPackages: {
