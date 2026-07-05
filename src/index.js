@@ -774,6 +774,93 @@ const isTextNode = (node) => {
     return tag === 'text' || tag === 'tspan';
 };
 
+const isCurrentColorValue = (value) => {
+    if (!value) return false;
+
+    const v = value.trim().toLowerCase();
+
+    return v === 'currentcolor' || v === 'current-color';
+};
+
+const isNoneValue = (value) => {
+    if (!value) return false;
+
+    return value.trim().toLowerCase() === 'none';
+};
+
+const isPaintServerValue = (value) => {
+    if (!value) return false;
+
+    const v = value.trim().toLowerCase();
+
+    return v.startsWith('url(') || v.startsWith('var(');
+};
+
+const isExplicitColorValue = (value) => {
+    if (!value) return false;
+
+    const v = value.trim().toLowerCase();
+
+    return !(
+        isBlackValue(v) ||
+        isWhiteValue(v) ||
+        isTransparentValue(v) ||
+        isCurrentColorValue(v) ||
+        isNoneValue(v) ||
+        isPaintServerValue(v)
+    );
+};
+
+const getStylePropertyValue = (styleText, property) => {
+    if (!styleText) return '';
+
+    const match = styleText.match(
+        new RegExp(`${property}\\s*:\\s*([^;]+)`, 'i')
+    );
+
+    return match ? match[1].trim() : '';
+};
+
+const getNodePresentationValue = (node, property) => {
+    return (
+        node?.style?.getPropertyValue(property) ||
+        node?.getAttribute?.(property) ||
+        ''
+    );
+};
+
+const getExplicitColorFromNode = (node, properties = ['fill', 'color']) => {
+    for (const property of properties) {
+        const value = getNodePresentationValue(node, property);
+
+        if (isExplicitColorValue(value)) {
+            return value;
+        }
+    }
+
+    return '';
+};
+
+const getInheritedExplicitColor = (node, properties = ['fill', 'color']) => {
+    let current = node?.parentElement;
+
+    while (current) {
+        if (current.tagName?.toLowerCase() === 'svg') {
+            return '';
+        }
+
+        const value = getExplicitColorFromNode(current, properties);
+
+        if (value) {
+            return value;
+        }
+
+        current = current.parentElement;
+    }
+
+    return '';
+};
+
 const getTikzWrappers = (root = document) => {
     const wrappers = [];
 
@@ -792,14 +879,24 @@ const normalizeStyleForTheme = (styleText, node) => {
 
     let result = styleText;
 
+    const ownColor = getStylePropertyValue(styleText, 'color');
+    const inheritedFillColor = getInheritedExplicitColor(node, ['fill', 'color']);
+    const inheritedStrokeColor = getInheritedExplicitColor(node, ['stroke', 'color']);
+
+    const fillReplacement = isExplicitColorValue(ownColor)
+        ? ownColor
+        : inheritedFillColor || 'currentColor';
+
+    const strokeReplacement = inheritedStrokeColor || 'currentColor';
+
     result = result.replace(
         /fill\s*:\s*(black|#000000|#000|rgb\(0,\s*0,\s*0\))\b/gi,
-        'fill: currentColor'
+        `fill: ${fillReplacement}`
     );
 
     result = result.replace(
         /stroke\s*:\s*(black|#000000|#000|rgb\(0,\s*0,\s*0\))\b/gi,
-        'stroke: currentColor'
+        `stroke: ${strokeReplacement}`
     );
 
     result = result.replace(
@@ -810,18 +907,20 @@ const normalizeStyleForTheme = (styleText, node) => {
     if (isTextNode(node)) {
         result = result.replace(
             /fill\s*:\s*(white|#ffffff|#fff|rgb\(255,\s*255,\s*255\))\b/gi,
-            'fill: currentColor'
+            `fill: ${inheritedFillColor || 'currentColor'}`
         );
     } else {
         result = result.replace(
             /fill\s*:\s*(white|#ffffff|#fff|rgb\(255,\s*255,\s*255\))\b/gi,
-            'fill: transparent'
+            inheritedFillColor ? `fill: ${inheritedFillColor}` : 'fill: transparent'
         );
     }
 
     result = result.replace(
         /stroke\s*:\s*(white|#ffffff|#fff|rgb\(255,\s*255,\s*255\))\b/gi,
-        'stroke: var(--tikzjax-background-color)'
+        inheritedStrokeColor
+            ? `stroke: ${inheritedStrokeColor}`
+            : 'stroke: var(--tikzjax-background-color)'
     );
 
     return result;
@@ -837,16 +936,30 @@ const normalizeSvgForTheme = (svg) => {
 
     svg.querySelectorAll('[fill], [stroke], [color], [style]')
         .forEach((node) => {
+            const inheritedFillColor = getInheritedExplicitColor(node, ['fill', 'color']);
+            const inheritedStrokeColor = getInheritedExplicitColor(node, ['stroke', 'color']);
+
             if (node.hasAttribute('fill')) {
                 const fill = node.getAttribute('fill');
 
                 if (isTextNode(node)) {
-                    node.setAttribute('fill', 'currentColor');
-                    node.style.setProperty('fill', 'currentColor', 'important');
+                    if (
+                        isBlackValue(fill) ||
+                        isWhiteValue(fill) ||
+                        isCurrentColorValue(fill)
+                    ) {
+                        const replacement = inheritedFillColor || 'currentColor';
+
+                        node.setAttribute('fill', replacement);
+                        node.style.setProperty('fill', replacement, 'important');
+                    }
                 } else if (isBlackValue(fill)) {
-                    node.setAttribute('fill', 'currentColor');
+                    node.setAttribute('fill', inheritedFillColor || 'currentColor');
                 } else if (isWhiteValue(fill)) {
-                    node.setAttribute('fill', 'transparent');
+                    node.setAttribute(
+                        'fill',
+                        inheritedFillColor || 'transparent'
+                    );
                 }
             }
 
@@ -854,9 +967,12 @@ const normalizeSvgForTheme = (svg) => {
                 const stroke = node.getAttribute('stroke');
 
                 if (isBlackValue(stroke)) {
-                    node.setAttribute('stroke', 'currentColor');
+                    node.setAttribute('stroke', inheritedStrokeColor || 'currentColor');
                 } else if (isWhiteValue(stroke)) {
-                    node.setAttribute('stroke', 'var(--tikzjax-background-color)');
+                    node.setAttribute(
+                        'stroke',
+                        inheritedStrokeColor || 'var(--tikzjax-background-color)'
+                    );
                 }
             }
 
@@ -877,8 +993,37 @@ const normalizeSvgForTheme = (svg) => {
         });
 
     svg.querySelectorAll('text, tspan').forEach((node) => {
-        node.setAttribute('fill', 'currentColor');
-        node.style.setProperty('fill', 'currentColor', 'important');
+        const fill =
+            node.style.getPropertyValue('fill') ||
+            node.getAttribute('fill') ||
+            '';
+
+        const color =
+            node.style.getPropertyValue('color') ||
+            node.getAttribute('color') ||
+            '';
+
+        const inheritedFillColor = getInheritedExplicitColor(node, ['fill', 'color']);
+        const effectiveColor = fill || color || inheritedFillColor;
+
+        if (inheritedFillColor && (
+            !fill ||
+            isBlackValue(fill) ||
+            isWhiteValue(fill) ||
+            isCurrentColorValue(fill)
+        )) {
+            node.setAttribute('fill', inheritedFillColor);
+            node.style.setProperty('fill', inheritedFillColor, 'important');
+        } else if (
+            !effectiveColor ||
+            isCurrentColorValue(effectiveColor) ||
+            isBlackValue(effectiveColor) ||
+            isWhiteValue(effectiveColor)
+        ) {
+            node.setAttribute('fill', 'currentColor');
+            node.style.setProperty('fill', 'currentColor', 'important');
+        }
+
         node.style.setProperty('opacity', '1', 'important');
     });
 };

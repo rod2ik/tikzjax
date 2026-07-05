@@ -52,15 +52,19 @@ svg.tikzjax [fill="white"] {
 fill: transparent !important;
 }
 
-/* Keep text controlled by the surrounding page color. */
-.tikzjax-wrapper svg.tikz text,
-.tikzjax-wrapper svg.tikz tspan,
-.tikzjax-wrapper svg.tikzjax text,
-.tikzjax-wrapper svg.tikzjax tspan,
-svg.tikz text,
-svg.tikz tspan,
-svg.tikzjax text,
-svg.tikzjax tspan {
+/*
+Keep uncolored text controlled by the surrounding page color,
+but do not override explicit SVG colors such as fill="#0000ff"
+or fill="#ff0000".
+*/
+.tikzjax-wrapper svg.tikz text:not([fill]),
+.tikzjax-wrapper svg.tikz tspan:not([fill]),
+.tikzjax-wrapper svg.tikzjax text:not([fill]),
+.tikzjax-wrapper svg.tikzjax tspan:not([fill]),
+svg.tikz text:not([fill]),
+svg.tikz tspan:not([fill]),
+svg.tikzjax text:not([fill]),
+svg.tikzjax tspan:not([fill]) {
 fill: currentColor;
 }
 

@@ -72,37 +72,96 @@ Local TeX packages are added to the global TeX packages.
 
 They do not replace them.
 
-This example adds `xcolor` locally, while still using global packages such as `amsmath` and `amsfonts`.
+### 2.1 Add a package locally
+
+This example adds `xcolor` locally.
+
+It still uses globally configured packages such as `amsfonts`, which provides `\mathbb`.
 
 ```html
-<script type="text/tikz" data-tex-packages='{"xcolor": ""}'>
+<script
+  type="text/tikz"
+  data-tex-packages='{"xcolor": ""}'
+>
 \begin{tikzpicture}
-    \node at (0,0) {\textcolor{blue}{$\mathbb{R}$}};
+    \draw[green, very thick] (-2,0) -- (2,0);
 
-    \node at (0,-1.2) {$
-        \begin{aligned}
-            f(x) &= x^2 + 1 \\
-            f'(x) &= 2x
-        \end{aligned}
-    $};
+    \node[above] at (0,0)
+        {\textcolor{blue}{$\mathbb{R}$ is provided by global packages}};
+
+    \node[below] at (0,0)
+        {\textcolor{red}{xcolor is added locally for this diagram}};
 \end{tikzpicture}
 </script>
 ```
 
 renders as:
 
-<script type="text/tikz" data-tex-packages='{"xcolor": ""}'>
+<script
+  type="text/tikz"
+  data-tex-packages='{"xcolor": ""}'
+>
 \begin{tikzpicture}
-    \node at (0,0) {\textcolor{blue}{$\mathbb{R}$}};
+    \draw[green, very thick] (-2,0) -- (2,0);
 
-    \node at (0,-1.2) {$
-        \begin{aligned}
-            f(x) &= x^2 + 1 \\
-            f'(x) &= 2x
-        \end{aligned}
-    $};
+    \node[above] at (0,0)
+        {\textcolor{blue}{$\mathbb{R}$ is provided by global packages}};
+
+    \node[below] at (0,0)
+        {\textcolor{red}{xcolor is added locally for this diagram}};
 \end{tikzpicture}
 </script>
+
+### 2.2 Add a package with options
+
+This example adds `xcolor` locally with the `dvipsnames` option.
+
+This enables named colors such as `ForestGreen`, `NavyBlue`, and `BrickRed`.
+
+It still uses globally configured packages such as `amsfonts`, which provides `\mathbb`.
+
+```html
+<script
+  type="text/tikz"
+  data-tex-packages='{"xcolor": "dvipsnames"}'
+>
+\begin{tikzpicture}
+    \draw[ForestGreen, very thick] (-2,0) -- (2,0);
+
+    \node[NavyBlue, above] at (0,0)
+        {$\mathbb{R}$ is provided by global packages};
+
+    \node[BrickRed, below] at (0,0)
+        {xcolor with dvipsnames is added locally};
+\end{tikzpicture}
+</script>
+```
+
+renders as:
+
+<script
+  type="text/tikz"
+  data-tex-packages='{"xcolor": "dvipsnames"}'
+>
+\begin{tikzpicture}
+    \draw[ForestGreen, very thick] (-2,0) -- (2,0);
+
+    \node[NavyBlue, above] at (0,0)
+        {$\mathbb{R}$ is provided by global packages};
+
+    \node[BrickRed, below] at (0,0)
+        {xcolor with dvipsnames is added locally};
+\end{tikzpicture}
+</script>
+
+!!! note
+    Package options may require additional TeX runtime files.
+
+    For example, `xcolor` with `dvipsnames` requires `dvipsnam.def.gz` to be available in `tex_files/`.
+
+    If you deploy TikZJax from npm through jsDelivr or unpkg, the packaged runtime files are used.
+
+    If you deploy TikZJax from a custom CDN, make sure your custom `tex_files/` directory contains the required files.
 
 ---
 
