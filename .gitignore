@@ -3,9 +3,11 @@ bakoma.zip
 core.dump
 core.dump.gz
 core.dump.original
+core.dump.gz.original
 tex.wasm
 tex.wasm.gz
 tex.wasm.original
+tex.wasm.gz.original
 
 dist
 node_modules
