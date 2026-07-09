@@ -40,6 +40,7 @@ nav:
   - Usage:
       - Basic Examples: basic-examples.md
       - Advanced Examples: advanced-examples.md
+      - Physics: examples/physics.md
   - Configuration:
       - Overview: configuration.md
       - Light/Dark themes: themes.md
@@ -52,6 +53,7 @@ nav:
   - DEBUG:
       - Page1: debug/page1.md
       - Page2: debug/page2.md
+      - Page3: debug/page3.md
 
 plugins:
   - search

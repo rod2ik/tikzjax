@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="https://tikzjax.com/v1/fonts.css">
+    <script src="https://tikzjax.com/v1/tikzjax.js"></script>
+</head>
+
+<body>
+
+<script type="text/tikz">
+\begin{tikzpicture}
+\draw (1,1) circle (1);
+\begin{scope}
+\clip (1,1) circle (1);
+
+\foreach \x in {-1,-0.8,...,5}{
+\draw[red] (\x,-0.5) -- ({\x +0.5},2.5);
+}
+\end{scope}
+\end{tikzpicture}		 
+</script>
+
+ONE:
+
+<script
+  type="text/tikz"
+  data-disable-cache="true"
+  data-tikz-libraries="shapes.geometric"
+>
+\begin{tikzpicture}
+  \node[
+    star,
+    star points=5,
+    star point ratio=2.5,
+    minimum size=2in,
+    draw=orange,
+    thick,
+    fill=yellow!50
+  ] at (0,0) {};
+\end{tikzpicture}
+</script>
+
+<script
+  type="text/tikz"
+  data-disable-cache="true"
+  data-tikz-libraries="shapes.geometric"
+>
+\begin{tikzpicture}
+  \draw[thick,fill=yellow!50, draw=orange]
+    (0,0)
+    node[
+      star,
+      star points=5,
+      star point ratio=2.5,
+      minimum size=2in,
+      draw
+    ] {};
+\end{tikzpicture}
+</script>
+
+TWO:
+
+<script type="text/tikz">
+\begin{tikzpicture}
+  \draw[thick, fill=yellow!50, draw=orange]
+    (90:1in) -- (126:0.4in) -- (162:1in) -- (198:0.4in) 
+    -- (234:1in) -- (270:0.4in) -- (306:1in) 
+    -- (342:0.4in) -- (18:1in) -- (54:0.4in) -- cycle;
+\end{tikzpicture}
+</script>
+
+THREE: 
+
+<script type="text/tikz">
+\begin{tikzpicture}
+\def \n {5}
+\def \radius {3cm}
+\def \margin {8} % margin in angles, depends on the radius
+
+\foreach \s in {1,...,\n}
+{
+  \node[draw, circle] at ({360/\n * (\s - 1)}:\radius) {$\s$};
+  \draw[->, >=latex] ({360/\n * (\s - 1)+\margin}:\radius) 
+    arc ({360/\n * (\s - 1)+\margin}:{360/\n * (\s)-\margin}:\radius);
+}
+\end{tikzpicture}
+</script>
+
+
+
+<script type="text/tikz">
+  \begin{tikzcd}
+    A \arrow[r, "\phi"] \arrow[d, red]
+      & B \arrow[d, "\psi" red] \\
+    C \arrow[r, red, "\eta" blue]
+      & |[blue, rotate=-15]| D
+  \end{tikzcd}
+</script>
+
+
+<script type="text/tikz" data-disable-cache="true" data-tikz-libraries="circuits,circuits.ee,circuits.ee.IEC">
+\begin{tikzpicture}[
+  circuit ee IEC,
+  every circuit symbol/.style={draw,thick},
+  thick
+]
+  \draw (0,0)
+    to [battery={info=$9\,\mathrm{V}$}] (0,2)
+    to [resistor={info=$R_1$}] (3,2)
+    to [capacitor={info=$C$}] (3,0)
+    -- (0,0);
+
+  \draw (3,2) -- (5,2)
+    to [resistor={info=$R_2$}] (5,0)
+    -- (3,0);
+
+  \node at (2.5,-0.6) {Built-in TikZ \texttt{circuits.ee.IEC}};
+\end{tikzpicture}
+</script>
+
+<script
+  type="text/tikz"
+  data-disable-cache="true"
+  data-tex-packages='{"xcolor": ""}'
+>
+\begin{tikzpicture}
+    \node[red] at (0,-2) {a};
+    \node[red] at (0,0) {$b$};
+    \node[text=red] at (-1,0) {$c$};
+    \node at (1,1) {$\color{red} d$};
+    \node at (-1,1) {$\textcolor{red}{e}$};
+    \node[red] at (-1,-2) {f};
+\end{tikzpicture}
+</script>
+
+
+</body>
+
+</html>

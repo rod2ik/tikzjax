@@ -45,6 +45,67 @@ const readTexLog = () => {
     }
 };
 
+const isPlainObject = (value) => {
+    return Object.prototype.toString.call(value) === '[object Object]';
+};
+
+const parseTexPackages = (value) => {
+    if (!value) return {};
+
+    if (isPlainObject(value)) return value;
+
+    if (Array.isArray(value)) {
+        return value.reduce((result, packageName) => {
+            const name = String(packageName || '').trim();
+
+            if (name) {
+                result[name] = '';
+            }
+
+            return result;
+        }, {});
+    }
+
+    if (typeof value === 'string') {
+        try {
+            const parsed = JSON.parse(value);
+
+            if (isPlainObject(parsed)) {
+                return parsed;
+            }
+
+            if (Array.isArray(parsed)) {
+                return parseTexPackages(parsed);
+            }
+        } catch {
+            // Allow simple data-tex-packages="physics,tkz-tab" syntax.
+        }
+
+        return value
+            .split(',')
+            .map((packageName) => packageName.trim())
+            .filter(Boolean)
+            .reduce((result, packageName) => {
+                result[packageName] = '';
+                return result;
+            }, {});
+    }
+
+    return {};
+};
+
+const buildUsePackagePreamble = (texPackages = {}) => {
+    return Object.entries(texPackages)
+        .map(([packageName, options]) => {
+            return (
+                '\\usepackage' +
+                (options ? `[${options}]` : '') +
+                `{${packageName}}\n`
+            );
+        })
+        .join('');
+};
+
 expose({
     async load(_urlRoot) {
         urlRoot = _urlRoot;
@@ -52,19 +113,12 @@ expose({
         coredump = new Uint8Array(await loadDecompress('core.dump.gz'), 0, library.pages * 65536);
     },
 
-    async texify(input, dataset) {
-        const texPackages = {
-            ...(dataset.texPackages ? JSON.parse(dataset.texPackages) : {})
-        };
+    async texify(input, dataset = {}) {
+        const texPackages = parseTexPackages(dataset.texPackages);
 
         input =
-            Object.entries(texPackages).reduce((usePackageString, thisPackage) => {
-                usePackageString +=
-                    '\\usepackage' + (thisPackage[1] ? `[${thisPackage[1]}]` : '') + `{${thisPackage[0]}}`;
-
-                return usePackageString;
-            }, '') +
-            (dataset.tikzLibraries ? `\\usetikzlibrary{${dataset.tikzLibraries}}` : '') +
+            buildUsePackagePreamble(texPackages) +
+            (dataset.tikzLibraries ? `\\usetikzlibrary{${dataset.tikzLibraries}}\n` : '') +
             (dataset.addToPreamble || '') +
             `\\begin{document}\n${input}\n\\end{document}\n`;
 

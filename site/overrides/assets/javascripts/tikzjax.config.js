@@ -12,12 +12,21 @@ window.TikzJaxOptions = {
             amsmath: "",
             amsfonts: "",
             amssymb: "",
+            physics: "",
+            chemfig: "",
             "tkz-tab": ""
         },
         tikzLibraries: [
             "arrows.meta",
+            "shapes.geometric",
             "calc",
-            "positioning"
+            "positioning",
+            "decorations.pathmorphing",
+
+            // Built-in PGF/TikZ circuit libraries
+            "circuits",
+            "circuits.ee",
+            "circuits.ee.IEC"
         ]
     },
 

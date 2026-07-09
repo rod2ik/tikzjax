@@ -3,6 +3,7 @@
 window.MathJax = {
   loader: {
     load: ['[tex]/tagformat', '[tex]/colortbl', '[tex]/extpfeil', '[tex]/mathtools', '[tex]/empheq', '[tex]/cases', '[tex]/cancel', '[tex]/textmacros', '[tex]/bbox', '[tex]/physics', '[tex]/unicode']
+    // load: ['[tex]/tagformat', '[tex]/colortbl', '[tex]/extpfeil', '[tex]/mathtools', '[tex]/empheq', '[tex]/cases', '[tex]/cancel', '[tex]/textmacros', '[tex]/bbox', '[tex]/unicode']
   },
   startup: {
     pageReady: () => {
@@ -16,6 +17,7 @@ window.MathJax = {
     processEscapes: true,
     processEnvironments: true,
     packages: { '[+]': ['tagformat', 'colortbl', 'extpfeil', 'mathtools', 'empheq', 'cases', 'cancel', 'textmacros', 'bbox', 'physics', 'unicode'] },
+    // packages: { '[+]': ['tagformat', 'colortbl', 'extpfeil', 'mathtools', 'empheq', 'cases', 'cancel', 'textmacros', 'bbox', 'unicode'] },
     tags: 'ams',
     tagSide: 'right',
     macros: {

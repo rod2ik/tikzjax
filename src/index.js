@@ -409,10 +409,33 @@ const normalizeTexPackagesOption = (value) => {
 
     if (isPlainObject(value)) return value;
 
+    if (Array.isArray(value)) {
+        return value.reduce((result, packageName) => {
+            const name = String(packageName || '').trim();
+
+            if (name) {
+                result[name] = '';
+            }
+
+            return result;
+        }, {});
+    }
+
     if (typeof value === 'string') {
         const parsed = parseJsonObject(value);
 
-        return Object.keys(parsed).length ? parsed : value;
+        if (Object.keys(parsed).length) {
+            return parsed;
+        }
+
+        return value
+            .split(',')
+            .map((packageName) => packageName.trim())
+            .filter(Boolean)
+            .reduce((result, packageName) => {
+                result[packageName] = '';
+                return result;
+            }, {});
     }
 
     return value;
