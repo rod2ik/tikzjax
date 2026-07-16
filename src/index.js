@@ -194,10 +194,16 @@ const getThemeOptions = () => {
     return options.theme || {};
 };
 
-const parseNumberOption = (value, fallback, minimum = Number.NEGATIVE_INFINITY) => {
+const parseNumberOption = (
+    value,
+    fallback,
+    minimum = Number.NEGATIVE_INFINITY
+) => {
     const parsed = Number(value);
 
-    return Number.isFinite(parsed) && parsed >= minimum ? parsed : fallback;
+    return Number.isFinite(parsed) && parsed >= minimum
+        ? parsed
+        : fallback;
 };
 
 const parseBooleanOption = (value, fallback = false) => {
@@ -229,6 +235,7 @@ const parseBooleanOption = (value, fallback = false) => {
 const getRenderTimeout = (dataset = {}) => {
     const options = getOptions();
     const texOptions = options.tex || {};
+
     const timeout =
         dataset.renderTimeout ??
         options.renderTimeout ??
@@ -241,6 +248,7 @@ const getRenderTimeout = (dataset = {}) => {
 const getMaxRetries = (dataset = {}) => {
     const options = getOptions();
     const texOptions = options.tex || {};
+
     const retries =
         dataset.maxRetries ??
         options.maxRetries ??
@@ -253,6 +261,7 @@ const getMaxRetries = (dataset = {}) => {
 const shouldRestartWorkerOnFail = (dataset = {}) => {
     const options = getOptions();
     const texOptions = options.tex || {};
+
     const value =
         dataset.restartWorkerOnFail ??
         options.restartWorkerOnFail ??
@@ -282,7 +291,12 @@ const parseJsonObject = (value) => {
 
         return isPlainObject(parsed) ? parsed : {};
     } catch (error) {
-        console.warn('TikZJax: unable to parse JSON option:', value, error);
+        console.warn(
+            'TikZJax: unable to parse JSON option:',
+            value,
+            error
+        );
+
         return {};
     }
 };
@@ -307,7 +321,11 @@ const normalizeTikzLibraries = (value) => {
 // TKZ-TAB GLOBAL MACROS
 // =================================================
 const createTexMacro = (macroName, value) => {
-    if (value === undefined || value === null || value === false) {
+    if (
+        value === undefined ||
+        value === null ||
+        value === false
+    ) {
         return '';
     }
 
@@ -382,17 +400,29 @@ const getTexDatasetFromOptions = (options = getOptions()) => {
     const tex = options.tex || {};
     const dataset = {};
 
-    const texPackages = tex.texPackages || options.texPackages;
-    const tikzLibraries = tex.tikzLibraries || options.tikzLibraries;
-    const addToPreamble = tex.addToPreamble || options.addToPreamble;
-    const tkzTabPreamble = getTkzTabPreamble(options);
+    const texPackages =
+        tex.texPackages ||
+        options.texPackages;
+
+    const tikzLibraries =
+        tex.tikzLibraries ||
+        options.tikzLibraries;
+
+    const addToPreamble =
+        tex.addToPreamble ||
+        options.addToPreamble;
+
+    const tkzTabPreamble =
+        getTkzTabPreamble(options);
 
     if (texPackages) {
-        dataset.texPackages = stringifyTexPackages(texPackages);
+        dataset.texPackages =
+            stringifyTexPackages(texPackages);
     }
 
     if (tikzLibraries) {
-        dataset.tikzLibraries = normalizeTikzLibraries(tikzLibraries);
+        dataset.tikzLibraries =
+            normalizeTikzLibraries(tikzLibraries);
     }
 
     if (tkzTabPreamble || addToPreamble) {
@@ -470,10 +500,16 @@ const getLocalOptionsFromDataset = (dataset = {}) => {
         );
     };
 
-    mergeLocalOptions(parseJsonObject(dataset.options));
-    mergeLocalOptions(parseJsonObject(dataset.tikzjaxOptions));
+    mergeLocalOptions(
+        parseJsonObject(dataset.options)
+    );
 
-    const texOption = parseJsonObject(dataset.tex);
+    mergeLocalOptions(
+        parseJsonObject(dataset.tikzjaxOptions)
+    );
+
+    const texOption =
+        parseJsonObject(dataset.tex);
 
     if (Object.keys(texOption).length) {
         localOptions.tex = mergeTikzJaxOptions(
@@ -483,24 +519,41 @@ const getLocalOptionsFromDataset = (dataset = {}) => {
     }
 
     if (hasOwn(dataset, 'texPackages')) {
-        localOptions.tex = mergeTikzJaxOptions(localOptions.tex || {}, {
-            texPackages: normalizeTexPackagesOption(dataset.texPackages)
-        });
+        localOptions.tex = mergeTikzJaxOptions(
+            localOptions.tex || {},
+            {
+                texPackages:
+                    normalizeTexPackagesOption(
+                        dataset.texPackages
+                    )
+            }
+        );
     }
 
     if (hasOwn(dataset, 'tikzLibraries')) {
-        localOptions.tex = mergeTikzJaxOptions(localOptions.tex || {}, {
-            tikzLibraries: normalizeTikzLibrariesOption(dataset.tikzLibraries)
-        });
+        localOptions.tex = mergeTikzJaxOptions(
+            localOptions.tex || {},
+            {
+                tikzLibraries:
+                    normalizeTikzLibrariesOption(
+                        dataset.tikzLibraries
+                    )
+            }
+        );
     }
 
     if (hasOwn(dataset, 'addToPreamble')) {
-        localOptions.tex = mergeTikzJaxOptions(localOptions.tex || {}, {
-            addToPreamble: dataset.addToPreamble
-        });
+        localOptions.tex = mergeTikzJaxOptions(
+            localOptions.tex || {},
+            {
+                addToPreamble:
+                    dataset.addToPreamble
+            }
+        );
     }
 
-    const tkzTabOption = parseJsonObject(dataset.tkzTab);
+    const tkzTabOption =
+        parseJsonObject(dataset.tkzTab);
 
     if (Object.keys(tkzTabOption).length) {
         localOptions.tkzTab = mergeTikzJaxOptions(
@@ -516,7 +569,9 @@ const getLocalOptionsFromDataset = (dataset = {}) => {
         'brokenImageSrc',
         'disableCache',
         'width',
-        'height'
+        'height',
+        'debugTimings',
+        'showTimings'
     ].forEach((key) => {
         if (hasOwn(dataset, key)) {
             localOptions[key] = dataset[key];
@@ -533,37 +588,83 @@ const getMergedOptionsForDataset = (dataset = {}) => {
     );
 };
 
-const copyOptionToDataset = (dataset, options, key) => {
+const copyOptionToDataset = (
+    dataset,
+    options,
+    key
+) => {
     if (hasOwn(options, key)) {
         dataset[key] = options[key];
     }
 };
 
-const copyRenderOptionsToDataset = (dataset, options) => {
+const copyRenderOptionsToDataset = (
+    dataset,
+    options
+) => {
     const texOptions = options.tex || {};
 
     if (hasOwn(options, 'renderTimeout')) {
-        dataset.renderTimeout = options.renderTimeout;
+        dataset.renderTimeout =
+            options.renderTimeout;
     } else if (hasOwn(texOptions, 'renderTimeout')) {
-        dataset.renderTimeout = texOptions.renderTimeout;
+        dataset.renderTimeout =
+            texOptions.renderTimeout;
     }
 
     if (hasOwn(options, 'maxRetries')) {
-        dataset.maxRetries = options.maxRetries;
+        dataset.maxRetries =
+            options.maxRetries;
     } else if (hasOwn(texOptions, 'maxRetries')) {
-        dataset.maxRetries = texOptions.maxRetries;
+        dataset.maxRetries =
+            texOptions.maxRetries;
     }
 
     if (hasOwn(options, 'restartWorkerOnFail')) {
-        dataset.restartWorkerOnFail = options.restartWorkerOnFail;
-    } else if (hasOwn(texOptions, 'restartWorkerOnFail')) {
-        dataset.restartWorkerOnFail = texOptions.restartWorkerOnFail;
+        dataset.restartWorkerOnFail =
+            options.restartWorkerOnFail;
+    } else if (
+        hasOwn(texOptions, 'restartWorkerOnFail')
+    ) {
+        dataset.restartWorkerOnFail =
+            texOptions.restartWorkerOnFail;
     }
 
-    copyOptionToDataset(dataset, options, 'brokenImageSrc');
-    copyOptionToDataset(dataset, options, 'disableCache');
-    copyOptionToDataset(dataset, options, 'width');
-    copyOptionToDataset(dataset, options, 'height');
+    copyOptionToDataset(
+        dataset,
+        options,
+        'brokenImageSrc'
+    );
+
+    copyOptionToDataset(
+        dataset,
+        options,
+        'disableCache'
+    );
+
+    copyOptionToDataset(
+        dataset,
+        options,
+        'width'
+    );
+
+    copyOptionToDataset(
+        dataset,
+        options,
+        'height'
+    );
+
+    copyOptionToDataset(
+        dataset,
+        options,
+        'debugTimings'
+    );
+
+    copyOptionToDataset(
+        dataset,
+        options,
+        'showTimings'
+    );
 };
 
 const cleanInternalDataset = (dataset) => {
@@ -584,21 +685,31 @@ const cleanLocalDatasetForWorker = (dataset) => {
     delete cleaned.tikzLibraries;
     delete cleaned.addToPreamble;
     delete cleaned.tkzTab;
+    delete cleaned.renderPriority;
 
     return cleaned;
 };
 
 const getTikzDataset = (elt) => {
-    const localDataset = cleanInternalDataset(Object.assign({}, elt.dataset || {}));
-    const mergedOptions = getMergedOptionsForDataset(localDataset);
-    const texDataset = getTexDatasetFromOptions(mergedOptions);
+    const localDataset = cleanInternalDataset(
+        Object.assign({}, elt.dataset || {})
+    );
+
+    const mergedOptions =
+        getMergedOptionsForDataset(localDataset);
+
+    const texDataset =
+        getTexDatasetFromOptions(mergedOptions);
 
     const dataset = {
         ...texDataset,
         ...cleanLocalDatasetForWorker(localDataset)
     };
 
-    copyRenderOptionsToDataset(dataset, mergedOptions);
+    copyRenderOptionsToDataset(
+        dataset,
+        mergedOptions
+    );
 
     return dataset;
 };
@@ -608,7 +719,11 @@ const getTikzDataset = (elt) => {
 // =================================================
 const dbPromise = openDB('TikzJax', 2, {
     upgrade(db) {
-        if (!db.objectStoreNames.contains('svgImages')) {
+        if (
+            !db.objectStoreNames.contains(
+                'svgImages'
+            )
+        ) {
             db.createObjectStore('svgImages');
         }
     }
@@ -618,17 +733,31 @@ const getItem = async (key) =>
     (await dbPromise).get('svgImages', key);
 
 const setItem = async (key, val) =>
-    (await dbPromise).put('svgImages', val, key);
+    (await dbPromise).put(
+        'svgImages',
+        val,
+        key
+    );
 
 // =================================================
 // STATE
 // =================================================
-let texWorker;
 let observer;
 let themeObserver;
 let themeRaf = null;
 let mkDocsTabsRescanTimer = null;
-let workerBlobUrl = null;
+let sourceRescanTimer = null;
+let shuttingDown = false;
+
+const workerSlots = [];
+const workerBlobUrls = new Map();
+const renderQueue = [];
+const pendingRenderGroups = new Map();
+const scheduledSources = new Set();
+
+let workerSequence = 0;
+let renderSequence = 0;
+let dispatchScheduled = false;
 
 // =================================================
 // TIMEOUT / FAILURE SAFETY
@@ -636,36 +765,63 @@ let workerBlobUrl = null;
 const withTimeout = (promise, ms) => {
     let timer;
 
-    const timeout = new Promise((_, reject) => {
-        timer = window.setTimeout(() => {
-            reject(new Error(`TikZJax render timeout after ${ms}ms`));
-        }, ms);
-    });
+    const timeout = new Promise(
+        (_, reject) => {
+            timer = window.setTimeout(() => {
+                reject(
+                    new Error(
+                        `TikZJax render timeout after ${ms}ms`
+                    )
+                );
+            }, ms);
+        }
+    );
 
-    return Promise.race([promise, timeout]).finally(() => {
-        window.clearTimeout(timer);
-    });
+    return Promise
+        .race([promise, timeout])
+        .finally(() => {
+            window.clearTimeout(timer);
+        });
 };
 
 const createDefaultBrokenImageSvg = () => {
-    const frag = document.createRange().createContextualFragment(
-        '<svg class="tikzjax-broken-image" ' +
-        'xmlns="http://www.w3.org/2000/svg" ' +
-        'width="75pt" height="75pt" viewBox="0 0 75 75" ' +
-        'role="img" aria-label="TikZJax rendering error">' +
-        '<path d="M14 10 H50 L63 23 V56 C63 61 60 64 55 64 H20 C16 64 12 61 12 56 V16 C12 13 14 10 18 10 Z" ' +
-        'fill="none" stroke="#3b82f6" stroke-width="3" stroke-linejoin="round"/>' +
-        '<path d="M50 10 V23 H63" ' +
-        'fill="none" stroke="#3b82f6" stroke-width="3" stroke-linejoin="round"/>' +
-        '<circle cx="26" cy="27" r="6" ' +
-        'fill="url(#tikzjax-broken-image-gradient-inline)" stroke="#3b82f6" stroke-width="3"/>' +
-        '<path d="M14 56 L29 39 L39 49 L51 35 L63 49" ' +
-        'fill="url(#tikzjax-broken-image-gradient-inline)" opacity="0.75" ' +
-        'stroke="#3b82f6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>' +
-        '<path d="M52 50 L66 64 M66 50 L52 64" ' +
-        'stroke="#ef4444" stroke-width="5" stroke-linecap="round"/>' +
-        '</svg>'
-    );
+    const frag = document
+        .createRange()
+        .createContextualFragment(
+            '<svg class="tikzjax-broken-image" ' +
+            'xmlns="http://www.w3.org/2000/svg" ' +
+            'width="75pt" height="75pt" ' +
+            'viewBox="0 0 75 75" ' +
+            'role="img" ' +
+            'aria-label="TikZJax rendering error">' +
+            '<path d="M14 10 H50 L63 23 V56 ' +
+            'C63 61 60 64 55 64 H20 ' +
+            'C16 64 12 61 12 56 V16 ' +
+            'C12 13 14 10 18 10 Z" ' +
+            'fill="none" stroke="#3b82f6" ' +
+            'stroke-width="3" ' +
+            'stroke-linejoin="round"/>' +
+            '<path d="M50 10 V23 H63" ' +
+            'fill="none" stroke="#3b82f6" ' +
+            'stroke-width="3" ' +
+            'stroke-linejoin="round"/>' +
+            '<circle cx="26" cy="27" r="6" ' +
+            'fill="url(#tikzjax-broken-image-gradient-inline)" ' +
+            'stroke="#3b82f6" stroke-width="3"/>' +
+            '<path d="M14 56 L29 39 L39 49 ' +
+            'L51 35 L63 49" ' +
+            'fill="url(#tikzjax-broken-image-gradient-inline)" ' +
+            'opacity="0.75" stroke="#3b82f6" ' +
+            'stroke-width="3" ' +
+            'stroke-linecap="round" ' +
+            'stroke-linejoin="round"/>' +
+            '<path d="M52 50 L66 64 ' +
+            'M66 50 L52 64" ' +
+            'stroke="#ef4444" ' +
+            'stroke-width="5" ' +
+            'stroke-linecap="round"/>' +
+            '</svg>'
+        );
 
     const svg = frag.firstChild;
 
@@ -679,7 +835,9 @@ const createDefaultBrokenImageSvg = () => {
     return svg;
 };
 
-const createBrokenImageElement = (dataset = {}) => {
+const createBrokenImageElement = (
+    dataset = {}
+) => {
     const img = document.createElement('img');
 
     img.className = 'tikzjax-broken-image';
@@ -696,7 +854,8 @@ const createBrokenImageElement = (dataset = {}) => {
     img.style.verticalAlign = 'middle';
 
     img.onerror = () => {
-        const fallback = createDefaultBrokenImageSvg();
+        const fallback =
+            createDefaultBrokenImageSvg();
 
         fallback.style.marginLeft = 'auto';
         fallback.style.marginRight = 'auto';
@@ -708,9 +867,13 @@ const createBrokenImageElement = (dataset = {}) => {
 };
 
 const createBrokenImage = (dataset = {}) => {
-    const wrapper = document.createElement('span');
+    const wrapper =
+        document.createElement('span');
 
-    wrapper.className = 'tikzjax-wrapper tikzjax-broken-wrapper mathjax_ignore';
+    wrapper.className =
+        'tikzjax-wrapper ' +
+        'tikzjax-broken-wrapper ' +
+        'mathjax_ignore';
 
     wrapper.style.display = 'block';
     wrapper.style.width = '100%';
@@ -719,7 +882,8 @@ const createBrokenImage = (dataset = {}) => {
     wrapper.style.textAlign = 'center';
     wrapper.style.verticalAlign = 'middle';
 
-    const img = createBrokenImageElement(dataset);
+    const img =
+        createBrokenImageElement(dataset);
 
     img.style.marginLeft = 'auto';
     img.style.marginRight = 'auto';
@@ -735,7 +899,9 @@ const createBrokenImage = (dataset = {}) => {
 const isBlackValue = (value) => {
     if (!value) return false;
 
-    const v = value.trim().toLowerCase();
+    const v = value
+        .trim()
+        .toLowerCase();
 
     return (
         v === 'black' ||
@@ -749,7 +915,9 @@ const isBlackValue = (value) => {
 const isWhiteValue = (value) => {
     if (!value) return false;
 
-    const v = value.trim().toLowerCase();
+    const v = value
+        .trim()
+        .toLowerCase();
 
     return (
         v === 'white' ||
@@ -763,7 +931,9 @@ const isWhiteValue = (value) => {
 const isTransparentValue = (value) => {
     if (!value) return true;
 
-    const v = value.trim().toLowerCase();
+    const v = value
+        .trim()
+        .toLowerCase();
 
     return (
         v === 'transparent' ||
@@ -774,25 +944,37 @@ const isTransparentValue = (value) => {
     );
 };
 
-const getEffectiveBackgroundColor = (element, fallbackTheme = 'light') => {
+const getEffectiveBackgroundColor = (
+    element,
+    fallbackTheme = 'light'
+) => {
     let node = element;
 
     while (node) {
-        const computed = window.getComputedStyle(node);
-        const backgroundColor = computed.backgroundColor;
+        const computed =
+            window.getComputedStyle(node);
 
-        if (backgroundColor && !isTransparentValue(backgroundColor)) {
+        const backgroundColor =
+            computed.backgroundColor;
+
+        if (
+            backgroundColor &&
+            !isTransparentValue(backgroundColor)
+        ) {
             return backgroundColor;
         }
 
         node = node.parentElement;
     }
 
-    return fallbackTheme === 'dark' ? '#000000' : '#ffffff';
+    return fallbackTheme === 'dark'
+        ? '#000000'
+        : '#ffffff';
 };
 
 const isTextNode = (node) => {
-    const tag = node?.tagName?.toLowerCase();
+    const tag =
+        node?.tagName?.toLowerCase();
 
     return tag === 'text' || tag === 'tspan';
 };
@@ -800,29 +982,43 @@ const isTextNode = (node) => {
 const isCurrentColorValue = (value) => {
     if (!value) return false;
 
-    const v = value.trim().toLowerCase();
+    const v = value
+        .trim()
+        .toLowerCase();
 
-    return v === 'currentcolor' || v === 'current-color';
+    return (
+        v === 'currentcolor' ||
+        v === 'current-color'
+    );
 };
 
 const isNoneValue = (value) => {
     if (!value) return false;
 
-    return value.trim().toLowerCase() === 'none';
+    return value
+        .trim()
+        .toLowerCase() === 'none';
 };
 
 const isPaintServerValue = (value) => {
     if (!value) return false;
 
-    const v = value.trim().toLowerCase();
+    const v = value
+        .trim()
+        .toLowerCase();
 
-    return v.startsWith('url(') || v.startsWith('var(');
+    return (
+        v.startsWith('url(') ||
+        v.startsWith('var(')
+    );
 };
 
 const isExplicitColorValue = (value) => {
     if (!value) return false;
 
-    const v = value.trim().toLowerCase();
+    const v = value
+        .trim()
+        .toLowerCase();
 
     return !(
         isBlackValue(v) ||
@@ -834,17 +1030,26 @@ const isExplicitColorValue = (value) => {
     );
 };
 
-const getStylePropertyValue = (styleText, property) => {
+const getStylePropertyValue = (
+    styleText,
+    property
+) => {
     if (!styleText) return '';
 
     const match = styleText.match(
-        new RegExp(`${property}\\s*:\\s*([^;]+)`, 'i')
+        new RegExp(
+            `${property}\\s*:\\s*([^;]+)`,
+            'i'
+        )
     );
 
     return match ? match[1].trim() : '';
 };
 
-const getNodePresentationValue = (node, property) => {
+const getNodePresentationValue = (
+    node,
+    property
+) => {
     return (
         node?.style?.getPropertyValue(property) ||
         node?.getAttribute?.(property) ||
@@ -852,9 +1057,16 @@ const getNodePresentationValue = (node, property) => {
     );
 };
 
-const getExplicitColorFromNode = (node, properties = ['fill', 'color']) => {
+const getExplicitColorFromNode = (
+    node,
+    properties = ['fill', 'color']
+) => {
     for (const property of properties) {
-        const value = getNodePresentationValue(node, property);
+        const value =
+            getNodePresentationValue(
+                node,
+                property
+            );
 
         if (isExplicitColorValue(value)) {
             return value;
@@ -864,15 +1076,24 @@ const getExplicitColorFromNode = (node, properties = ['fill', 'color']) => {
     return '';
 };
 
-const getInheritedExplicitColor = (node, properties = ['fill', 'color']) => {
+const getInheritedExplicitColor = (
+    node,
+    properties = ['fill', 'color']
+) => {
     let current = node?.parentElement;
 
     while (current) {
-        if (current.tagName?.toLowerCase() === 'svg') {
+        if (
+            current.tagName?.toLowerCase() ===
+            'svg'
+        ) {
             return '';
         }
 
-        const value = getExplicitColorFromNode(current, properties);
+        const value = getExplicitColorFromNode(
+            current,
+            properties
+        );
 
         if (value) {
             return value;
@@ -887,30 +1108,56 @@ const getInheritedExplicitColor = (node, properties = ['fill', 'color']) => {
 const getTikzWrappers = (root = document) => {
     const wrappers = [];
 
-    if (root instanceof Element && root.matches('.tikzjax-wrapper')) {
+    if (
+        root instanceof Element &&
+        root.matches('.tikzjax-wrapper')
+    ) {
         wrappers.push(root);
     }
 
     root.querySelectorAll?.('.tikzjax-wrapper')
-        ?.forEach((wrapper) => wrappers.push(wrapper));
+        ?.forEach((wrapper) => {
+            wrappers.push(wrapper);
+        });
 
     return [...new Set(wrappers)];
 };
 
-const normalizeStyleForTheme = (styleText, node) => {
+const normalizeStyleForTheme = (
+    styleText,
+    node
+) => {
     if (!styleText) return styleText;
 
     let result = styleText;
 
-    const ownColor = getStylePropertyValue(styleText, 'color');
-    const inheritedFillColor = getInheritedExplicitColor(node, ['fill', 'color']);
-    const inheritedStrokeColor = getInheritedExplicitColor(node, ['stroke', 'color']);
+    const ownColor =
+        getStylePropertyValue(
+            styleText,
+            'color'
+        );
 
-    const fillReplacement = isExplicitColorValue(ownColor)
-        ? ownColor
-        : inheritedFillColor || 'currentColor';
+    const inheritedFillColor =
+        getInheritedExplicitColor(
+            node,
+            ['fill', 'color']
+        );
 
-    const strokeReplacement = inheritedStrokeColor || 'currentColor';
+    const inheritedStrokeColor =
+        getInheritedExplicitColor(
+            node,
+            ['stroke', 'color']
+        );
+
+    const fillReplacement =
+        isExplicitColorValue(ownColor)
+            ? ownColor
+            : inheritedFillColor ||
+            'currentColor';
+
+    const strokeReplacement =
+        inheritedStrokeColor ||
+        'currentColor';
 
     result = result.replace(
         /fill\s*:\s*(black|#000000|#000|rgb\(0,\s*0,\s*0\))\b/gi,
@@ -930,12 +1177,16 @@ const normalizeStyleForTheme = (styleText, node) => {
     if (isTextNode(node)) {
         result = result.replace(
             /fill\s*:\s*(white|#ffffff|#fff|rgb\(255,\s*255,\s*255\))\b/gi,
-            `fill: ${inheritedFillColor || 'currentColor'}`
+            `fill: ${inheritedFillColor ||
+            'currentColor'
+            }`
         );
     } else {
         result = result.replace(
             /fill\s*:\s*(white|#ffffff|#fff|rgb\(255,\s*255,\s*255\))\b/gi,
-            inheritedFillColor ? `fill: ${inheritedFillColor}` : 'fill: transparent'
+            inheritedFillColor
+                ? `fill: ${inheritedFillColor}`
+                : 'fill: transparent'
         );
     }
 
@@ -950,20 +1201,40 @@ const normalizeStyleForTheme = (styleText, node) => {
 };
 
 const normalizeSvgForTheme = (svg) => {
-    if (!svg || svg.dataset.tikzjaxThemeNormalized === 'true') return;
+    if (
+        !svg ||
+        svg.dataset.tikzjaxThemeNormalized ===
+        'true'
+    ) {
+        return;
+    }
 
-    svg.dataset.tikzjaxThemeNormalized = 'true';
+    svg.dataset.tikzjaxThemeNormalized =
+        'true';
 
     svg.classList.add('tikzjax', 'tikz');
     svg.style.color = 'currentColor';
 
-    svg.querySelectorAll('[fill], [stroke], [color], [style]')
+    svg
+        .querySelectorAll(
+            '[fill], [stroke], [color], [style]'
+        )
         .forEach((node) => {
-            const inheritedFillColor = getInheritedExplicitColor(node, ['fill', 'color']);
-            const inheritedStrokeColor = getInheritedExplicitColor(node, ['stroke', 'color']);
+            const inheritedFillColor =
+                getInheritedExplicitColor(
+                    node,
+                    ['fill', 'color']
+                );
+
+            const inheritedStrokeColor =
+                getInheritedExplicitColor(
+                    node,
+                    ['stroke', 'color']
+                );
 
             if (node.hasAttribute('fill')) {
-                const fill = node.getAttribute('fill');
+                const fill =
+                    node.getAttribute('fill');
 
                 if (isTextNode(node)) {
                     if (
@@ -971,105 +1242,189 @@ const normalizeSvgForTheme = (svg) => {
                         isWhiteValue(fill) ||
                         isCurrentColorValue(fill)
                     ) {
-                        const replacement = inheritedFillColor || 'currentColor';
+                        const replacement =
+                            inheritedFillColor ||
+                            'currentColor';
 
-                        node.setAttribute('fill', replacement);
-                        node.style.setProperty('fill', replacement, 'important');
+                        node.setAttribute(
+                            'fill',
+                            replacement
+                        );
+
+                        node.style.setProperty(
+                            'fill',
+                            replacement,
+                            'important'
+                        );
                     }
                 } else if (isBlackValue(fill)) {
-                    node.setAttribute('fill', inheritedFillColor || 'currentColor');
+                    node.setAttribute(
+                        'fill',
+                        inheritedFillColor ||
+                        'currentColor'
+                    );
                 } else if (isWhiteValue(fill)) {
                     node.setAttribute(
                         'fill',
-                        inheritedFillColor || 'transparent'
+                        inheritedFillColor ||
+                        'transparent'
                     );
                 }
             }
 
             if (node.hasAttribute('stroke')) {
-                const stroke = node.getAttribute('stroke');
+                const stroke =
+                    node.getAttribute('stroke');
 
                 if (isBlackValue(stroke)) {
-                    node.setAttribute('stroke', inheritedStrokeColor || 'currentColor');
-                } else if (isWhiteValue(stroke)) {
                     node.setAttribute(
                         'stroke',
-                        inheritedStrokeColor || 'var(--tikzjax-background-color)'
+                        inheritedStrokeColor ||
+                        'currentColor'
+                    );
+                } else if (
+                    isWhiteValue(stroke)
+                ) {
+                    node.setAttribute(
+                        'stroke',
+                        inheritedStrokeColor ||
+                        'var(--tikzjax-background-color)'
                     );
                 }
             }
 
             if (node.hasAttribute('color')) {
-                const color = node.getAttribute('color');
+                const color =
+                    node.getAttribute('color');
 
                 if (isBlackValue(color)) {
-                    node.setAttribute('color', 'currentColor');
+                    node.setAttribute(
+                        'color',
+                        'currentColor'
+                    );
                 }
             }
 
             if (node.hasAttribute('style')) {
                 node.setAttribute(
                     'style',
-                    normalizeStyleForTheme(node.getAttribute('style'), node)
+                    normalizeStyleForTheme(
+                        node.getAttribute('style'),
+                        node
+                    )
                 );
             }
         });
 
-    svg.querySelectorAll('text, tspan').forEach((node) => {
-        const fill =
-            node.style.getPropertyValue('fill') ||
-            node.getAttribute('fill') ||
-            '';
+    svg.querySelectorAll('text, tspan')
+        .forEach((node) => {
+            const fill =
+                node.style.getPropertyValue(
+                    'fill'
+                ) ||
+                node.getAttribute('fill') ||
+                '';
 
-        const color =
-            node.style.getPropertyValue('color') ||
-            node.getAttribute('color') ||
-            '';
+            const color =
+                node.style.getPropertyValue(
+                    'color'
+                ) ||
+                node.getAttribute('color') ||
+                '';
 
-        const inheritedFillColor = getInheritedExplicitColor(node, ['fill', 'color']);
-        const effectiveColor = fill || color || inheritedFillColor;
+            const inheritedFillColor =
+                getInheritedExplicitColor(
+                    node,
+                    ['fill', 'color']
+                );
 
-        if (inheritedFillColor && (
-            !fill ||
-            isBlackValue(fill) ||
-            isWhiteValue(fill) ||
-            isCurrentColorValue(fill)
-        )) {
-            node.setAttribute('fill', inheritedFillColor);
-            node.style.setProperty('fill', inheritedFillColor, 'important');
-        } else if (
-            !effectiveColor ||
-            isCurrentColorValue(effectiveColor) ||
-            isBlackValue(effectiveColor) ||
-            isWhiteValue(effectiveColor)
-        ) {
-            node.setAttribute('fill', 'currentColor');
-            node.style.setProperty('fill', 'currentColor', 'important');
-        }
+            const effectiveColor =
+                fill ||
+                color ||
+                inheritedFillColor;
 
-        node.style.setProperty('opacity', '1', 'important');
-    });
+            if (
+                inheritedFillColor &&
+                (
+                    !fill ||
+                    isBlackValue(fill) ||
+                    isWhiteValue(fill) ||
+                    isCurrentColorValue(fill)
+                )
+            ) {
+                node.setAttribute(
+                    'fill',
+                    inheritedFillColor
+                );
+
+                node.style.setProperty(
+                    'fill',
+                    inheritedFillColor,
+                    'important'
+                );
+            } else if (
+                !effectiveColor ||
+                isCurrentColorValue(
+                    effectiveColor
+                ) ||
+                isBlackValue(effectiveColor) ||
+                isWhiteValue(effectiveColor)
+            ) {
+                node.setAttribute(
+                    'fill',
+                    'currentColor'
+                );
+
+                node.style.setProperty(
+                    'fill',
+                    'currentColor',
+                    'important'
+                );
+            }
+
+            node.style.setProperty(
+                'opacity',
+                '1',
+                'important'
+            );
+        });
 };
 
 const getConfiguredThemeTargets = () => {
-    const themeOptions = getThemeOptions();
-    const selector = themeOptions.selector;
+    const themeOptions =
+        getThemeOptions();
+
+    const selector =
+        themeOptions.selector;
 
     if (!selector) return [];
 
     try {
-        return Array.from(document.querySelectorAll(selector));
+        return Array.from(
+            document.querySelectorAll(selector)
+        );
     } catch (error) {
-        console.warn('TikZJax: invalid theme selector:', selector, error);
+        console.warn(
+            'TikZJax: invalid theme selector:',
+            selector,
+            error
+        );
+
         return [];
     }
 };
 
-const getConfiguredThemeTarget = (wrapper) => {
-    const targets = getConfiguredThemeTargets();
+const getConfiguredThemeTarget = (
+    wrapper
+) => {
+    const targets =
+        getConfiguredThemeTargets();
 
     for (const target of targets) {
-        if (target === wrapper || target.contains(wrapper)) {
+        if (
+            target === wrapper ||
+            target.contains(wrapper)
+        ) {
             return target;
         }
     }
@@ -1080,53 +1435,129 @@ const getConfiguredThemeTarget = (wrapper) => {
 const getThemeFromElement = (element) => {
     if (!element) return null;
 
-    const themeOptions = getThemeOptions();
+    const themeOptions =
+        getThemeOptions();
 
-    const darkClass = themeOptions.darkClass || 'dark';
-    const lightClass = themeOptions.lightClass || 'light';
+    const darkClass =
+        themeOptions.darkClass ||
+        'dark';
 
-    const attribute = themeOptions.attribute || 'data-theme';
-    const darkValue = themeOptions.darkValue || 'dark';
-    const lightValue = themeOptions.lightValue || 'light';
+    const lightClass =
+        themeOptions.lightClass ||
+        'light';
 
-    if (attribute && element.hasAttribute(attribute)) {
-        const value = element.getAttribute(attribute);
+    const attribute =
+        themeOptions.attribute ||
+        'data-theme';
 
-        if (value === darkValue) return 'dark';
-        if (value === lightValue) return 'light';
+    const darkValue =
+        themeOptions.darkValue ||
+        'dark';
+
+    const lightValue =
+        themeOptions.lightValue ||
+        'light';
+
+    if (
+        attribute &&
+        element.hasAttribute(attribute)
+    ) {
+        const value =
+            element.getAttribute(attribute);
+
+        if (value === darkValue) {
+            return 'dark';
+        }
+
+        if (value === lightValue) {
+            return 'light';
+        }
     }
 
-    if (element.classList?.contains(darkClass)) return 'dark';
-    if (element.classList?.contains(lightClass)) return 'light';
-
-    if (element.hasAttribute('data-bs-theme')) {
-        const value = element.getAttribute('data-bs-theme');
-
-        if (value === 'dark') return 'dark';
-        if (value === 'light') return 'light';
+    if (
+        element.classList?.contains(
+            darkClass
+        )
+    ) {
+        return 'dark';
     }
 
-    if (element.hasAttribute('data-color-scheme')) {
-        const value = element.getAttribute('data-color-scheme');
+    if (
+        element.classList?.contains(
+            lightClass
+        )
+    ) {
+        return 'light';
+    }
 
-        if (value === 'dark' || value === 'slate') return 'dark';
-        if (value === 'light' || value === 'default') return 'light';
+    if (
+        element.hasAttribute(
+            'data-bs-theme'
+        )
+    ) {
+        const value =
+            element.getAttribute(
+                'data-bs-theme'
+            );
+
+        if (value === 'dark') {
+            return 'dark';
+        }
+
+        if (value === 'light') {
+            return 'light';
+        }
+    }
+
+    if (
+        element.hasAttribute(
+            'data-color-scheme'
+        )
+    ) {
+        const value =
+            element.getAttribute(
+                'data-color-scheme'
+            );
+
+        if (
+            value === 'dark' ||
+            value === 'slate'
+        ) {
+            return 'dark';
+        }
+
+        if (
+            value === 'light' ||
+            value === 'default'
+        ) {
+            return 'light';
+        }
     }
 
     return null;
 };
 
 const getFallbackTheme = () => {
-    const themeOptions = getThemeOptions();
-    const fallbackTheme = themeOptions.fallbackTheme || themeOptions.defaultTheme;
+    const themeOptions =
+        getThemeOptions();
 
-    if (fallbackTheme === 'dark' || fallbackTheme === 'light') {
+    const fallbackTheme =
+        themeOptions.fallbackTheme ||
+        themeOptions.defaultTheme;
+
+    if (
+        fallbackTheme === 'dark' ||
+        fallbackTheme === 'light'
+    ) {
         return fallbackTheme;
     }
 
     if (
-        themeOptions.followSystemTheme === true &&
-        window.matchMedia?.('(prefers-color-scheme: dark)').matches
+        themeOptions.followSystemTheme ===
+        true &&
+        window.matchMedia?.(
+            '(prefers-color-scheme: dark)'
+        ).matches
     ) {
         return 'dark';
     }
@@ -1135,75 +1566,149 @@ const getFallbackTheme = () => {
 };
 
 const getThemeForWrapper = (wrapper) => {
-    const configuredTarget = getConfiguredThemeTarget(wrapper);
-    const configuredTheme = getThemeFromElement(configuredTarget);
+    const configuredTarget =
+        getConfiguredThemeTarget(wrapper);
 
-    if (configuredTheme) return configuredTheme;
+    const configuredTheme =
+        getThemeFromElement(
+            configuredTarget
+        );
 
-    const themeOptions = getThemeOptions();
-    const darkClass = themeOptions.darkClass || 'dark';
-    const lightClass = themeOptions.lightClass || 'light';
-    const attribute = themeOptions.attribute || 'data-theme';
+    if (configuredTheme) {
+        return configuredTheme;
+    }
+
+    const themeOptions =
+        getThemeOptions();
+
+    const darkClass =
+        themeOptions.darkClass ||
+        'dark';
+
+    const lightClass =
+        themeOptions.lightClass ||
+        'light';
+
+    const attribute =
+        themeOptions.attribute ||
+        'data-theme';
 
     let localThemeElement;
 
     try {
         localThemeElement = wrapper.closest(
-            `.${darkClass}, .${lightClass}, [${attribute}], [data-bs-theme], [data-color-scheme]`
+            `.${darkClass}, ` +
+            `.${lightClass}, ` +
+            `[${attribute}], ` +
+            '[data-bs-theme], ' +
+            '[data-color-scheme]'
         );
     } catch {
         localThemeElement = wrapper.closest(
-            '.dark, .light, [data-theme], [data-bs-theme], [data-color-scheme]'
+            '.dark, .light, ' +
+            '[data-theme], ' +
+            '[data-bs-theme], ' +
+            '[data-color-scheme]'
         );
     }
 
-    const localTheme = getThemeFromElement(localThemeElement);
+    const localTheme =
+        getThemeFromElement(
+            localThemeElement
+        );
 
-    if (localTheme) return localTheme;
+    if (localTheme) {
+        return localTheme;
+    }
 
-    const bodyTheme = document.body?.getAttribute('data-md-color-scheme');
+    const bodyTheme =
+        document.body?.getAttribute(
+            'data-md-color-scheme'
+        );
 
-    if (bodyTheme === 'slate') return 'dark';
-    if (bodyTheme) return 'light';
+    if (bodyTheme === 'slate') {
+        return 'dark';
+    }
 
-    const bodyClassTheme = getThemeFromElement(document.body);
-    if (bodyClassTheme) return bodyClassTheme;
+    if (bodyTheme) {
+        return 'light';
+    }
 
-    const htmlClassTheme = getThemeFromElement(document.documentElement);
-    if (htmlClassTheme) return htmlClassTheme;
+    const bodyClassTheme =
+        getThemeFromElement(
+            document.body
+        );
+
+    if (bodyClassTheme) {
+        return bodyClassTheme;
+    }
+
+    const htmlClassTheme =
+        getThemeFromElement(
+            document.documentElement
+        );
+
+    if (htmlClassTheme) {
+        return htmlClassTheme;
+    }
 
     return getFallbackTheme();
 };
 
-const applyThemeToTikz = (root = document) => {
-    getTikzWrappers(root).forEach((wrapper) => {
-        const theme = getThemeForWrapper(wrapper);
-        const isDark = theme === 'dark';
-        const backgroundColor = getEffectiveBackgroundColor(wrapper, theme);
+const applyThemeToTikz = (
+    root = document
+) => {
+    getTikzWrappers(root)
+        .forEach((wrapper) => {
+            const theme =
+                getThemeForWrapper(wrapper);
 
-        wrapper.style.color = isDark ? '#ffffff' : '#000000';
-        wrapper.style.setProperty('--tikzjax-background-color', backgroundColor);
+            const isDark =
+                theme === 'dark';
 
-        wrapper.querySelectorAll('svg').forEach((svg) => {
-            normalizeSvgForTheme(svg);
+            const backgroundColor =
+                getEffectiveBackgroundColor(
+                    wrapper,
+                    theme
+                );
+
+            wrapper.style.color =
+                isDark
+                    ? '#ffffff'
+                    : '#000000';
+
+            wrapper.style.setProperty(
+                '--tikzjax-background-color',
+                backgroundColor
+            );
+
+            wrapper
+                .querySelectorAll('svg')
+                .forEach((svg) => {
+                    normalizeSvgForTheme(svg);
+                });
         });
-    });
 };
 
 const scheduleThemeApply = () => {
     if (themeRaf !== null) return;
 
-    themeRaf = window.requestAnimationFrame(() => {
-        themeRaf = null;
-        applyThemeToTikz(document);
-    });
+    themeRaf =
+        window.requestAnimationFrame(() => {
+            themeRaf = null;
+            applyThemeToTikz(document);
+        });
 };
 
 const observeTheme = () => {
     if (!document.body) return;
 
-    const themeOptions = getThemeOptions();
-    const configuredAttribute = themeOptions.attribute || 'data-theme';
+    const themeOptions =
+        getThemeOptions();
+
+    const configuredAttribute =
+        themeOptions.attribute ||
+        'data-theme';
 
     const attributeFilter = [
         'class',
@@ -1213,8 +1718,15 @@ const observeTheme = () => {
         'data-md-color-scheme'
     ];
 
-    if (configuredAttribute && !attributeFilter.includes(configuredAttribute)) {
-        attributeFilter.push(configuredAttribute);
+    if (
+        configuredAttribute &&
+        !attributeFilter.includes(
+            configuredAttribute
+        )
+    ) {
+        attributeFilter.push(
+            configuredAttribute
+        );
     }
 
     const observedTargets = new Set([
@@ -1223,17 +1735,25 @@ const observeTheme = () => {
         ...getConfiguredThemeTargets()
     ]);
 
-    themeObserver = new MutationObserver((mutations) => {
-        for (const mutation of mutations) {
-            if (
-                mutation.type === 'attributes' &&
-                attributeFilter.includes(mutation.attributeName)
-            ) {
-                scheduleThemeApply();
-                return;
+    themeObserver =
+        new MutationObserver(
+            (mutations) => {
+                for (
+                    const mutation of mutations
+                ) {
+                    if (
+                        mutation.type ===
+                        'attributes' &&
+                        attributeFilter.includes(
+                            mutation.attributeName
+                        )
+                    ) {
+                        scheduleThemeApply();
+                        return;
+                    }
+                }
             }
-        }
-    });
+        );
 
     observedTargets.forEach((target) => {
         if (!target) return;
@@ -1249,29 +1769,62 @@ const observeTheme = () => {
 // SPINNER
 // =================================================
 const createLoader = (dataset = {}) => {
-    const width = parseFloat(dataset.width) || 75;
-    const height = parseFloat(dataset.height) || 75;
-    const radius = Math.min(width, height) * 0.2;
+    const width =
+        parseFloat(dataset.width) ||
+        75;
 
-    const frag = document.createRange().createContextualFragment(
-        '<svg class="tikzjax-loader" version="1.1" ' +
-        'xmlns="http://www.w3.org/2000/svg" ' +
-        'xmlns:xlink="http://www.w3.org/1999/xlink" ' +
-        `width="${width}pt" height="${height}pt" viewBox="0 0 ${width} ${height}">` +
-        `<rect width="${width}" height="${height}" rx="5pt" ry="5pt" ` +
-        'fill="#000" fill-opacity="0.2"/>' +
-        `<circle cx="${width / 2}" cy="${height / 2}" r="${radius}" ` +
-        'stroke="#f3f3f3" fill="none" stroke-width="3"/>' +
-        `<circle cx="${width / 2}" cy="${height / 2}" r="${radius}" ` +
-        'stroke="#3498db" fill="none" stroke-width="3" stroke-linecap="round">' +
-        '<animate attributeName="stroke-dasharray" begin="0s" dur="2s" ' +
-        'values="56.5 37.7;1 93.2;56.5 37.7" keyTimes="0;0.5;1" repeatCount="indefinite">' +
-        '</animate>' +
-        '<animate attributeName="stroke-dashoffset" begin="0s" dur="2s" ' +
-        'from="0" to="188.5" repeatCount="indefinite"></animate>' +
-        '</circle>' +
-        '</svg>'
-    );
+    const height =
+        parseFloat(dataset.height) ||
+        75;
+
+    const radius =
+        Math.min(width, height) *
+        0.2;
+
+    const frag = document
+        .createRange()
+        .createContextualFragment(
+            '<svg class="tikzjax-loader" ' +
+            'version="1.1" ' +
+            'xmlns="http://www.w3.org/2000/svg" ' +
+            'xmlns:xlink="http://www.w3.org/1999/xlink" ' +
+            `width="${width}pt" ` +
+            `height="${height}pt" ` +
+            `viewBox="0 0 ${width} ${height}">` +
+            `<rect width="${width}" ` +
+            `height="${height}" ` +
+            'rx="5pt" ry="5pt" ' +
+            'fill="#000" ' +
+            'fill-opacity="0.2"/>' +
+            `<circle cx="${width / 2}" ` +
+            `cy="${height / 2}" ` +
+            `r="${radius}" ` +
+            'stroke="#f3f3f3" ' +
+            'fill="none" ' +
+            'stroke-width="3"/>' +
+            `<circle cx="${width / 2}" ` +
+            `cy="${height / 2}" ` +
+            `r="${radius}" ` +
+            'stroke="#3498db" ' +
+            'fill="none" ' +
+            'stroke-width="3" ' +
+            'stroke-linecap="round">' +
+            '<animate ' +
+            'attributeName="stroke-dasharray" ' +
+            'begin="0s" dur="2s" ' +
+            'values="56.5 37.7;1 93.2;56.5 37.7" ' +
+            'keyTimes="0;0.5;1" ' +
+            'repeatCount="indefinite">' +
+            '</animate>' +
+            '<animate ' +
+            'attributeName="stroke-dashoffset" ' +
+            'begin="0s" dur="2s" ' +
+            'from="0" to="188.5" ' +
+            'repeatCount="indefinite">' +
+            '</animate>' +
+            '</circle>' +
+            '</svg>'
+        );
 
     return frag.firstChild;
 };
@@ -1280,24 +1833,43 @@ const createLoader = (dataset = {}) => {
 // SOURCES
 // =================================================
 const isTikzPre = (node) => {
-    if (!node || node.nodeType !== 1) return false;
+    if (
+        !node ||
+        node.nodeType !== 1
+    ) {
+        return false;
+    }
 
-    if (node.tagName !== 'PRE') return false;
+    if (node.tagName !== 'PRE') {
+        return false;
+    }
 
     return (
-        node.classList.contains('language-tikzjax') ||
-        node.classList.contains('tikzjax') ||
-        node.classList.contains('language-tikz') ||
-        node.classList.contains('tikz')
+        node.classList.contains(
+            'language-tikzjax'
+        ) ||
+        node.classList.contains(
+            'tikzjax'
+        ) ||
+        node.classList.contains(
+            'language-tikz'
+        ) ||
+        node.classList.contains(
+            'tikz'
+        )
     );
 };
 
-const getTikzSources = (root = document) => {
+const getTikzSources = (
+    root = document
+) => {
     const sources = [];
 
     if (
         root instanceof Element &&
-        root.matches('script[type="text/tikz"]')
+        root.matches(
+            'script[type="text/tikz"]'
+        )
     ) {
         sources.push(root);
     }
@@ -1309,32 +1881,54 @@ const getTikzSources = (root = document) => {
         sources.push(root);
     }
 
-    root.querySelectorAll?.('script[type="text/tikz"]')
-        ?.forEach((source) => sources.push(source));
+    root
+        .querySelectorAll?.(
+            'script[type="text/tikz"]'
+        )
+        ?.forEach((source) => {
+            sources.push(source);
+        });
 
-    root.querySelectorAll?.('pre.language-tikzjax, pre.tikzjax, pre.language-tikz, pre.tikz')
-        ?.forEach((source) => sources.push(source));
+    root
+        .querySelectorAll?.(
+            'pre.language-tikzjax, ' +
+            'pre.tikzjax, ' +
+            'pre.language-tikz, ' +
+            'pre.tikz'
+        )
+        ?.forEach((source) => {
+            sources.push(source);
+        });
 
     return [...new Set(sources)]
-        .filter((el) => !el.dataset?.tikzjaxProcessed);
+        .filter(
+            (element) =>
+                !element.dataset
+                    ?.tikzjaxProcessed
+        );
 };
 
 // =================================================
 // TEXT EXTRACTION
 // =================================================
 const decodeHtmlEntities = (text) => {
-    let decoded = String(text || '');
+    let decoded =
+        String(text || '');
 
     for (let i = 0; i < 3; i += 1) {
         if (!decoded.includes('&')) {
             return decoded;
         }
 
-        const textarea = document.createElement('textarea');
+        const textarea =
+            document.createElement(
+                'textarea'
+            );
 
         textarea.innerHTML = decoded;
 
-        const next = textarea.value;
+        const next =
+            textarea.value;
 
         if (next === decoded) {
             return decoded;
@@ -1344,48 +1938,66 @@ const decodeHtmlEntities = (text) => {
     }
 
     return decoded;
-
 };
 
-const cleanMkDocsMaterialTextArtifacts = (text) => {
-    let cleaned = decodeHtmlEntities(text);
+const cleanMkDocsMaterialTextArtifacts = (
+    text
+) => {
+    let cleaned =
+        decodeHtmlEntities(text);
 
-    cleaned = cleaned.replace(/<br\s*\/?>/gi, '\n');
-    cleaned = cleaned.replace(/<\/?p\b[^>]*>/gi, '\n');
+    cleaned = cleaned.replace(
+        /<br\s*\/?>/gi,
+        '\n'
+    );
+
+    cleaned = cleaned.replace(
+        /<\/?p\b[^>]*>/gi,
+        '\n'
+    );
 
     cleaned = cleaned.replace(
         /<span\b[^>]*class=(["'])[^"']*\barithmatex\b[^"']*\1[^>]*>\s*\\\(([\s\S]*?)\\\)\s*<\/span>/gi,
-        (_match, _quote, math) => `$${math}$`
+        (_match, _quote, math) =>
+            `$${math}$`
     );
 
     cleaned = cleaned.replace(
         /<span\b[^>]*class=(["'])[^"']*\barithmatex\b[^"']*\1[^>]*>\s*\\\[([\s\S]*?)\\\]\s*<\/span>/gi,
-        (_match, _quote, math) => `$$${math}$$`
+        (_match, _quote, math) =>
+            `$$${math}$$`
     );
 
     cleaned = cleaned.replace(
         /<span\b[^>]*class=(["'])[^"']*\barithmatex\b[^"']*\1[^>]*>\s*([\s\S]*?)\s*<\/span>/gi,
-        (_match, _quote, math) => math
+        (_match, _quote, math) =>
+            math
     );
 
-    cleaned = cleaned.replace(/<\/?span\b[^>]*>/gi, '');
+    cleaned = cleaned.replace(
+        /<\/?span\b[^>]*>/gi,
+        ''
+    );
 
     cleaned = cleaned.replace(
         /\\\(([\s\S]*?)\\\)/g,
-        (_match, math) => `$${math}$`
+        (_match, math) =>
+            `$${math}$`
     );
 
     cleaned = cleaned.replace(
         /\\\[([\s\S]*?)\\\]/g,
-        (_match, math) => `$$${math}$$`
+        (_match, math) =>
+            `$$${math}$$`
     );
 
     return decodeHtmlEntities(cleaned);
-
 };
 
 const normalizeTikzSourceText = (text) => {
-    const raw = String(text || '').replace(/\r\n?/g, '\n');
+    const raw = String(text || '')
+        .replace(/\r\n?/g, '\n');
+
     const trimmed = raw.trim();
 
     if (!trimmed) return '';
@@ -1395,14 +2007,23 @@ const normalizeTikzSourceText = (text) => {
     const indents = lines
         .filter((line) => line.trim())
         .map((line) => {
-            const match = line.match(/^[ \t]*/);
-            return match ? match[0].length : 0;
+            const match =
+                line.match(/^[ \t]*/);
+
+            return match
+                ? match[0].length
+                : 0;
         });
 
-    const minIndent = indents.length ? Math.min(...indents) : 0;
+    const minIndent =
+        indents.length
+            ? Math.min(...indents)
+            : 0;
 
     return lines
-        .map((line) => line.slice(minIndent))
+        .map((line) =>
+            line.slice(minIndent)
+        )
         .join('\n')
         .trim();
 };
@@ -1412,51 +2033,93 @@ const getTikzSourceText = (elt) => {
 
     if (elt.tagName === 'SCRIPT') {
         return normalizeTikzSourceText(
-            cleanMkDocsMaterialTextArtifacts(elt.textContent || '')
+            cleanMkDocsMaterialTextArtifacts(
+                elt.textContent || ''
+            )
         );
     }
 
-    const code = elt.querySelector('code');
+    const code =
+        elt.querySelector('code');
 
-    return normalizeTikzSourceText(code ? code.textContent : elt.textContent || '');
-
+    return normalizeTikzSourceText(
+        code
+            ? code.textContent
+            : elt.textContent || ''
+    );
 };
 
 // =================================================
 // MKDOCS MATERIAL CONTENT TABS SUPPORT
 // =================================================
 const isMkDocsTabbedElement = (node) => {
-    if (!node || node.nodeType !== 1) return false;
+    if (
+        !node ||
+        node.nodeType !== 1
+    ) {
+        return false;
+    }
 
     return (
-        node.matches?.('.tabbed-set, .tabbed-content, .tabbed-block') ||
-        Boolean(node.closest?.('.tabbed-set')) ||
-        Boolean(node.querySelector?.('.tabbed-set, .tabbed-content, .tabbed-block'))
+        node.matches?.(
+            '.tabbed-set, ' +
+            '.tabbed-content, ' +
+            '.tabbed-block'
+        ) ||
+        Boolean(
+            node.closest?.(
+                '.tabbed-set'
+            )
+        ) ||
+        Boolean(
+            node.querySelector?.(
+                '.tabbed-set, ' +
+                '.tabbed-content, ' +
+                '.tabbed-block'
+            )
+        )
     );
 };
 
-const scheduleMkDocsTabsRescan = (delay = 80) => {
-    if (mkDocsTabsRescanTimer !== null) return;
+const scheduleMkDocsTabsRescan = (
+    delay = 80
+) => {
+    if (
+        mkDocsTabsRescanTimer !== null
+    ) {
+        return;
+    }
 
-    mkDocsTabsRescanTimer = window.setTimeout(() => {
-        mkDocsTabsRescanTimer = null;
+    mkDocsTabsRescanTimer =
+        window.setTimeout(() => {
+            mkDocsTabsRescanTimer = null;
 
-        const sources = getTikzSources(document);
+            const sources =
+                getTikzSources(document);
 
-        if (sources.length) {
-            processTikzSources(sources);
-        }
+            if (sources.length) {
+                processTikzSources(sources);
+            }
 
-        applyThemeToTikz(document);
-    }, delay);
+            applyThemeToTikz(document);
+        }, delay);
 };
 
-const handleMkDocsTabsInteraction = (event) => {
+const handleMkDocsTabsInteraction = (
+    event
+) => {
     const target = event.target;
 
     if (
-        target?.matches?.('.tabbed-set input[type="radio"]') ||
-        target?.closest?.('.tabbed-set label, .tabbed-set [role="tab"], .tabbed-label')
+        target?.matches?.(
+            '.tabbed-set ' +
+            'input[type="radio"]'
+        ) ||
+        target?.closest?.(
+            '.tabbed-set label, ' +
+            '.tabbed-set [role="tab"], ' +
+            '.tabbed-label'
+        )
     ) {
         scheduleMkDocsTabsRescan();
     }
@@ -1466,8 +2129,11 @@ const handleMkDocsTabsInteraction = (event) => {
 // SVG WRAPPER
 // =================================================
 const wrapSvg = (svg) => {
-    const wrapper = document.createElement('span');
-    wrapper.className = 'tikzjax-wrapper mathjax_ignore';
+    const wrapper =
+        document.createElement('span');
+
+    wrapper.className =
+        'tikzjax-wrapper mathjax_ignore';
 
     wrapper.appendChild(svg);
 
@@ -1477,11 +2143,12 @@ const wrapSvg = (svg) => {
 };
 
 // =================================================
-// WORKER
+// WORKER POOL
 // =================================================
 const getWorkerOptions = () => {
     const options = getOptions();
-    const workerOptions = options.worker || {};
+    const workerOptions =
+        options.worker || {};
 
     const configuredWorkerUrl =
         options.workerUrl ||
@@ -1493,311 +2160,1331 @@ const getWorkerOptions = () => {
         workerOptions.mode ||
         'auto';
 
-    const workerMode = String(configuredWorkerMode).toLowerCase();
+    const workerMode =
+        String(configuredWorkerMode)
+            .toLowerCase();
 
-    if (!['auto', 'direct', 'blob'].includes(workerMode)) {
+    if (
+        ![
+            'auto',
+            'direct',
+            'blob'
+        ].includes(workerMode)
+    ) {
         console.warn(
-            `TikZJax: invalid workerMode "${configuredWorkerMode}". Falling back to "auto".`
+            `TikZJax: invalid workerMode ` +
+            `"${configuredWorkerMode}". ` +
+            'Falling back to "auto".'
         );
     }
 
     return {
-        workerUrl: resolveAssetUrl(configuredWorkerUrl),
-        workerMode: ['auto', 'direct', 'blob'].includes(workerMode) ? workerMode : 'auto'
+        workerUrl:
+            resolveAssetUrl(
+                configuredWorkerUrl
+            ),
+
+        workerMode:
+            [
+                'auto',
+                'direct',
+                'blob'
+            ].includes(workerMode)
+                ? workerMode
+                : 'auto'
     };
 };
 
+const getWorkerPoolOptions = () => {
+    const options = getOptions();
+
+    const workerOptions =
+        options.worker || {};
+
+    const configuredPool =
+        options.workerPool === false
+            ? {
+                enabled: false
+            }
+            : (
+                isPlainObject(
+                    options.workerPool
+                )
+                    ? options.workerPool
+                    : (
+                        isPlainObject(
+                            workerOptions.pool
+                        )
+                            ? workerOptions.pool
+                            : {}
+                    )
+            );
+
+    return {
+        enabled: parseBooleanOption(
+            configuredPool.enabled,
+            true
+        ),
+
+        maxWorkers: parseNumberOption(
+            configuredPool.maxWorkers,
+            3,
+            1
+        ),
+
+        reserveCpuCores:
+            parseNumberOption(
+                configuredPool
+                    .reserveCpuCores,
+                1,
+                0
+            ),
+
+        useDeviceMemory:
+            parseBooleanOption(
+                configuredPool
+                    .useDeviceMemory,
+                true
+            ),
+
+        initializationRetries:
+            parseNumberOption(
+                configuredPool
+                    .initializationRetries,
+                1,
+                0
+            )
+    };
+};
+
+const getMemoryWorkerLimit = () => {
+    const poolOptions =
+        getWorkerPoolOptions();
+
+    if (!poolOptions.useDeviceMemory) {
+        return Number.POSITIVE_INFINITY;
+    }
+
+    const memoryGiB =
+        Number(navigator.deviceMemory);
+
+    if (!Number.isFinite(memoryGiB)) {
+        return Number.POSITIVE_INFINITY;
+    }
+
+    if (memoryGiB <= 2) return 1;
+    if (memoryGiB <= 4) return 2;
+    if (memoryGiB <= 8) return 3;
+
+    return 4;
+};
+
+const getDesiredWorkerCount = (
+    workload
+) => {
+    if (workload <= 0) return 0;
+
+    const poolOptions =
+        getWorkerPoolOptions();
+
+    if (!poolOptions.enabled) {
+        return 1;
+    }
+
+    const cpuCount =
+        parseNumberOption(
+            navigator.hardwareConcurrency,
+            4,
+            1
+        );
+
+    const cpuLimit = Math.max(
+        1,
+        cpuCount -
+        poolOptions.reserveCpuCores
+    );
+
+    const memoryLimit =
+        getMemoryWorkerLimit();
+
+    return Math.max(
+        1,
+        Math.min(
+            workload,
+            poolOptions.maxWorkers,
+            cpuLimit,
+            memoryLimit
+        )
+    );
+};
+
 const isSameOriginUrl = (value) =>
-    new URL(value, document.baseURI).origin === window.location.origin;
+    new URL(
+        value,
+        document.baseURI
+    ).origin === window.location.origin;
 
-const createDirectWorker = (workerUrl) =>
-    new Worker(workerUrl);
+const createDirectWorker = (
+    workerUrl
+) => {
+    return new Worker(workerUrl);
+};
 
-const createBlobWorker = async (workerUrl) => {
-    const response = await fetch(workerUrl);
+const getWorkerBlobUrl = async (
+    workerUrl
+) => {
+    let pendingBlobUrl =
+        workerBlobUrls.get(workerUrl);
 
-    if (!response.ok) {
-        throw new Error(
-            `TikZJax: unable to load worker ${workerUrl}: ${response.status} ${response.statusText}`
+    if (!pendingBlobUrl) {
+        pendingBlobUrl = (
+            async () => {
+                const response =
+                    await fetch(workerUrl);
+
+                if (!response.ok) {
+                    throw new Error(
+                        'TikZJax: unable to load ' +
+                        `worker ${workerUrl}: ` +
+                        `${response.status} ` +
+                        response.statusText
+                    );
+                }
+
+                const workerSource =
+                    await response.text();
+
+                return URL.createObjectURL(
+                    new Blob(
+                        [workerSource],
+                        {
+                            type:
+                                'application/javascript'
+                        }
+                    )
+                );
+            }
+        )().catch((error) => {
+            workerBlobUrls.delete(
+                workerUrl
+            );
+
+            throw error;
+        });
+
+        workerBlobUrls.set(
+            workerUrl,
+            pendingBlobUrl
         );
     }
 
-    const workerSource = await response.text();
+    return pendingBlobUrl;
+};
 
-    if (workerBlobUrl) {
-        URL.revokeObjectURL(workerBlobUrl);
-    }
+const createBlobWorker = async (
+    workerUrl
+) => {
+    const blobUrl =
+        await getWorkerBlobUrl(
+            workerUrl
+        );
 
-    workerBlobUrl = URL.createObjectURL(
-        new Blob([workerSource], { type: 'application/javascript' })
-    );
-
-    return new Worker(workerBlobUrl);
+    return new Worker(blobUrl);
 };
 
 const createWorker = async () => {
-    const { workerUrl, workerMode } = getWorkerOptions();
+    const {
+        workerUrl,
+        workerMode
+    } = getWorkerOptions();
 
     if (workerMode === 'direct') {
-        return createDirectWorker(workerUrl);
+        return createDirectWorker(
+            workerUrl
+        );
     }
 
     if (workerMode === 'blob') {
-        return createBlobWorker(workerUrl);
+        return createBlobWorker(
+            workerUrl
+        );
     }
 
     if (isSameOriginUrl(workerUrl)) {
-        return createDirectWorker(workerUrl);
+        return createDirectWorker(
+            workerUrl
+        );
     }
 
     return createBlobWorker(workerUrl);
 };
 
-const initializeWorker = async () => {
+const initializeWorkerProxy = async (
+    workerId
+) => {
     const root = assetBaseUrl;
 
-    const tex = await spawn(await createWorker());
+    const tex = await spawn(
+        await createWorker()
+    );
 
-    Thread.events(tex).subscribe((event) => {
-        if (event.type === 'message' && typeof event.data === 'string') {
-            console.log(event.data);
-        }
-    });
+    Thread.events(tex)
+        .subscribe((event) => {
+            if (
+                event.type === 'message' &&
+                typeof event.data === 'string'
+            ) {
+                console.log(
+                    `[TikZJax worker ${workerId}] ` +
+                    event.data
+                );
+            }
+        });
 
     await tex.load(root);
 
     return tex;
 };
 
-const restartWorker = async () => {
-    const oldWorker = texWorker;
-
-    texWorker = initializeWorker();
+const terminateWorkerProxy = async (
+    proxy
+) => {
+    if (!proxy) return;
 
     try {
-        if (oldWorker) {
-            await Thread.terminate(await oldWorker);
-        }
+        await Thread.terminate(proxy);
     } catch (error) {
-        console.warn('TikZJax: unable to terminate failed worker:', error);
+        console.warn(
+            'TikZJax: unable to ' +
+            'terminate worker:',
+            error
+        );
+    }
+};
+
+const initializeWorkerSlot = async (
+    slot,
+    attempt = 0
+) => {
+    const poolOptions =
+        getWorkerPoolOptions();
+
+    slot.initializing = true;
+    slot.ready = false;
+    slot.failed = false;
+
+    try {
+        slot.proxy =
+            await initializeWorkerProxy(
+                slot.id
+            );
+
+        slot.ready = true;
+        slot.initializing = false;
+
+        scheduleDispatch();
+
+        return slot;
+    } catch (error) {
+        slot.proxy = null;
+        slot.ready = false;
+        slot.initializing = false;
+
+        if (
+            attempt <
+            poolOptions
+                .initializationRetries &&
+            !shuttingDown
+        ) {
+            await new Promise(
+                (resolve) => {
+                    window.setTimeout(
+                        resolve,
+                        250 * (attempt + 1)
+                    );
+                }
+            );
+
+            return initializeWorkerSlot(
+                slot,
+                attempt + 1
+            );
+        }
+
+        slot.failed = true;
+
+        console.warn(
+            `TikZJax: worker ${slot.id} ` +
+            'initialization failed:',
+            error
+        );
+
+        const index =
+            workerSlots.indexOf(slot);
+
+        if (index >= 0) {
+            workerSlots.splice(index, 1);
+        }
+
+        if (
+            renderQueue.length &&
+            !workerSlots.some(
+                (worker) =>
+                    worker.ready ||
+                    worker.initializing
+            )
+        ) {
+            failQueuedRenderGroups(error);
+        }
+
+        throw error;
+    }
+};
+
+const createWorkerSlot = () => {
+    const slot = {
+        id: ++workerSequence,
+        proxy: null,
+        ready: false,
+        initializing: true,
+        busy: false,
+        failed: false,
+        restarting: null,
+        activeGroup: null,
+        dependencyKeys: new Set(),
+        initializationPromise: null
+    };
+
+    workerSlots.push(slot);
+
+    slot.initializationPromise =
+        initializeWorkerSlot(slot)
+            .catch(() => null);
+
+    return slot;
+};
+
+const restartWorkerSlot = async (
+    slot
+) => {
+    if (slot.restarting) {
+        return slot.restarting;
     }
 
-    texWorker = await texWorker;
+    slot.restarting = (
+        async () => {
+            const oldProxy =
+                slot.proxy;
 
-    return texWorker;
+            slot.proxy = null;
+            slot.ready = false;
+            slot.initializing = true;
+
+            slot.dependencyKeys.clear();
+
+            await terminateWorkerProxy(
+                oldProxy
+            );
+
+            if (shuttingDown) {
+                return null;
+            }
+
+            await initializeWorkerSlot(slot);
+
+            return slot.proxy;
+        }
+    )().finally(() => {
+        slot.restarting = null;
+    });
+
+    return slot.restarting;
 };
+
+const terminateWorkerSlot = async (
+    slot
+) => {
+    const proxy = slot.proxy;
+
+    slot.proxy = null;
+    slot.ready = false;
+    slot.initializing = false;
+    slot.busy = false;
+    slot.failed = true;
+
+    slot.dependencyKeys.clear();
+
+    await terminateWorkerProxy(proxy);
+};
+
+const getDependencyKey = (
+    dataset = {}
+) => {
+    return JSON.stringify({
+        texPackages:
+            dataset.texPackages || '',
+
+        tikzLibraries:
+            dataset.tikzLibraries || '',
+
+        addToPreamble:
+            dataset.addToPreamble || ''
+    });
+};
+
+const getOutstandingWorkload = () => {
+    const activeCount =
+        workerSlots.filter(
+            (slot) => slot.busy
+        ).length;
+
+    return (
+        renderQueue.length +
+        activeCount
+    );
+};
+
+const ensureWorkerCapacity = () => {
+    if (shuttingDown) return;
+
+    const desiredCount =
+        getDesiredWorkerCount(
+            getOutstandingWorkload()
+        );
+
+    const usableCount =
+        workerSlots.filter(
+            (slot) => !slot.failed
+        ).length;
+
+    for (
+        let i = usableCount;
+        i < desiredCount;
+        i += 1
+    ) {
+        createWorkerSlot();
+    }
+};
+
+// =================================================
+// RENDER QUEUE
+// =================================================
+const getViewportPriority = (element) => {
+    if (!element?.isConnected) {
+        return 3;
+    }
+
+    const explicitPriority =
+        Number(
+            element.dataset
+                ?.renderPriority
+        );
+
+    if (
+        Number.isFinite(
+            explicitPriority
+        )
+    ) {
+        return explicitPriority;
+    }
+
+    const style =
+        window.getComputedStyle(
+            element
+        );
+
+    if (
+        style.display === 'none' ||
+        style.visibility === 'hidden'
+    ) {
+        return 3;
+    }
+
+    const rect =
+        element.getBoundingClientRect();
+
+    const viewportHeight =
+        window.innerHeight ||
+        document.documentElement
+            .clientHeight ||
+        0;
+
+    if (
+        rect.bottom >= 0 &&
+        rect.top <= viewportHeight
+    ) {
+        return 0;
+    }
+
+    if (
+        rect.bottom >= -viewportHeight &&
+        rect.top <= viewportHeight * 2
+    ) {
+        return 1;
+    }
+
+    return 2;
+};
+
+const getRenderCacheKey = (
+    text,
+    dataset
+) => {
+    return (
+        JSON.stringify(dataset) +
+        '\n' +
+        text
+    );
+};
+
+const createSvgFromHtml = (html) => {
+    return document
+        .createRange()
+        .createContextualFragment(html)
+        .firstChild;
+};
+
+const applyRenderedHtmlToTarget = (
+    target,
+    html
+) => {
+    const svg =
+        createSvgFromHtml(html);
+
+    if (!svg) {
+        throw new Error(
+            'TikZJax: texify returned ' +
+            'empty output.'
+        );
+    }
+
+    if (target.loader?.isConnected) {
+        target.loader.replaceWith(
+            wrapSvg(svg)
+        );
+    }
+
+    applyThemeToTikz(document);
+
+    svg.dispatchEvent(
+        new Event(
+            'tikzjax-load-finished',
+            {
+                bubbles: true
+            }
+        )
+    );
+};
+
+const failRenderTarget = (
+    target,
+    error
+) => {
+    console.warn(
+        'TikZJax rendering failed:',
+        error
+    );
+
+    const brokenImage =
+        createBrokenImage(
+            target.dataset || {}
+        );
+
+    if (target.loader?.isConnected) {
+        target.loader.replaceWith(
+            brokenImage
+        );
+    }
+};
+
+const completeRenderGroup = (group) => {
+    if (!group.disableCache) {
+        pendingRenderGroups.delete(
+            group.cacheKey
+        );
+    }
+
+    group.completed = true;
+};
+
+const failRenderGroup = (
+    group,
+    error
+) => {
+    group.targets.forEach((target) => {
+        failRenderTarget(
+            target,
+            error
+        );
+    });
+
+    completeRenderGroup(group);
+};
+
+const failQueuedRenderGroups = (
+    error
+) => {
+    const queued =
+        renderQueue.splice(0);
+
+    queued.forEach((group) => {
+        failRenderGroup(group, error);
+    });
+};
+
+const enqueueResolvedRenderGroup = (
+    group
+) => {
+    if (
+        group.completed ||
+        group.queued
+    ) {
+        return;
+    }
+
+    group.queued = true;
+    renderQueue.push(group);
+
+    scheduleDispatch();
+};
+
+const resolveRenderGroupCache = async (
+    group
+) => {
+    if (group.disableCache) {
+        enqueueResolvedRenderGroup(group);
+        return;
+    }
+
+    try {
+        const cached =
+            await getItem(
+                group.cacheKey
+            );
+
+        if (cached) {
+            try {
+                group.targets.forEach(
+                    (target) => {
+                        applyRenderedHtmlToTarget(
+                            target,
+                            cached
+                        );
+                    }
+                );
+
+                completeRenderGroup(group);
+                return;
+            } catch (error) {
+                console.warn(
+                    'TikZJax: cached SVG ' +
+                    'output was invalid; ' +
+                    'recompiling.',
+                    error
+                );
+            }
+        }
+    } catch (error) {
+        console.warn(
+            'TikZJax: unable to read ' +
+            'the SVG cache:',
+            error
+        );
+    }
+
+    enqueueResolvedRenderGroup(group);
+};
+
+const addTargetToRenderQueue = (
+    target
+) => {
+    const disableCache =
+        parseBooleanOption(
+            target.dataset.disableCache,
+            false
+        );
+
+    const cacheKey =
+        getRenderCacheKey(
+            target.text,
+            target.dataset
+        );
+
+    if (!disableCache) {
+        const existingGroup =
+            pendingRenderGroups.get(
+                cacheKey
+            );
+
+        if (
+            existingGroup &&
+            !existingGroup.completed
+        ) {
+            existingGroup.targets.push(
+                target
+            );
+
+            existingGroup.priority =
+                Math.min(
+                    existingGroup.priority,
+                    target.priority
+                );
+
+            return existingGroup;
+        }
+    }
+
+    const group = {
+        id: ++renderSequence,
+        text: target.text,
+        dataset: target.dataset,
+        cacheKey,
+        disableCache,
+
+        dependencyKey:
+            getDependencyKey(
+                target.dataset
+            ),
+
+        priority: target.priority,
+        targets: [target],
+        queued: false,
+        completed: false
+    };
+
+    if (!disableCache) {
+        pendingRenderGroups.set(
+            cacheKey,
+            group
+        );
+    }
+
+    resolveRenderGroupCache(group);
+
+    return group;
+};
+
+const takeNextRenderGroup = (slot) => {
+    if (!renderQueue.length) {
+        return null;
+    }
+
+    let bestPriority =
+        Number.POSITIVE_INFINITY;
+
+    renderQueue.forEach((group) => {
+        if (
+            group.priority <
+            bestPriority
+        ) {
+            bestPriority =
+                group.priority;
+        }
+    });
+
+    const candidateIndexes = [];
+
+    renderQueue.forEach(
+        (group, index) => {
+            if (
+                group.priority ===
+                bestPriority
+            ) {
+                candidateIndexes.push(
+                    index
+                );
+            }
+        }
+    );
+
+    let selectedIndex =
+        candidateIndexes.find(
+            (index) => {
+                return slot
+                    .dependencyKeys
+                    .has(
+                        renderQueue[index]
+                            .dependencyKey
+                    );
+            }
+        );
+
+    if (selectedIndex === undefined) {
+        selectedIndex =
+            candidateIndexes[0];
+    }
+
+    return renderQueue.splice(
+        selectedIndex,
+        1
+    )[0];
+};
+
+const isTimeoutError = (error) => {
+    return String(
+        error?.message ||
+        error
+    ).includes(
+        'TikZJax render timeout after'
+    );
+};
+
+const renderWithWorkerSafety = async (
+    slot,
+    group
+) => {
+    const timeout =
+        getRenderTimeout(
+            group.dataset
+        );
+
+    return withTimeout(
+        slot.proxy.texify(
+            group.text,
+            group.dataset
+        ),
+        timeout
+    );
+};
+
+const renderGroupOnWorker = async (
+    slot,
+    group
+) => {
+    let html;
+    let lastError = null;
+
+    const maxRetries =
+        getMaxRetries(
+            group.dataset
+        );
+
+    for (
+        let attempt = 0;
+        attempt <= maxRetries;
+        attempt += 1
+    ) {
+        try {
+            html =
+                await renderWithWorkerSafety(
+                    slot,
+                    group
+                );
+
+            break;
+        } catch (error) {
+            lastError = error;
+
+            const restartRequired =
+                isTimeoutError(error) ||
+                shouldRestartWorkerOnFail(
+                    group.dataset
+                );
+
+            if (restartRequired) {
+                try {
+                    await restartWorkerSlot(
+                        slot
+                    );
+                } catch (
+                restartError
+                ) {
+                    lastError =
+                        new Error(
+                            'TikZJax: worker ' +
+                            'restart failed.',
+                            {
+                                cause:
+                                    restartError
+                            }
+                        );
+
+                    break;
+                }
+            }
+        }
+    }
+
+    if (!html) {
+        throw (
+            lastError ||
+            new Error(
+                'TikZJax rendering failed.'
+            )
+        );
+    }
+
+    slot.dependencyKeys.add(
+        group.dependencyKey
+    );
+
+    if (!group.disableCache) {
+        try {
+            await setItem(
+                group.cacheKey,
+                html
+            );
+        } catch (error) {
+            console.warn(
+                'TikZJax: unable to ' +
+                'write the SVG cache:',
+                error
+            );
+        }
+    }
+
+    group.targets.forEach((target) => {
+        applyRenderedHtmlToTarget(
+            target,
+            html
+        );
+    });
+
+    completeRenderGroup(group);
+};
+
+const executeRenderGroup = async (
+    slot,
+    group
+) => {
+    slot.busy = true;
+    slot.activeGroup = group;
+
+    try {
+        await renderGroupOnWorker(
+            slot,
+            group
+        );
+    } catch (error) {
+        failRenderGroup(
+            group,
+            error
+        );
+    } finally {
+        slot.busy = false;
+        slot.activeGroup = null;
+
+        scheduleDispatch();
+    }
+};
+
+const dispatchRenderQueue = () => {
+    if (shuttingDown) return;
+
+    ensureWorkerCapacity();
+
+    workerSlots.forEach((slot) => {
+        if (
+            slot.ready &&
+            !slot.busy &&
+            !slot.restarting &&
+            renderQueue.length
+        ) {
+            const group =
+                takeNextRenderGroup(slot);
+
+            if (group) {
+                executeRenderGroup(
+                    slot,
+                    group
+                );
+            }
+        }
+    });
+};
+
+function scheduleDispatch() {
+    if (
+        dispatchScheduled ||
+        shuttingDown
+    ) {
+        return;
+    }
+
+    dispatchScheduled = true;
+
+    queueMicrotask(() => {
+        dispatchScheduled = false;
+        dispatchRenderQueue();
+    });
+}
 
 // =================================================
 // ENGINE
 // =================================================
-const processTikzSources = async (sources) => {
-    const queue = [];
+const prepareTikzSource = (elt) => {
+    if (
+        !elt ||
+        elt.dataset?.tikzjaxProcessed
+    ) {
+        return null;
+    }
 
-    const load = async (elt) => {
-        const text = getTikzSourceText(elt);
+    const text =
+        getTikzSourceText(elt);
 
-        elt.tikzjaxText = text;
-        elt.tikzjaxDataset = getTikzDataset(elt);
-        elt.dataset.tikzjaxProcessed = 'true';
+    const dataset =
+        getTikzDataset(elt);
 
-        const container =
-            elt.closest('pre.language-tikzjax') ||
-            elt.closest('pre.tikzjax') ||
-            elt.closest('pre.language-tikz') ||
-            elt.closest('pre.tikz') ||
-            elt.closest('script') ||
-            elt;
+    elt.dataset.tikzjaxProcessed =
+        'true';
 
-        const loader = createLoader(elt.tikzjaxDataset || elt.dataset || {});
+    const container =
+        elt.closest(
+            'pre.language-tikzjax'
+        ) ||
+        elt.closest(
+            'pre.tikzjax'
+        ) ||
+        elt.closest(
+            'pre.language-tikz'
+        ) ||
+        elt.closest(
+            'pre.tikz'
+        ) ||
+        elt.closest('script') ||
+        elt;
 
-        const wrapper = document.createElement('span');
-        wrapper.className = 'tikzjax-wrapper tikzjax-loading mathjax_ignore';
-        wrapper.style.display = 'inline-flex';
-        wrapper.style.alignItems = 'center';
-        wrapper.style.justifyContent = 'center';
-        wrapper.style.verticalAlign = 'middle';
-        wrapper.style.minWidth = `${parseFloat(elt.tikzjaxDataset?.width) || 75}pt`;
-        wrapper.style.minHeight = `${parseFloat(elt.tikzjaxDataset?.height) || 75}pt`;
-
-        container.replaceWith(wrapper);
-        wrapper.appendChild(loader);
-
-        applyThemeToTikz(wrapper);
-
-        elt.tikzjaxLoader = wrapper;
-
-        queue.push(elt);
-    };
-
-    const failRender = async (elt, error) => {
-        console.warn('TikZJax rendering failed:', error);
-
-        const brokenImage = createBrokenImage(elt.tikzjaxDataset || {});
-
-        if (elt.tikzjaxLoader) {
-            elt.tikzjaxLoader.replaceWith(brokenImage);
-        }
-
-        if (shouldRestartWorkerOnFail(elt.tikzjaxDataset || {})) {
-            await restartWorker();
-        }
-    };
-
-    const renderWithSafety = async (text, dataset) => {
-        const timeout = getRenderTimeout(dataset);
-
-        return withTimeout(
-            texWorker.texify(text, dataset),
-            timeout
+    const loaderSvg =
+        createLoader(
+            dataset ||
+            elt.dataset ||
+            {}
         );
+
+    const wrapper =
+        document.createElement('span');
+
+    wrapper.className =
+        'tikzjax-wrapper ' +
+        'tikzjax-loading ' +
+        'mathjax_ignore';
+
+    wrapper.style.display =
+        'inline-flex';
+
+    wrapper.style.alignItems =
+        'center';
+
+    wrapper.style.justifyContent =
+        'center';
+
+    wrapper.style.verticalAlign =
+        'middle';
+
+    wrapper.style.minWidth =
+        `${parseFloat(dataset?.width) ||
+        75
+        }pt`;
+
+    wrapper.style.minHeight =
+        `${parseFloat(dataset?.height) ||
+        75
+        }pt`;
+
+    container.replaceWith(wrapper);
+    wrapper.appendChild(loaderSvg);
+
+    applyThemeToTikz(wrapper);
+
+    return {
+        element: elt,
+        text,
+        dataset,
+        loader: wrapper,
+
+        priority:
+            getViewportPriority(
+                wrapper
+            )
     };
+};
 
-    const process = async (elt) => {
-        const text = elt.tikzjaxText;
-        const dataset = elt.tikzjaxDataset || {};
-        const cacheKey = JSON.stringify(dataset) + '\n' + text;
+const processTikzSources = async (
+    sources
+) => {
+    const uniqueSources =
+        [...new Set(sources || [])];
 
+    uniqueSources.forEach((source) => {
         try {
-            const cached = parseBooleanOption(dataset.disableCache, false) ? undefined : await getItem(cacheKey);
+            const target =
+                prepareTikzSource(
+                    source
+                );
 
-            let html;
-
-            if (cached) {
-                html = cached;
-            } else {
-                let lastError = null;
-                const maxRetries = getMaxRetries(dataset);
-
-                for (let attempt = 0; attempt <= maxRetries; attempt += 1) {
-                    try {
-                        html = await renderWithSafety(text, dataset);
-                        break;
-                    } catch (error) {
-                        lastError = error;
-
-                        if (attempt < maxRetries && shouldRestartWorkerOnFail(dataset)) {
-                            await restartWorker();
-                        }
-                    }
-                }
-
-                if (!html) {
-                    throw lastError || new Error('TikZJax rendering failed.');
-                }
-
-                if (!parseBooleanOption(dataset.disableCache, false)) {
-                    await setItem(cacheKey, html);
-                }
+            if (target) {
+                addTargetToRenderQueue(
+                    target
+                );
             }
-
-            const svg = document
-                .createRange()
-                .createContextualFragment(html)
-                .firstChild;
-
-            if (!svg) {
-                throw new Error('TikZJax: texify returned empty output.');
-            }
-
-            elt.tikzjaxLoader.replaceWith(wrapSvg(svg));
-
-            applyThemeToTikz(document);
-
-            svg.dispatchEvent(
-                new Event('tikzjax-load-finished', { bubbles: true })
-            );
         } catch (error) {
-            await failRender(elt, error);
+            console.warn(
+                'TikZJax: unable to ' +
+                'prepare TikZ source:',
+                error
+            );
         }
-    };
-
-    for (const source of sources) {
-        await load(source);
-    }
-
-    if (!queue.length) return;
-
-    texWorker = await texWorker;
-
-    for (const elt of queue) {
-        await process(elt);
-    }
+    });
 };
 
 // =================================================
 // INIT
 // =================================================
-const initialize = async () => {
-    texWorker = texWorker || initializeWorker();
+const scheduleSourceProcess = (node) => {
+    if (!node) return;
 
-    const schedule = new Set();
+    scheduledSources.add(node);
 
-    const scheduleProcess = (node) => {
-        schedule.add(node);
+    if (sourceRescanTimer !== null) {
+        return;
+    }
 
-        setTimeout(() => {
-            processTikzSources([...schedule]);
-            schedule.clear();
+    sourceRescanTimer =
+        window.setTimeout(() => {
+            sourceRescanTimer = null;
+
+            const sources =
+                [...scheduledSources];
+
+            scheduledSources.clear();
+
+            processTikzSources(sources);
         }, 50);
-    };
+};
 
+const initialize = async () => {
     const boot = () => {
-        processTikzSources(getTikzSources(document));
+        const sources =
+            getTikzSources(document);
+
+        if (sources.length) {
+            processTikzSources(sources);
+        }
+
         applyThemeToTikz(document);
         scheduleMkDocsTabsRescan();
     };
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', boot);
+    if (
+        document.readyState ===
+        'loading'
+    ) {
+        document.addEventListener(
+            'DOMContentLoaded',
+            boot,
+            {
+                once: true
+            }
+        );
     } else {
         boot();
     }
 
-    observer = new MutationObserver((mutations) => {
-        const targets = [];
+    observer = new MutationObserver(
+        (mutations) => {
+            const targets = [];
 
-        for (const mutation of mutations) {
-            for (const node of mutation.addedNodes) {
-                if (!node || node.nodeType !== 1) continue;
+            for (
+                const mutation of mutations
+            ) {
+                for (
+                    const node of
+                    mutation.addedNodes
+                ) {
+                    if (
+                        !node ||
+                        node.nodeType !== 1
+                    ) {
+                        continue;
+                    }
 
-                if (node.matches?.('script[type="text/tikz"]')) {
-                    targets.push(node);
-                }
+                    if (
+                        node.matches?.(
+                            'script[type="text/tikz"]'
+                        )
+                    ) {
+                        targets.push(node);
+                    }
 
-                if (isTikzPre(node)) {
-                    targets.push(node);
-                }
+                    if (isTikzPre(node)) {
+                        targets.push(node);
+                    }
 
-                node.querySelectorAll?.('script[type="text/tikz"]')
-                    ?.forEach((child) => targets.push(child));
+                    node
+                        .querySelectorAll?.(
+                            'script[type="text/tikz"]'
+                        )
+                        ?.forEach(
+                            (child) => {
+                                targets.push(
+                                    child
+                                );
+                            }
+                        );
 
-                node.querySelectorAll?.('pre.language-tikzjax, pre.tikzjax, pre.language-tikz, pre.tikz')
-                    ?.forEach((child) => targets.push(child));
+                    node
+                        .querySelectorAll?.(
+                            'pre.language-tikzjax, ' +
+                            'pre.tikzjax, ' +
+                            'pre.language-tikz, ' +
+                            'pre.tikz'
+                        )
+                        ?.forEach(
+                            (child) => {
+                                targets.push(
+                                    child
+                                );
+                            }
+                        );
 
-                if (isMkDocsTabbedElement(node)) {
-                    scheduleMkDocsTabsRescan();
+                    if (
+                        isMkDocsTabbedElement(
+                            node
+                        )
+                    ) {
+                        scheduleMkDocsTabsRescan();
+                    }
                 }
             }
+
+            targets.forEach(
+                scheduleSourceProcess
+            );
         }
+    );
 
-        if (targets.length) {
-            targets.forEach(scheduleProcess);
+    observer.observe(
+        document.body,
+        {
+            childList: true,
+            subtree: true
         }
-    });
+    );
 
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
+    document.addEventListener(
+        'change',
+        handleMkDocsTabsInteraction,
+        true
+    );
 
-    document.addEventListener('change', handleMkDocsTabsInteraction, true);
-    document.addEventListener('click', handleMkDocsTabsInteraction, true);
+    document.addEventListener(
+        'click',
+        handleMkDocsTabsInteraction,
+        true
+    );
 
     observeTheme();
     applyThemeToTikz(document);
 
-    setTimeout(() => {
-        processTikzSources(getTikzSources(document));
+    window.setTimeout(() => {
+        const sources =
+            getTikzSources(document);
+
+        if (sources.length) {
+            processTikzSources(sources);
+        }
+
         applyThemeToTikz(document);
         scheduleMkDocsTabsRescan();
     }, 300);
@@ -1807,6 +3494,8 @@ const initialize = async () => {
 // SHUTDOWN
 // =================================================
 const shutdown = async () => {
+    shuttingDown = true;
+
     if (observer) {
         observer.disconnect();
     }
@@ -1816,26 +3505,72 @@ const shutdown = async () => {
     }
 
     if (themeRaf !== null) {
-        window.cancelAnimationFrame(themeRaf);
+        window.cancelAnimationFrame(
+            themeRaf
+        );
+
         themeRaf = null;
     }
 
-    if (mkDocsTabsRescanTimer !== null) {
-        window.clearTimeout(mkDocsTabsRescanTimer);
+    if (
+        mkDocsTabsRescanTimer !== null
+    ) {
+        window.clearTimeout(
+            mkDocsTabsRescanTimer
+        );
+
         mkDocsTabsRescanTimer = null;
     }
 
-    document.removeEventListener('change', handleMkDocsTabsInteraction, true);
-    document.removeEventListener('click', handleMkDocsTabsInteraction, true);
+    if (sourceRescanTimer !== null) {
+        window.clearTimeout(
+            sourceRescanTimer
+        );
 
-    if (texWorker) {
-        await Thread.terminate(await texWorker);
+        sourceRescanTimer = null;
     }
 
-    if (workerBlobUrl) {
-        URL.revokeObjectURL(workerBlobUrl);
-        workerBlobUrl = null;
-    }
+    document.removeEventListener(
+        'change',
+        handleMkDocsTabsInteraction,
+        true
+    );
+
+    document.removeEventListener(
+        'click',
+        handleMkDocsTabsInteraction,
+        true
+    );
+
+    const slots =
+        workerSlots.splice(0);
+
+    await Promise.allSettled(
+        slots.map((slot) =>
+            terminateWorkerSlot(slot)
+        )
+    );
+
+    const blobUrlPromises =
+        [...workerBlobUrls.values()];
+
+    workerBlobUrls.clear();
+
+    const blobUrls =
+        await Promise.allSettled(
+            blobUrlPromises
+        );
+
+    blobUrls.forEach((result) => {
+        if (
+            result.status ===
+            'fulfilled'
+        ) {
+            URL.revokeObjectURL(
+                result.value
+            );
+        }
+    });
 };
 
 // =================================================
@@ -1844,13 +3579,23 @@ const shutdown = async () => {
 if (!window.TikzJax) {
     window.TikzJax = true;
 
-    texWorker = initializeWorker();
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initialize);
+    if (
+        document.readyState ===
+        'loading'
+    ) {
+        document.addEventListener(
+            'DOMContentLoaded',
+            initialize,
+            {
+                once: true
+            }
+        );
     } else {
         initialize();
     }
 
-    window.addEventListener('unload', shutdown);
+    window.addEventListener(
+        'unload',
+        shutdown
+    );
 }

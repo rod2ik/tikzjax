@@ -5,77 +5,314 @@ import { Buffer } from 'buffer';
 import { Writable } from 'stream-browserify';
 import * as library from './library.js';
 
+// =================================================
+// ENGINE STATE
+// =================================================
 let coredump;
-let code;
+let wasmModule;
 let urlRoot;
 
-const loadDecompress = async (file) => {
-    const url = `${urlRoot}/${file}`;
+// Cache local au worker. Les fichiers TeX décompressés restent disponibles
+// entre plusieurs compilations, même après le nettoyage du système de fichiers
+// virtuel de TeX.
+const decompressedFileCache = new Map();
+
+// =================================================
+// BYTE HELPERS
+// =================================================
+const toUint8Array = (value) => {
+    if (value instanceof Uint8Array) {
+        return value;
+    }
+
+    if (value instanceof ArrayBuffer) {
+        return new Uint8Array(value);
+    }
+
+    if (ArrayBuffer.isView(value)) {
+        return new Uint8Array(
+            value.buffer,
+            value.byteOffset,
+            value.byteLength
+        );
+    }
+
+    return Uint8Array.from(value || []);
+};
+
+const cloneBytes = (value) => {
+    return toUint8Array(value).slice();
+};
+
+// =================================================
+// URL HELPERS
+// =================================================
+const normalizeUrlRoot = (value) => {
+    return String(value || '').replace(/\/+$/, '');
+};
+
+const resolveFileUrl = (file) => {
+    if (!urlRoot) {
+        throw new Error(
+            'TikZJax: worker asset root has not been initialized.'
+        );
+    }
+
+    const normalizedFile = String(file || '').replace(/^\/+/, '');
+
+    return new URL(
+        normalizedFile,
+        `${urlRoot}/`
+    ).href;
+};
+
+// =================================================
+// OPTIONAL TIMINGS
+// =================================================
+const shouldLogTimings = (dataset = {}) => {
+    return (
+        dataset.debugTimings === true ||
+        dataset.debugTimings === 'true' ||
+        dataset.showTimings === true ||
+        dataset.showTimings === 'true'
+    );
+};
+
+const measure = async (label, enabled, callback) => {
+    if (!enabled) {
+        return callback();
+    }
+
+    const startedAt = performance.now();
+
+    try {
+        return await callback();
+    } finally {
+        const duration = performance.now() - startedAt;
+
+        console.log(
+            `[TikZJax timing] ${label}: ${duration.toFixed(1)} ms`
+        );
+    }
+};
+
+// =================================================
+// DOWNLOAD + DECOMPRESSION
+// =================================================
+const decompressArrayBuffer = (arrayBuffer, file) => {
+    try {
+        return cloneBytes(
+            pako.ungzip(
+                new Uint8Array(arrayBuffer)
+            )
+        );
+    } catch (error) {
+        throw new Error(
+            `Unable to decompress ${file}: ` +
+            `${error.message || error}`,
+            {
+                cause: error
+            }
+        );
+    }
+};
+
+const fetchAndDecompress = async (file) => {
+    const url = resolveFileUrl(file);
     const response = await fetch(url);
 
     if (!response.ok) {
-        throw new Error(`Unable to load ${file} from ${url}. File not available.`);
+        throw new Error(
+            `Unable to load ${file} from ${url}. ` +
+            `HTTP ${response.status} ` +
+            `${response.statusText || ''}`.trim()
+        );
+    }
+
+    if (!response.body) {
+        return decompressArrayBuffer(
+            await response.arrayBuffer(),
+            file
+        );
     }
 
     const reader = response.body.getReader();
     const inflate = new pako.Inflate();
 
-    while (true) {
-        const { done, value } = await reader.read();
+    try {
+        while (true) {
+            const {
+                done,
+                value
+            } = await reader.read();
 
-        if (done) break;
+            if (done) {
+                break;
+            }
 
-        inflate.push(value);
+            inflate.push(value, false);
+
+            if (inflate.err) {
+                throw new Error(
+                    inflate.msg ||
+                    String(inflate.err)
+                );
+            }
+        }
+
+        if (!inflate.ended) {
+            inflate.push(
+                new Uint8Array(0),
+                true
+            );
+        }
+
+        if (inflate.err) {
+            throw new Error(
+                inflate.msg ||
+                String(inflate.err)
+            );
+        }
+
+        if (!inflate.result) {
+            throw new Error(
+                'The decompressor returned no data.'
+            );
+        }
+
+        return cloneBytes(inflate.result);
+    } catch (error) {
+        try {
+            await reader.cancel(error);
+        } catch {
+            // Ignore errors raised while cancelling the stream.
+        }
+
+        throw new Error(
+            `Unable to decompress ${file} from ${url}: ` +
+            `${error.message || error}`,
+            {
+                cause: error
+            }
+        );
+    } finally {
+        try {
+            reader.releaseLock();
+        } catch {
+            // The reader may already have been released.
+        }
     }
-
-    reader.releaseLock();
-
-    if (inflate.err) {
-        throw new Error(`Unable to decompress ${file}: ${inflate.msg || inflate.err}`);
-    }
-
-    return inflate.result;
 };
 
+// =================================================
+// RUNTIME TEX FILE CACHE
+// =================================================
+const loadDecompress = async (file) => {
+    const url = resolveFileUrl(file);
+
+    let pending =
+        decompressedFileCache.get(url);
+
+    if (!pending) {
+        pending = fetchAndDecompress(file)
+            .catch((error) => {
+                decompressedFileCache.delete(url);
+                throw error;
+            });
+
+        decompressedFileCache.set(
+            url,
+            pending
+        );
+    }
+
+    const cachedBytes = await pending;
+
+    // Une copie est retournée afin que le système de fichiers virtuel puisse
+    // modifier ses octets sans altérer le cache conservé par le worker.
+    return cachedBytes.slice();
+};
+
+// =================================================
+// TEX LOG
+// =================================================
 const readTexLog = () => {
     try {
-        return Buffer.from(library.readFileSync('input.log')).toString();
+        return Buffer
+            .from(
+                library.readFileSync(
+                    'input.log'
+                )
+            )
+            .toString();
     } catch {
         return 'No TeX log file was available.';
     }
 };
 
+// =================================================
+// VIRTUAL FILESYSTEM CLEANUP
+// =================================================
+const cleanVirtualFileSystem = () => {
+    try {
+        library.deleteEverything();
+    } catch (error) {
+        console.warn(
+            'TikZJax: unable to clean the TeX virtual filesystem.',
+            error
+        );
+    }
+};
+
+// =================================================
+// TEX PACKAGE OPTIONS
+// =================================================
 const isPlainObject = (value) => {
-    return Object.prototype.toString.call(value) === '[object Object]';
+    return Object.prototype
+        .toString
+        .call(value) === '[object Object]';
 };
 
 const parseTexPackages = (value) => {
-    if (!value) return {};
+    if (!value) {
+        return {};
+    }
 
-    if (isPlainObject(value)) return value;
+    if (isPlainObject(value)) {
+        return value;
+    }
 
     if (Array.isArray(value)) {
-        return value.reduce((result, packageName) => {
-            const name = String(packageName || '').trim();
+        return value.reduce(
+            (result, packageName) => {
+                const name =
+                    String(
+                        packageName || ''
+                    ).trim();
 
-            if (name) {
-                result[name] = '';
-            }
+                if (name) {
+                    result[name] = '';
+                }
 
-            return result;
-        }, {});
+                return result;
+            },
+            {}
+        );
     }
 
     if (typeof value === 'string') {
         try {
-            const parsed = JSON.parse(value);
+            const parsed =
+                JSON.parse(value);
 
             if (isPlainObject(parsed)) {
                 return parsed;
             }
 
             if (Array.isArray(parsed)) {
-                return parseTexPackages(parsed);
+                return parseTexPackages(
+                    parsed
+                );
             }
         } catch {
             // Allow simple data-tex-packages="physics,tkz-tab" syntax.
@@ -83,99 +320,356 @@ const parseTexPackages = (value) => {
 
         return value
             .split(',')
-            .map((packageName) => packageName.trim())
+            .map((packageName) =>
+                packageName.trim()
+            )
             .filter(Boolean)
-            .reduce((result, packageName) => {
-                result[packageName] = '';
-                return result;
-            }, {});
+            .reduce(
+                (
+                    result,
+                    packageName
+                ) => {
+                    result[packageName] = '';
+                    return result;
+                },
+                {}
+            );
     }
 
     return {};
 };
 
-const buildUsePackagePreamble = (texPackages = {}) => {
-    return Object.entries(texPackages)
-        .map(([packageName, options]) => {
-            return (
-                '\\usepackage' +
-                (options ? `[${options}]` : '') +
-                `{${packageName}}\n`
-            );
-        })
+const buildUsePackagePreamble = (
+    texPackages = {}
+) => {
+    return Object
+        .entries(texPackages)
+        .map(
+            (
+                [
+                    packageName,
+                    options
+                ]
+            ) => {
+                const normalizedName =
+                    String(
+                        packageName || ''
+                    ).trim();
+
+                if (!normalizedName) {
+                    return '';
+                }
+
+                const normalizedOptions =
+                    options === undefined ||
+                        options === null ||
+                        options === false
+                        ? ''
+                        : String(
+                            options
+                        ).trim();
+
+                return (
+                    '\\usepackage' +
+                    (
+                        normalizedOptions
+                            ? `[${normalizedOptions}]`
+                            : ''
+                    ) +
+                    `{${normalizedName}}\n`
+                );
+            }
+        )
         .join('');
 };
 
-expose({
-    async load(_urlRoot) {
-        urlRoot = _urlRoot;
-        code = await loadDecompress('tex.wasm.gz');
-        coredump = new Uint8Array(await loadDecompress('core.dump.gz'), 0, library.pages * 65536);
-    },
+// =================================================
+// TEX INPUT
+// =================================================
+const buildTexInput = (
+    input,
+    dataset = {}
+) => {
+    const texPackages =
+        parseTexPackages(
+            dataset.texPackages
+        );
 
-    async texify(input, dataset = {}) {
-        const texPackages = parseTexPackages(dataset.texPackages);
+    return (
+        buildUsePackagePreamble(
+            texPackages
+        ) +
+        (
+            dataset.tikzLibraries
+                ? `\\usetikzlibrary{${dataset.tikzLibraries}}\n`
+                : ''
+        ) +
+        (dataset.addToPreamble || '') +
+        '\\begin{document}\n' +
+        String(input || '') +
+        '\n\\end{document}\n'
+    );
+};
 
-        input =
-            buildUsePackagePreamble(texPackages) +
-            (dataset.tikzLibraries ? `\\usetikzlibrary{${dataset.tikzLibraries}}\n` : '') +
-            (dataset.addToPreamble || '') +
-            `\\begin{document}\n${input}\n\\end{document}\n`;
+// =================================================
+// WASM MEMORY
+// =================================================
+const createTexMemory = () => {
+    if (!coredump) {
+        throw new Error(
+            'TikZJax: core.dump has not been loaded.'
+        );
+    }
 
-        if (dataset.showConsole) library.setShowConsole();
+    const expectedLength =
+        library.pages * 65536;
 
-        library.writeFileSync('input.tex', Buffer.from(input));
+    if (
+        coredump.byteLength !==
+        expectedLength
+    ) {
+        throw new Error(
+            'TikZJax: invalid core.dump size. ' +
+            `Expected ${expectedLength} bytes, ` +
+            `received ${coredump.byteLength} bytes.`
+        );
+    }
 
-        const memory = new WebAssembly.Memory({
+    const memory =
+        new WebAssembly.Memory({
             initial: library.pages,
             maximum: library.pages
         });
 
-        const buffer = new Uint8Array(memory.buffer, 0, library.pages * 65536);
-        buffer.set(coredump.slice(0));
+    const buffer =
+        new Uint8Array(
+            memory.buffer,
+            0,
+            expectedLength
+        );
 
-        library.setMemory(memory.buffer);
-        library.setInput('input.tex\n\\end\n');
-        library.setFileLoader(loadDecompress);
+    buffer.set(coredump);
 
-        const wasm = await WebAssembly.instantiate(code, {
-            library,
-            env: {
-                memory
-            }
-        });
+    return memory;
+};
 
-        await library.executeAsync(wasm.instance.exports);
+// =================================================
+// TEX COMPILATION
+// =================================================
+const compileToDvi = async (
+    input,
+    dataset = {}
+) => {
+    if (!wasmModule) {
+        throw new Error(
+            'TikZJax: tex.wasm has not been loaded.'
+        );
+    }
 
-        let dvi;
+    cleanVirtualFileSystem();
+
+    try {
+        if (dataset.showConsole) {
+            library.setShowConsole();
+        }
+
+        library.writeFileSync(
+            'input.tex',
+            Buffer.from(input)
+        );
+
+        const memory =
+            createTexMemory();
+
+        library.setMemory(
+            memory.buffer
+        );
+
+        library.setInput(
+            'input.tex\n\\end\n'
+        );
+
+        library.setFileLoader(
+            loadDecompress
+        );
+
+        const wasmInstance =
+            await WebAssembly.instantiate(
+                wasmModule,
+                {
+                    library,
+                    env: {
+                        memory
+                    }
+                }
+            );
+
+        await library.executeAsync(
+            wasmInstance.exports
+        );
+
+        let dviFile;
 
         try {
-            dvi = library.readFileSync('input.dvi').buffer;
+            dviFile =
+                library.readFileSync(
+                    'input.dvi'
+                );
         } catch (error) {
+            const texLog =
+                readTexLog();
+
             throw new Error(
-                'TikZJax: TeX did not produce input.dvi.\n\n' + readTexLog(),
-                { cause: error }
+                'TikZJax: TeX did not produce input.dvi.\n\n' +
+                texLog,
+                {
+                    cause: error
+                }
             );
         }
 
-        library.deleteEverything();
+        return Buffer.from(
+            cloneBytes(dviFile)
+        );
+    } finally {
+        cleanVirtualFileSystem();
+    }
+};
 
-        let html = '';
+// =================================================
+// DVI TO HTML
+// =================================================
+const convertDviToHtml = async (dvi) => {
+    const chunks = [];
 
-        const page = new Writable({
-            write(chunk, _encoding, callback) {
-                html = html + chunk.toString();
+    const page = new Writable({
+        write(
+            chunk,
+            _encoding,
+            callback
+        ) {
+            try {
+                chunks.push(
+                    Buffer.from(chunk)
+                );
+
                 callback();
+            } catch (error) {
+                callback(error);
             }
-        });
+        }
+    });
 
-        async function* streamBuffer() {
-            yield Buffer.from(dvi);
+    async function* streamBuffer() {
+        yield Buffer.from(dvi);
+    }
+
+    await dvi2html(
+        streamBuffer(),
+        page
+    );
+
+    return Buffer
+        .concat(chunks)
+        .toString();
+};
+
+// =================================================
+// WORKER API
+// =================================================
+expose({
+    async load(_urlRoot) {
+        const nextUrlRoot =
+            normalizeUrlRoot(_urlRoot);
+
+        if (!nextUrlRoot) {
+            throw new Error(
+                'TikZJax: no asset root URL was provided.'
+            );
+        }
+
+        if (
+            urlRoot &&
+            urlRoot !== nextUrlRoot
+        ) {
+            decompressedFileCache.clear();
+            wasmModule = undefined;
+            coredump = undefined;
+        }
+
+        urlRoot = nextUrlRoot;
+
+        if (wasmModule && coredump) {
             return;
         }
 
-        await dvi2html(streamBuffer(), page);
+        const [
+            wasmBytes,
+            loadedCoredump
+        ] = await Promise.all([
+            fetchAndDecompress(
+                'tex.wasm.gz'
+            ),
+            fetchAndDecompress(
+                'core.dump.gz'
+            )
+        ]);
 
-        return html;
+        const expectedCoreDumpLength =
+            library.pages * 65536;
+
+        if (
+            loadedCoredump.byteLength <
+            expectedCoreDumpLength
+        ) {
+            throw new Error(
+                'TikZJax: core.dump is too small. ' +
+                `Expected at least ${expectedCoreDumpLength} bytes, ` +
+                `received ${loadedCoredump.byteLength} bytes.`
+            );
+        }
+
+        coredump =
+            loadedCoredump.byteLength ===
+                expectedCoreDumpLength
+                ? loadedCoredump
+                : loadedCoredump.slice(
+                    0,
+                    expectedCoreDumpLength
+                );
+
+        wasmModule =
+            await WebAssembly.compile(
+                wasmBytes
+            );
+    },
+
+    async texify(
+        input,
+        dataset = {}
+    ) {
+        const timingsEnabled =
+            shouldLogTimings(dataset);
+
+        const texInput =
+            buildTexInput(
+                input,
+                dataset
+            );
+
+        const dvi = await measure(
+            'TeX compilation',
+            timingsEnabled,
+            () => compileToDvi(
+                texInput,
+                dataset
+            )
+        );
+
+        return measure(
+            'DVI to HTML',
+            timingsEnabled,
+            () => convertDviToHtml(dvi)
+        );
     }
 });
