@@ -21,7 +21,11 @@ window.TikzJaxOptions = {
             // "positioning",
             // "decorations.pathmorphing",
 
+<<<<<<< HEAD
             // Built-in PGF/TikZ circuit libraries, incompatible with circuitikz texPackage global syntax
+=======
+            // Built-in PGF/TikZ circuit libraries
+>>>>>>> b57632d (maj)
             // "circuits",
             // "circuits.ee",
             // "circuits.ee.IEC"
