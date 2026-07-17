@@ -32,8 +32,11 @@ jobs:
           node-version: "24"
           registry-url: "https://registry.npmjs.org"
 
-      - name: Upgrade npm
-        run: npm install -g npm@latest
+      - name: Install supported npm version
+        run: |
+          npm install -g npm@12.0.1
+          node --version
+          npm --version
 
       - name: Enable Corepack
         run: corepack enable
@@ -72,6 +75,7 @@ jobs:
           test -f cdn-runtime/tikzjax/tex_files/l3backend-dvips.def.gz
 
           rm -rf dist/tex_files
+
           cp -f cdn-runtime/tikzjax/core.dump.gz dist/core.dump.gz
           cp -f cdn-runtime/tikzjax/tex.wasm.gz dist/tex.wasm.gz
           cp -R cdn-runtime/tikzjax/tex_files dist/tex_files
@@ -101,15 +105,99 @@ jobs:
           test "$count" -gt 100
 
       - name: Check package contents
+        shell: bash
         run: |
-          npm pack --dry-run
-          npm pack --json > pack.json
+          set -euo pipefail
 
-          node - <<'NODE'
+          PACK_JSON="${RUNNER_TEMP}/tikzjax-pack.json"
+
+          echo "Human-readable npm package preview:"
+          npm pack --dry-run
+
+          echo "Generating JSON package manifest:"
+          npm pack --dry-run --json > "$PACK_JSON"
+
+          echo "npm pack JSON:"
+          cat "$PACK_JSON"
+
+          node - "$PACK_JSON" <<'NODE'
           const fs = require("fs");
 
-          const pack = JSON.parse(fs.readFileSync("pack.json", "utf8"))[0];
-          const files = new Set(pack.files.map((file) => file.path));
+          const packJsonPath = process.argv[2];
+
+          if (!packJsonPath) {
+            console.error("The npm pack JSON path was not provided.");
+            process.exit(1);
+          }
+
+          const manifest = JSON.parse(
+            fs.readFileSync("package.json", "utf8")
+          );
+
+          const parsed = JSON.parse(
+            fs.readFileSync(packJsonPath, "utf8")
+          );
+
+          /*
+           * npm <= 11:
+           *
+           * [
+           *   {
+           *     "name": "@rod2ik/tikzjax",
+           *     "files": [...]
+           *   }
+           * ]
+           *
+           * npm >= 12:
+           *
+           * {
+           *   "@rod2ik/tikzjax": {
+           *     "name": "@rod2ik/tikzjax",
+           *     "files": [...]
+           *   }
+           * }
+           */
+          const packEntries = Array.isArray(parsed)
+            ? parsed
+            : Object.values(parsed || {});
+
+          const pack =
+            packEntries.find(
+              (entry) => entry?.name === manifest.name
+            ) ||
+            packEntries[0];
+
+          if (!pack) {
+            console.error(
+              "npm pack returned no package entry."
+            );
+
+            console.error(
+              JSON.stringify(parsed, null, 2)
+            );
+
+            process.exit(1);
+          }
+
+          if (!Array.isArray(pack.files)) {
+            console.error(
+              "npm pack did not return a files array."
+            );
+
+            console.error(
+              JSON.stringify(pack, null, 2)
+            );
+
+            process.exit(1);
+          }
+
+          console.log(
+            `Checking package: ${pack.name}@${pack.version}`
+          );
+
+          const files = new Set(
+            pack.files.map((file) => file.path)
+          );
 
           const required = [
             "dist/run-tex.js",
@@ -123,10 +211,14 @@ jobs:
             "dist/tex_files/l3backend-dvips.def.gz"
           ];
 
-          const missing = required.filter((file) => !files.has(file));
+          const missing = required.filter(
+            (file) => !files.has(file)
+          );
 
           if (missing.length) {
-            console.error("Missing files from npm package:");
+            console.error(
+              "Missing files from npm package:"
+            );
 
             for (const file of missing) {
               console.error(`- ${file}`);
@@ -137,16 +229,28 @@ jobs:
 
           const texRuntimeFiles = pack.files
             .map((file) => file.path)
-            .filter((file) => file.startsWith("dist/tex_files/"));
+            .filter(
+              (file) =>
+                file.startsWith(
+                  "dist/tex_files/"
+                )
+            );
 
-          console.log(`TeX runtime files in npm package: ${texRuntimeFiles.length}`);
+          console.log(
+            `TeX runtime files in npm package: ${texRuntimeFiles.length}`
+          );
 
           if (texRuntimeFiles.length <= 100) {
-            console.error("The npm package does not contain enough TeX runtime files.");
+            console.error(
+              "The npm package does not contain enough TeX runtime files."
+            );
+
             process.exit(1);
           }
 
-          console.log("All required files are present in the npm package.");
+          console.log(
+            "All required files are present in the npm package."
+          );
           NODE
 
       - name: Publish to npm
