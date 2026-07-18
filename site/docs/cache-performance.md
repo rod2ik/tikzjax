@@ -54,9 +54,9 @@ A cache hit at the SVG level is the fastest result because no TeX compilation is
 
 ---
 
-# Persistent SVG cache
+## Persistent SVG cache
 
-## IndexedDB storage
+### IndexedDB storage
 
 TikZJax stores rendered SVG output in IndexedDB.
 
@@ -73,7 +73,7 @@ On a later page visit, TikZJax can insert that SVG without sending the diagram t
 
 ---
 
-## Cache lookup flow
+### Cache lookup flow
 
 For each discovered diagram, TikZJax determines whether the persistent cache may be used.
 
@@ -100,7 +100,7 @@ A cached diagram:
 
 ---
 
-## Cache identity
+### Cache identity
 
 The persistent cache identity includes:
 
@@ -126,7 +126,7 @@ Two diagrams can share a cache entry only when their effective rendering input i
 
 ---
 
-## Exact source matters
+### Exact source matters
 
 These two sources may produce the same visual result, but they are different cache inputs:
 
@@ -147,7 +147,7 @@ For the best cache reuse, keep repeated diagrams byte-for-byte identical when po
 
 ---
 
-## Local configuration matters
+### Local configuration matters
 
 These diagrams have identical TikZ source but different package datasets:
 
@@ -187,7 +187,7 @@ data-tikzjax-options
 
 ---
 
-## Global configuration and cache identity
+### Global configuration and cache identity
 
 Local effective configuration is built from:
 
@@ -233,7 +233,7 @@ See [Global and Local Configuration](configuration-scopes.md).
 
 ---
 
-## Loader dimensions and cache entries
+### Loader dimensions and cache entries
 
 Attributes such as:
 
@@ -252,9 +252,9 @@ For consistent reuse, keep repeated diagram attributes consistent.
 
 ---
 
-# Disabling the persistent cache
+## Disabling the persistent cache
 
-## Local cache bypass
+### Local cache bypass
 
 Use:
 
@@ -290,7 +290,7 @@ Keep the cache enabled for normal production pages.
 
 ---
 
-## What cache bypass means
+### What cache bypass means
 
 With cache disabled, TikZJax does not reuse an existing persistent SVG result for that diagram.
 
@@ -316,7 +316,7 @@ A fresh SVG compilation may therefore still benefit from previously prepared wor
 
 ---
 
-## Do not leave cache bypass enabled in production
+### Do not leave cache bypass enabled in production
 
 This configuration forces unnecessary TeX compilations on every page visit:
 
@@ -341,7 +341,7 @@ For a documentation page containing many diagrams, leaving it enabled can signif
 
 ---
 
-# Clearing the persistent cache
+## Clearing the persistent cache
 
 Delete the complete TikZJax IndexedDB database from the browser console:
 
@@ -363,15 +363,13 @@ Use this when:
 
 !!! note
 
-```
-IndexedDB storage is origin-specific.
+    IndexedDB storage is origin-specific.
 
-Clearing the cache on a local development origin does not clear the cache for the deployed documentation site.
-```
+    Clearing the cache on a local development origin does not clear the cache for the deployed documentation site.
 
 ---
 
-# Pending-job deduplication
+## Pending-job deduplication
 
 The persistent SVG cache helps after a diagram has already been rendered.
 
@@ -391,7 +389,7 @@ This prevents several workers from compiling the same rendering input simultaneo
 
 ---
 
-## Deduplication requirements
+### Deduplication requirements
 
 Diagrams can join the same pending render only when their rendering identity matches.
 
@@ -443,7 +441,7 @@ These cannot:
 
 ---
 
-## Deduplication is not the persistent cache
+### Deduplication is not the persistent cache
 
 The two mechanisms operate at different times:
 
@@ -459,7 +457,7 @@ After a successful pending job completes, its generated SVG can also be stored i
 
 ---
 
-# Worker-local TeX caches
+## Worker-local TeX caches
 
 Each rendering worker maintains an in-memory cache of TeX files that it has downloaded and decompressed.
 
@@ -481,7 +479,7 @@ A later job assigned to the same worker can reuse those prepared files.
 
 ---
 
-## Worker caches are isolated
+### Worker caches are isolated
 
 One worker cannot directly read another worker's virtual filesystem or decompressed-file cache.
 
@@ -496,7 +494,7 @@ The browser's HTTP cache may prevent a full network transfer the second time, bu
 
 ---
 
-## Why specialized first renders are slower
+### Why specialized first renders are slower
 
 The first diagram using an optional package may require the worker to:
 
@@ -521,7 +519,7 @@ A second worker may still experience its own first-use cost.
 
 ---
 
-## Worker restart clears local caches
+### Worker restart clears local caches
 
 When a worker is restarted, its local runtime state is discarded:
 
@@ -537,7 +535,7 @@ Other healthy workers keep their own state.
 
 ---
 
-# WebAssembly runtime reuse
+## WebAssembly runtime reuse
 
 TikZJax does not create a new TeX WebAssembly runtime for every diagram.
 
@@ -564,7 +562,7 @@ This makes a persistent worker pool more efficient than repeatedly creating a ne
 
 ---
 
-# Browser HTTP cache
+## Browser HTTP cache
 
 Runtime files are fetched through the browser's normal networking layer.
 
@@ -593,7 +591,7 @@ Use appropriate immutable caching headers when self-hosting versioned TikZJax as
 
 ---
 
-# Parallel rendering and performance
+## Parallel rendering and performance
 
 TikZJax uses a bounded pool of workers to render independent diagrams concurrently.
 
@@ -619,7 +617,7 @@ The effective worker count can be lower than `maxWorkers`.
 
 ---
 
-## More workers are not always faster
+### More workers are not always faster
 
 Increasing the worker count also increases:
 
@@ -636,7 +634,7 @@ Avoid selecting the worker count only from a high-end development computer.
 
 ---
 
-## Recommended worker limit
+### Recommended worker limit
 
 For most documentation sites, begin with:
 
@@ -662,7 +660,7 @@ A representative test should include:
 
 ---
 
-## One-worker comparison
+### One-worker comparison
 
 To measure sequential worker performance while retaining the same scheduling system:
 
@@ -689,7 +687,7 @@ This helps determine whether a slowdown is caused by:
 
 ---
 
-## Dependency affinity
+### Dependency affinity
 
 When workers are available for a queued job, TikZJax may prefer a worker that already has useful dependencies prepared.
 
@@ -716,7 +714,7 @@ Keeping workers busy and respecting viewport priority remain more important than
 
 ---
 
-# Viewport priority
+## Viewport priority
 
 TikZJax prioritizes pending diagrams according to their relationship with the current viewport.
 
@@ -737,7 +735,7 @@ Parallel rendering therefore does not guarantee completion in document order.
 
 ---
 
-# Global versus local dependencies
+## Global versus local dependencies
 
 Every globally configured package is inserted into every diagram's TeX preamble.
 
@@ -781,7 +779,7 @@ This reduces unnecessary TeX preamble work.
 
 ---
 
-## Global dependencies that make sense
+### Global dependencies that make sense
 
 A global dependency can be appropriate when nearly every diagram uses it.
 
@@ -808,7 +806,7 @@ See [Global and Local Configuration](configuration-scopes.md).
 
 ---
 
-## Fenced blocks and performance
+### Fenced blocks and performance
 
 A fenced block cannot declare local HTML attributes:
 
@@ -835,9 +833,9 @@ If a specialized package is needed only once, an HTML block is usually more effi
 
 ---
 
-# Timeouts and performance
+## Timeouts and performance
 
-## Global timeout
+### Global timeout
 
 ```js
 window.TikzJaxOptions = {
@@ -851,7 +849,7 @@ A timeout protects a worker from remaining occupied indefinitely.
 
 ---
 
-## Local timeout
+### Local timeout
 
 ```html
 <script
@@ -874,7 +872,7 @@ Examples that may need more time include:
 
 ---
 
-## Timeout is not a speed target
+### Timeout is not a speed target
 
 A timeout of `30000` does not mean that a normal diagram should take 30 seconds.
 
@@ -886,9 +884,9 @@ Increasing the timeout does not make a diagram faster.
 
 ---
 
-# Retries and worker restarts
+## Retries and worker restarts
 
-## Retry configuration
+### Retry configuration
 
 ```js
 window.TikzJaxOptions = {
@@ -910,7 +908,7 @@ They do not fix invalid TeX source.
 
 ---
 
-## Local retry configuration
+### Local retry configuration
 
 ```html
 <script
@@ -927,7 +925,7 @@ These values apply only to the current diagram.
 
 ---
 
-## Cost of restarting a worker
+### Cost of restarting a worker
 
 Restarting a worker improves failure isolation, but the replacement loses the failed worker's prepared state.
 
@@ -942,13 +940,13 @@ Frequent worker restarts are therefore a sign that the underlying failure should
 
 ---
 
-# Measuring performance
+## Measuring performance
 
-## Measure cold and warm states separately
+### Measure cold and warm states separately
 
 A useful performance test includes several states.
 
-### Cold persistent cache
+#### Cold persistent cache
 
 Clear IndexedDB:
 
@@ -959,19 +957,19 @@ location.reload();
 
 This measures fresh SVG compilation.
 
-### Warm persistent cache
+#### Warm persistent cache
 
 Reload the page without clearing IndexedDB.
 
 This measures SVG reuse.
 
-### Cold worker dependency state
+#### Cold worker dependency state
 
 Open the page in a new browser context or after a full runtime restart.
 
 This measures first-use package preparation.
 
-### Warm worker dependency state
+#### Warm worker dependency state
 
 Render several diagrams using the same package during one page session.
 
@@ -979,7 +977,7 @@ This measures worker-local dependency reuse.
 
 ---
 
-## Timing output
+### Timing output
 
 Enable timing logs on one diagram:
 
@@ -1007,7 +1005,7 @@ total worker rendering time
 
 ---
 
-## Show TeX console output separately
+### Show TeX console output separately
 
 Use:
 
@@ -1032,7 +1030,7 @@ Console output can be extensive and should not remain enabled on every productio
 
 ---
 
-## Use representative diagrams
+### Use representative diagrams
 
 A simple circle is useful for measuring runtime overhead:
 
@@ -1064,9 +1062,9 @@ kinematikz
 
 ---
 
-# Recommended configurations
+## Recommended configurations
 
-## General documentation site
+### General documentation site
 
 ```js
 window.TikzJaxOptions = {
@@ -1093,7 +1091,7 @@ Load specialized dependencies locally.
 
 ---
 
-## Memory-conscious site
+### Memory-conscious site
 
 ```js
 window.TikzJaxOptions = {
@@ -1113,7 +1111,7 @@ window.TikzJaxOptions = {
 
 ---
 
-## Debugging configuration
+### Debugging configuration
 
 ```js
 window.TikzJaxOptions = {
@@ -1146,7 +1144,7 @@ Then enable local diagnostics only on the diagram being tested:
 
 ---
 
-# Performance recommendations
+## Performance recommendations
 
 1. Keep the persistent SVG cache enabled in production.
 2. Load specialized packages locally.
@@ -1166,9 +1164,9 @@ Then enable local diagnostics only on the diagram being tested:
 
 ---
 
-# Common problems
+## Common problems
 
-## A diagram does not update
+### A diagram does not update
 
 Temporarily disable the persistent cache:
 
@@ -1192,7 +1190,7 @@ Also verify that the browser is loading the expected JavaScript release.
 
 ---
 
-## A repeated diagram is rendered more than once
+### A repeated diagram is rendered more than once
 
 Check whether the diagrams differ in:
 
@@ -1208,7 +1206,7 @@ The exact source and effective dataset must match.
 
 ---
 
-## The first specialized diagram is slow
+### The first specialized diagram is slow
 
 The assigned worker may be downloading and preparing its package dependencies for the first time.
 
@@ -1218,7 +1216,7 @@ This is expected.
 
 ---
 
-## The same package is prepared by several workers
+### The same package is prepared by several workers
 
 Worker TeX caches are isolated.
 
@@ -1228,7 +1226,7 @@ A lower worker count reduces duplicated worker state but may also reduce concurr
 
 ---
 
-## Increasing `maxWorkers` made the page slower
+### Increasing `maxWorkers` made the page slower
 
 The device may be limited by:
 
@@ -1253,7 +1251,7 @@ and compare again.
 
 ---
 
-## A diagram times out only on its first render
+### A diagram times out only on its first render
 
 The first attempt may include worker initialization and dependency preparation.
 
@@ -1263,7 +1261,7 @@ Do not increase the global timeout unnecessarily when only one specialized diagr
 
 ---
 
-## Cached rendering is fast but fresh rendering fails
+### Cached rendering is fast but fresh rendering fails
 
 Clear IndexedDB or use:
 
@@ -1277,7 +1275,7 @@ Inspect the TeX console during a fresh render.
 
 ---
 
-## Rendering is slow on every page
+### Rendering is slow on every page
 
 Check whether large optional packages are loaded globally.
 
@@ -1302,7 +1300,7 @@ Also check:
 
 ---
 
-## Worker loading fails
+### Worker loading fails
 
 Verify that these files come from the same TikZJax release:
 
@@ -1322,7 +1320,7 @@ See [Troubleshooting](troubleshooting.md).
 
 ---
 
-# Related documentation
+## Related documentation
 
 * [Configuration](configuration.md)
 * [Global and Local Configuration](configuration-scopes.md)

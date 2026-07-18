@@ -64,17 +64,15 @@ They do not replace the global configuration.
 
 !!! tip "Why local loading is recommended"
 
-```
-`kinematikz` is useful only for mechanism diagrams.
+    `kinematikz` is useful only for mechanism diagrams.
 
-Loading it locally:
+    Loading it locally:
 
-- keeps ordinary TikZ diagrams lighter;
-- avoids initializing mechanical symbols in unrelated diagrams;
-- reduces unnecessary TeX processing;
-- limits package interactions;
-- makes the dependencies of each diagram explicit.
-```
+    - keeps ordinary TikZ diagrams lighter;
+    - avoids initializing mechanical symbols in unrelated diagrams;
+    - reduces unnecessary TeX processing;
+    - limits package interactions;
+    - makes the dependencies of each diagram explicit.
 
 ---
 
@@ -89,67 +87,63 @@ This example contains:
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
-  data-width="520"
-  data-height="300"
->
-\begin{tikzpicture}
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+      data-width="520"
+      data-height="300"
+    >
+    \begin{tikzpicture}
 
-    \pic (MyB) {
-        frame pivot triangle
-    };
+        \pic (MyB) {
+            frame pivot triangle
+        };
 
-    \pic (MyL1) at (MyB-center) {
-        link bar generic=20:30pt
-    };
+        \pic (MyL1) at (MyB-center) {
+            link bar generic=20:30pt
+        };
 
-    \pic (MyL2) at (MyL1-end) {
-        revolute pair planar=-45:30pt
-    };
+        \pic (MyL2) at (MyL1-end) {
+            revolute pair planar=-45:30pt
+        };
 
-    \pic (MyL3) at (MyL2-end) {
-        revolute pair planar=45:30pt
-    };
+        \pic (MyL3) at (MyL2-end) {
+            revolute pair planar=45:30pt
+        };
 
-\end{tikzpicture}
-</script>
-```
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
-  data-width="520"
-  data-height="300"
->
-\begin{tikzpicture}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+      data-width="520"
+      data-height="300"
+    >
+    \begin{tikzpicture}
 
-    \pic (MyB) {
-        frame pivot triangle
-    };
+        \pic (MyB) {
+            frame pivot triangle
+        };
 
-    \pic (MyL1) at (MyB-center) {
-        link bar generic=20:30pt
-    };
+        \pic (MyL1) at (MyB-center) {
+            link bar generic=20:30pt
+        };
 
-    \pic (MyL2) at (MyL1-end) {
-        revolute pair planar=-45:30pt
-    };
+        \pic (MyL2) at (MyL1-end) {
+            revolute pair planar=-45:30pt
+        };
 
-    \pic (MyL3) at (MyL2-end) {
-        revolute pair planar=45:30pt
-    };
+        \pic (MyL3) at (MyL2-end) {
+            revolute pair planar=45:30pt
+        };
 
-\end{tikzpicture}
-</script>
-```
-````
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -203,31 +197,27 @@ The simplest fixed pivot frame is:
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
->
-\begin{tikzpicture}
-    \pic {frame pivot triangle};
-\end{tikzpicture}
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+    >
+    \begin{tikzpicture}
+        \pic {frame pivot triangle};
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
->
-\begin{tikzpicture}
-    \pic {frame pivot triangle};
-\end{tikzpicture}
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+    >
+    \begin{tikzpicture}
+        \pic {frame pivot triangle};
+    \end{tikzpicture}
+    </script>
+    ```
 
 The default position is `(0,0)`.
 
@@ -239,67 +229,63 @@ The argument of `frame pivot triangle` controls its base width:
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
-  data-width="520"
-  data-height="270"
->
-\begin{tikzpicture}
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+      data-width="520"
+      data-height="270"
+    >
+    \begin{tikzpicture}
 
-    \pic (A) at (-2,0) {
-        frame pivot triangle
-    };
+        \pic (A) at (-2,0) {
+            frame pivot triangle
+        };
 
-    \pic (B) at (0,0) {
-        frame pivot triangle=1.25cm
-    };
+        \pic (B) at (0,0) {
+            frame pivot triangle=1.25cm
+        };
 
-    \pic (C) at (2.5,0) {
-        frame pivot triangle=1.6cm
-    };
+        \pic (C) at (2.5,0) {
+            frame pivot triangle=1.6cm
+        };
 
-    \node[below=6pt] at (A-south) {default};
-    \node[below=6pt] at (B-south) {$1.25\,\mathrm{cm}$};
-    \node[below=6pt] at (C-south) {$1.6\,\mathrm{cm}$};
+        \node[below=6pt] at (A-south) {default};
+        \node[below=6pt] at (B-south) {$1.25\,\mathrm{cm}$};
+        \node[below=6pt] at (C-south) {$1.6\,\mathrm{cm}$};
 
-\end{tikzpicture}
-</script>
-```
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
-  data-width="520"
-  data-height="270"
->
-\begin{tikzpicture}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+      data-width="520"
+      data-height="270"
+    >
+    \begin{tikzpicture}
 
-    \pic (A) at (-2,0) {
-        frame pivot triangle
-    };
+        \pic (A) at (-2,0) {
+            frame pivot triangle
+        };
 
-    \pic (B) at (0,0) {
-        frame pivot triangle=1.25cm
-    };
+        \pic (B) at (0,0) {
+            frame pivot triangle=1.25cm
+        };
 
-    \pic (C) at (2.5,0) {
-        frame pivot triangle=1.6cm
-    };
+        \pic (C) at (2.5,0) {
+            frame pivot triangle=1.6cm
+        };
 
-    \node[below=6pt] at (A-south) {default};
-    \node[below=6pt] at (B-south) {$1.25\,\mathrm{cm}$};
-    \node[below=6pt] at (C-south) {$1.6\,\mathrm{cm}$};
+        \node[below=6pt] at (A-south) {default};
+        \node[below=6pt] at (B-south) {$1.25\,\mathrm{cm}$};
+        \node[below=6pt] at (C-south) {$1.6\,\mathrm{cm}$};
 
-\end{tikzpicture}
-</script>
-```
-````
+    \end{tikzpicture}
+    </script>
+    ```
 
 This changes the frame geometry directly.
 
@@ -313,77 +299,73 @@ KinemaTikZ provides several frame representations.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
-  data-width="680"
-  data-height="280"
->
-\begin{tikzpicture}
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+      data-width="680"
+      data-height="280"
+    >
+    \begin{tikzpicture}
 
-    \pic (A) at (-4.5,0) {
-        frame pivot flat=1.2cm
-    };
+        \pic (A) at (-4.5,0) {
+            frame pivot flat=1.2cm
+        };
 
-    \pic (B) at (-1.5,0) {
-        frame pivot trapezium=1.2cm
-    };
+        \pic (B) at (-1.5,0) {
+            frame pivot trapezium=1.2cm
+        };
 
-    \pic (C) at (1.5,0) {
-        frame pivot triangle=1.2cm
-    };
+        \pic (C) at (1.5,0) {
+            frame pivot triangle=1.2cm
+        };
 
-    \pic (D) at (4.5,0) {
-        frame pivot rounded=1cm
-    };
+        \pic (D) at (4.5,0) {
+            frame pivot rounded=1cm
+        };
 
-    \node[below=9pt] at (A-south) {flat};
-    \node[below=9pt] at (B-south) {trapezium};
-    \node[below=9pt] at (C-south) {triangle};
-    \node[below=9pt] at (D-south) {rounded};
+        \node[below=9pt] at (A-south) {flat};
+        \node[below=9pt] at (B-south) {trapezium};
+        \node[below=9pt] at (C-south) {triangle};
+        \node[below=9pt] at (D-south) {rounded};
 
-\end{tikzpicture}
-</script>
-```
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
-  data-width="680"
-  data-height="280"
->
-\begin{tikzpicture}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+      data-width="680"
+      data-height="280"
+    >
+    \begin{tikzpicture}
 
-    \pic (A) at (-4.5,0) {
-        frame pivot flat=1.2cm
-    };
+        \pic (A) at (-4.5,0) {
+            frame pivot flat=1.2cm
+        };
 
-    \pic (B) at (-1.5,0) {
-        frame pivot trapezium=1.2cm
-    };
+        \pic (B) at (-1.5,0) {
+            frame pivot trapezium=1.2cm
+        };
 
-    \pic (C) at (1.5,0) {
-        frame pivot triangle=1.2cm
-    };
+        \pic (C) at (1.5,0) {
+            frame pivot triangle=1.2cm
+        };
 
-    \pic (D) at (4.5,0) {
-        frame pivot rounded=1cm
-    };
+        \pic (D) at (4.5,0) {
+            frame pivot rounded=1cm
+        };
 
-    \node[below=9pt] at (A-south) {flat};
-    \node[below=9pt] at (B-south) {trapezium};
-    \node[below=9pt] at (C-south) {triangle};
-    \node[below=9pt] at (D-south) {rounded};
+        \node[below=9pt] at (A-south) {flat};
+        \node[below=9pt] at (B-south) {trapezium};
+        \node[below=9pt] at (C-south) {triangle};
+        \node[below=9pt] at (D-south) {rounded};
 
-\end{tikzpicture}
-</script>
-```
-````
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -442,51 +424,47 @@ KinemaTikZ objects can be mixed with ordinary TikZ commands.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
->
-\begin{tikzpicture}
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+    >
+    \begin{tikzpicture}
 
-    \pic (Base) {
-        frame pivot triangle
-    };
+        \pic (Base) {
+            frame pivot triangle
+        };
 
-    \draw[
-        very thick,
-        red
-    ]
-        (Base-center) -- (20:45pt);
+        \draw[
+            very thick,
+            red
+        ]
+            (Base-center) -- (20:45pt);
 
-\end{tikzpicture}
-</script>
-```
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
->
-\begin{tikzpicture}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+    >
+    \begin{tikzpicture}
 
-    \pic (Base) {
-        frame pivot triangle
-    };
+        \pic (Base) {
+            frame pivot triangle
+        };
 
-    \draw[
-        very thick,
-        red
-    ]
-        (Base-center) -- (20:45pt);
+        \draw[
+            very thick,
+            red
+        ]
+            (Base-center) -- (20:45pt);
 
-\end{tikzpicture}
-</script>
-```
-````
+    \end{tikzpicture}
+    </script>
+    ```
 
 Standard TikZ paths, nodes, coordinates, loops, colors, and transformations remain available.
 
@@ -498,47 +476,43 @@ The `link bar generic` object represents a configurable planar link.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
->
-\begin{tikzpicture}
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+    >
+    \begin{tikzpicture}
 
-    \pic (Base) {
-        frame pivot triangle
-    };
+        \pic (Base) {
+            frame pivot triangle
+        };
 
-    \pic (Link) at (Base-center) {
-        link bar generic=25:55pt
-    };
+        \pic (Link) at (Base-center) {
+            link bar generic=25:55pt
+        };
 
-\end{tikzpicture}
-</script>
-```
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
->
-\begin{tikzpicture}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+    >
+    \begin{tikzpicture}
 
-    \pic (Base) {
-        frame pivot triangle
-    };
+        \pic (Base) {
+            frame pivot triangle
+        };
 
-    \pic (Link) at (Base-center) {
-        link bar generic=25:55pt
-    };
+        \pic (Link) at (Base-center) {
+            link bar generic=25:55pt
+        };
 
-\end{tikzpicture}
-</script>
-```
-````
+    \end{tikzpicture}
+    </script>
+    ```
 
 The endpoint:
 
@@ -594,95 +568,91 @@ Empty entries preserve the corresponding default.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
-  data-width="650"
-  data-height="360"
->
-\begin{tikzpicture}
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+      data-width="650"
+      data-height="360"
+    >
+    \begin{tikzpicture}
 
-    \pic (BaseA) at (-3,1.6) {
-        frame pivot triangle
-    };
+        \pic (BaseA) at (-3,1.6) {
+            frame pivot triangle
+        };
 
-    \pic (LinkA) at (BaseA-center) {
-        link bar generic={25:55pt/1/1/1/0}
-    };
+        \pic (LinkA) at (BaseA-center) {
+            link bar generic={25:55pt/1/1/1/0}
+        };
 
-    \pic (BaseB) at (-3,-1.3) {
-        frame pivot triangle
-    };
+        \pic (BaseB) at (-3,-1.3) {
+            frame pivot triangle
+        };
 
-    \pic (LinkB) at (BaseB-center) {
-        link bar generic={25:55pt/0/1/0/1}
-    };
+        \pic (LinkB) at (BaseB-center) {
+            link bar generic={25:55pt/0/1/0/1}
+        };
 
-    \node[
-        right=8pt
-    ] at (LinkA-end) {
-        centre of mass and two pivots
-    };
+        \node[
+            right=8pt
+        ] at (LinkA-end) {
+            centre of mass and two pivots
+        };
 
-    \node[
-        right=8pt,
-        align=left
-    ] at (LinkB-end) {
-        no centre of mass,\\
-        no terminal pivot, crosshairs
-    };
+        \node[
+            right=8pt,
+            align=left
+        ] at (LinkB-end) {
+            no centre of mass,\\
+            no terminal pivot, crosshairs
+        };
 
-\end{tikzpicture}
-</script>
-```
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
-  data-width="650"
-  data-height="360"
->
-\begin{tikzpicture}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+      data-width="650"
+      data-height="360"
+    >
+    \begin{tikzpicture}
 
-    \pic (BaseA) at (-3,1.6) {
-        frame pivot triangle
-    };
+        \pic (BaseA) at (-3,1.6) {
+            frame pivot triangle
+        };
 
-    \pic (LinkA) at (BaseA-center) {
-        link bar generic={25:55pt/1/1/1/0}
-    };
+        \pic (LinkA) at (BaseA-center) {
+            link bar generic={25:55pt/1/1/1/0}
+        };
 
-    \pic (BaseB) at (-3,-1.3) {
-        frame pivot triangle
-    };
+        \pic (BaseB) at (-3,-1.3) {
+            frame pivot triangle
+        };
 
-    \pic (LinkB) at (BaseB-center) {
-        link bar generic={25:55pt/0/1/0/1}
-    };
+        \pic (LinkB) at (BaseB-center) {
+            link bar generic={25:55pt/0/1/0/1}
+        };
 
-    \node[
-        right=8pt
-    ] at (LinkA-end) {
-        centre of mass and two pivots
-    };
+        \node[
+            right=8pt
+        ] at (LinkA-end) {
+            centre of mass and two pivots
+        };
 
-    \node[
-        right=8pt,
-        align=left
-    ] at (LinkB-end) {
-        no centre of mass,\\
-        no terminal pivot, crosshairs
-    };
+        \node[
+            right=8pt,
+            align=left
+        ] at (LinkB-end) {
+            no centre of mass,\\
+            no terminal pivot, crosshairs
+        };
 
-\end{tikzpicture}
-</script>
-```
-````
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -692,55 +662,51 @@ A polar or Cartesian endpoint supplied directly to a link is interpreted relativ
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
->
-\begin{tikzpicture}
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+    >
+    \begin{tikzpicture}
 
-    \pic (Base) {
-        frame pivot triangle
-    };
+        \pic (Base) {
+            frame pivot triangle
+        };
 
-    \pic (FirstLink) at (Base-center) {
-        link bar generic=20:40pt
-    };
+        \pic (FirstLink) at (Base-center) {
+            link bar generic=20:40pt
+        };
 
-    \pic (SecondLink) at (FirstLink-end) {
-        link bar generic=-45:40pt
-    };
+        \pic (SecondLink) at (FirstLink-end) {
+            link bar generic=-45:40pt
+        };
 
-\end{tikzpicture}
-</script>
-```
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
->
-\begin{tikzpicture}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+    >
+    \begin{tikzpicture}
 
-    \pic (Base) {
-        frame pivot triangle
-    };
+        \pic (Base) {
+            frame pivot triangle
+        };
 
-    \pic (FirstLink) at (Base-center) {
-        link bar generic=20:40pt
-    };
+        \pic (FirstLink) at (Base-center) {
+            link bar generic=20:40pt
+        };
 
-    \pic (SecondLink) at (FirstLink-end) {
-        link bar generic=-45:40pt
-    };
+        \pic (SecondLink) at (FirstLink-end) {
+            link bar generic=-45:40pt
+        };
 
-\end{tikzpicture}
-</script>
-```
-````
+    \end{tikzpicture}
+    </script>
+    ```
 
 The second endpoint is calculated relative to `FirstLink-end`.
 
@@ -752,73 +718,69 @@ A named TikZ coordinate can be used as an endpoint:
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
->
-\begin{tikzpicture}
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+    >
+    \begin{tikzpicture}
 
-    \coordinate (Target) at (3,1.5);
+        \coordinate (Target) at (3,1.5);
 
-    \pic (Base) {
-        frame pivot triangle
-    };
+        \pic (Base) {
+            frame pivot triangle
+        };
 
-    \pic (Link) at (Base-center) {
-        link bar generic=Target
-    };
+        \pic (Link) at (Base-center) {
+            link bar generic=Target
+        };
 
-    \fill[
-        red
-    ]
-        (Target) circle (2pt);
+        \fill[
+            red
+        ]
+            (Target) circle (2pt);
 
-    \node[
-        above
-    ] at (Target) {
-        Target
-    };
+        \node[
+            above
+        ] at (Target) {
+            Target
+        };
 
-\end{tikzpicture}
-</script>
-```
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
->
-\begin{tikzpicture}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+    >
+    \begin{tikzpicture}
 
-    \coordinate (Target) at (3,1.5);
+        \coordinate (Target) at (3,1.5);
 
-    \pic (Base) {
-        frame pivot triangle
-    };
+        \pic (Base) {
+            frame pivot triangle
+        };
 
-    \pic (Link) at (Base-center) {
-        link bar generic=Target
-    };
+        \pic (Link) at (Base-center) {
+            link bar generic=Target
+        };
 
-    \fill[
-        red
-    ]
-        (Target) circle (2pt);
+        \fill[
+            red
+        ]
+            (Target) circle (2pt);
 
-    \node[
-        above
-    ] at (Target) {
-        Target
-    };
+        \node[
+            above
+        ] at (Target) {
+            Target
+        };
 
-\end{tikzpicture}
-</script>
-```
-````
+    \end{tikzpicture}
+    </script>
+    ```
 
 When passing a named coordinate as a KinemaTikZ parameter, omit parentheses:
 
@@ -840,47 +802,43 @@ The `revolute pair planar` object represents two links connected by a planar rot
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
->
-\begin{tikzpicture}
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+    >
+    \begin{tikzpicture}
 
-    \pic (Base) {
-        frame pivot triangle
-    };
+        \pic (Base) {
+            frame pivot triangle
+        };
 
-    \pic (Joint) at (Base-center) {
-        revolute pair planar=30:55pt
-    };
+        \pic (Joint) at (Base-center) {
+            revolute pair planar=30:55pt
+        };
 
-\end{tikzpicture}
-</script>
-```
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
->
-\begin{tikzpicture}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+    >
+    \begin{tikzpicture}
 
-    \pic (Base) {
-        frame pivot triangle
-    };
+        \pic (Base) {
+            frame pivot triangle
+        };
 
-    \pic (Joint) at (Base-center) {
-        revolute pair planar=30:55pt
-    };
+        \pic (Joint) at (Base-center) {
+            revolute pair planar=30:55pt
+        };
 
-\end{tikzpicture}
-</script>
-```
-````
+    \end{tikzpicture}
+    </script>
+    ```
 
 The object accepts three parameters:
 
@@ -900,71 +858,67 @@ revolute pair planar={100:1cm/0/1}
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
-  data-width="600"
-  data-height="320"
->
-\begin{tikzpicture}
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+      data-width="600"
+      data-height="320"
+    >
+    \begin{tikzpicture}
 
-    \pic (Base) {
-        frame pivot triangle
-    };
+        \pic (Base) {
+            frame pivot triangle
+        };
 
-    \pic (JointA) at (Base-out) {
-        revolute pair planar={40:50pt/0/1}
-    };
+        \pic (JointA) at (Base-out) {
+            revolute pair planar={40:50pt/0/1}
+        };
 
-    \pic (JointB) at (JointA-out) {
-        revolute pair planar={-35:45pt/1/1}
-    };
+        \pic (JointB) at (JointA-out) {
+            revolute pair planar={-35:45pt/1/1}
+        };
 
-    \pic[
-        scale=0.7
-    ] at (JointB-out) {
-        gripper=0/0
-    };
+        \pic[
+            scale=0.7
+        ] at (JointB-out) {
+            gripper=0/0
+        };
 
-\end{tikzpicture}
-</script>
-```
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
-  data-width="600"
-  data-height="320"
->
-\begin{tikzpicture}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+      data-width="600"
+      data-height="320"
+    >
+    \begin{tikzpicture}
 
-    \pic (Base) {
-        frame pivot triangle
-    };
+        \pic (Base) {
+            frame pivot triangle
+        };
 
-    \pic (JointA) at (Base-out) {
-        revolute pair planar={40:50pt/0/1}
-    };
+        \pic (JointA) at (Base-out) {
+            revolute pair planar={40:50pt/0/1}
+        };
 
-    \pic (JointB) at (JointA-out) {
-        revolute pair planar={-35:45pt/1/1}
-    };
+        \pic (JointB) at (JointA-out) {
+            revolute pair planar={-35:45pt/1/1}
+        };
 
-    \pic[
-        scale=0.7
-    ] at (JointB-out) {
-        gripper=0/0
-    };
+        \pic[
+            scale=0.7
+        ] at (JointB-out) {
+            gripper=0/0
+        };
 
-\end{tikzpicture}
-</script>
-```
-````
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -976,83 +930,79 @@ The alias `linear pair` produces the same type of object.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
-  data-width="580"
-  data-height="250"
->
-\begin{tikzpicture}[knLinkStyle]
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+      data-width="580"
+      data-height="250"
+    >
+    \begin{tikzpicture}[knLinkStyle]
 
-    \pic[
-        rotate=-90
-    ] (Base) {
-        frame
-    };
+        \pic[
+            rotate=-90
+        ] (Base) {
+            frame
+        };
 
-    \pic[
-        right=1cm of Base-out
-    ] (JointA) {
-        prismatic pair
-    };
+        \pic[
+            right=1cm of Base-out
+        ] (JointA) {
+            prismatic pair
+        };
 
-    \pic[
-        right=1cm of JointA-out
-    ] (JointB) {
-        linear pair=-60:1cm/1
-    };
+        \pic[
+            right=1cm of JointA-out
+        ] (JointB) {
+            linear pair=-60:1cm/1
+        };
 
-    \draw
-        (Base-out) -- (JointA-in);
+        \draw
+            (Base-out) -- (JointA-in);
 
-    \draw
-        (JointA-out) -- (JointB-in);
+        \draw
+            (JointA-out) -- (JointB-in);
 
-\end{tikzpicture}
-</script>
-```
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
-  data-width="580"
-  data-height="250"
->
-\begin{tikzpicture}[knLinkStyle]
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+      data-width="580"
+      data-height="250"
+    >
+    \begin{tikzpicture}[knLinkStyle]
 
-    \pic[
-        rotate=-90
-    ] (Base) {
-        frame
-    };
+        \pic[
+            rotate=-90
+        ] (Base) {
+            frame
+        };
 
-    \pic[
-        right=1cm of Base-out
-    ] (JointA) {
-        prismatic pair
-    };
+        \pic[
+            right=1cm of Base-out
+        ] (JointA) {
+            prismatic pair
+        };
 
-    \pic[
-        right=1cm of JointA-out
-    ] (JointB) {
-        linear pair=-60:1cm/1
-    };
+        \pic[
+            right=1cm of JointA-out
+        ] (JointB) {
+            linear pair=-60:1cm/1
+        };
 
-    \draw
-        (Base-out) -- (JointA-in);
+        \draw
+            (Base-out) -- (JointA-in);
 
-    \draw
-        (JointA-out) -- (JointB-in);
+        \draw
+            (JointA-out) -- (JointB-in);
 
-\end{tikzpicture}
-</script>
-```
-````
+    \end{tikzpicture}
+    </script>
+    ```
 
 The parameter structure is:
 
@@ -1068,73 +1018,69 @@ The `linear piston` object provides another schematic representation of a prisma
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
-  data-width="660"
-  data-height="270"
->
-\begin{tikzpicture}
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+      data-width="660"
+      data-height="270"
+    >
+    \begin{tikzpicture}
 
-    \foreach \position [count=\index] in {
-        0.2,
-        0.4,
-        0.6,
-        0.8
-    } {
-        \pic[
-            xshift=\index*2.2cm
-        ] (P\index) {
-            linear piston=\position
-        };
+        \foreach \position [count=\index] in {
+            0.2,
+            0.4,
+            0.6,
+            0.8
+        } {
+            \pic[
+                xshift=\index*2.2cm
+            ] (P\index) {
+                linear piston=\position
+            };
 
-        \node[
-            below=10pt
-        ] at (P\index-center) {
-            \position
-        };
-    }
+            \node[
+                below=10pt
+            ] at (P\index-center) {
+                \position
+            };
+        }
 
-\end{tikzpicture}
-</script>
-```
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
-  data-width="660"
-  data-height="270"
->
-\begin{tikzpicture}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+      data-width="660"
+      data-height="270"
+    >
+    \begin{tikzpicture}
 
-    \foreach \position [count=\index] in {
-        0.2,
-        0.4,
-        0.6,
-        0.8
-    } {
-        \pic[
-            xshift=\index*2.2cm
-        ] (P\index) {
-            linear piston=\position
-        };
+        \foreach \position [count=\index] in {
+            0.2,
+            0.4,
+            0.6,
+            0.8
+        } {
+            \pic[
+                xshift=\index*2.2cm
+            ] (P\index) {
+                linear piston=\position
+            };
 
-        \node[
-            below=10pt
-        ] at (P\index-center) {
-            \position
-        };
-    }
+            \node[
+                below=10pt
+            ] at (P\index-center) {
+                \position
+            };
+        }
 
-\end{tikzpicture}
-</script>
-```
-````
+    \end{tikzpicture}
+    </script>
+    ```
 
 The first parameter is a number from `0` to `1` representing the piston insertion fraction.
 
@@ -1150,101 +1096,97 @@ linear piston={0.5/5pt}
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
-  data-width="620"
-  data-height="360"
->
-\begin{tikzpicture}[knLinkStyle]
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+      data-width="620"
+      data-height="360"
+    >
+    \begin{tikzpicture}[knLinkStyle]
 
-    \pic (Base) {
-        frame
-    };
+        \pic (Base) {
+            frame
+        };
 
-    \pic[
-        above right=of Base-out
-    ] (PistonA) {
-        linear piston=0.2
-    };
+        \pic[
+            above right=of Base-out
+        ] (PistonA) {
+            linear piston=0.2
+        };
 
-    \pic[
-        below right=of PistonA-out,
-        rotate=-90
-    ] (PistonB) {
-        linear piston={0.5/5pt}
-    };
+        \pic[
+            below right=of PistonA-out,
+            rotate=-90
+        ] (PistonB) {
+            linear piston={0.5/5pt}
+        };
 
-    \pic[
-        scale=0.6
-    ] (Grip) at (PistonB-out) {
-        gripper=3/0
-    };
+        \pic[
+            scale=0.6
+        ] (Grip) at (PistonB-out) {
+            gripper=3/0
+        };
 
-    \draw
-        (Base-out)
-        |-
-        (PistonA-in);
+        \draw
+            (Base-out)
+            |-
+            (PistonA-in);
 
-    \draw
-        (PistonA-out)
-        -|
-        (PistonB-in);
+        \draw
+            (PistonA-out)
+            -|
+            (PistonB-in);
 
-\end{tikzpicture}
-</script>
-```
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
-  data-width="620"
-  data-height="360"
->
-\begin{tikzpicture}[knLinkStyle]
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+      data-width="620"
+      data-height="360"
+    >
+    \begin{tikzpicture}[knLinkStyle]
 
-    \pic (Base) {
-        frame
-    };
+        \pic (Base) {
+            frame
+        };
 
-    \pic[
-        above right=of Base-out
-    ] (PistonA) {
-        linear piston=0.2
-    };
+        \pic[
+            above right=of Base-out
+        ] (PistonA) {
+            linear piston=0.2
+        };
 
-    \pic[
-        below right=of PistonA-out,
-        rotate=-90
-    ] (PistonB) {
-        linear piston={0.5/5pt}
-    };
+        \pic[
+            below right=of PistonA-out,
+            rotate=-90
+        ] (PistonB) {
+            linear piston={0.5/5pt}
+        };
 
-    \pic[
-        scale=0.6
-    ] (Grip) at (PistonB-out) {
-        gripper=3/0
-    };
+        \pic[
+            scale=0.6
+        ] (Grip) at (PistonB-out) {
+            gripper=3/0
+        };
 
-    \draw
-        (Base-out)
-        |-
-        (PistonA-in);
+        \draw
+            (Base-out)
+            |-
+            (PistonA-in);
 
-    \draw
-        (PistonA-out)
-        -|
-        (PistonB-in);
+        \draw
+            (PistonA-out)
+            -|
+            (PistonB-in);
 
-\end{tikzpicture}
-</script>
-```
-````
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -1262,59 +1204,55 @@ Example:
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
-  data-width="620"
-  data-height="280"
->
-\begin{tikzpicture}
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+      data-width="620"
+      data-height="280"
+    >
+    \begin{tikzpicture}
 
-    \pic (A) at (-3,0) {
-        linear joint bar={0.25/1cm/0/1}
-    };
+        \pic (A) at (-3,0) {
+            linear joint bar={0.25/1cm/0/1}
+        };
 
-    \pic (B) at (0,0) {
-        linear joint bar={0.5/1cm/1/1}
-    };
+        \pic (B) at (0,0) {
+            linear joint bar={0.5/1cm/1/1}
+        };
 
-    \pic (C) at (3,0) {
-        linear joint bar={0.8/1cm/1/0}
-    };
+        \pic (C) at (3,0) {
+            linear joint bar={0.8/1cm/1/0}
+        };
 
-\end{tikzpicture}
-</script>
-```
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
-  data-width="620"
-  data-height="280"
->
-\begin{tikzpicture}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+      data-width="620"
+      data-height="280"
+    >
+    \begin{tikzpicture}
 
-    \pic (A) at (-3,0) {
-        linear joint bar={0.25/1cm/0/1}
-    };
+        \pic (A) at (-3,0) {
+            linear joint bar={0.25/1cm/0/1}
+        };
 
-    \pic (B) at (0,0) {
-        linear joint bar={0.5/1cm/1/1}
-    };
+        \pic (B) at (0,0) {
+            linear joint bar={0.5/1cm/1/1}
+        };
 
-    \pic (C) at (3,0) {
-        linear joint bar={0.8/1cm/1/0}
-    };
+        \pic (C) at (3,0) {
+            linear joint bar={0.8/1cm/1/0}
+        };
 
-\end{tikzpicture}
-</script>
-```
-````
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -1346,77 +1284,73 @@ The second parameter is:
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
-  data-width="680"
-  data-height="400"
->
-\begin{tikzpicture}
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+      data-width="680"
+      data-height="400"
+    >
+    \begin{tikzpicture}
 
-    \foreach \perspective in {0,1} {
-        \foreach \direction in {0,1,2,3} {
-            \begin{scope}[
-                xshift=\direction*2.3cm,
-                yshift=-\perspective*2.4cm
-            ]
+        \foreach \perspective in {0,1} {
+            \foreach \direction in {0,1,2,3} {
+                \begin{scope}[
+                    xshift=\direction*2.3cm,
+                    yshift=-\perspective*2.4cm
+                ]
 
-                \pic (Grip) {
-                    gripper={\direction/\perspective}
-                };
+                    \pic (Grip) {
+                        gripper={\direction/\perspective}
+                    };
 
-                \node[
-                    below=9pt
-                ] at (Grip-center) {
-                    \direction/\perspective
-                };
+                    \node[
+                        below=9pt
+                    ] at (Grip-center) {
+                        \direction/\perspective
+                    };
 
-            \end{scope}
+                \end{scope}
+            }
         }
-    }
 
-\end{tikzpicture}
-</script>
-```
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
-  data-width="680"
-  data-height="400"
->
-\begin{tikzpicture}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+      data-width="680"
+      data-height="400"
+    >
+    \begin{tikzpicture}
 
-    \foreach \perspective in {0,1} {
-        \foreach \direction in {0,1,2,3} {
-            \begin{scope}[
-                xshift=\direction*2.3cm,
-                yshift=-\perspective*2.4cm
-            ]
+        \foreach \perspective in {0,1} {
+            \foreach \direction in {0,1,2,3} {
+                \begin{scope}[
+                    xshift=\direction*2.3cm,
+                    yshift=-\perspective*2.4cm
+                ]
 
-                \pic (Grip) {
-                    gripper={\direction/\perspective}
-                };
+                    \pic (Grip) {
+                        gripper={\direction/\perspective}
+                    };
 
-                \node[
-                    below=9pt
-                ] at (Grip-center) {
-                    \direction/\perspective
-                };
+                    \node[
+                        below=9pt
+                    ] at (Grip-center) {
+                        \direction/\perspective
+                    };
 
-            \end{scope}
+                \end{scope}
+            }
         }
-    }
 
-\end{tikzpicture}
-</script>
-```
-````
+    \end{tikzpicture}
+    </script>
+    ```
 
 Fractional orientation values are also accepted:
 
@@ -1434,85 +1368,81 @@ Ordinary TikZ options can be applied to KinemaTikZ `pic` objects.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
-  data-width="560"
-  data-height="300"
->
-\begin{tikzpicture}
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+      data-width="560"
+      data-height="300"
+    >
+    \begin{tikzpicture}
 
-    \pic[
-        blue!70!black
-    ] (Base) {
-        frame pivot triangle
-    };
+        \pic[
+            blue!70!black
+        ] (Base) {
+            frame pivot triangle
+        };
 
-    \pic[
-        red!75!black
-    ] (LinkA) at (Base-center) {
-        link bar generic={25:55pt/1/1/1/0}
-    };
+        \pic[
+            red!75!black
+        ] (LinkA) at (Base-center) {
+            link bar generic={25:55pt/1/1/1/0}
+        };
 
-    \pic[
-        green!50!black
-    ] (LinkB) at (LinkA-end) {
-        revolute pair planar={-40:45pt/0/1}
-    };
+        \pic[
+            green!50!black
+        ] (LinkB) at (LinkA-end) {
+            revolute pair planar={-40:45pt/0/1}
+        };
 
-    \pic[
-        orange!80!black,
-        scale=0.7
-    ] at (LinkB-out) {
-        gripper=0/0
-    };
+        \pic[
+            orange!80!black,
+            scale=0.7
+        ] at (LinkB-out) {
+            gripper=0/0
+        };
 
-\end{tikzpicture}
-</script>
-```
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
-  data-width="560"
-  data-height="300"
->
-\begin{tikzpicture}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+      data-width="560"
+      data-height="300"
+    >
+    \begin{tikzpicture}
 
-    \pic[
-        blue!70!black
-    ] (Base) {
-        frame pivot triangle
-    };
+        \pic[
+            blue!70!black
+        ] (Base) {
+            frame pivot triangle
+        };
 
-    \pic[
-        red!75!black
-    ] (LinkA) at (Base-center) {
-        link bar generic={25:55pt/1/1/1/0}
-    };
+        \pic[
+            red!75!black
+        ] (LinkA) at (Base-center) {
+            link bar generic={25:55pt/1/1/1/0}
+        };
 
-    \pic[
-        green!50!black
-    ] (LinkB) at (LinkA-end) {
-        revolute pair planar={-40:45pt/0/1}
-    };
+        \pic[
+            green!50!black
+        ] (LinkB) at (LinkA-end) {
+            revolute pair planar={-40:45pt/0/1}
+        };
 
-    \pic[
-        orange!80!black,
-        scale=0.7
-    ] at (LinkB-out) {
-        gripper=0/0
-    };
+        \pic[
+            orange!80!black,
+            scale=0.7
+        ] at (LinkB-out) {
+            gripper=0/0
+        };
 
-\end{tikzpicture}
-</script>
-```
-````
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -1546,91 +1476,87 @@ Styles can be extended locally with `\tikzset`.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
-  data-width="580"
-  data-height="300"
->
-\begin{tikzpicture}
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+      data-width="580"
+      data-height="300"
+    >
+    \begin{tikzpicture}
 
-    \tikzset{
-        knLinkStyle/.append style={
-            line width=1.5pt,
-            blue!70!black
-        },
+        \tikzset{
+            knLinkStyle/.append style={
+                line width=1.5pt,
+                blue!70!black
+            },
 
-        knJointStyle/.append style={
-            line width=1.5pt,
-            red!70!black
-        },
+            knJointStyle/.append style={
+                line width=1.5pt,
+                red!70!black
+            },
 
-        knLineCap/.style={
-            line cap=round
+            knLineCap/.style={
+                line cap=round
+            }
         }
-    }
 
-    \pic (Base) {
-        frame pivot triangle
-    };
+        \pic (Base) {
+            frame pivot triangle
+        };
 
-    \pic (JointA) at (Base-out) {
-        revolute pair planar=30:55pt
-    };
+        \pic (JointA) at (Base-out) {
+            revolute pair planar=30:55pt
+        };
 
-    \pic (JointB) at (JointA-out) {
-        revolute pair planar=-35:45pt
-    };
+        \pic (JointB) at (JointA-out) {
+            revolute pair planar=-35:45pt
+        };
 
-\end{tikzpicture}
-</script>
-```
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
-  data-width="580"
-  data-height="300"
->
-\begin{tikzpicture}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+      data-width="580"
+      data-height="300"
+    >
+    \begin{tikzpicture}
 
-    \tikzset{
-        knLinkStyle/.append style={
-            line width=1.5pt,
-            blue!70!black
-        },
+        \tikzset{
+            knLinkStyle/.append style={
+                line width=1.5pt,
+                blue!70!black
+            },
 
-        knJointStyle/.append style={
-            line width=1.5pt,
-            red!70!black
-        },
+            knJointStyle/.append style={
+                line width=1.5pt,
+                red!70!black
+            },
 
-        knLineCap/.style={
-            line cap=round
+            knLineCap/.style={
+                line cap=round
+            }
         }
-    }
 
-    \pic (Base) {
-        frame pivot triangle
-    };
+        \pic (Base) {
+            frame pivot triangle
+        };
 
-    \pic (JointA) at (Base-out) {
-        revolute pair planar=30:55pt
-    };
+        \pic (JointA) at (Base-out) {
+            revolute pair planar=30:55pt
+        };
 
-    \pic (JointB) at (JointA-out) {
-        revolute pair planar=-35:45pt
-    };
+        \pic (JointB) at (JointA-out) {
+            revolute pair planar=-35:45pt
+        };
 
-\end{tikzpicture}
-</script>
-```
-````
+    \end{tikzpicture}
+    </script>
+    ```
 
 Because every TikZJax block is compiled independently, this local style modification affects only the current diagram.
 
@@ -1661,87 +1587,81 @@ Example:
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
-  data-width="580"
-  data-height="310"
->
-\begin{tikzpicture}[
-    scale=1.2,
-    transform shape
-]
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+      data-width="580"
+      data-height="310"
+    >
+    \begin{tikzpicture}[
+        scale=1.2,
+        transform shape
+    ]
 
-    \pic (Base) {
-        frame pivot triangle
-    };
+        \pic (Base) {
+            frame pivot triangle
+        };
 
-    \pic (LinkA) at (Base-center) {
-        link bar generic=25:45pt
-    };
+        \pic (LinkA) at (Base-center) {
+            link bar generic=25:45pt
+        };
 
-    \pic (LinkB) at (LinkA-end) {
-        link bar generic=-35:40pt
-    };
+        \pic (LinkB) at (LinkA-end) {
+            link bar generic=-35:40pt
+        };
 
-\end{tikzpicture}
-</script>
-```
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
-  data-width="580"
-  data-height="310"
->
-\begin{tikzpicture}[
-    scale=1.2,
-    transform shape
-]
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+      data-width="580"
+      data-height="310"
+    >
+    \begin{tikzpicture}[
+        scale=1.2,
+        transform shape
+    ]
 
-    \pic (Base) {
-        frame pivot triangle
-    };
+        \pic (Base) {
+            frame pivot triangle
+        };
 
-    \pic (LinkA) at (Base-center) {
-        link bar generic=25:45pt
-    };
+        \pic (LinkA) at (Base-center) {
+            link bar generic=25:45pt
+        };
 
-    \pic (LinkB) at (LinkA-end) {
-        link bar generic=-35:40pt
-    };
+        \pic (LinkB) at (LinkA-end) {
+            link bar generic=-35:40pt
+        };
 
-\end{tikzpicture}
-</script>
-```
-````
+    \end{tikzpicture}
+    </script>
+    ```
 
 !!! note
 
-````
-Changing an object parameter such as:
+    Changing an object parameter such as:
 
-```latex
-frame pivot triangle=1.5cm
-```
+    ```latex
+    frame pivot triangle=1.5cm
+    ```
 
-modifies the object geometry.
+    modifies the object geometry.
 
-Applying:
+    Applying:
 
-```latex
-scale=1.5
-```
+    ```latex
+    scale=1.5
+    ```
 
-applies a TikZ transformation.
+    applies a TikZ transformation.
 
-The two operations are not always visually equivalent.
-````
+    The two operations are not always visually equivalent.
 
 ---
 
@@ -1776,11 +1696,9 @@ Only include packages required by the current diagram.
 
 !!! warning
 
-```
-Loading more packages creates a larger TeX preamble.
+    Loading more packages creates a larger TeX preamble.
 
-It may increase rendering time, memory usage, and the possibility of package conflicts.
-```
+    It may increase rendering time, memory usage, and the possibility of package conflicts.
 
 ---
 
@@ -1834,19 +1752,17 @@ data-tex-packages="kinematikz"
 
 !!! warning "Performance"
 
-````
-Global loading inserts:
+    Global loading inserts:
 
-```latex
-\usepackage{kinematikz}
-```
+    ```latex
+    \usepackage{kinematikz}
+    ```
 
-into every TikZJax document.
+    into every TikZJax document.
 
-Ordinary TikZ diagrams will therefore initialize the package and its required TikZ libraries even when they contain no mechanism.
+    Ordinary TikZ diagrams will therefore initialize the package and its required TikZ libraries even when they contain no mechanism.
 
-Prefer local loading unless KinemaTikZ is used throughout the site.
-````
+    Prefer local loading unless KinemaTikZ is used throughout the site.
 
 ---
 
@@ -1858,56 +1774,50 @@ Therefore, fenced blocks using KinemaTikZ work only when the package is loaded g
 
 === "Rendering"
 
-````
-```tikzjax
-\begin{tikzpicture}
+    <script type="text/tikz">
+    \begin{tikzpicture}
 
-    \pic (Base) {
-        frame pivot triangle
-    };
+        \pic (Base) {
+            frame pivot triangle
+        };
 
-    \pic (Link) at (Base-center) {
-        link bar generic=25:55pt
-    };
+        \pic (Link) at (Base-center) {
+            link bar generic=25:55pt
+        };
 
-\end{tikzpicture}
-```
-````
+    \end{tikzpicture}
+    </script>
 
 === ":fa-markdown: Markdown"
 
-`````
-````markdown
-```tikzjax
-\begin{tikzpicture}
+    ````markdown
+    ```tikzjax
+    \begin{tikzpicture}
 
-    \pic (Base) {
-        frame pivot triangle
-    };
+        \pic (Base) {
+            frame pivot triangle
+        };
 
-    \pic (Link) at (Base-center) {
-        link bar generic=25:55pt
-    };
+        \pic (Link) at (Base-center) {
+            link bar generic=25:55pt
+        };
 
-\end{tikzpicture}
-```
-````
-`````
+    \end{tikzpicture}
+    ```
+    ````
 
 !!! important
 
-````
-For portable local loading, prefer:
+    For portable local loading, prefer:
 
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="kinematikz"
->
-...
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="kinematikz"
+    >
+    ...
+    </script>
+    ```
 
 ---
 
@@ -1915,71 +1825,67 @@ For portable local loading, prefer:
 
 === "Rendering"
 
-```
-=== "Question"
+    === "Question"
 
-    Draw a simple mechanism containing a fixed pivot and two moving links.
+        Draw a simple mechanism containing a fixed pivot and two moving links.
 
-=== "Solution"
+    === "Solution"
 
-    <script
-      type="text/tikz"
-      data-tex-packages="kinematikz"
-      data-width="520"
-      data-height="280"
-    >
-    \begin{tikzpicture}
+        <script
+          type="text/tikz"
+          data-tex-packages="kinematikz"
+          data-width="520"
+          data-height="280"
+        >
+        \begin{tikzpicture}
 
-        \pic (Base) {
-            frame pivot triangle
-        };
+            \pic (Base) {
+                frame pivot triangle
+            };
 
-        \pic (LinkA) at (Base-center) {
-            link bar generic=25:50pt
-        };
+            \pic (LinkA) at (Base-center) {
+                link bar generic=25:50pt
+            };
 
-        \pic (LinkB) at (LinkA-end) {
-            revolute pair planar=-40:45pt
-        };
+            \pic (LinkB) at (LinkA-end) {
+                revolute pair planar=-40:45pt
+            };
 
-    \end{tikzpicture}
-    </script>
-```
+        \end{tikzpicture}
+        </script>
 
 === ":fa-markdown: Markdown"
 
-`````
-````markdown
-=== "Question"
+    ````markdown
+    === "Question"
 
-    Draw a simple mechanism containing a fixed pivot and two moving links.
+        Draw a simple mechanism containing a fixed pivot and two moving links.
 
-=== "Solution"
+    === "Solution"
 
-    <script
-      type="text/tikz"
-      data-tex-packages="kinematikz"
-      data-width="520"
-      data-height="280"
-    >
-    \begin{tikzpicture}
+        <script
+          type="text/tikz"
+          data-tex-packages="kinematikz"
+          data-width="520"
+          data-height="280"
+        >
+        \begin{tikzpicture}
 
-        \pic (Base) {
-            frame pivot triangle
-        };
+            \pic (Base) {
+                frame pivot triangle
+            };
 
-        \pic (LinkA) at (Base-center) {
-            link bar generic=25:50pt
-        };
+            \pic (LinkA) at (Base-center) {
+                link bar generic=25:50pt
+            };
 
-        \pic (LinkB) at (LinkA-end) {
-            revolute pair planar=-40:45pt
-        };
+            \pic (LinkB) at (LinkA-end) {
+                revolute pair planar=-40:45pt
+            };
 
-    \end{tikzpicture}
-    </script>
-````
-`````
+        \end{tikzpicture}
+        </script>
+    ````
 
 TikZJax automatically rescans MkDocs Material content tabs when they become visible.
 
@@ -1989,51 +1895,47 @@ TikZJax automatically rescans MkDocs Material content tabs when they become visi
 
 === "Rendering"
 
-```
-!!! example "Kinematic chain"
+    !!! example "Kinematic chain"
 
-    <script
-      type="text/tikz"
-      data-tex-packages="kinematikz"
-    >
-    \begin{tikzpicture}
+        <script
+          type="text/tikz"
+          data-tex-packages="kinematikz"
+        >
+        \begin{tikzpicture}
 
-        \pic (Base) {
-            frame pivot triangle
-        };
+            \pic (Base) {
+                frame pivot triangle
+            };
 
-        \pic (Link) at (Base-center) {
-            link bar generic=25:55pt
-        };
+            \pic (Link) at (Base-center) {
+                link bar generic=25:55pt
+            };
 
-    \end{tikzpicture}
-    </script>
-```
+        \end{tikzpicture}
+        </script>
 
 === ":fa-markdown: Markdown"
 
-`````
-````markdown
-!!! example "Kinematic chain"
+    ````markdown
+    !!! example "Kinematic chain"
 
-    <script
-      type="text/tikz"
-      data-tex-packages="kinematikz"
-    >
-    \begin{tikzpicture}
+        <script
+          type="text/tikz"
+          data-tex-packages="kinematikz"
+        >
+        \begin{tikzpicture}
 
-        \pic (Base) {
-            frame pivot triangle
-        };
+            \pic (Base) {
+                frame pivot triangle
+            };
 
-        \pic (Link) at (Base-center) {
-            link bar generic=25:55pt
-        };
+            \pic (Link) at (Base-center) {
+                link bar generic=25:55pt
+            };
 
-    \end{tikzpicture}
-    </script>
-````
-`````
+        \end{tikzpicture}
+        </script>
+    ````
 
 ---
 
@@ -2137,11 +2039,9 @@ The first `kinematikz` diagram handled by a worker may therefore take longer tha
 
 !!! tip
 
-```
-Local package loading remains fully compatible with parallel rendering.
+    Local package loading remains fully compatible with parallel rendering.
 
-The package declaration travels with the individual diagram when it is assigned to a worker.
-```
+    The package declaration travels with the individual diagram when it is assigned to a worker.
 
 ---
 

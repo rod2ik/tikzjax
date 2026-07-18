@@ -119,11 +119,9 @@ The global configuration becomes the base configuration for every diagram on the
 
 !!! tip
 
-```
-Global configuration is appropriate for options that genuinely apply to most or all diagrams.
+    Global configuration is appropriate for options that genuinely apply to most or all diagrams.
 
-Do not globally load a large package merely because one diagram needs it.
-```
+    Do not globally load a large package merely because one diagram needs it.
 
 ---
 
@@ -186,9 +184,7 @@ console.log(options);
 
 !!! tip
 
-```
-Prefer `window.TikzJaxConfigure()` for runtime updates because it makes the merge operation explicit.
-```
+    Prefer `window.TikzJaxConfigure()` for runtime updates because it makes the merge operation explicit.
 
 ---
 
@@ -307,11 +303,9 @@ Likewise, assigning a new nested object does not erase unspecified keys from the
 
 !!! warning
 
-```
-Configure the final global dependency list before loading TikZJax whenever possible.
+    Configure the final global dependency list before loading TikZJax whenever possible.
 
-Partial updates are useful for additions and scalar overrides, but they are not intended for removing previously registered packages, libraries, or nested settings.
-```
+    Partial updates are useful for additions and scalar overrides, but they are not intended for removing previously registered packages, libraries, or nested settings.
 
 ---
 
@@ -675,11 +669,9 @@ shapes.geometric
 
 !!! warning
 
-```
-A package and a TikZ library can have very different runtime files and loading behavior.
+    A package and a TikZ library can have very different runtime files and loading behavior.
 
-Declaring a dependency in the wrong category may produce an undefined command, an unknown key, or a missing-file error.
-```
+    Declaring a dependency in the wrong category may produce an undefined command, an unknown key, or a missing-file error.
 
 ---
 
@@ -708,15 +700,13 @@ The local `data-add-to-preamble` value becomes the configured `tex.addToPreamble
 
 Therefore, when a site already defines a global custom preamble, include the required global definitions again in a local replacement or use the local JSON configuration to supply the complete intended value.
 
-TikZJax-generated `tkz-tab` macros are still inserted before the configured custom preamble.
+The TikZJax-generated `tkz-tab` preamble is still inserted before the configured custom preamble. It contains the public helper macros and, when `tkzTab.autoApply` is enabled, the generated native `tkz-tab` defaults.
 
 !!! important
 
-```
-A local package list and a local preamble are separate settings.
+    A local package list and a local preamble are separate settings.
 
-Loading a package does not automatically define your custom macros, and adding a macro does not automatically load the package that provides its commands.
-```
+    Loading a package does not automatically define your custom macros, and adding a macro does not automatically load the package that provides its commands.
 
 Example:
 
@@ -814,11 +804,9 @@ They are then merged with the global configuration.
 
 !!! tip
 
-```
-Avoid defining the same option in both `data-tikzjax-options` and a dedicated attribute.
+    Avoid defining the same option in both `data-tikzjax-options` and a dedicated attribute.
 
-Even though the precedence is deterministic, using one local source per option makes the diagram easier to understand.
-```
+    Even though the precedence is deterministic, using one local source per option makes the diagram easier to understand.
 
 ---
 
@@ -847,59 +835,87 @@ Dedicated attributes remain the preferred syntax for simple local changes.
 
 ## Local `tkz-tab` configuration
 
-TikZJax can generate reusable TeX macros from the `tkzTab` configuration.
+The `data-tkz-tab` attribute provides a local `tkzTab` object for one diagram.
 
-Global example:
+Package loading remains separate. A local table normally needs both:
 
-```js
-window.TikzJaxOptions = {
-    tkzTab: {
-        lineWidth: "1.1pt",
-        font: "\\large",
-        lgt: "4.5",
-        espcl: "2.6",
-        variableRowHeight: "1.3",
-        signRowHeight: "1.3",
-        variationRowHeight: "2.2"
-    }
-};
+```html
+data-tex-packages="tkz-tab"
+data-tkz-tab='{ ... }'
 ```
 
-These settings generate macros such as:
+The local object is recursively merged with the global `tkzTab` configuration.
 
-```text
-\tikzjaxTkzTabLineWidth
-\tikzjaxTkzTabFont
-\tikzjaxTkzTabLgt
-\tikzjaxTkzTabEspcl
-\tikzjaxTkzTabVariableRowHeight
-\tikzjaxTkzTabSignRowHeight
-\tikzjaxTkzTabVariationRowHeight
-```
+When `autoApply` is enabled, supported values are converted automatically into native `tkz-tab` defaults:
 
-A single diagram can provide local style values:
+| Local option | Automatic effect |
+| ------------ | ---------------- |
+| `lineWidth` | Sets the native `lw` default and refreshes the package line styles |
+| `font` | Appends the configured font to the diagram's TikZ nodes |
+| `firstColumnWidth` | Sets native `lgt` and takes priority over `lgt` |
+| `lgt` | Sets native `lgt` when `firstColumnWidth` is absent |
+| `espcl` | Sets native `espcl` |
+| `init` | Adds or overrides native `\tkzTabInit` preset keys |
+| `setup` | Passes options to native `\tkzTabSetup` |
+| `colors` | Passes options to native `\tkzTabColors` |
+
+For example:
 
 ```html
 <script
   type="text/tikz"
   data-tex-packages="tkz-tab"
   data-tkz-tab='{
+    "autoApply": true,
     "lineWidth": "1.4pt",
     "font": "\\Large",
-    "lgt": "5",
-    "espcl": "3"
+    "firstColumnWidth": 5,
+    "espcl": 3,
+    "init": {
+      "deltacl": 0.8
+    },
+    "setup": {
+      "arrowlinewidth": "1pt"
+    },
+    "colors": {
+      "color": "black",
+      "backgroundcolor": "white"
+    }
   }'
 >
-\begin{tikzpicture}[
-    line width=\tikzjaxTkzTabLineWidth,
-    font=\tikzjaxTkzTabFont
-]
-    % tkz-tab source
+\begin{tikzpicture}
+    \tkzTabInit
+        {$x$/1,$f'(x)$/1,$f(x)$/2}
+        {$-\infty$,$0$,$+\infty$}
+
+    \tkzTabLine{,-,z,+,}
+    \tkzTabVar{+/$+\infty$,-/$0$,+/$+\infty$}
 \end{tikzpicture}
 </script>
 ```
 
-The local `tkzTab` object is recursively merged with the global `tkzTab` object for this diagram.
+The source does not need to reference `\tikzjaxTkzTabLineWidth` or `\tikzjaxTkzTabFont` for these automatic defaults to apply.
+
+Within the merged local object, keys in `init` override corresponding automatically derived values. Explicit TeX options remain higher priority than every configured default:
+
+```latex
+\tkzTabInit[
+    lw=0.8pt,
+    lgt=4
+]
+```
+
+Set `"autoApply": false` to keep the public helper macros without applying native defaults automatically.
+
+Row-height settings remain helper macros because TikZJax cannot infer the semantic type of each required `label/height` row:
+
+```text
+\tikzjaxTkzTabVariableRowHeight
+\tikzjaxTkzTabSignRowHeight
+\tikzjaxTkzTabVariationRowHeight
+\tikzjaxTkzTabImageRowHeight
+\tikzjaxTkzTabAntecedentRowHeight
+```
 
 See the [`tkz-tab` examples](examples/tkz-tab.md) for complete tables.
 
@@ -960,11 +976,9 @@ The fenced block can then use them:
 
 !!! tip
 
-```
-Use fenced blocks for diagrams that depend only on the site's standard global configuration.
+    Use fenced blocks for diagrams that depend only on the site's standard global configuration.
 
-Use `<script type="text/tikz">` when the diagram requires specialized local dependencies or options.
-```
+    Use `<script type="text/tikz">` when the diagram requires specialized local dependencies or options.
 
 ---
 

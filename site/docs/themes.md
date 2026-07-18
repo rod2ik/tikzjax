@@ -123,7 +123,7 @@ Choose explicit colors that provide sufficient contrast in every supported theme
 
 ---
 
-# Configuration
+## Configuration
 
 Theme configuration belongs in the global TikZJax options:
 
@@ -154,7 +154,7 @@ It is not configured separately for each diagram.
 
 ---
 
-## Theme-option summary
+### Theme-option summary
 
 | Option                    | Purpose                                        |
 | ------------------------- | ---------------------------------------------- |
@@ -170,7 +170,7 @@ It is not configured separately for each diagram.
 
 ---
 
-# Material for MkDocs
+## Material for MkDocs
 
 Material for MkDocs commonly stores the active palette in:
 
@@ -237,7 +237,7 @@ Explicit configuration is useful when:
 
 ---
 
-# Attribute-based themes
+## Attribute-based themes
 
 Use attribute-based detection when the site stores the active theme in an HTML attribute.
 
@@ -264,7 +264,7 @@ window.TikzJaxOptions = {
 
 ---
 
-## Bootstrap-style theme attribute
+### Bootstrap-style theme attribute
 
 Example:
 
@@ -289,7 +289,7 @@ window.TikzJaxOptions = {
 
 ---
 
-## Custom attribute values
+### Custom attribute values
 
 The attribute values do not have to be named `light` and `dark`.
 
@@ -317,7 +317,7 @@ The configured values must exactly match the values present in the final HTML.
 
 ---
 
-# Class-based themes
+## Class-based themes
 
 Use class detection when the active theme is represented by a CSS class.
 
@@ -359,7 +359,7 @@ window.TikzJaxOptions = {
 
 ---
 
-# Automatic detection
+## Automatic detection
 
 Without an explicit selector, TikZJax can recognize common theme conventions.
 
@@ -392,7 +392,7 @@ It prevents unrelated theme-like attributes elsewhere in the document from creat
 
 ---
 
-# Fallback theme
+## Fallback theme
 
 Use `fallbackTheme` when no usable theme state can be detected:
 
@@ -425,7 +425,7 @@ An invalid value is ignored in favor of another available theme source or the bu
 
 ---
 
-## `defaultTheme`
+### `defaultTheme`
 
 `defaultTheme` is supported as a compatibility alias:
 
@@ -443,7 +443,7 @@ When both are present, `fallbackTheme` should be treated as the explicit current
 
 ---
 
-# System theme
+## System theme
 
 Enable system-theme fallback with:
 
@@ -486,7 +486,7 @@ The explicit DOM theme remains the preferred signal when it is available.
 
 ---
 
-# Dynamic theme changes
+## Dynamic theme changes
 
 TikZJax observes relevant page-level theme changes.
 
@@ -517,7 +517,7 @@ Typical examples include:
 
 ---
 
-## Observed elements
+### Observed elements
 
 TikZJax can observe:
 
@@ -533,7 +533,7 @@ Avoid selecting a decorative child element whose state does not represent the co
 
 ---
 
-# Parallel rendering
+## Parallel rendering
 
 Diagrams can finish in a different order when the worker pool is enabled.
 
@@ -559,7 +559,7 @@ See [Parallel Rendering and the Worker Pool](parallel-rendering.md).
 
 ---
 
-# Cached SVGs
+## Cached SVGs
 
 A diagram restored from the persistent SVG cache is also inserted into the current page and adapted to the current theme.
 
@@ -579,7 +579,7 @@ See [Cache and Performance](cache-performance.md).
 
 ---
 
-# Dynamic content
+## Dynamic content
 
 A diagram inserted after the initial page load follows the same theme process.
 
@@ -606,9 +606,9 @@ This includes diagrams appearing through:
 
 ---
 
-# Explicit colors
+## Explicit colors
 
-## Colors intended to remain fixed
+### Colors intended to remain fixed
 
 Use explicit TikZ colors when a stroke or fill must retain its chosen color:
 
@@ -628,7 +628,7 @@ TikZJax normally preserves these colors.
 
 ---
 
-## Colors that should follow the page
+### Colors that should follow the page
 
 Use default TikZ foreground colors when the element should adapt automatically:
 
@@ -649,7 +649,7 @@ The default line and label can be converted to `currentColor`.
 
 ---
 
-## Avoid forcing black unnecessarily
+### Avoid forcing black unnecessarily
 
 This explicitly black line may remain intentionally black:
 
@@ -667,7 +667,7 @@ The same principle applies to text and fills.
 
 ---
 
-# Separate light and dark diagrams
+## Separate light and dark diagrams
 
 For illustrations whose palettes cannot be adapted automatically, provide two source versions.
 
@@ -711,17 +711,15 @@ Adapt the selectors and values to the site's actual theme state.
 
 !!! note
 
-```
-Both source blocks may still be discovered and rendered even when one container is hidden.
+    Both source blocks may still be discovered and rendered even when one container is hidden.
 
-When rendering both versions is undesirable, insert only the active version dynamically or use a site-specific content strategy.
-```
+    When rendering both versions is undesirable, insert only the active version dynamically or use a site-specific content strategy.
 
 ---
 
-# Recommended configurations
+## Recommended configurations
 
-## Material for MkDocs
+### Material for MkDocs
 
 ```js
 window.TikzJaxOptions = {
@@ -738,7 +736,7 @@ window.TikzJaxOptions = {
 
 ---
 
-## Custom attribute-based site
+### Custom attribute-based site
 
 ```js
 window.TikzJaxOptions = {
@@ -755,7 +753,7 @@ window.TikzJaxOptions = {
 
 ---
 
-## Class-based site
+### Class-based site
 
 ```js
 window.TikzJaxOptions = {
@@ -771,7 +769,7 @@ window.TikzJaxOptions = {
 
 ---
 
-## System-only site
+### System-only site
 
 ```js
 window.TikzJaxOptions = {
@@ -783,9 +781,9 @@ window.TikzJaxOptions = {
 
 ---
 
-# Troubleshooting
+## Troubleshooting
 
-## The diagram remains black in dark mode
+### The diagram remains black in dark mode
 
 Inspect the final page HTML.
 
@@ -819,7 +817,7 @@ Also verify that the affected line or text does not explicitly force a custom bl
 
 ---
 
-## Theme changes only after a page reload
+### Theme changes only after a page reload
 
 Check that the actual attribute or class changes when the theme toggle is activated.
 
@@ -845,7 +843,7 @@ Also check the Console for a JavaScript error that may have stopped the theme ob
 
 ---
 
-## The wrong theme is detected
+### The wrong theme is detected
 
 Use explicit configuration instead of automatic detection:
 
@@ -870,7 +868,7 @@ Verify that:
 
 ---
 
-## Explicit colors do not change
+### Explicit colors do not change
 
 This is expected.
 
@@ -884,7 +882,7 @@ Use:
 
 ---
 
-## A white rectangle remains visible in dark mode
+### A white rectangle remains visible in dark mode
 
 The rectangle may use an explicit fill that TikZJax does not classify as a default background.
 
@@ -899,7 +897,7 @@ Consider:
 
 ---
 
-## A cached diagram uses the wrong theme
+### A cached diagram uses the wrong theme
 
 A cached SVG is adapted after insertion.
 
@@ -916,7 +914,7 @@ Clearing IndexedDB should not normally be required merely for a theme change.
 
 ---
 
-## Only newly rendered diagrams change theme
+### Only newly rendered diagrams change theme
 
 Check whether older SVGs were:
 
@@ -930,7 +928,7 @@ Theme updates operate on TikZJax-managed SVG output in the active document.
 
 ---
 
-## The theme configuration is ignored
+### The theme configuration is ignored
 
 Confirm the loading order:
 
@@ -960,7 +958,7 @@ window.TikzJaxConfigure({
 
 ---
 
-# Related documentation
+## Related documentation
 
 * [Configuration](configuration.md)
 * [Global and Local Configuration](configuration-scopes.md)

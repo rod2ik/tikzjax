@@ -170,13 +170,13 @@ All runtime files should come from the same TikZJax release.
 
 ---
 
-# Main-thread architecture
+## Main-thread architecture
 
-## Source discovery
+### Source discovery
 
 TikZJax recognizes two source families.
 
-### HTML blocks
+#### HTML blocks
 
 ```html
 <script type="text/tikz">
@@ -186,7 +186,7 @@ TikZJax recognizes two source families.
 </script>
 ```
 
-### Fenced-block output
+#### Fenced-block output
 
 TikZJax recognizes generated `<pre>` elements with classes such as:
 
@@ -213,7 +213,7 @@ When a nested `<code>` element exists, TikZJax extracts its text content as the 
 
 ---
 
-## Initial page scan
+### Initial page scan
 
 After initialization, TikZJax scans the document for supported source blocks.
 
@@ -250,7 +250,7 @@ page scan
 
 ---
 
-## Source normalization and processing state
+### Source normalization and processing state
 
 TikZJax tracks discovered source elements so that the same element is not processed repeatedly.
 
@@ -266,9 +266,9 @@ A source that has already been converted into a TikZJax wrapper is not treated a
 
 ---
 
-# Configuration architecture
+## Configuration architecture
 
-## Effective configuration
+### Effective configuration
 
 The configuration of one diagram is constructed from:
 
@@ -291,7 +291,7 @@ See [Global and Local Configuration](configuration-scopes.md).
 
 ---
 
-## Configuration responsibilities
+### Configuration responsibilities
 
 Some options control the complete runtime:
 
@@ -321,7 +321,7 @@ A diagram cannot create an independent local worker pool. Pool sizing and worker
 
 ---
 
-## Local attribute processing
+### Local attribute processing
 
 Local attributes are interpreted in a deterministic order:
 
@@ -340,11 +340,72 @@ Dedicated attributes therefore override equivalent values from a general local J
 
 The resulting effective configuration is serialized into the dataset sent to the worker.
 
+### `tkz-tab` preamble generation
+
+The effective `tkzTab` object belongs to the configuration of an individual rendering job.
+
+TikZJax generates a dedicated preamble fragment before the effective custom `tex.addToPreamble` string.
+
+This generated fragment has two roles.
+
+#### Public helper macros
+
+The configured values remain available through public TeX macros such as:
+
+```text
+\tikzjaxTkzTabLineWidth
+\tikzjaxTkzTabFont
+\tikzjaxTkzTabLgt
+\tikzjaxTkzTabFirstColumnWidth
+\tikzjaxTkzTabEspcl
+\tikzjaxTkzTabVariableRowHeight
+\tikzjaxTkzTabSignRowHeight
+\tikzjaxTkzTabVariationRowHeight
+\tikzjaxTkzTabImageRowHeight
+\tikzjaxTkzTabAntecedentRowHeight
+```
+
+The row-height values remain helper macros because the runtime cannot infer the semantic type of every required `label/height` row passed to `\tkzTabInit`.
+
+#### Automatic native defaults
+
+When `tkzTab.autoApply` is enabled, supported values are also converted into native `tkz-tab` defaults.
+
+The generated preamble can:
+
+* refresh the package default line width;
+* preset native `\tkzTabInit` keys such as `lw`, `lgt`, and `espcl`;
+* pass serialized scalar options to `\tkzTabSetup`;
+* pass serialized scalar options to `\tkzTabColors`;
+* append the configured font to TikZ nodes used by the table.
+
+The native first-column width is resolved from:
+
+```text
+tkzTab.firstColumnWidth
+?? tkzTab.lgt
+```
+
+Values in `tkzTab.init` override corresponding automatically derived `lw`, `lgt`, and `espcl` values.
+
+Explicit options written directly in the TeX source remain the highest-priority values:
+
+```latex
+\tkzTabInit[
+    lw=0.8pt,
+    lgt=4
+]
+```
+
+Setting `tkzTab.autoApply` to `false` disables the native-default commands but keeps the public helper macros.
+
+The generated commands are guarded so that ordinary diagrams remain valid when the `tkz-tab` package is not loaded.
+
 ---
 
-# Rendering identity and caching
+## Rendering identity and caching
 
-## Rendering identity
+### Rendering identity
 
 The persistent rendering identity is based on:
 
@@ -382,7 +443,7 @@ produce different rendering identities.
 
 ---
 
-## Scheduler-only values
+### Scheduler-only values
 
 A value used only for main-thread scheduling does not need to affect the compiled SVG.
 
@@ -398,7 +459,7 @@ Changing only the explicit queue priority therefore does not change the generate
 
 ---
 
-## Persistent SVG cache
+### Persistent SVG cache
 
 TikZJax stores generated SVG markup in IndexedDB.
 
@@ -427,7 +488,7 @@ See [Cache and Performance](cache-performance.md).
 
 ---
 
-## Cache bypass
+### Cache bypass
 
 A diagram with:
 
@@ -445,9 +506,9 @@ This does not disable:
 
 ---
 
-# Pending-job architecture
+## Pending-job architecture
 
-## Pending-job deduplication
+### Pending-job deduplication
 
 Several identical sources may be discovered before their first rendering has completed.
 
@@ -465,7 +526,7 @@ This prevents several workers from compiling the same rendering input simultaneo
 
 ---
 
-## Pending-job identity
+### Pending-job identity
 
 Two targets can share one pending job only when they have the same:
 
@@ -478,7 +539,7 @@ A different package list, preamble, library list, or relevant local option creat
 
 ---
 
-## Completed cache versus pending group
+### Completed cache versus pending group
 
 These mechanisms operate at different stages:
 
@@ -494,9 +555,9 @@ A successful pending job can subsequently populate the persistent cache.
 
 ---
 
-# Render queue architecture
+## Render queue architecture
 
-## Central queue
+### Central queue
 
 All uncached, non-duplicated jobs enter one global queue.
 
@@ -521,7 +582,7 @@ There is no separate independent queue for each source block.
 
 ---
 
-## Viewport priority
+### Viewport priority
 
 The scheduler calculates a priority from the source element's relationship with the current viewport.
 
@@ -540,7 +601,7 @@ An explicit `data-render-priority` value can override the automatic priority.
 
 ---
 
-## Reprioritization
+### Reprioritization
 
 The queue can be reprioritized as:
 
@@ -553,7 +614,7 @@ Jobs that have already started are not normally interrupted solely because anoth
 
 ---
 
-## Completion order
+### Completion order
 
 Parallel jobs can complete in any order.
 
@@ -571,9 +632,9 @@ Application code must not assume source-order completion.
 
 ---
 
-# Adaptive worker-pool architecture
+## Adaptive worker-pool architecture
 
-## Pool purpose
+### Pool purpose
 
 A Web Worker can execute only one TeX compilation at a time.
 
@@ -591,7 +652,7 @@ One diagram is never divided between workers.
 
 ---
 
-## Pool configuration
+### Pool configuration
 
 The main pool settings are:
 
@@ -624,7 +685,7 @@ The root `workerPool` value takes precedence.
 
 ---
 
-## Effective pool size
+### Effective pool size
 
 The effective number of workers is bounded by:
 
@@ -653,7 +714,7 @@ When no uncached work exists, the runtime does not need to initialize rendering 
 
 ---
 
-## Lazy initialization
+### Lazy initialization
 
 Worker initialization is deferred until the queue contains work.
 
@@ -677,7 +738,7 @@ TikZJax does not need to create every possible worker in advance.
 
 ---
 
-## Worker states
+### Worker states
 
 A worker can conceptually be in one of these states:
 
@@ -690,33 +751,33 @@ restarting
 terminated
 ```
 
-### Initializing
+#### Initializing
 
 The worker script, WebAssembly module, core dump, and TeX environment are being prepared.
 
-### Idle
+#### Idle
 
 The worker is ready to receive a job.
 
-### Busy
+#### Busy
 
 The worker is processing one diagram.
 
-### Failed
+#### Failed
 
 The worker encountered an initialization, runtime, communication, or timeout failure.
 
-### Restarting
+#### Restarting
 
 The failed worker is being replaced.
 
-### Terminated
+#### Terminated
 
 The worker is no longer part of the active runtime.
 
 ---
 
-## One active job per worker
+### One active job per worker
 
 A worker does not process two TeX compilations concurrently.
 
@@ -735,7 +796,7 @@ Concurrency exists between workers.
 
 ---
 
-## Dependency affinity
+### Dependency affinity
 
 When several workers are suitable for a job, the scheduler can prefer a worker that already has useful dependencies cached.
 
@@ -762,9 +823,9 @@ TikZJax does not intentionally leave useful capacity idle for a long period mere
 
 ---
 
-# Worker initialization
+## Worker initialization
 
-## Worker startup mode
+### Worker startup mode
 
 Workers can be created in one of three modes.
 
@@ -778,7 +839,7 @@ The configured worker mode applies to every member of the pool.
 
 ---
 
-## Initialization message
+### Initialization message
 
 After a worker is created, the main thread supplies initialization information such as:
 
@@ -792,7 +853,7 @@ The worker must report successful initialization before it becomes idle and elig
 
 ---
 
-## Initialization retries
+### Initialization retries
 
 Worker startup failures are governed by:
 
@@ -808,9 +869,9 @@ If initialization cannot succeed after the allowed attempts, that worker cannot 
 
 ---
 
-# Worker runtime architecture
+## Worker runtime architecture
 
-## WebAssembly TeX engine
+### WebAssembly TeX engine
 
 Each worker initializes a TeX engine from:
 
@@ -830,7 +891,7 @@ The WebAssembly instance and TeX engine remain associated with that worker for s
 
 ---
 
-## Virtual filesystem
+### Virtual filesystem
 
 Each worker owns an isolated virtual filesystem.
 
@@ -847,7 +908,7 @@ Another worker cannot directly access this filesystem.
 
 ---
 
-## Worker-local TeX file cache
+### Worker-local TeX file cache
 
 Optional packages and TikZ libraries are stored as compressed runtime files under:
 
@@ -877,7 +938,7 @@ worker 2:
 
 ---
 
-## Isolation between workers
+### Isolation between workers
 
 Workers do not directly share:
 
@@ -891,7 +952,7 @@ The browser may reuse compressed HTTP responses, but each worker maintains its o
 
 ---
 
-## Runtime reuse
+### Runtime reuse
 
 An initialized worker can process multiple diagrams:
 
@@ -912,9 +973,9 @@ Reusable runtime files remain available, while job-specific files are cleaned be
 
 ---
 
-# Generated LaTeX document
+## Generated LaTeX document
 
-## Document construction
+### Document construction
 
 For every job, the worker builds a complete LaTeX document.
 
@@ -937,7 +998,9 @@ Conceptually:
     positioning
 }
 
-% TikZJax-generated tkz-tab macros
+% TikZJax-generated tkz-tab preamble
+% - public helper macros
+% - native defaults when autoApply is enabled
 
 % Effective custom preamble
 \newcommand{\R}{\mathbb{R}}
@@ -953,7 +1016,7 @@ The exact order and support code are generated by the worker implementation.
 
 ---
 
-## Package generation
+### Package generation
 
 The effective package object:
 
@@ -975,7 +1038,7 @@ Packages loaded locally are merged with globally configured packages for the cur
 
 ---
 
-## TikZ-library generation
+### TikZ-library generation
 
 The effective library list:
 
@@ -1001,17 +1064,17 @@ Duplicate names are removed during configuration merging.
 
 ---
 
-## Custom preamble
+### Custom preamble
 
 The effective `tex.addToPreamble` string is inserted before `\begin{document}`.
 
 A local `data-add-to-preamble` value is a scalar override of the global custom preamble for that diagram.
 
-TikZJax-generated `tkz-tab` macros are inserted separately before the effective custom preamble.
+The complete TikZJax-generated `tkz-tab` preamble is inserted separately before the effective custom preamble. It contains the public helper macros and, when `tkzTab.autoApply` is enabled, the guarded native-default commands.
 
 ---
 
-## User source
+### User source
 
 The exact extracted source is inserted into the document body.
 
@@ -1031,9 +1094,9 @@ or:
 
 ---
 
-# TeX execution
+## TeX execution
 
-## Compilation
+### Compilation
 
 The worker writes the generated document to:
 
@@ -1063,7 +1126,7 @@ Compilation failures can include:
 
 ---
 
-## Console forwarding
+### Console forwarding
 
 A diagram with:
 
@@ -1083,7 +1146,7 @@ This is useful for identifying:
 
 ---
 
-## Timing collection
+### Timing collection
 
 With timing diagnostics enabled, the worker can report stages such as:
 
@@ -1097,9 +1160,9 @@ Timing information is sent back with or alongside the result and logged by the r
 
 ---
 
-# DVI conversion
+## DVI conversion
 
-## DVI output
+### DVI output
 
 The TeX engine produces a DVI document rather than directly generating browser SVG.
 
@@ -1107,7 +1170,7 @@ The worker reads the DVI bytes and passes them to the DVI conversion layer.
 
 ---
 
-## `dvi2html`
+### `dvi2html`
 
 TikZJax uses `@rod2ik/dvi2html` to convert the DVI output into HTML and SVG markup suitable for insertion into the page.
 
@@ -1127,9 +1190,9 @@ The result is sent from the worker to the main thread.
 
 ---
 
-# Result handling
+## Result handling
 
-## Successful result
+### Successful result
 
 The worker response contains the generated markup and associated job information.
 
@@ -1147,7 +1210,7 @@ The main thread:
 
 ---
 
-## Generated wrapper
+### Generated wrapper
 
 Output is placed inside a wrapper similar to:
 
@@ -1167,7 +1230,7 @@ The `mathjax_ignore` class helps prevent later MathJax rescans from reprocessing
 
 ---
 
-## Helper containers
+### Helper containers
 
 If a source is inside:
 
@@ -1187,9 +1250,9 @@ the SVG also receives full-width and full-height behavior.
 
 ---
 
-# Theme architecture
+## Theme architecture
 
-## Theme detection
+### Theme detection
 
 After SVG insertion, TikZJax determines the applicable theme.
 
@@ -1207,7 +1270,7 @@ See [Themes](themes.md).
 
 ---
 
-## SVG adaptation
+### SVG adaptation
 
 TikZJax can adapt common generated colors for dark and light backgrounds.
 
@@ -1224,7 +1287,7 @@ Theme adaptation happens after SVG generation and can be reapplied when the site
 
 ---
 
-## Theme observation
+### Theme observation
 
 TikZJax observes relevant theme changes and schedules updates to already rendered SVG elements.
 
@@ -1242,9 +1305,9 @@ adapt existing SVG
 
 ---
 
-# Dynamic-content architecture
+## Dynamic-content architecture
 
-## Central MutationObserver
+### Central MutationObserver
 
 TikZJax uses a central DOM observer rather than creating one observer per diagram.
 
@@ -1262,7 +1325,7 @@ Detected candidates are added to a central processing queue.
 
 ---
 
-## Mutation batching
+### Mutation batching
 
 DOM mutations may arrive in bursts.
 
@@ -1278,7 +1341,7 @@ This is useful for frontend frameworks and documentation themes that insert seve
 
 ---
 
-## MkDocs content tabs
+### MkDocs content tabs
 
 TikZJax listens for interactions commonly associated with MkDocs Material content tabs.
 
@@ -1288,7 +1351,7 @@ Those diagrams join the same global render queue and worker pool as the rest of 
 
 ---
 
-## Client-side navigation
+### Client-side navigation
 
 On sites using client-side page replacement, newly inserted page content is detected through the same DOM-observation system.
 
@@ -1296,9 +1359,9 @@ Previously processed elements are not rendered again unless they are replaced wi
 
 ---
 
-# Error architecture
+## Error architecture
 
-## Failure categories
+### Failure categories
 
 A render can fail during:
 
@@ -1317,7 +1380,7 @@ The main thread associates failures with the relevant job and worker.
 
 ---
 
-## Timeouts
+### Timeouts
 
 Each rendering attempt has a finite timeout.
 
@@ -1336,7 +1399,7 @@ A timed-out worker is not considered safe for immediate reuse and is replaced be
 
 ---
 
-## Render retries
+### Render retries
 
 `maxRetries` controls retries after the initial attempt.
 
@@ -1357,7 +1420,7 @@ Retries do not correct invalid TeX source.
 
 ---
 
-## Worker restart
+### Worker restart
 
 When restart behavior is enabled, a failed worker is terminated and replaced.
 
@@ -1381,7 +1444,7 @@ Other workers can continue their current jobs.
 
 ---
 
-## Fallback image
+### Fallback image
 
 After all permitted attempts fail, the target is replaced with the configured fallback image.
 
@@ -1400,7 +1463,7 @@ See [Fallback and Error Images](fallback-error-images.md).
 
 ---
 
-# Completion event
+## Completion event
 
 After successful SVG insertion, TikZJax dispatches:
 
@@ -1432,9 +1495,9 @@ document.addEventListener(
 
 ---
 
-# Cleanup and lifecycle
+## Cleanup and lifecycle
 
-## Per-job cleanup
+### Per-job cleanup
 
 After compilation, a worker removes or resets job-specific files such as:
 
@@ -1448,7 +1511,7 @@ Reusable runtime files remain available in the worker cache.
 
 ---
 
-## Worker restart cleanup
+### Worker restart cleanup
 
 Terminating a worker discards:
 
@@ -1460,7 +1523,7 @@ Terminating a worker discards:
 
 ---
 
-## Page cleanup
+### Page cleanup
 
 When the page unloads or TikZJax is torn down, the runtime can:
 
@@ -1476,7 +1539,7 @@ This prevents page-level runtime state from surviving after the document is no l
 
 ---
 
-# End-to-end sequence
+## End-to-end sequence
 
 The following sequence summarizes a fresh uncached render:
 
@@ -1510,7 +1573,7 @@ A target joining an existing pending job skips the creation of a duplicate queue
 
 ---
 
-# Design goals
+## Design goals
 
 The architecture is designed to provide:
 
@@ -1533,7 +1596,7 @@ Local package declarations reduce unnecessary TeX preamble work across the pool.
 
 ---
 
-# Related documentation
+## Related documentation
 
 * [Configuration](configuration.md)
 * [Global and Local Configuration](configuration-scopes.md)

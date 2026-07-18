@@ -1,8 +1,3 @@
-# Examples of tikz-feynhand
-
-
-
-
 # `tikz-feynhand` Examples
 
 [`tikz-feynhand`](https://ctan.org/pkg/tikz-feynhand) is a TikZ-based package for drawing Feynman diagrams with manually positioned vertices.
@@ -26,7 +21,7 @@ The package is included in the TikZJax runtime, but it is not automatically load
 
 For the best performance, load it locally only where it is needed:
 
-```html id="4frf1c"
+```html
 <script
   type="text/tikz"
   data-tex-packages="tikz-feynhand"
@@ -47,13 +42,13 @@ For other supported packages, return to the [Examples overview](index.md).
 
 Use:
 
-```html id="40qiud"
+```html
 data-tex-packages="tikz-feynhand"
 ```
 
 on each diagram containing a `feynhand` environment.
 
-```html id="i4j6uu"
+```html
 <script
   type="text/tikz"
   data-tex-packages="tikz-feynhand"
@@ -77,17 +72,15 @@ They do not replace the global configuration.
 
 !!! tip "Why local loading is recommended"
 
-```
-`tikz-feynhand` is required only by Feynman diagrams.
+    `tikz-feynhand` is required only by Feynman diagrams.
 
-Loading it locally:
+    Loading it locally:
 
-- keeps ordinary TikZ diagrams lighter;
-- avoids processing particle styles in unrelated diagrams;
-- reduces unnecessary package initialization;
-- limits possible package interactions;
-- keeps the configuration of each diagram explicit.
-```
+    - keeps ordinary TikZ diagrams lighter;
+    - avoids processing particle styles in unrelated diagrams;
+    - reduces unnecessary package initialization;
+    - limits possible package interactions;
+    - keeps the configuration of each diagram explicit.
 
 ---
 
@@ -102,65 +95,61 @@ This example contains:
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="tikz-feynhand"
->
-\begin{tikzpicture}
-\begin{feynhand}
+    <script
+      type="text/tikz"
+      data-tex-packages="tikz-feynhand"
+    >
+    \begin{tikzpicture}
+    \begin{feynhand}
 
-    \vertex (a) at (-1.5,-1);
-    \vertex (b) at (1.5,-1);
-    \vertex (c) at (0,1.5);
+        \vertex (a) at (-1.5,-1);
+        \vertex (b) at (1.5,-1);
+        \vertex (c) at (0,1.5);
 
-    \vertex[dot] (o) at (0,0) {};
+        \vertex[dot] (o) at (0,0) {};
 
-    \propag[fermion]
-        (a) to (o);
+        \propag[fermion]
+            (a) to (o);
 
-    \propag[anti fermion]
-        (b) to (o);
+        \propag[anti fermion]
+            (b) to (o);
 
-    \propag[photon]
-        (o) to (c);
+        \propag[photon]
+            (o) to (c);
 
-\end{feynhand}
-\end{tikzpicture}
-</script>
-```
+    \end{feynhand}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="tikz-feynhand"
->
-\begin{tikzpicture}
-\begin{feynhand}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="tikz-feynhand"
+    >
+    \begin{tikzpicture}
+    \begin{feynhand}
 
-    \vertex (a) at (-1.5,-1);
-    \vertex (b) at (1.5,-1);
-    \vertex (c) at (0,1.5);
+        \vertex (a) at (-1.5,-1);
+        \vertex (b) at (1.5,-1);
+        \vertex (c) at (0,1.5);
 
-    \vertex[dot] (o) at (0,0) {};
+        \vertex[dot] (o) at (0,0) {};
 
-    \propag[fermion]
-        (a) to (o);
+        \propag[fermion]
+            (a) to (o);
 
-    \propag[anti fermion]
-        (b) to (o);
+        \propag[anti fermion]
+            (b) to (o);
 
-    \propag[photon]
-        (o) to (c);
+        \propag[photon]
+            (o) to (c);
 
-\end{feynhand}
-\end{tikzpicture}
-</script>
-```
-````
+    \end{feynhand}
+    \end{tikzpicture}
+    </script>
+    ```
 
 No additional TikZ library is required for this example.
 
@@ -170,7 +159,7 @@ No additional TikZ library is required for this example.
 
 A standard diagram uses:
 
-```latex id="gcc9hx"
+```latex
 \begin{tikzpicture}
 \begin{feynhand}
 
@@ -186,7 +175,7 @@ The `feynhand` environment must be placed inside `tikzpicture`.
 
 All `\vertex` and `\propag` commands must end with a semicolon:
 
-```latex id="vqy4jk"
+```latex
 \vertex (a) at (0,0);
 \vertex (b) at (2,0);
 
@@ -195,9 +184,7 @@ All `\vertex` and `\propag` commands must end with a semicolon:
 
 !!! warning
 
-```
-A missing semicolon can prevent the whole diagram from compiling.
-```
+    A missing semicolon can prevent the whole diagram from compiling.
 
 ---
 
@@ -205,7 +192,7 @@ A missing semicolon can prevent the whole diagram from compiling.
 
 `TikZ-FeynHand` uses manually positioned vertices.
 
-```latex id="pp4obz"
+```latex
 \vertex (a) at (-2,0);
 \vertex (b) at (0,0);
 \vertex (c) at (2,0);
@@ -213,7 +200,7 @@ A missing semicolon can prevent the whole diagram from compiling.
 
 The names:
 
-```text id="6be71p"
+```text
 a
 b
 c
@@ -225,55 +212,51 @@ They are not displayed in the final diagram unless content or a particle label i
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="tikz-feynhand"
->
-\begin{tikzpicture}
-\begin{feynhand}
+    <script
+      type="text/tikz"
+      data-tex-packages="tikz-feynhand"
+    >
+    \begin{tikzpicture}
+    \begin{feynhand}
 
-    \vertex (a) at (-2,0);
-    \vertex[dot] (b) at (0,0) {};
-    \vertex (c) at (2,0);
+        \vertex (a) at (-2,0);
+        \vertex[dot] (b) at (0,0) {};
+        \vertex (c) at (2,0);
 
-    \propag[fermion]
-        (a) to (b);
+        \propag[fermion]
+            (a) to (b);
 
-    \propag[fermion]
-        (b) to (c);
+        \propag[fermion]
+            (b) to (c);
 
-\end{feynhand}
-\end{tikzpicture}
-</script>
-```
+    \end{feynhand}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="tikz-feynhand"
->
-\begin{tikzpicture}
-\begin{feynhand}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="tikz-feynhand"
+    >
+    \begin{tikzpicture}
+    \begin{feynhand}
 
-    \vertex (a) at (-2,0);
-    \vertex[dot] (b) at (0,0) {};
-    \vertex (c) at (2,0);
+        \vertex (a) at (-2,0);
+        \vertex[dot] (b) at (0,0) {};
+        \vertex (c) at (2,0);
 
-    \propag[fermion]
-        (a) to (b);
+        \propag[fermion]
+            (a) to (b);
 
-    \propag[fermion]
-        (b) to (c);
+        \propag[fermion]
+            (b) to (c);
 
-\end{feynhand}
-\end{tikzpicture>
-</script>
-```
-````
+    \end{feynhand}
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -283,7 +266,7 @@ They are not displayed in the final diagram unless content or a particle label i
 
 A bare vertex defines a coordinate without drawing a symbol:
 
-```latex id="yqg5j4"
+```latex
 \vertex (a) at (0,0);
 ```
 
@@ -293,7 +276,7 @@ Do not add an empty content argument to a bare vertex.
 
 A visible interaction dot uses:
 
-```latex id="u4l6y5"
+```latex
 \vertex[dot] (v) at (0,0) {};
 ```
 
@@ -303,7 +286,7 @@ The final empty argument is important for visible vertex styles.
 
 Examples include:
 
-```latex id="i5cb9b"
+```latex
 \vertex[ringdot] (v) at (0,0) {};
 \vertex[squaredot] (v) at (0,0) {};
 \vertex[crossdot] (v) at (0,0) {};
@@ -317,81 +300,77 @@ Examples include:
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="tikz-feynhand"
-  data-width="620"
-  data-height="190"
->
-\begin{tikzpicture}
-\begin{feynhand}
+    <script
+      type="text/tikz"
+      data-tex-packages="tikz-feynhand"
+      data-width="620"
+      data-height="190"
+    >
+    \begin{tikzpicture}
+    \begin{feynhand}
 
-    \vertex[dot]
-        (a) at (-3,0) {};
+        \vertex[dot]
+            (a) at (-3,0) {};
 
-    \vertex[ringdot]
-        (b) at (-1.5,0) {};
+        \vertex[ringdot]
+            (b) at (-1.5,0) {};
 
-    \vertex[squaredot]
-        (c) at (0,0) {};
+        \vertex[squaredot]
+            (c) at (0,0) {};
 
-    \vertex[crossdot]
-        (d) at (1.5,0) {};
+        \vertex[crossdot]
+            (d) at (1.5,0) {};
 
-    \vertex[blob]
-        (e) at (3,0) {};
+        \vertex[blob]
+            (e) at (3,0) {};
 
-    \node[below=7pt] at (a) {dot};
-    \node[below=7pt] at (b) {ringdot};
-    \node[below=7pt] at (c) {squaredot};
-    \node[below=7pt] at (d) {crossdot};
-    \node[below=7pt] at (e) {blob};
+        \node[below=7pt] at (a) {dot};
+        \node[below=7pt] at (b) {ringdot};
+        \node[below=7pt] at (c) {squaredot};
+        \node[below=7pt] at (d) {crossdot};
+        \node[below=7pt] at (e) {blob};
 
-\end{feynhand}
-\end{tikzpicture}
-</script>
-```
+    \end{feynhand}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="tikz-feynhand"
-  data-width="620"
-  data-height="190"
->
-\begin{tikzpicture}
-\begin{feynhand}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="tikz-feynhand"
+      data-width="620"
+      data-height="190"
+    >
+    \begin{tikzpicture}
+    \begin{feynhand}
 
-    \vertex[dot]
-        (a) at (-3,0) {};
+        \vertex[dot]
+            (a) at (-3,0) {};
 
-    \vertex[ringdot]
-        (b) at (-1.5,0) {};
+        \vertex[ringdot]
+            (b) at (-1.5,0) {};
 
-    \vertex[squaredot]
-        (c) at (0,0) {};
+        \vertex[squaredot]
+            (c) at (0,0) {};
 
-    \vertex[crossdot]
-        (d) at (1.5,0) {};
+        \vertex[crossdot]
+            (d) at (1.5,0) {};
 
-    \vertex[blob]
-        (e) at (3,0) {};
+        \vertex[blob]
+            (e) at (3,0) {};
 
-    \node[below=7pt] at (a) {dot};
-    \node[below=7pt] at (b) {ringdot};
-    \node[below=7pt] at (c) {squaredot};
-    \node[below=7pt] at (d) {crossdot};
-    \node[below=7pt] at (e) {blob};
+        \node[below=7pt] at (a) {dot};
+        \node[below=7pt] at (b) {ringdot};
+        \node[below=7pt] at (c) {squaredot};
+        \node[below=7pt] at (d) {crossdot};
+        \node[below=7pt] at (e) {blob};
 
-\end{feynhand}
-\end{tikzpicture>
-</script>
-```
-````
+    \end{feynhand}
+    \end{tikzpicture}
+    </script>
+    ```
 
 Ordinary TikZ commands such as `\node` remain available inside the environment.
 
@@ -403,87 +382,83 @@ Use the `particle` vertex style for incoming and outgoing particle labels:
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="tikz-feynhand"
-  data-width="520"
-  data-height="250"
->
-\begin{tikzpicture}
-\begin{feynhand}
+    <script
+      type="text/tikz"
+      data-tex-packages="tikz-feynhand"
+      data-width="520"
+      data-height="250"
+    >
+    \begin{tikzpicture}
+    \begin{feynhand}
 
-    \vertex[particle]
-        (e1) at (-2,-1)
-        {$e^-$};
+        \vertex[particle]
+            (e1) at (-2,-1)
+            {$e^-$};
 
-    \vertex[particle]
-        (e2) at (-2,1)
-        {$e^+$};
+        \vertex[particle]
+            (e2) at (-2,1)
+            {$e^+$};
 
-    \vertex[dot]
-        (v) at (0,0) {};
+        \vertex[dot]
+            (v) at (0,0) {};
 
-    \vertex[particle]
-        (g) at (2,0)
-        {$\gamma$};
+        \vertex[particle]
+            (g) at (2,0)
+            {$\gamma$};
 
-    \propag[fermion]
-        (e1) to (v);
+        \propag[fermion]
+            (e1) to (v);
 
-    \propag[anti fermion]
-        (e2) to (v);
+        \propag[anti fermion]
+            (e2) to (v);
 
-    \propag[photon]
-        (v) to (g);
+        \propag[photon]
+            (v) to (g);
 
-\end{feynhand}
-\end{tikzpicture}
-</script>
-```
+    \end{feynhand}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="tikz-feynhand"
-  data-width="520"
-  data-height="250"
->
-\begin{tikzpicture}
-\begin{feynhand}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="tikz-feynhand"
+      data-width="520"
+      data-height="250"
+    >
+    \begin{tikzpicture}
+    \begin{feynhand}
 
-    \vertex[particle]
-        (e1) at (-2,-1)
-        {$e^-$};
+        \vertex[particle]
+            (e1) at (-2,-1)
+            {$e^-$};
 
-    \vertex[particle]
-        (e2) at (-2,1)
-        {$e^+$};
+        \vertex[particle]
+            (e2) at (-2,1)
+            {$e^+$};
 
-    \vertex[dot]
-        (v) at (0,0) {};
+        \vertex[dot]
+            (v) at (0,0) {};
 
-    \vertex[particle]
-        (g) at (2,0)
-        {$\gamma$};
+        \vertex[particle]
+            (g) at (2,0)
+            {$\gamma$};
 
-    \propag[fermion]
-        (e1) to (v);
+        \propag[fermion]
+            (e1) to (v);
 
-    \propag[anti fermion]
-        (e2) to (v);
+        \propag[anti fermion]
+            (e2) to (v);
 
-    \propag[photon]
-        (v) to (g);
+        \propag[photon]
+            (v) to (g);
 
-\end{feynhand}
-\end{tikzpicture>
-</script>
-```
-````
+    \end{feynhand}
+    \end{tikzpicture}
+    </script>
+    ```
 
 Particle labels are generally most useful for external incoming or outgoing lines.
 
@@ -493,7 +468,7 @@ Particle labels are generally most useful for external incoming or outgoing line
 
 Common long-form propagator styles include:
 
-```text id="zw7z19"
+```text
 plain
 fermion
 anti fermion
@@ -534,7 +509,7 @@ anti majorana
 
 Both forms are supported:
 
-```latex id="3zocek"
+```latex
 \propag[fermion] (a) to (b);
 \propag[fer] (a) to (b);
 ```
@@ -547,111 +522,107 @@ The long forms are often clearer in documentation.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="tikz-feynhand"
-  data-width="640"
-  data-height="430"
->
-\begin{tikzpicture}
-\begin{feynhand}
+    <script
+      type="text/tikz"
+      data-tex-packages="tikz-feynhand"
+      data-width="640"
+      data-height="430"
+    >
+    \begin{tikzpicture}
+    \begin{feynhand}
 
-    \vertex (a1) at (-2,3);
-    \vertex (b1) at (2,3);
-    \propag[fermion,blue]
-        (a1) to (b1);
-    \node[left] at (a1) {fermion};
+        \vertex (a1) at (-2,3);
+        \vertex (b1) at (2,3);
+        \propag[fermion,blue]
+            (a1) to (b1);
+        \node[left] at (a1) {fermion};
 
-    \vertex (a2) at (-2,2);
-    \vertex (b2) at (2,2);
-    \propag[anti fermion,red]
-        (a2) to (b2);
-    \node[left] at (a2) {anti fermion};
+        \vertex (a2) at (-2,2);
+        \vertex (b2) at (2,2);
+        \propag[anti fermion,red]
+            (a2) to (b2);
+        \node[left] at (a2) {anti fermion};
 
-    \vertex (a3) at (-2,1);
-    \vertex (b3) at (2,1);
-    \propag[photon,orange]
-        (a3) to (b3);
-    \node[left] at (a3) {photon};
+        \vertex (a3) at (-2,1);
+        \vertex (b3) at (2,1);
+        \propag[photon,orange]
+            (a3) to (b3);
+        \node[left] at (a3) {photon};
 
-    \vertex (a4) at (-2,0);
-    \vertex (b4) at (2,0);
-    \propag[gluon,green!50!black]
-        (a4) to (b4);
-    \node[left] at (a4) {gluon};
+        \vertex (a4) at (-2,0);
+        \vertex (b4) at (2,0);
+        \propag[gluon,green!50!black]
+            (a4) to (b4);
+        \node[left] at (a4) {gluon};
 
-    \vertex (a5) at (-2,-1);
-    \vertex (b5) at (2,-1);
-    \propag[scalar,purple]
-        (a5) to (b5);
-    \node[left] at (a5) {scalar};
+        \vertex (a5) at (-2,-1);
+        \vertex (b5) at (2,-1);
+        \propag[scalar,purple]
+            (a5) to (b5);
+        \node[left] at (a5) {scalar};
 
-    \vertex (a6) at (-2,-2);
-    \vertex (b6) at (2,-2);
-    \propag[ghost,cyan!60!black]
-        (a6) to (b6);
-    \node[left] at (a6) {ghost};
+        \vertex (a6) at (-2,-2);
+        \vertex (b6) at (2,-2);
+        \propag[ghost,cyan!60!black]
+            (a6) to (b6);
+        \node[left] at (a6) {ghost};
 
-\end{feynhand}
-\end{tikzpicture}
-</script>
-```
+    \end{feynhand}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="tikz-feynhand"
-  data-width="640"
-  data-height="430"
->
-\begin{tikzpicture}
-\begin{feynhand}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="tikz-feynhand"
+      data-width="640"
+      data-height="430"
+    >
+    \begin{tikzpicture}
+    \begin{feynhand}
 
-    \vertex (a1) at (-2,3);
-    \vertex (b1) at (2,3);
-    \propag[fermion,blue]
-        (a1) to (b1);
-    \node[left] at (a1) {fermion};
+        \vertex (a1) at (-2,3);
+        \vertex (b1) at (2,3);
+        \propag[fermion,blue]
+            (a1) to (b1);
+        \node[left] at (a1) {fermion};
 
-    \vertex (a2) at (-2,2);
-    \vertex (b2) at (2,2);
-    \propag[anti fermion,red]
-        (a2) to (b2);
-    \node[left] at (a2) {anti fermion};
+        \vertex (a2) at (-2,2);
+        \vertex (b2) at (2,2);
+        \propag[anti fermion,red]
+            (a2) to (b2);
+        \node[left] at (a2) {anti fermion};
 
-    \vertex (a3) at (-2,1);
-    \vertex (b3) at (2,1);
-    \propag[photon,orange]
-        (a3) to (b3);
-    \node[left] at (a3) {photon};
+        \vertex (a3) at (-2,1);
+        \vertex (b3) at (2,1);
+        \propag[photon,orange]
+            (a3) to (b3);
+        \node[left] at (a3) {photon};
 
-    \vertex (a4) at (-2,0);
-    \vertex (b4) at (2,0);
-    \propag[gluon,green!50!black]
-        (a4) to (b4);
-    \node[left] at (a4) {gluon};
+        \vertex (a4) at (-2,0);
+        \vertex (b4) at (2,0);
+        \propag[gluon,green!50!black]
+            (a4) to (b4);
+        \node[left] at (a4) {gluon};
 
-    \vertex (a5) at (-2,-1);
-    \vertex (b5) at (2,-1);
-    \propag[scalar,purple]
-        (a5) to (b5);
-    \node[left] at (a5) {scalar};
+        \vertex (a5) at (-2,-1);
+        \vertex (b5) at (2,-1);
+        \propag[scalar,purple]
+            (a5) to (b5);
+        \node[left] at (a5) {scalar};
 
-    \vertex (a6) at (-2,-2);
-    \vertex (b6) at (2,-2);
-    \propag[ghost,cyan!60!black]
-        (a6) to (b6);
-    \node[left] at (a6) {ghost};
+        \vertex (a6) at (-2,-2);
+        \vertex (b6) at (2,-2);
+        \propag[ghost,cyan!60!black]
+            (a6) to (b6);
+        \node[left] at (a6) {ghost};
 
-\end{feynhand}
-\end{tikzpicture>
-</script>
-```
-````
+    \end{feynhand}
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -659,117 +630,113 @@ The long forms are often clearer in documentation.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="tikz-feynhand"
-  data-width="560"
-  data-height="330"
->
-\begin{tikzpicture}
-\begin{feynhand}
+    <script
+      type="text/tikz"
+      data-tex-packages="tikz-feynhand"
+      data-width="560"
+      data-height="330"
+    >
+    \begin{tikzpicture}
+    \begin{feynhand}
 
-    \vertex[particle]
-        (i1) at (-2.5,1.5)
-        {$e^-$};
+        \vertex[particle]
+            (i1) at (-2.5,1.5)
+            {$e^-$};
 
-    \vertex[particle]
-        (i2) at (-2.5,-1.5)
-        {$e^-$};
+        \vertex[particle]
+            (i2) at (-2.5,-1.5)
+            {$e^-$};
 
-    \vertex[dot]
-        (v1) at (0,1) {};
+        \vertex[dot]
+            (v1) at (0,1) {};
 
-    \vertex[dot]
-        (v2) at (0,-1) {};
+        \vertex[dot]
+            (v2) at (0,-1) {};
 
-    \vertex[particle]
-        (f1) at (2.5,1.5)
-        {$e^-$};
+        \vertex[particle]
+            (f1) at (2.5,1.5)
+            {$e^-$};
 
-    \vertex[particle]
-        (f2) at (2.5,-1.5)
-        {$e^-$};
+        \vertex[particle]
+            (f2) at (2.5,-1.5)
+            {$e^-$};
 
-    \propag[fermion]
-        (i1) to (v1);
+        \propag[fermion]
+            (i1) to (v1);
 
-    \propag[fermion]
-        (v1) to (f1);
+        \propag[fermion]
+            (v1) to (f1);
 
-    \propag[fermion]
-        (i2) to (v2);
+        \propag[fermion]
+            (i2) to (v2);
 
-    \propag[fermion]
-        (v2) to (f2);
+        \propag[fermion]
+            (v2) to (f2);
 
-    \propag[photon,blue]
-        (v1) to
-        [edge label=$\gamma$]
-        (v2);
+        \propag[photon,blue]
+            (v1) to
+            [edge label=$\gamma$]
+            (v2);
 
-\end{feynhand}
-\end{tikzpicture}
-</script>
-```
+    \end{feynhand}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="tikz-feynhand"
-  data-width="560"
-  data-height="330"
->
-\begin{tikzpicture}
-\begin{feynhand}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="tikz-feynhand"
+      data-width="560"
+      data-height="330"
+    >
+    \begin{tikzpicture}
+    \begin{feynhand}
 
-    \vertex[particle]
-        (i1) at (-2.5,1.5)
-        {$e^-$};
+        \vertex[particle]
+            (i1) at (-2.5,1.5)
+            {$e^-$};
 
-    \vertex[particle]
-        (i2) at (-2.5,-1.5)
-        {$e^-$};
+        \vertex[particle]
+            (i2) at (-2.5,-1.5)
+            {$e^-$};
 
-    \vertex[dot]
-        (v1) at (0,1) {};
+        \vertex[dot]
+            (v1) at (0,1) {};
 
-    \vertex[dot]
-        (v2) at (0,-1) {};
+        \vertex[dot]
+            (v2) at (0,-1) {};
 
-    \vertex[particle]
-        (f1) at (2.5,1.5)
-        {$e^-$};
+        \vertex[particle]
+            (f1) at (2.5,1.5)
+            {$e^-$};
 
-    \vertex[particle]
-        (f2) at (2.5,-1.5)
-        {$e^-$};
+        \vertex[particle]
+            (f2) at (2.5,-1.5)
+            {$e^-$};
 
-    \propag[fermion]
-        (i1) to (v1);
+        \propag[fermion]
+            (i1) to (v1);
 
-    \propag[fermion]
-        (v1) to (f1);
+        \propag[fermion]
+            (v1) to (f1);
 
-    \propag[fermion]
-        (i2) to (v2);
+        \propag[fermion]
+            (i2) to (v2);
 
-    \propag[fermion]
-        (v2) to (f2);
+        \propag[fermion]
+            (v2) to (f2);
 
-    \propag[photon,blue]
-        (v1) to
-        [edge label=$\gamma$]
-        (v2);
+        \propag[photon,blue]
+            (v1) to
+            [edge label=$\gamma$]
+            (v2);
 
-\end{feynhand}
-\end{tikzpicture>
-</script>
-```
-````
+    \end{feynhand}
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -777,7 +744,7 @@ The long forms are often clearer in documentation.
 
 A label can be added to the `to` operation:
 
-```latex id="9pkd0n"
+```latex
 \propag[fermion]
     (a) to
     [edge label=$p$]
@@ -786,7 +753,7 @@ A label can be added to the `to` operation:
 
 Use the primed version to place the label on the other side:
 
-```latex id="wdgd8q"
+```latex
 \propag[fermion]
     (a) to
     [edge label'=$p$]
@@ -797,83 +764,79 @@ The left and right sides are relative to the propagator direction.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="tikz-feynhand"
-  data-width="520"
-  data-height="240"
->
-\begin{tikzpicture}
-\begin{feynhand}
+    <script
+      type="text/tikz"
+      data-tex-packages="tikz-feynhand"
+      data-width="520"
+      data-height="240"
+    >
+    \begin{tikzpicture}
+    \begin{feynhand}
 
-    \vertex (a1) at (-2,-1);
-    \vertex (a2) at (0,1);
+        \vertex (a1) at (-2,-1);
+        \vertex (a2) at (0,1);
 
-    \vertex (b1) at (0,1);
-    \vertex (b2) at (2,-1);
+        \vertex (b1) at (0,1);
+        \vertex (b2) at (2,-1);
 
-    \propag[
-        fermion,
-        blue
-    ]
-        (a1) to
-        [edge label=$p$]
-        (a2);
+        \propag[
+            fermion,
+            blue
+        ]
+            (a1) to
+            [edge label=$p$]
+            (a2);
 
-    \propag[
-        fermion,
-        red
-    ]
-        (b1) to
-        [edge label'=$q$]
-        (b2);
+        \propag[
+            fermion,
+            red
+        ]
+            (b1) to
+            [edge label'=$q$]
+            (b2);
 
-\end{feynhand}
-\end{tikzpicture}
-</script>
-```
+    \end{feynhand}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="tikz-feynhand"
-  data-width="520"
-  data-height="240"
->
-\begin{tikzpicture}
-\begin{feynhand}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="tikz-feynhand"
+      data-width="520"
+      data-height="240"
+    >
+    \begin{tikzpicture}
+    \begin{feynhand}
 
-    \vertex (a1) at (-2,-1);
-    \vertex (a2) at (0,1);
+        \vertex (a1) at (-2,-1);
+        \vertex (a2) at (0,1);
 
-    \vertex (b1) at (0,1);
-    \vertex (b2) at (2,-1);
+        \vertex (b1) at (0,1);
+        \vertex (b2) at (2,-1);
 
-    \propag[
-        fermion,
-        blue
-    ]
-        (a1) to
-        [edge label=$p$]
-        (a2);
+        \propag[
+            fermion,
+            blue
+        ]
+            (a1) to
+            [edge label=$p$]
+            (a2);
 
-    \propag[
-        fermion,
-        red
-    ]
-        (b1) to
-        [edge label'=$q$]
-        (b2);
+        \propag[
+            fermion,
+            red
+        ]
+            (b1) to
+            [edge label'=$q$]
+            (b2);
 
-\end{feynhand}
-\end{tikzpicture>
-</script>
-```
-````
+    \end{feynhand}
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -881,7 +844,7 @@ The left and right sides are relative to the propagator direction.
 
 Use `momentum` or the shorter `mom` key:
 
-```latex id="n9s4jg"
+```latex
 \propag[
     fermion,
     mom={$p$}
@@ -891,103 +854,97 @@ Use `momentum` or the shorter `mom` key:
 
 A reversed momentum arrow can use:
 
-```latex id="ofexen"
+```latex
 reversed momentum
 ```
 
 or the shorter form:
 
-```latex id="xnwk2r"
+```latex
 revmom
 ```
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="tikz-feynhand"
-  data-width="520"
-  data-height="230"
->
-\begin{tikzpicture}
-\begin{feynhand}
+    <script
+      type="text/tikz"
+      data-tex-packages="tikz-feynhand"
+      data-width="520"
+      data-height="230"
+    >
+    \begin{tikzpicture}
+    \begin{feynhand}
 
-    \vertex (a) at (-2,0);
-    \vertex[dot] (v) at (0,0) {};
-    \vertex (b) at (2,0);
+        \vertex (a) at (-2,0);
+        \vertex[dot] (v) at (0,0) {};
+        \vertex (b) at (2,0);
 
-    \propag[
-        fermion,
-        blue,
-        mom={$p$}
-    ]
-        (a) to (v);
+        \propag[
+            fermion,
+            blue,
+            mom={$p$}
+        ]
+            (a) to (v);
 
-    \propag[
-        fermion,
-        red,
-        revmom'={$q$}
-    ]
-        (v) to (b);
+        \propag[
+            fermion,
+            red,
+            revmom'={$q$}
+        ]
+            (v) to (b);
 
-\end{feynhand}
-\end{tikzpicture}
-</script>
-```
+    \end{feynhand}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="tikz-feynhand"
-  data-width="520"
-  data-height="230"
->
-\begin{tikzpicture}
-\begin{feynhand}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="tikz-feynhand"
+      data-width="520"
+      data-height="230"
+    >
+    \begin{tikzpicture}
+    \begin{feynhand}
 
-    \vertex (a) at (-2,0);
-    \vertex[dot] (v) at (0,0) {};
-    \vertex (b) at (2,0);
+        \vertex (a) at (-2,0);
+        \vertex[dot] (v) at (0,0) {};
+        \vertex (b) at (2,0);
 
-    \propag[
-        fermion,
-        blue,
-        mom={$p$}
-    ]
-        (a) to (v);
+        \propag[
+            fermion,
+            blue,
+            mom={$p$}
+        ]
+            (a) to (v);
 
-    \propag[
-        fermion,
-        red,
-        revmom'={$q$}
-    ]
-        (v) to (b);
+        \propag[
+            fermion,
+            red,
+            revmom'={$q$}
+        ]
+            (v) to (b);
 
-\end{feynhand}
-\end{tikzpicture>
-</script>
-```
-````
+    \end{feynhand}
+    \end{tikzpicture}
+    </script>
+    ```
 
 !!! note
 
-````
-`edge label` is an option of the `to` path:
+    `edge label` is an option of the `to` path:
 
-```latex
-to [edge label=$p$]
-```
+    ```latex
+    to [edge label=$p$]
+    ```
 
-Momentum is an option of `\propag`:
+    Momentum is an option of `\propag`:
 
-```latex
-\propag[mom={$p$}]
-```
-````
+    ```latex
+    \propag[mom={$p$}]
+    ```
 
 ---
 
@@ -997,7 +954,7 @@ TikZ path options can control the propagator curvature.
 
 Use:
 
-```text id="kmh9fi"
+```text
 out
 in
 looseness
@@ -1007,107 +964,103 @@ Example:
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="tikz-feynhand"
-  data-width="520"
-  data-height="280"
->
-\begin{tikzpicture}
-\begin{feynhand}
+    <script
+      type="text/tikz"
+      data-tex-packages="tikz-feynhand"
+      data-width="520"
+      data-height="280"
+    >
+    \begin{tikzpicture}
+    \begin{feynhand}
 
-    \vertex[dot]
-        (a) at (-2,0) {};
+        \vertex[dot]
+            (a) at (-2,0) {};
 
-    \vertex[dot]
-        (b) at (2,0) {};
+        \vertex[dot]
+            (b) at (2,0) {};
 
-    \propag[
-        fermion,
-        blue
-    ]
-        (a) to
-        [
-            out=70,
-            in=110,
-            looseness=1.4,
-            edge label=$e^-$
+        \propag[
+            fermion,
+            blue
         ]
-        (b);
+            (a) to
+            [
+                out=70,
+                in=110,
+                looseness=1.4,
+                edge label=$e^-$
+            ]
+            (b);
 
-    \propag[
-        photon,
-        orange
-    ]
-        (a) to
-        [
-            out=-70,
-            in=-110,
-            looseness=1.4,
-            edge label'=$\gamma$
+        \propag[
+            photon,
+            orange
         ]
-        (b);
+            (a) to
+            [
+                out=-70,
+                in=-110,
+                looseness=1.4,
+                edge label'=$\gamma$
+            ]
+            (b);
 
-\end{feynhand}
-\end{tikzpicture}
-</script>
-```
+    \end{feynhand}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="tikz-feynhand"
-  data-width="520"
-  data-height="280"
->
-\begin{tikzpicture}
-\begin{feynhand}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="tikz-feynhand"
+      data-width="520"
+      data-height="280"
+    >
+    \begin{tikzpicture}
+    \begin{feynhand}
 
-    \vertex[dot]
-        (a) at (-2,0) {};
+        \vertex[dot]
+            (a) at (-2,0) {};
 
-    \vertex[dot]
-        (b) at (2,0) {};
+        \vertex[dot]
+            (b) at (2,0) {};
 
-    \propag[
-        fermion,
-        blue
-    ]
-        (a) to
-        [
-            out=70,
-            in=110,
-            looseness=1.4,
-            edge label=$e^-$
+        \propag[
+            fermion,
+            blue
         ]
-        (b);
+            (a) to
+            [
+                out=70,
+                in=110,
+                looseness=1.4,
+                edge label=$e^-$
+            ]
+            (b);
 
-    \propag[
-        photon,
-        orange
-    ]
-        (a) to
-        [
-            out=-70,
-            in=-110,
-            looseness=1.4,
-            edge label'=$\gamma$
+        \propag[
+            photon,
+            orange
         ]
-        (b);
+            (a) to
+            [
+                out=-70,
+                in=-110,
+                looseness=1.4,
+                edge label'=$\gamma$
+            ]
+            (b);
 
-\end{feynhand}
-\end{tikzpicture>
-</script>
-```
-````
+    \end{feynhand}
+    \end{tikzpicture}
+    </script>
+    ```
 
 Angles use the standard TikZ coordinate system:
 
-```text id="bynhnb"
+```text
 0°   right
 90°  up
 180° left
@@ -1120,7 +1073,7 @@ Angles use the standard TikZ coordinate system:
 
 Convenience keys include:
 
-```text id="wxoqi9"
+```text
 half left
 half right
 quarter left
@@ -1129,95 +1082,91 @@ quarter right
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="tikz-feynhand"
-  data-width="500"
-  data-height="270"
->
-\begin{tikzpicture}
-\begin{feynhand}
+    <script
+      type="text/tikz"
+      data-tex-packages="tikz-feynhand"
+      data-width="500"
+      data-height="270"
+    >
+    \begin{tikzpicture}
+    \begin{feynhand}
 
-    \vertex[dot]
-        (a) at (-2,0) {};
+        \vertex[dot]
+            (a) at (-2,0) {};
 
-    \vertex[dot]
-        (b) at (2,0) {};
+        \vertex[dot]
+            (b) at (2,0) {};
 
-    \propag[
-        fermion,
-        blue
-    ]
-        (a) to
-        [
-            half left,
-            looseness=1.2
+        \propag[
+            fermion,
+            blue
         ]
-        (b);
+            (a) to
+            [
+                half left,
+                looseness=1.2
+            ]
+            (b);
 
-    \propag[
-        anti fermion,
-        red
-    ]
-        (a) to
-        [
-            half right,
-            looseness=1.2
+        \propag[
+            anti fermion,
+            red
         ]
-        (b);
+            (a) to
+            [
+                half right,
+                looseness=1.2
+            ]
+            (b);
 
-\end{feynhand}
-\end{tikzpicture}
-</script>
-```
+    \end{feynhand}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="tikz-feynhand"
-  data-width="500"
-  data-height="270"
->
-\begin{tikzpicture}
-\begin{feynhand}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="tikz-feynhand"
+      data-width="500"
+      data-height="270"
+    >
+    \begin{tikzpicture}
+    \begin{feynhand}
 
-    \vertex[dot]
-        (a) at (-2,0) {};
+        \vertex[dot]
+            (a) at (-2,0) {};
 
-    \vertex[dot]
-        (b) at (2,0) {};
+        \vertex[dot]
+            (b) at (2,0) {};
 
-    \propag[
-        fermion,
-        blue
-    ]
-        (a) to
-        [
-            half left,
-            looseness=1.2
+        \propag[
+            fermion,
+            blue
         ]
-        (b);
+            (a) to
+            [
+                half left,
+                looseness=1.2
+            ]
+            (b);
 
-    \propag[
-        anti fermion,
-        red
-    ]
-        (a) to
-        [
-            half right,
-            looseness=1.2
+        \propag[
+            anti fermion,
+            red
         ]
-        (b);
+            (a) to
+            [
+                half right,
+                looseness=1.2
+            ]
+            (b);
 
-\end{feynhand}
-\end{tikzpicture>
-</script>
-```
-````
+    \end{feynhand}
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -1229,77 +1178,73 @@ Draw the lower propagator first, then draw the propagator that must cross on top
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="tikz-feynhand"
-  data-width="460"
-  data-height="260"
->
-\begin{tikzpicture}
-\begin{feynhand}
+    <script
+      type="text/tikz"
+      data-tex-packages="tikz-feynhand"
+      data-width="460"
+      data-height="260"
+    >
+    \begin{tikzpicture}
+    \begin{feynhand}
 
-    \vertex (a) at (-2,-1);
-    \vertex (b) at (2,1);
+        \vertex (a) at (-2,-1);
+        \vertex (b) at (2,1);
 
-    \vertex (c) at (-2,1);
-    \vertex (d) at (2,-1);
+        \vertex (c) at (-2,1);
+        \vertex (d) at (2,-1);
 
-    \propag[
-        charged boson,
-        orange
-    ]
-        (c) to (d);
+        \propag[
+            charged boson,
+            orange
+        ]
+            (c) to (d);
 
-    \propag[
-        fermion,
-        blue,
-        top
-    ]
-        (a) to (b);
+        \propag[
+            fermion,
+            blue,
+            top
+        ]
+            (a) to (b);
 
-\end{feynhand}
-\end{tikzpicture}
-</script>
-```
+    \end{feynhand}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="tikz-feynhand"
-  data-width="460"
-  data-height="260"
->
-\begin{tikzpicture}
-\begin{feynhand}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="tikz-feynhand"
+      data-width="460"
+      data-height="260"
+    >
+    \begin{tikzpicture}
+    \begin{feynhand}
 
-    \vertex (a) at (-2,-1);
-    \vertex (b) at (2,1);
+        \vertex (a) at (-2,-1);
+        \vertex (b) at (2,1);
 
-    \vertex (c) at (-2,1);
-    \vertex (d) at (2,-1);
+        \vertex (c) at (-2,1);
+        \vertex (d) at (2,-1);
 
-    \propag[
-        charged boson,
-        orange
-    ]
-        (c) to (d);
+        \propag[
+            charged boson,
+            orange
+        ]
+            (c) to (d);
 
-    \propag[
-        fermion,
-        blue,
-        top
-    ]
-        (a) to (b);
+        \propag[
+            fermion,
+            blue,
+            top
+        ]
+            (a) to (b);
 
-\end{feynhand}
-\end{tikzpicture>
-</script>
-```
-````
+    \end{feynhand}
+    \end{tikzpicture}
+    </script>
+    ```
 
 The crossing does not create an interaction vertex.
 
@@ -1309,74 +1254,70 @@ The crossing does not create an interaction vertex.
 
 Insertion marks can be placed at selected fractions of a propagator length:
 
-```latex id="6hxvug"
+```latex
 insertion=0.25
 insertion=0.75
 ```
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="tikz-feynhand"
-  data-width="500"
-  data-height="200"
->
-\begin{tikzpicture}
-\begin{feynhand}
+    <script
+      type="text/tikz"
+      data-tex-packages="tikz-feynhand"
+      data-width="500"
+      data-height="200"
+    >
+    \begin{tikzpicture}
+    \begin{feynhand}
 
-    \vertex[dot]
-        (a) at (-2,0) {};
+        \vertex[dot]
+            (a) at (-2,0) {};
 
-    \vertex[dot]
-        (b) at (2,0) {};
+        \vertex[dot]
+            (b) at (2,0) {};
 
-    \propag[
-        charged boson,
-        red,
-        insertion=0.25,
-        insertion=0.75
-    ]
-        (a) to (b);
+        \propag[
+            charged boson,
+            red,
+            insertion=0.25,
+            insertion=0.75
+        ]
+            (a) to (b);
 
-\end{feynhand}
-\end{tikzpicture}
-</script>
-```
+    \end{feynhand}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="tikz-feynhand"
-  data-width="500"
-  data-height="200"
->
-\begin{tikzpicture}
-\begin{feynhand}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="tikz-feynhand"
+      data-width="500"
+      data-height="200"
+    >
+    \begin{tikzpicture}
+    \begin{feynhand}
 
-    \vertex[dot]
-        (a) at (-2,0) {};
+        \vertex[dot]
+            (a) at (-2,0) {};
 
-    \vertex[dot]
-        (b) at (2,0) {};
+        \vertex[dot]
+            (b) at (2,0) {};
 
-    \propag[
-        charged boson,
-        red,
-        insertion=0.25,
-        insertion=0.75
-    ]
-        (a) to (b);
+        \propag[
+            charged boson,
+            red,
+            insertion=0.25,
+            insertion=0.75
+        ]
+            (a) to (b);
 
-\end{feynhand}
-\end{tikzpicture>
-</script>
-```
-````
+    \end{feynhand}
+    \end{tikzpicture}
+    </script>
+    ```
 
 Values range from `0` at the beginning to `1` at the end of the propagator.
 
@@ -1386,7 +1327,7 @@ Values range from `0` at the beginning to `1` at the end of the propagator.
 
 The package provides length commands for changing the appearance of diagrams:
 
-```latex id="ti56l8"
+```latex
 \setlength{\feynhanddotsize}{2mm}
 \setlength{\feynhandblobsize}{10mm}
 \setlength{\feynhandlinesize}{1.2pt}
@@ -1398,75 +1339,71 @@ Example:
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="tikz-feynhand"
->
-\setlength{\feynhanddotsize}{2mm}
-\setlength{\feynhandlinesize}{1.1pt}
-\setlength{\feynhandarrowsize}{8pt}
+    <script
+      type="text/tikz"
+      data-tex-packages="tikz-feynhand"
+    >
+    \setlength{\feynhanddotsize}{2mm}
+    \setlength{\feynhandlinesize}{1.1pt}
+    \setlength{\feynhandarrowsize}{8pt}
 
-\begin{tikzpicture}
-\begin{feynhand}
+    \begin{tikzpicture}
+    \begin{feynhand}
 
-    \vertex (a) at (-2,0);
-    \vertex[dot] (v) at (0,0) {};
-    \vertex (b) at (2,0);
+        \vertex (a) at (-2,0);
+        \vertex[dot] (v) at (0,0) {};
+        \vertex (b) at (2,0);
 
-    \propag[
-        fermion,
-        blue
-    ]
-        (a) to (v);
+        \propag[
+            fermion,
+            blue
+        ]
+            (a) to (v);
 
-    \propag[
-        fermion,
-        red
-    ]
-        (v) to (b);
+        \propag[
+            fermion,
+            red
+        ]
+            (v) to (b);
 
-\end{feynhand}
-\end{tikzpicture}
-</script>
-```
+    \end{feynhand}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="tikz-feynhand"
->
-\setlength{\feynhanddotsize}{2mm}
-\setlength{\feynhandlinesize}{1.1pt}
-\setlength{\feynhandarrowsize}{8pt}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="tikz-feynhand"
+    >
+    \setlength{\feynhanddotsize}{2mm}
+    \setlength{\feynhandlinesize}{1.1pt}
+    \setlength{\feynhandarrowsize}{8pt}
 
-\begin{tikzpicture}
-\begin{feynhand}
+    \begin{tikzpicture}
+    \begin{feynhand}
 
-    \vertex (a) at (-2,0);
-    \vertex[dot] (v) at (0,0) {};
-    \vertex (b) at (2,0);
+        \vertex (a) at (-2,0);
+        \vertex[dot] (v) at (0,0) {};
+        \vertex (b) at (2,0);
 
-    \propag[
-        fermion,
-        blue
-    ]
-        (a) to (v);
+        \propag[
+            fermion,
+            blue
+        ]
+            (a) to (v);
 
-    \propag[
-        fermion,
-        red
-    ]
-        (v) to (b);
+        \propag[
+            fermion,
+            red
+        ]
+            (v) to (b);
 
-\end{feynhand}
-\end{tikzpicture>
-</script>
-```
-````
+    \end{feynhand}
+    \end{tikzpicture}
+    </script>
+    ```
 
 Each TikZJax block is compiled as an independent TeX document, so these changes affect only the current diagram.
 
@@ -1476,141 +1413,137 @@ Each TikZJax block is compiled as an independent TeX document, so these changes 
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="tikz-feynhand"
-  data-width="560"
-  data-height="300"
->
-\begin{tikzpicture}
-\begin{feynhand}
+    <script
+      type="text/tikz"
+      data-tex-packages="tikz-feynhand"
+      data-width="560"
+      data-height="300"
+    >
+    \begin{tikzpicture}
+    \begin{feynhand}
 
-    \vertex[particle]
-        (a) at (-2.5,-1)
-        {$e^-$};
+        \vertex[particle]
+            (a) at (-2.5,-1)
+            {$e^-$};
 
-    \vertex[particle]
-        (b) at (-2.5,1)
-        {$e^+$};
+        \vertex[particle]
+            (b) at (-2.5,1)
+            {$e^+$};
 
-    \vertex[
-        dot,
-        fill=purple,
-        draw=purple
-    ]
-        (v) at (0,0) {};
+        \vertex[
+            dot,
+            fill=purple,
+            draw=purple
+        ]
+            (v) at (0,0) {};
 
-    \vertex[particle]
-        (c) at (2.5,1)
-        {$\mu^-$};
+        \vertex[particle]
+            (c) at (2.5,1)
+            {$\mu^-$};
 
-    \vertex[particle]
-        (d) at (2.5,-1)
-        {$\mu^+$};
+        \vertex[particle]
+            (d) at (2.5,-1)
+            {$\mu^+$};
 
-    \propag[
-        fermion,
-        blue,
-        very thick
-    ]
-        (a) to (v);
+        \propag[
+            fermion,
+            blue,
+            very thick
+        ]
+            (a) to (v);
 
-    \propag[
-        anti fermion,
-        blue,
-        very thick
-    ]
-        (b) to (v);
+        \propag[
+            anti fermion,
+            blue,
+            very thick
+        ]
+            (b) to (v);
 
-    \propag[
-        fermion,
-        red,
-        very thick
-    ]
-        (v) to (c);
+        \propag[
+            fermion,
+            red,
+            very thick
+        ]
+            (v) to (c);
 
-    \propag[
-        anti fermion,
-        red,
-        very thick
-    ]
-        (v) to (d);
+        \propag[
+            anti fermion,
+            red,
+            very thick
+        ]
+            (v) to (d);
 
-\end{feynhand}
-\end{tikzpicture}
-</script>
-```
+    \end{feynhand}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="tikz-feynhand"
-  data-width="560"
-  data-height="300"
->
-\begin{tikzpicture}
-\begin{feynhand}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="tikz-feynhand"
+      data-width="560"
+      data-height="300"
+    >
+    \begin{tikzpicture}
+    \begin{feynhand}
 
-    \vertex[particle]
-        (a) at (-2.5,-1)
-        {$e^-$};
+        \vertex[particle]
+            (a) at (-2.5,-1)
+            {$e^-$};
 
-    \vertex[particle]
-        (b) at (-2.5,1)
-        {$e^+$};
+        \vertex[particle]
+            (b) at (-2.5,1)
+            {$e^+$};
 
-    \vertex[
-        dot,
-        fill=purple,
-        draw=purple
-    ]
-        (v) at (0,0) {};
+        \vertex[
+            dot,
+            fill=purple,
+            draw=purple
+        ]
+            (v) at (0,0) {};
 
-    \vertex[particle]
-        (c) at (2.5,1)
-        {$\mu^-$};
+        \vertex[particle]
+            (c) at (2.5,1)
+            {$\mu^-$};
 
-    \vertex[particle]
-        (d) at (2.5,-1)
-        {$\mu^+$};
+        \vertex[particle]
+            (d) at (2.5,-1)
+            {$\mu^+$};
 
-    \propag[
-        fermion,
-        blue,
-        very thick
-    ]
-        (a) to (v);
+        \propag[
+            fermion,
+            blue,
+            very thick
+        ]
+            (a) to (v);
 
-    \propag[
-        anti fermion,
-        blue,
-        very thick
-    ]
-        (b) to (v);
+        \propag[
+            anti fermion,
+            blue,
+            very thick
+        ]
+            (b) to (v);
 
-    \propag[
-        fermion,
-        red,
-        very thick
-    ]
-        (v) to (c);
+        \propag[
+            fermion,
+            red,
+            very thick
+        ]
+            (v) to (c);
 
-    \propag[
-        anti fermion,
-        red,
-        very thick
-    ]
-        (v) to (d);
+        \propag[
+            anti fermion,
+            red,
+            very thick
+        ]
+            (v) to (d);
 
-\end{feynhand}
-\end{tikzpicture>
-</script>
-```
-````
+    \end{feynhand}
+    \end{tikzpicture}
+    </script>
+    ```
 
 Explicit colors are preserved by TikZJax theme adaptation.
 
@@ -1620,7 +1553,7 @@ Explicit colors are preserved by TikZJax theme adaptation.
 
 Several packages can be loaded locally with a comma-separated list:
 
-```html id="ehq7ha"
+```html
 <script
   type="text/tikz"
   data-tex-packages="tikz-feynhand,physics"
@@ -1631,7 +1564,7 @@ Several packages can be loaded locally with a comma-separated list:
 
 They can also be declared with JSON:
 
-```html id="f4x960"
+```html
 <script
   type="text/tikz"
   data-tex-packages='{
@@ -1647,11 +1580,9 @@ Only include packages required by the current diagram.
 
 !!! warning
 
-```
-Loading several packages creates a larger TeX preamble.
+    Loading several packages creates a larger TeX preamble.
 
-Package combinations may increase rendering time or introduce conflicts.
-```
+    Package combinations may increase rendering time or introduce conflicts.
 
 ---
 
@@ -1659,7 +1590,7 @@ Package combinations may increase rendering time or introduce conflicts.
 
 Load `tikz-feynhand` globally only when it is required by most diagrams on the site:
 
-```js id="x0ur73"
+```js
 window.TikzJaxOptions = {
     tex: {
         texPackages: {
@@ -1671,25 +1602,23 @@ window.TikzJaxOptions = {
 
 After global loading, individual diagrams do not need:
 
-```html id="ochztj"
+```html
 data-tex-packages="tikz-feynhand"
 ```
 
 !!! warning "Performance"
 
-````
-Global loading inserts:
+    Global loading inserts:
 
-```latex
-\usepackage{tikz-feynhand}
-```
+    ```latex
+    \usepackage{tikz-feynhand}
+    ```
 
-into every TikZJax document.
+    into every TikZJax document.
 
-Ordinary TikZ diagrams will therefore process the package even when they contain no Feynman diagram.
+    Ordinary TikZ diagrams will therefore process the package even when they contain no Feynman diagram.
 
-Prefer local loading unless the package is used throughout the site.
-````
+    Prefer local loading unless the package is used throughout the site.
 
 ---
 
@@ -1701,74 +1630,68 @@ Therefore, fenced blocks using `tikz-feynhand` work only when the package is loa
 
 === "Rendering"
 
-````
-```tikzjax
-\begin{tikzpicture}
-\begin{feynhand}
+    <script type="text/tikz">
+    \begin{tikzpicture}
+    \begin{feynhand}
 
-    \vertex (a) at (-1.5,-1);
-    \vertex (b) at (1.5,-1);
-    \vertex (c) at (0,1.5);
+        \vertex (a) at (-1.5,-1);
+        \vertex (b) at (1.5,-1);
+        \vertex (c) at (0,1.5);
 
-    \vertex[dot] (v) at (0,0) {};
+        \vertex[dot] (v) at (0,0) {};
 
-    \propag[fermion]
-        (a) to (v);
+        \propag[fermion]
+            (a) to (v);
 
-    \propag[anti fermion]
-        (b) to (v);
+        \propag[anti fermion]
+            (b) to (v);
 
-    \propag[photon]
-        (v) to (c);
+        \propag[photon]
+            (v) to (c);
 
-\end{feynhand}
-\end{tikzpicture}
-```
-````
+    \end{feynhand}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-markdown: Markdown"
 
-`````
-````markdown
-```tikzjax
-\begin{tikzpicture}
-\begin{feynhand}
+    ````markdown
+    ```tikzjax
+    \begin{tikzpicture}
+    \begin{feynhand}
 
-    \vertex (a) at (-1.5,-1);
-    \vertex (b) at (1.5,-1);
-    \vertex (c) at (0,1.5);
+        \vertex (a) at (-1.5,-1);
+        \vertex (b) at (1.5,-1);
+        \vertex (c) at (0,1.5);
 
-    \vertex[dot] (v) at (0,0) {};
+        \vertex[dot] (v) at (0,0) {};
 
-    \propag[fermion]
-        (a) to (v);
+        \propag[fermion]
+            (a) to (v);
 
-    \propag[anti fermion]
-        (b) to (v);
+        \propag[anti fermion]
+            (b) to (v);
 
-    \propag[photon]
-        (v) to (c);
+        \propag[photon]
+            (v) to (c);
 
-\end{feynhand}
-\end{tikzpicture}
-```
-````
-`````
+    \end{feynhand}
+    \end{tikzpicture}
+    ```
+    ````
 
 !!! important
 
-````
-For portable local loading, prefer:
+    For portable local loading, prefer:
 
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="tikz-feynhand"
->
-...
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="tikz-feynhand"
+    >
+    ...
+    </script>
+    ```
 
 ---
 
@@ -1776,77 +1699,73 @@ For portable local loading, prefer:
 
 === "Rendering"
 
-```
-=== "Question"
+    === "Question"
 
-    Draw a fermion–anti-fermion interaction producing a photon.
+        Draw a fermion–anti-fermion interaction producing a photon.
 
-=== "Solution"
+    === "Solution"
 
-    <script
-      type="text/tikz"
-      data-tex-packages="tikz-feynhand"
-    >
-    \begin{tikzpicture}
-    \begin{feynhand}
+        <script
+          type="text/tikz"
+          data-tex-packages="tikz-feynhand"
+        >
+        \begin{tikzpicture}
+        \begin{feynhand}
 
-        \vertex (a) at (-1.5,-1);
-        \vertex (b) at (1.5,-1);
-        \vertex (c) at (0,1.5);
+            \vertex (a) at (-1.5,-1);
+            \vertex (b) at (1.5,-1);
+            \vertex (c) at (0,1.5);
 
-        \vertex[dot] (v) at (0,0) {};
+            \vertex[dot] (v) at (0,0) {};
 
-        \propag[fermion]
-            (a) to (v);
+            \propag[fermion]
+                (a) to (v);
 
-        \propag[anti fermion]
-            (b) to (v);
+            \propag[anti fermion]
+                (b) to (v);
 
-        \propag[photon]
-            (v) to (c);
+            \propag[photon]
+                (v) to (c);
 
-    \end{feynhand}
-    \end{tikzpicture}
-    </script>
-```
+        \end{feynhand}
+        \end{tikzpicture}
+        </script>
 
 === ":fa-markdown: Markdown"
 
-`````
-````markdown
-=== "Question"
+    ````markdown
+    === "Question"
 
-    Draw a fermion–anti-fermion interaction producing a photon.
+        Draw a fermion–anti-fermion interaction producing a photon.
 
-=== "Solution"
+    === "Solution"
 
-    <script
-      type="text/tikz"
-      data-tex-packages="tikz-feynhand"
-    >
-    \begin{tikzpicture}
-    \begin{feynhand}
+        <script
+          type="text/tikz"
+          data-tex-packages="tikz-feynhand"
+        >
+        \begin{tikzpicture}
+        \begin{feynhand}
 
-        \vertex (a) at (-1.5,-1);
-        \vertex (b) at (1.5,-1);
-        \vertex (c) at (0,1.5);
+            \vertex (a) at (-1.5,-1);
+            \vertex (b) at (1.5,-1);
+            \vertex (c) at (0,1.5);
 
-        \vertex[dot] (v) at (0,0) {};
+            \vertex[dot] (v) at (0,0) {};
 
-        \propag[fermion]
-            (a) to (v);
+            \propag[fermion]
+                (a) to (v);
 
-        \propag[anti fermion]
-            (b) to (v);
+            \propag[anti fermion]
+                (b) to (v);
 
-        \propag[photon]
-            (v) to (c);
+            \propag[photon]
+                (v) to (c);
 
-    \end{feynhand}
-    \end{tikzpicture}
-    </script>
-````
-`````
+        \end{feynhand}
+        \end{tikzpicture}
+        </script>
+    ````
 
 TikZJax automatically rescans MkDocs Material content tabs when they become visible.
 
@@ -1856,69 +1775,65 @@ TikZJax automatically rescans MkDocs Material content tabs when they become visi
 
 === "Rendering"
 
-```
-!!! example "Feynman interaction"
+    !!! example "Feynman interaction"
 
-    <script
-      type="text/tikz"
-      data-tex-packages="tikz-feynhand"
-    >
-    \begin{tikzpicture}
-    \begin{feynhand}
+        <script
+          type="text/tikz"
+          data-tex-packages="tikz-feynhand"
+        >
+        \begin{tikzpicture}
+        \begin{feynhand}
 
-        \vertex (a) at (-1.5,-1);
-        \vertex (b) at (1.5,-1);
-        \vertex (c) at (0,1.5);
+            \vertex (a) at (-1.5,-1);
+            \vertex (b) at (1.5,-1);
+            \vertex (c) at (0,1.5);
 
-        \vertex[dot] (v) at (0,0) {};
+            \vertex[dot] (v) at (0,0) {};
 
-        \propag[fermion]
-            (a) to (v);
+            \propag[fermion]
+                (a) to (v);
 
-        \propag[anti fermion]
-            (b) to (v);
+            \propag[anti fermion]
+                (b) to (v);
 
-        \propag[photon]
-            (v) to (c);
+            \propag[photon]
+                (v) to (c);
 
-    \end{feynhand}
-    \end{tikzpicture}
-    </script>
-```
+        \end{feynhand}
+        \end{tikzpicture}
+        </script>
 
 === ":fa-markdown: Markdown"
 
-`````
-````markdown
-!!! example "Feynman interaction"
+    ````markdown
+    !!! example "Feynman interaction"
 
-    <script
-      type="text/tikz"
-      data-tex-packages="tikz-feynhand"
-    >
-    \begin{tikzpicture}
-    \begin{feynhand}
+        <script
+          type="text/tikz"
+          data-tex-packages="tikz-feynhand"
+        >
+        \begin{tikzpicture}
+        \begin{feynhand}
 
-        \vertex (a) at (-1.5,-1);
-        \vertex (b) at (1.5,-1);
-        \vertex (c) at (0,1.5);
+            \vertex (a) at (-1.5,-1);
+            \vertex (b) at (1.5,-1);
+            \vertex (c) at (0,1.5);
 
-        \vertex[dot] (v) at (0,0) {};
+            \vertex[dot] (v) at (0,0) {};
 
-        \propag[fermion]
-            (a) to (v);
+            \propag[fermion]
+                (a) to (v);
 
-        \propag[anti fermion]
-            (b) to (v);
+            \propag[anti fermion]
+                (b) to (v);
 
-        \propag[photon]
-            (v) to (c);
+            \propag[photon]
+                (v) to (c);
 
-    \end{feynhand}
-    \end{tikzpicture}
-    </script>
-````
-`````
+        \end{feynhand}
+        \end{tikzpicture}
+        </script>
+    ````
 
 ---
 
@@ -1928,14 +1843,14 @@ Feynman diagrams may be wider or taller than the default loader.
 
 Reserve additional space with:
 
-```html id="ry6gqa"
+```html
 data-width="600"
 data-height="320"
 ```
 
 Example:
 
-```html id="xv7620"
+```html
 <script
   type="text/tikz"
   data-tex-packages="tikz-feynhand"
@@ -1960,7 +1875,7 @@ They do not resize the final SVG.
 
 A diagram can combine several local runtime options:
 
-```html id="e4s5ss"
+```html
 <script
   type="text/tikz"
   data-tex-packages="tikz-feynhand"
@@ -1984,7 +1899,7 @@ A diagram can combine several local runtime options:
 
 Use:
 
-```html id="5ayg5q"
+```html
 data-disable-cache="true"
 ```
 
@@ -1992,7 +1907,7 @@ while modifying an example.
 
 Use:
 
-```html id="ertk97"
+```html
 data-show-console="true"
 ```
 
@@ -2006,7 +1921,7 @@ TikZJax places uncached diagrams in a global rendering queue.
 
 Several Feynman diagrams can be compiled concurrently:
 
-```text id="fdbfr3"
+```text
 worker 1 -> Feynman diagram A
 worker 2 -> Feynman diagram B
 worker 3 -> another TikZ diagram
@@ -2022,11 +1937,9 @@ The first `tikz-feynhand` diagram handled by a worker may therefore take longer 
 
 !!! tip
 
-```
-Local package loading remains fully compatible with parallel rendering.
+    Local package loading remains fully compatible with parallel rendering.
 
-The package declaration travels with the individual diagram when it is assigned to a worker.
-```
+    The package declaration travels with the individual diagram when it is assigned to a worker.
 
 ---
 
@@ -2034,7 +1947,7 @@ The package declaration travels with the individual diagram when it is assigned 
 
 ### Enable TeX logs
 
-```html id="d52gje"
+```html
 <script
   type="text/tikz"
   data-tex-packages="tikz-feynhand"
@@ -2068,14 +1981,14 @@ The package declaration travels with the individual diagram when it is assigned 
 
 Run this in the browser console:
 
-```js id="d9jqaj"
+```js
 indexedDB.deleteDatabase("TikzJax");
 location.reload();
 ```
 
 ### Inspect globally configured packages
 
-```js id="7n24a2"
+```js
 window.TikzJaxOptions?.tex?.texPackages
 ```
 
@@ -2083,13 +1996,13 @@ window.TikzJaxOptions?.tex?.texPackages
 
 A missing package generally appears as:
 
-```text id="ngoyib"
+```text
 GET .../tex_files/tikz-feynhand.sty.gz 404
 ```
 
 Another dependency may appear as a missing:
 
-```text id="m5rsd6"
+```text
 .sty.gz
 .tex.gz
 .def.gz
@@ -2102,19 +2015,19 @@ Use the TikZJax JavaScript bundle, WebAssembly runtime, core dump, and `tex_file
 
 A timeout appears as:
 
-```text id="1bbpcs"
+```text
 TikZJax render timeout after 30000ms
 ```
 
 Increase it locally:
 
-```html id="8jq59e"
+```html
 data-render-timeout="45000"
 ```
 
 or globally:
 
-```js id="h9p5wa"
+```js
 window.TikzJaxOptions = {
     renderTimeout: 45000
 };
@@ -2130,7 +2043,7 @@ The package was not loaded.
 
 Add:
 
-```html id="la4417"
+```html
 data-tex-packages="tikz-feynhand"
 ```
 
@@ -2140,13 +2053,13 @@ or enable it globally.
 
 Visible vertex styles require an empty content argument:
 
-```latex id="g2kf63"
+```latex
 \vertex[dot] (v) at (0,0) {};
 ```
 
 Not:
 
-```latex id="hgf375"
+```latex
 \vertex[dot] (v) at (0,0);
 ```
 
@@ -2154,7 +2067,7 @@ Not:
 
 A bare vertex should generally be written without an empty content argument:
 
-```latex id="6nd8i9"
+```latex
 \vertex (v) at (0,0);
 ```
 
@@ -2162,7 +2075,7 @@ A bare vertex should generally be written without an empty content argument:
 
 The arrow follows the direction from the first vertex to the second:
 
-```latex id="lyj3hq"
+```latex
 \propag[fermion] (a) to (b);
 ```
 
@@ -2172,7 +2085,7 @@ Reverse the vertex order or use an anti-particle style when appropriate.
 
 Add path options after `to`:
 
-```latex id="8obhha"
+```latex
 \propag[fermion]
     (a) to
     [
@@ -2187,13 +2100,13 @@ Add path options after `to`:
 
 Use the primed label form:
 
-```latex id="xw6pyd"
+```latex
 edge label'=$p$
 ```
 
 instead of:
 
-```latex id="smh9fr"
+```latex
 edge label=$p$
 ```
 
@@ -2213,7 +2126,7 @@ Load `tikz-feynhand` globally or replace the fenced block with an HTML `<script>
 
 Increase:
 
-```html id="wyfw03"
+```html
 data-width
 data-height
 ```
@@ -2232,7 +2145,7 @@ The previously rendered SVG may be stored in IndexedDB.
 
 Use:
 
-```html id="scu5a3"
+```html
 data-disable-cache="true"
 ```
 

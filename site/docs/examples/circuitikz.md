@@ -1,5 +1,3 @@
-# Examples of Circuitikz
-
 # `circuitikz` Examples
 
 [`circuitikz`](https://ctan.org/pkg/circuitikz) is a LaTeX package for drawing electrical and electronic circuits with TikZ.
@@ -64,16 +62,14 @@ They do not replace the global configuration.
 
 !!! tip "Why local loading is recommended"
 
-```
-`circuitikz` is a large graphical package that is unnecessary for ordinary TikZ diagrams.
+    `circuitikz` is a large graphical package that is unnecessary for ordinary TikZ diagrams.
 
-Loading it only for circuit diagrams:
+    Loading it only for circuit diagrams:
 
-- reduces unnecessary TeX processing;
-- limits package conflicts;
-- keeps unrelated diagrams faster;
-- avoids adding circuit-specific definitions to every worker task.
-```
+    - reduces unnecessary TeX processing;
+    - limits package conflicts;
+    - keeps unrelated diagrams faster;
+    - avoids adding circuit-specific definitions to every worker task.
 
 ---
 
@@ -88,41 +84,37 @@ This example contains:
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="circuitikz"
->
-\begin{circuitikz}
-    \draw
-        (0,0)
-        to[battery1,l=$V$] (0,2.5)
-        to[R,l=$R$] (3.5,2.5)
-        to[C,l=$C$] (3.5,0)
-        -- (0,0);
-\end{circuitikz}
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="circuitikz"
+    >
+    \begin{circuitikz}
+        \draw
+            (0,0)
+            to[battery1,l=$V$] (0,2.5)
+            to[R,l=$R$] (3.5,2.5)
+            to[C,l=$C$] (3.5,0)
+            -- (0,0);
+    \end{circuitikz}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="circuitikz"
->
-\begin{circuitikz}
-    \draw
-        (0,0)
-        to[battery1,l=$V$] (0,2.5)
-        to[R,l=$R$] (3.5,2.5)
-        to[C,l=$C$] (3.5,0)
-        -- (0,0);
-\end{circuitikz}
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="circuitikz"
+    >
+    \begin{circuitikz}
+        \draw
+            (0,0)
+            to[battery1,l=$V$] (0,2.5)
+            to[R,l=$R$] (3.5,2.5)
+            to[C,l=$C$] (3.5,0)
+            -- (0,0);
+    \end{circuitikz}
+    </script>
+    ```
 
 No additional TikZ library is required for this basic example.
 
@@ -134,41 +126,37 @@ The package can also be declared with JSON:
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages='{"circuitikz":""}'
->
-\begin{circuitikz}
-    \draw
-        (0,0)
-        to[battery1,l=$V$] (0,2.5)
-        to[R,l=$R$] (3.5,2.5)
-        to[C,l=$C$] (3.5,0)
-        -- (0,0);
-\end{circuitikz}
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages='{"circuitikz":""}'
+    >
+    \begin{circuitikz}
+        \draw
+            (0,0)
+            to[battery1,l=$V$] (0,2.5)
+            to[R,l=$R$] (3.5,2.5)
+            to[C,l=$C$] (3.5,0)
+            -- (0,0);
+    \end{circuitikz}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages='{"circuitikz":""}'
->
-\begin{circuitikz}
-    \draw
-        (0,0)
-        to[battery1,l=$V$] (0,2.5)
-        to[R,l=$R$] (3.5,2.5)
-        to[C,l=$C$] (3.5,0)
-        -- (0,0);
-\end{circuitikz}
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages='{"circuitikz":""}'
+    >
+    \begin{circuitikz}
+        \draw
+            (0,0)
+            to[battery1,l=$V$] (0,2.5)
+            to[R,l=$R$] (3.5,2.5)
+            to[C,l=$C$] (3.5,0)
+            -- (0,0);
+    \end{circuitikz}
+    </script>
+    ```
 
 The simple string form is usually sufficient:
 
@@ -184,43 +172,39 @@ Use JSON when package options or several packages must be declared.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="circuitikz"
->
-\begin{circuitikz}
-    \draw
-        (0,0)
-        to[battery1,l=$V$] (0,3)
-        to[R,l=$R_1$] (3,3)
-        to[R,l=$R_2$] (5.5,3)
-        -- (5.5,0)
-        -- (0,0);
-\end{circuitikz}
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="circuitikz"
+    >
+    \begin{circuitikz}
+        \draw
+            (0,0)
+            to[battery1,l=$V$] (0,3)
+            to[R,l=$R_1$] (3,3)
+            to[R,l=$R_2$] (5.5,3)
+            -- (5.5,0)
+            -- (0,0);
+    \end{circuitikz}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="circuitikz"
->
-\begin{circuitikz}
-    \draw
-        (0,0)
-        to[battery1,l=$V$] (0,3)
-        to[R,l=$R_1$] (3,3)
-        to[R,l=$R_2$] (5.5,3)
-        -- (5.5,0)
-        -- (0,0);
-\end{circuitikz}
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="circuitikz"
+    >
+    \begin{circuitikz}
+        \draw
+            (0,0)
+            to[battery1,l=$V$] (0,3)
+            to[R,l=$R_1$] (3,3)
+            to[R,l=$R_2$] (5.5,3)
+            -- (5.5,0)
+            -- (0,0);
+    \end{circuitikz}
+    </script>
+    ```
 
 The two resistors are placed in the same branch.
 
@@ -230,61 +214,57 @@ The two resistors are placed in the same branch.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="circuitikz"
-  data-width="500"
-  data-height="260"
->
-\begin{circuitikz}
+    <script
+      type="text/tikz"
+      data-tex-packages="circuitikz"
+      data-width="500"
+      data-height="260"
+    >
+    \begin{circuitikz}
 
-    \draw
-        (0,0)
-        to[battery1,l=$V$] (0,3)
-        -- (1.5,3)
-        to[R,l=$R_1$] (1.5,0)
-        -- (0,0);
+        \draw
+            (0,0)
+            to[battery1,l=$V$] (0,3)
+            -- (1.5,3)
+            to[R,l=$R_1$] (1.5,0)
+            -- (0,0);
 
-    \draw
-        (1.5,3)
-        -- (4,3)
-        to[R,l=$R_2$] (4,0)
-        -- (1.5,0);
+        \draw
+            (1.5,3)
+            -- (4,3)
+            to[R,l=$R_2$] (4,0)
+            -- (1.5,0);
 
-\end{circuitikz}
-</script>
-```
+    \end{circuitikz}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="circuitikz"
-  data-width="500"
-  data-height="260"
->
-\begin{circuitikz}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="circuitikz"
+      data-width="500"
+      data-height="260"
+    >
+    \begin{circuitikz}
 
-    \draw
-        (0,0)
-        to[battery1,l=$V$] (0,3)
-        -- (1.5,3)
-        to[R,l=$R_1$] (1.5,0)
-        -- (0,0);
+        \draw
+            (0,0)
+            to[battery1,l=$V$] (0,3)
+            -- (1.5,3)
+            to[R,l=$R_1$] (1.5,0)
+            -- (0,0);
 
-    \draw
-        (1.5,3)
-        -- (4,3)
-        to[R,l=$R_2$] (4,0)
-        -- (1.5,0);
+        \draw
+            (1.5,3)
+            -- (4,3)
+            to[R,l=$R_2$] (4,0)
+            -- (1.5,0);
 
-\end{circuitikz}
-</script>
-```
-````
+    \end{circuitikz}
+    </script>
+    ```
 
 The two resistor branches share the same upper and lower electrical nodes.
 
@@ -294,49 +274,45 @@ The two resistor branches share the same upper and lower electrical nodes.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="circuitikz"
-  data-width="600"
-  data-height="260"
->
-\begin{circuitikz}
-    \draw
-        (0,0)
-        to[battery1,l=$V$] (0,3)
-        to[R,l=$R$] (2.5,3)
-        to[L,l=$L$] (5,3)
-        to[C,l=$C$] (7,3)
-        -- (7,0)
-        -- (0,0);
-\end{circuitikz}
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="circuitikz"
+      data-width="600"
+      data-height="260"
+    >
+    \begin{circuitikz}
+        \draw
+            (0,0)
+            to[battery1,l=$V$] (0,3)
+            to[R,l=$R$] (2.5,3)
+            to[L,l=$L$] (5,3)
+            to[C,l=$C$] (7,3)
+            -- (7,0)
+            -- (0,0);
+    \end{circuitikz}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="circuitikz"
-  data-width="600"
-  data-height="260"
->
-\begin{circuitikz}
-    \draw
-        (0,0)
-        to[battery1,l=$V$] (0,3)
-        to[R,l=$R$] (2.5,3)
-        to[L,l=$L$] (5,3)
-        to[C,l=$C$] (7,3)
-        -- (7,0)
-        -- (0,0);
-\end{circuitikz}
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="circuitikz"
+      data-width="600"
+      data-height="260"
+    >
+    \begin{circuitikz}
+        \draw
+            (0,0)
+            to[battery1,l=$V$] (0,3)
+            to[R,l=$R$] (2.5,3)
+            to[L,l=$L$] (5,3)
+            to[C,l=$C$] (7,3)
+            -- (7,0)
+            -- (0,0);
+    \end{circuitikz}
+    </script>
+    ```
 
 This circuit combines:
 
@@ -376,17 +352,15 @@ The label is part of the component options:
 
 !!! warning
 
-````
-If the browser console reports an error involving:
+    If the browser console reports an error involving:
 
-```text
-/tikz/l
-```
+    ```text
+    /tikz/l
+    ```
 
-check that the built-in TikZ circuit libraries have not been loaded globally.
+    check that the built-in TikZ circuit libraries have not been loaded globally.
 
-This problem is generally caused by a conflict between two different circuit systems, not by the `l` label itself.
-````
+    This problem is generally caused by a conflict between two different circuit systems, not by the `l` label itself.
 
 ---
 
@@ -428,21 +402,19 @@ These systems are not interchangeable.
 
 !!! danger "Do not load both systems globally"
 
-````
-Do not globally activate:
+    Do not globally activate:
 
-```text
-circuits
-circuits.ee
-circuits.ee.IEC
-```
+    ```text
+    circuits
+    circuits.ee
+    circuits.ee.IEC
+    ```
 
-when the site also uses the external `circuitikz` package.
+    when the site also uses the external `circuitikz` package.
 
-The built-in libraries can redefine keys used by `circuitikz`, including component-label keys.
+    The built-in libraries can redefine keys used by `circuitikz`, including component-label keys.
 
-Load the built-in circuit libraries locally only for the diagrams that intentionally use them.
-````
+    Load the built-in circuit libraries locally only for the diagrams that intentionally use them.
 
 For an example using the built-in circuit libraries, see [TikZ examples](tikz.md#built-in-tikz-electrical-circuits).
 
@@ -490,71 +462,67 @@ This example uses:
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="circuitikz,physics"
-  data-width="520"
-  data-height="280"
->
-\begin{circuitikz}
+    <script
+      type="text/tikz"
+      data-tex-packages="circuitikz,physics"
+      data-width="520"
+      data-height="280"
+    >
+    \begin{circuitikz}
 
-    \draw
-        (0,0)
-        to[battery1,l=$V(t)$] (0,3)
-        to[R,l=$R$] (3,3)
-        to[C,l=$C$] (3,0)
-        -- (0,0);
+        \draw
+            (0,0)
+            to[battery1,l=$V(t)$] (0,3)
+            to[R,l=$R$] (3,3)
+            to[C,l=$C$] (3,0)
+            -- (0,0);
 
-    \node[
-        draw,
-        rounded corners,
-        fill=blue!8,
-        inner sep=7pt
-    ] at (5.4,1.5) {
-        $\displaystyle
-        i(t)=C\dv{u_C}{t}
-        $
-    };
+        \node[
+            draw,
+            rounded corners,
+            fill=blue!8,
+            inner sep=7pt
+        ] at (5.4,1.5) {
+            $\displaystyle
+            i(t)=C\dv{u_C}{t}
+            $
+        };
 
-\end{circuitikz}
-</script>
-```
+    \end{circuitikz}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="circuitikz,physics"
-  data-width="520"
-  data-height="280"
->
-\begin{circuitikz}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="circuitikz,physics"
+      data-width="520"
+      data-height="280"
+    >
+    \begin{circuitikz}
 
-    \draw
-        (0,0)
-        to[battery1,l=$V(t)$] (0,3)
-        to[R,l=$R$] (3,3)
-        to[C,l=$C$] (3,0)
-        -- (0,0);
+        \draw
+            (0,0)
+            to[battery1,l=$V(t)$] (0,3)
+            to[R,l=$R$] (3,3)
+            to[C,l=$C$] (3,0)
+            -- (0,0);
 
-    \node[
-        draw,
-        rounded corners,
-        fill=blue!8,
-        inner sep=7pt
-    ] at (5.4,1.5) {
-        $\displaystyle
-        i(t)=C\dv{u_C}{t}
-        $
-    };
+        \node[
+            draw,
+            rounded corners,
+            fill=blue!8,
+            inner sep=7pt
+        ] at (5.4,1.5) {
+            $\displaystyle
+            i(t)=C\dv{u_C}{t}
+            $
+        };
 
-\end{circuitikz}
-</script>
-```
-````
+    \end{circuitikz}
+    </script>
+    ```
 
 ---
 
@@ -580,19 +548,17 @@ data-tex-packages="circuitikz"
 
 !!! warning "Performance"
 
-````
-Global loading inserts:
+    Global loading inserts:
 
-```latex
-\usepackage{circuitikz}
-```
+    ```latex
+    \usepackage{circuitikz}
+    ```
 
-into the preamble of every diagram.
+    into the preamble of every diagram.
 
-This means that ordinary TikZ diagrams also process the package, even when they contain no electrical circuit.
+    This means that ordinary TikZ diagrams also process the package, even when they contain no electrical circuit.
 
-Prefer local loading unless the site is primarily dedicated to circuit diagrams.
-````
+    Prefer local loading unless the site is primarily dedicated to circuit diagrams.
 
 ---
 
@@ -604,50 +570,44 @@ Therefore, fenced blocks using `circuitikz` work only when the package is loaded
 
 === "Rendering"
 
-````
-```tikzjax
-\begin{circuitikz}
-    \draw
-        (0,0)
-        to[battery1,l=$V$] (0,2.5)
-        to[R,l=$R$] (3.5,2.5)
-        to[C,l=$C$] (3.5,0)
-        -- (0,0);
-\end{circuitikz}
-```
-````
+    <script type="text/tikz">
+    \begin{circuitikz}
+        \draw
+            (0,0)
+            to[battery1,l=$V$] (0,2.5)
+            to[R,l=$R$] (3.5,2.5)
+            to[C,l=$C$] (3.5,0)
+            -- (0,0);
+    \end{circuitikz}
+    </script>
 
 === ":fa-markdown: Markdown"
 
-`````
-````markdown
-```tikzjax
-\begin{circuitikz}
-    \draw
-        (0,0)
-        to[battery1,l=$V$] (0,2.5)
-        to[R,l=$R$] (3.5,2.5)
-        to[C,l=$C$] (3.5,0)
-        -- (0,0);
-\end{circuitikz}
-```
-````
-`````
+    ````markdown
+    ```tikzjax
+    \begin{circuitikz}
+        \draw
+            (0,0)
+            to[battery1,l=$V$] (0,2.5)
+            to[R,l=$R$] (3.5,2.5)
+            to[C,l=$C$] (3.5,0)
+            -- (0,0);
+    \end{circuitikz}
+    ```
+    ````
 
 !!! important
 
-````
-For portable local loading, prefer:
+    For portable local loading, prefer:
 
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="circuitikz"
->
-...
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="circuitikz"
+    >
+    ...
+    </script>
+    ```
 
 ---
 
@@ -655,53 +615,49 @@ For portable local loading, prefer:
 
 === "Rendering"
 
-```
-=== "Question"
+    === "Question"
 
-    Draw a series circuit containing a battery, a resistor, and a capacitor.
+        Draw a series circuit containing a battery, a resistor, and a capacitor.
 
-=== "Solution"
+    === "Solution"
 
-    <script
-      type="text/tikz"
-      data-tex-packages="circuitikz"
-    >
-    \begin{circuitikz}
-        \draw
-            (0,0)
-            to[battery1,l=$V$] (0,2.5)
-            to[R,l=$R$] (3.5,2.5)
-            to[C,l=$C$] (3.5,0)
-            -- (0,0);
-    \end{circuitikz}
-    </script>
-```
+        <script
+          type="text/tikz"
+          data-tex-packages="circuitikz"
+        >
+        \begin{circuitikz}
+            \draw
+                (0,0)
+                to[battery1,l=$V$] (0,2.5)
+                to[R,l=$R$] (3.5,2.5)
+                to[C,l=$C$] (3.5,0)
+                -- (0,0);
+        \end{circuitikz}
+        </script>
 
 === ":fa-markdown: Markdown"
 
-`````
-````markdown
-=== "Question"
+    ````markdown
+    === "Question"
 
-    Draw a series circuit containing a battery, a resistor, and a capacitor.
+        Draw a series circuit containing a battery, a resistor, and a capacitor.
 
-=== "Solution"
+    === "Solution"
 
-    <script
-      type="text/tikz"
-      data-tex-packages="circuitikz"
-    >
-    \begin{circuitikz}
-        \draw
-            (0,0)
-            to[battery1,l=$V$] (0,2.5)
-            to[R,l=$R$] (3.5,2.5)
-            to[C,l=$C$] (3.5,0)
-            -- (0,0);
-    \end{circuitikz}
-    </script>
-````
-`````
+        <script
+          type="text/tikz"
+          data-tex-packages="circuitikz"
+        >
+        \begin{circuitikz}
+            \draw
+                (0,0)
+                to[battery1,l=$V$] (0,2.5)
+                to[R,l=$R$] (3.5,2.5)
+                to[C,l=$C$] (3.5,0)
+                -- (0,0);
+        \end{circuitikz}
+        </script>
+    ````
 
 TikZJax automatically rescans MkDocs Material content tabs when they become visible.
 
@@ -711,45 +667,41 @@ TikZJax automatically rescans MkDocs Material content tabs when they become visi
 
 === "Rendering"
 
-```
-!!! example "RC circuit"
+    !!! example "RC circuit"
 
-    <script
-      type="text/tikz"
-      data-tex-packages="circuitikz"
-    >
-    \begin{circuitikz}
-        \draw
-            (0,0)
-            to[battery1,l=$V$] (0,2.5)
-            to[R,l=$R$] (3.5,2.5)
-            to[C,l=$C$] (3.5,0)
-            -- (0,0);
-    \end{circuitikz}
-    </script>
-```
+        <script
+          type="text/tikz"
+          data-tex-packages="circuitikz"
+        >
+        \begin{circuitikz}
+            \draw
+                (0,0)
+                to[battery1,l=$V$] (0,2.5)
+                to[R,l=$R$] (3.5,2.5)
+                to[C,l=$C$] (3.5,0)
+                -- (0,0);
+        \end{circuitikz}
+        </script>
 
 === ":fa-markdown: Markdown"
 
-`````
-````markdown
-!!! example "RC circuit"
+    ````markdown
+    !!! example "RC circuit"
 
-    <script
-      type="text/tikz"
-      data-tex-packages="circuitikz"
-    >
-    \begin{circuitikz}
-        \draw
-            (0,0)
-            to[battery1,l=$V$] (0,2.5)
-            to[R,l=$R$] (3.5,2.5)
-            to[C,l=$C$] (3.5,0)
-            -- (0,0);
-    \end{circuitikz}
-    </script>
-````
-`````
+        <script
+          type="text/tikz"
+          data-tex-packages="circuitikz"
+        >
+        \begin{circuitikz}
+            \draw
+                (0,0)
+                to[battery1,l=$V$] (0,2.5)
+                to[R,l=$R$] (3.5,2.5)
+                to[C,l=$C$] (3.5,0)
+                -- (0,0);
+        \end{circuitikz}
+        </script>
+    ````
 
 ---
 
@@ -848,11 +800,9 @@ The first `circuitikz` diagram handled by a worker may therefore take longer tha
 
 !!! tip
 
-```
-Loading `circuitikz` locally does not prevent parallel rendering.
+    Loading `circuitikz` locally does not prevent parallel rendering.
 
-Each diagram carries its own package configuration into the worker assigned to it.
-```
+    Each diagram carries its own package configuration into the worker assigned to it.
 
 ---
 

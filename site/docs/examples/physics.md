@@ -54,11 +54,9 @@ They do not replace the global configuration.
 
 !!! tip "Why local loading is recommended"
 
-```
-The `physics` package affects mathematical notation but is not required by ordinary TikZ drawings.
+    The `physics` package affects mathematical notation but is not required by ordinary TikZ drawings.
 
-Loading it only where necessary keeps unrelated diagrams lighter and reduces the amount of work performed by each TeX worker.
-```
+    Loading it only where necessary keeps unrelated diagrams lighter and reduces the amount of work performed by each TeX worker.
 
 ---
 
@@ -68,131 +66,127 @@ The command `\vb` typesets a vector.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="physics"
-  data-tikz-libraries="arrows.meta"
->
-\begin{tikzpicture}[
-    >=Stealth,
-    line width=1.1pt
-]
-
-    \fill[
-        blue!12,
-        draw=blue!70!black,
-        rounded corners
+    <script
+      type="text/tikz"
+      data-tex-packages="physics"
+      data-tikz-libraries="arrows.meta"
+    >
+    \begin{tikzpicture}[
+        >=Stealth,
+        line width=1.1pt
     ]
-        (0,-0.6) rectangle (2,0.6);
 
-    \node[
-        font=\Large
-    ] at (1,0) {
-        $m$
-    };
+        \fill[
+            blue!12,
+            draw=blue!70!black,
+            rounded corners
+        ]
+            (0,-0.6) rectangle (2,0.6);
 
-    \draw[
-        -{Stealth[length=4mm]},
-        red!75!black,
-        very thick
-    ]
-        (2,0) -- (4.5,0)
-        node[
-            midway,
-            above
-        ] {
-            $\vb{F}$
+        \node[
+            font=\Large
+        ] at (1,0) {
+            $m$
         };
 
-    \draw[
-        -{Stealth[length=4mm]},
-        green!50!black,
-        very thick
-    ]
-        (1,-0.6) -- (1,-2.2)
-        node[
-            midway,
-            right
-        ] {
-            $\vb{P}=m\vb{g}$
+        \draw[
+            -{Stealth[length=4mm]},
+            red!75!black,
+            very thick
+        ]
+            (2,0) -- (4.5,0)
+            node[
+                midway,
+                above
+            ] {
+                $\vb{F}$
+            };
+
+        \draw[
+            -{Stealth[length=4mm]},
+            green!50!black,
+            very thick
+        ]
+            (1,-0.6) -- (1,-2.2)
+            node[
+                midway,
+                right
+            ] {
+                $\vb{P}=m\vb{g}$
+            };
+
+        \node[
+            below,
+            align=center
+        ] at (1,-2.5) {
+            $\displaystyle \vb{F}_{\mathrm{net}}=m\vb{a}$
         };
 
-    \node[
-        below,
-        align=center
-    ] at (1,-2.5) {
-        $\displaystyle \vb{F}_{\mathrm{net}}=m\vb{a}$
-    };
-
-\end{tikzpicture}
-</script>
-```
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="physics"
-  data-tikz-libraries="arrows.meta"
->
-\begin{tikzpicture}[
-    >=Stealth,
-    line width=1.1pt
-]
-
-    \fill[
-        blue!12,
-        draw=blue!70!black,
-        rounded corners
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="physics"
+      data-tikz-libraries="arrows.meta"
+    >
+    \begin{tikzpicture}[
+        >=Stealth,
+        line width=1.1pt
     ]
-        (0,-0.6) rectangle (2,0.6);
 
-    \node[
-        font=\Large
-    ] at (1,0) {
-        $m$
-    };
+        \fill[
+            blue!12,
+            draw=blue!70!black,
+            rounded corners
+        ]
+            (0,-0.6) rectangle (2,0.6);
 
-    \draw[
-        -{Stealth[length=4mm]},
-        red!75!black,
-        very thick
-    ]
-        (2,0) -- (4.5,0)
-        node[
-            midway,
-            above
-        ] {
-            $\vb{F}$
+        \node[
+            font=\Large
+        ] at (1,0) {
+            $m$
         };
 
-    \draw[
-        -{Stealth[length=4mm]},
-        green!50!black,
-        very thick
-    ]
-        (1,-0.6) -- (1,-2.2)
-        node[
-            midway,
-            right
-        ] {
-            $\vb{P}=m\vb{g}$
+        \draw[
+            -{Stealth[length=4mm]},
+            red!75!black,
+            very thick
+        ]
+            (2,0) -- (4.5,0)
+            node[
+                midway,
+                above
+            ] {
+                $\vb{F}$
+            };
+
+        \draw[
+            -{Stealth[length=4mm]},
+            green!50!black,
+            very thick
+        ]
+            (1,-0.6) -- (1,-2.2)
+            node[
+                midway,
+                right
+            ] {
+                $\vb{P}=m\vb{g}$
+            };
+
+        \node[
+            below,
+            align=center
+        ] at (1,-2.5) {
+            $\displaystyle \vb{F}_{\mathrm{net}}=m\vb{a}$
         };
 
-    \node[
-        below,
-        align=center
-    ] at (1,-2.5) {
-        $\displaystyle \vb{F}_{\mathrm{net}}=m\vb{a}$
-    };
-
-\end{tikzpicture}
-</script>
-```
-````
+    \end{tikzpicture}
+    </script>
+    ```
 
 This example also uses the TikZ library:
 
@@ -215,181 +209,179 @@ This example uses:
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="physics"
-  data-tikz-libraries="arrows.meta,positioning,decorations.pathmorphing"
-  data-width="520"
-  data-height="280"
->
-\begin{tikzpicture}[
-    >=Stealth,
-    thick,
-    mass/.style={
-        draw=blue!70!black,
-        fill=blue!10,
-        rounded corners,
-        minimum width=1.4cm,
-        minimum height=1cm
-    }
-]
-
-    \draw[
-        very thick
+    <script
+    type="text/tikz"
+    data-tex-packages="physics"
+    data-tikz-libraries="arrows.meta,positioning,decorations.pathmorphing"
+    data-show-console="true"
+    data-disable-cache="true"
+    data-width="520"
+    data-height="280"
+    >
+    \begin{tikzpicture}[
+        >=Stealth,
+        thick,
+        mass/.style={
+            draw=blue!70!black,
+            fill=blue!10,
+            rounded corners,
+            minimum width=1.4cm,
+            minimum height=1cm
+        }
     ]
-        (-3,-0.8) -- (-3,0.8);
 
-    \foreach \y in {-0.7,-0.4,...,0.8}
         \draw[
-            gray
+            very thick
         ]
-            (-3.25,\y-0.2) -- (-3,\y);
+            (-3,-0.8) -- (-3,0.8);
 
-    \draw[
-        decorate,
-        decoration={
-            coil,
-            aspect=0.45,
-            segment length=5pt,
-            amplitude=5pt
-        },
-        blue!70!black,
-        very thick
-    ]
-        (-3,0) -- (0,0);
+        \foreach \y in {-0.7,-0.4,...,0.8}
+            \draw[
+                gray
+            ]
+                (-3.25,\y-0.2) -- (-3,\y);
 
-    \node[
-        mass
-    ] (m) at (0.8,0) {
-        $m$
-    };
+        \draw[
+            decorate,
+            decoration={
+                coil,
+                aspect=0.45,
+                segment length=5pt,
+                amplitude=5pt
+            },
+            blue!70!black,
+            very thick
+        ]
+            (-3,0) -- (0,0);
 
-    \draw[
-        -{Stealth[length=4mm]},
-        red!75!black,
-        very thick
-    ]
-        (m.west) -- ++(-1.4,0)
-        node[
-            midway,
-            above
-        ] {
-            $\vb{F}=-k\vb{x}$
+        \node[
+            mass
+        ] (m) at (0.8,0) {
+            $m$
         };
 
-    \draw[
-        ->,
-        gray!70!black
-    ]
-        (-3,-1.2) -- (3,-1.2)
-        node[right] {$x$};
+        \draw[
+            -{Stealth[length=4mm]},
+            red!75!black,
+            very thick
+        ]
+            (m.west) -- ++(-1.4,0)
+            node[
+                midway,
+                above
+            ] {
+                $\vb{F}=-k\vb{x}$
+            };
 
-    \node[
-        draw,
-        rounded corners,
-        fill=yellow!12,
-        below=1.6cm of m,
-        align=center,
-        inner sep=7pt
-    ] {
-        $\displaystyle m\dv[2]{x}{t}+kx=0$\\[4pt]
-        $\displaystyle x(t)=A\cos\qty(\omega t+\varphi)$
-    };
+        \draw[
+            ->,
+            gray!70!black
+        ]
+            (-3,-1.2) -- (3,-1.2)
+            node[right] {$x$};
 
-\end{tikzpicture}
-</script>
-```
+        \node[
+            draw,
+            rounded corners,
+            fill=yellow!12,
+            below=1.6cm of m,
+            align=center,
+            inner sep=7pt
+        ] {
+            $\displaystyle m\dv[2]{x}{t}+kx=0$\\[4pt]
+            $\displaystyle x(t)=A\cos\qty(\omega t+\varphi)$
+        };
+
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="physics"
-  data-tikz-libraries="arrows.meta,positioning,decorations.pathmorphing"
-  data-width="520"
-  data-height="280"
->
-\begin{tikzpicture}[
-    >=Stealth,
-    thick,
-    mass/.style={
-        draw=blue!70!black,
-        fill=blue!10,
-        rounded corners,
-        minimum width=1.4cm,
-        minimum height=1cm
-    }
-]
-
-    \draw[
-        very thick
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="physics"
+      data-tikz-libraries="arrows.meta,positioning,decorations.pathmorphing"
+      data-width="520"
+      data-height="280"
+    >
+    \begin{tikzpicture}[
+        >=Stealth,
+        thick,
+        mass/.style={
+            draw=blue!70!black,
+            fill=blue!10,
+            rounded corners,
+            minimum width=1.4cm,
+            minimum height=1cm
+        }
     ]
-        (-3,-0.8) -- (-3,0.8);
 
-    \foreach \y in {-0.7,-0.4,...,0.8}
         \draw[
-            gray
+            very thick
         ]
-            (-3.25,\y-0.2) -- (-3,\y);
+            (-3,-0.8) -- (-3,0.8);
 
-    \draw[
-        decorate,
-        decoration={
-            coil,
-            aspect=0.45,
-            segment length=5pt,
-            amplitude=5pt
-        },
-        blue!70!black,
-        very thick
-    ]
-        (-3,0) -- (0,0);
+        \foreach \y in {-0.7,-0.4,...,0.8}
+            \draw[
+                gray
+            ]
+                (-3.25,\y-0.2) -- (-3,\y);
 
-    \node[
-        mass
-    ] (m) at (0.8,0) {
-        $m$
-    };
+        \draw[
+            decorate,
+            decoration={
+                coil,
+                aspect=0.45,
+                segment length=5pt,
+                amplitude=5pt
+            },
+            blue!70!black,
+            very thick
+        ]
+            (-3,0) -- (0,0);
 
-    \draw[
-        -{Stealth[length=4mm]},
-        red!75!black,
-        very thick
-    ]
-        (m.west) -- ++(-1.4,0)
-        node[
-            midway,
-            above
-        ] {
-            $\vb{F}=-k\vb{x}$
+        \node[
+            mass
+        ] (m) at (0.8,0) {
+            $m$
         };
 
-    \draw[
-        ->,
-        gray!70!black
-    ]
-        (-3,-1.2) -- (3,-1.2)
-        node[right] {$x$};
+        \draw[
+            -{Stealth[length=4mm]},
+            red!75!black,
+            very thick
+        ]
+            (m.west) -- ++(-1.4,0)
+            node[
+                midway,
+                above
+            ] {
+                $\vb{F}=-k\vb{x}$
+            };
 
-    \node[
-        draw,
-        rounded corners,
-        fill=yellow!12,
-        below=1.6cm of m,
-        align=center,
-        inner sep=7pt
-    ] {
-        $\displaystyle m\dv[2]{x}{t}+kx=0$\\[4pt]
-        $\displaystyle x(t)=A\cos\qty(\omega t+\varphi)$
-    };
+        \draw[
+            ->,
+            gray!70!black
+        ]
+            (-3,-1.2) -- (3,-1.2)
+            node[right] {$x$};
 
-\end{tikzpicture}
-</script>
-```
-````
+        \node[
+            draw,
+            rounded corners,
+            fill=yellow!12,
+            below=1.6cm of m,
+            align=center,
+            inner sep=7pt
+        ] {
+            $\displaystyle m\dv[2]{x}{t}+kx=0$\\[4pt]
+            $\displaystyle x(t)=A\cos\qty(\omega t+\varphi)$
+        };
+
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -406,97 +398,93 @@ The `physics` package provides a compact derivative syntax.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="physics"
->
-\begin{tikzpicture}[
-    formula/.style={
-        draw,
-        rounded corners,
-        very thick,
-        minimum width=4.3cm,
-        minimum height=1.1cm,
-        align=center
-    }
-]
+    <script
+      type="text/tikz"
+      data-tex-packages="physics"
+    >
+    \begin{tikzpicture}[
+        formula/.style={
+            draw,
+            rounded corners,
+            very thick,
+            minimum width=4.3cm,
+            minimum height=1.1cm,
+            align=center
+        }
+    ]
 
-    \node[
-        formula,
-        draw=blue!70!black,
-        fill=blue!8
-    ] at (0,1.4) {
-        $\displaystyle v(t)=\dv{x}{t}$
-    };
+        \node[
+            formula,
+            draw=blue!70!black,
+            fill=blue!8
+        ] at (0,1.4) {
+            $\displaystyle v(t)=\dv{x}{t}$
+        };
 
-    \node[
-        formula,
-        draw=red!70!black,
-        fill=red!8
-    ] at (0,0) {
-        $\displaystyle a(t)=\dv[2]{x}{t}$
-    };
+        \node[
+            formula,
+            draw=red!70!black,
+            fill=red!8
+        ] at (0,0) {
+            $\displaystyle a(t)=\dv[2]{x}{t}$
+        };
 
-    \node[
-        formula,
-        draw=green!50!black,
-        fill=green!8
-    ] at (0,-1.4) {
-        $\displaystyle \dv{}{t}\qty(\frac12 mv^2)=mva$
-    };
+        \node[
+            formula,
+            draw=green!50!black,
+            fill=green!8
+        ] at (0,-1.4) {
+            $\displaystyle \dv{}{t}\qty(\frac12 mv^2)=mva$
+        };
 
-\end{tikzpicture}
-</script>
-```
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="physics"
->
-\begin{tikzpicture}[
-    formula/.style={
-        draw,
-        rounded corners,
-        very thick,
-        minimum width=4.3cm,
-        minimum height=1.1cm,
-        align=center
-    }
-]
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="physics"
+    >
+    \begin{tikzpicture}[
+        formula/.style={
+            draw,
+            rounded corners,
+            very thick,
+            minimum width=4.3cm,
+            minimum height=1.1cm,
+            align=center
+        }
+    ]
 
-    \node[
-        formula,
-        draw=blue!70!black,
-        fill=blue!8
-    ] at (0,1.4) {
-        $\displaystyle v(t)=\dv{x}{t}$
-    };
+        \node[
+            formula,
+            draw=blue!70!black,
+            fill=blue!8
+        ] at (0,1.4) {
+            $\displaystyle v(t)=\dv{x}{t}$
+        };
 
-    \node[
-        formula,
-        draw=red!70!black,
-        fill=red!8
-    ] at (0,0) {
-        $\displaystyle a(t)=\dv[2]{x}{t}$
-    };
+        \node[
+            formula,
+            draw=red!70!black,
+            fill=red!8
+        ] at (0,0) {
+            $\displaystyle a(t)=\dv[2]{x}{t}$
+        };
 
-    \node[
-        formula,
-        draw=green!50!black,
-        fill=green!8
-    ] at (0,-1.4) {
-        $\displaystyle \dv{}{t}\qty(\frac12 mv^2)=mva$
-    };
+        \node[
+            formula,
+            draw=green!50!black,
+            fill=green!8
+        ] at (0,-1.4) {
+            $\displaystyle \dv{}{t}\qty(\frac12 mv^2)=mva$
+        };
 
-\end{tikzpicture}
-</script>
-```
-````
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -506,107 +494,103 @@ Use `\pdv` for partial derivatives.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="physics"
-  data-tikz-libraries="positioning"
->
-\begin{tikzpicture}[
-    equation/.style={
-        draw,
-        rounded corners,
-        very thick,
-        inner sep=8pt,
-        minimum width=4cm
-    }
-]
+    <script
+      type="text/tikz"
+      data-tex-packages="physics"
+      data-tikz-libraries="positioning"
+    >
+    \begin{tikzpicture}[
+        equation/.style={
+            draw,
+            rounded corners,
+            very thick,
+            inner sep=8pt,
+            minimum width=4cm
+        }
+    ]
 
-    \node[
-        equation,
-        draw=purple!70!black,
-        fill=purple!8
-    ] (gradient) {
-        $\displaystyle
-        \vb{\nabla} f
-        =
-        \qty(
-            \pdv{f}{x},
-            \pdv{f}{y},
-            \pdv{f}{z}
-        )
-        $
-    };
+        \node[
+            equation,
+            draw=purple!70!black,
+            fill=purple!8
+        ] (gradient) {
+            $\displaystyle
+            \vb{\nabla} f
+            =
+            \qty(
+                \pdv{f}{x},
+                \pdv{f}{y},
+                \pdv{f}{z}
+            )
+            $
+        };
 
-    \node[
-        equation,
-        draw=orange!80!black,
-        fill=orange!10,
-        below=0.8cm of gradient
-    ] {
-        $\displaystyle
-        \pdv[2]{u}{t}
-        =
-        c^2\pdv[2]{u}{x}
-        $
-    };
+        \node[
+            equation,
+            draw=orange!80!black,
+            fill=orange!10,
+            below=0.8cm of gradient
+        ] {
+            $\displaystyle
+            \pdv[2]{u}{t}
+            =
+            c^2\pdv[2]{u}{x}
+            $
+        };
 
-\end{tikzpicture}
-</script>
-```
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="physics"
-  data-tikz-libraries="positioning"
->
-\begin{tikzpicture}[
-    equation/.style={
-        draw,
-        rounded corners,
-        very thick,
-        inner sep=8pt,
-        minimum width=4cm
-    }
-]
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="physics"
+      data-tikz-libraries="positioning"
+    >
+    \begin{tikzpicture}[
+        equation/.style={
+            draw,
+            rounded corners,
+            very thick,
+            inner sep=8pt,
+            minimum width=4cm
+        }
+    ]
 
-    \node[
-        equation,
-        draw=purple!70!black,
-        fill=purple!8
-    ] (gradient) {
-        $\displaystyle
-        \vb{\nabla} f
-        =
-        \qty(
-            \pdv{f}{x},
-            \pdv{f}{y},
-            \pdv{f}{z}
-        )
-        $
-    };
+        \node[
+            equation,
+            draw=purple!70!black,
+            fill=purple!8
+        ] (gradient) {
+            $\displaystyle
+            \vb{\nabla} f
+            =
+            \qty(
+                \pdv{f}{x},
+                \pdv{f}{y},
+                \pdv{f}{z}
+            )
+            $
+        };
 
-    \node[
-        equation,
-        draw=orange!80!black,
-        fill=orange!10,
-        below=0.8cm of gradient
-    ] {
-        $\displaystyle
-        \pdv[2]{u}{t}
-        =
-        c^2\pdv[2]{u}{x}
-        $
-    };
+        \node[
+            equation,
+            draw=orange!80!black,
+            fill=orange!10,
+            below=0.8cm of gradient
+        ] {
+            $\displaystyle
+            \pdv[2]{u}{t}
+            =
+            c^2\pdv[2]{u}{x}
+            $
+        };
 
-\end{tikzpicture}
-</script>
-```
-````
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -622,75 +606,71 @@ The command `\qty` automatically adjusts delimiters to their contents.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="physics"
->
-\begin{tikzpicture}
+    <script
+      type="text/tikz"
+      data-tex-packages="physics"
+    >
+    \begin{tikzpicture}
 
-    \node[
-        draw=blue!70!black,
-        fill=blue!8,
-        rounded corners,
-        very thick,
-        inner sep=10pt,
-        align=center
-    ] {
-        $\displaystyle
-        E
-        =
-        \qty[
-            \frac12 mv^2
-            +
-            \frac12 kx^2
-        ]
-        $\\[8pt]
-        $\displaystyle
-        A\cos\qty(\omega t+\varphi)
-        $
-    };
+        \node[
+            draw=blue!70!black,
+            fill=blue!8,
+            rounded corners,
+            very thick,
+            inner sep=10pt,
+            align=center
+        ] {
+            $\displaystyle
+            E
+            =
+            \qty[
+                \frac12 mv^2
+                +
+                \frac12 kx^2
+            ]
+            $\\[8pt]
+            $\displaystyle
+            A\cos\qty(\omega t+\varphi)
+            $
+        };
 
-\end{tikzpicture}
-</script>
-```
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="physics"
->
-\begin{tikzpicture}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="physics"
+    >
+    \begin{tikzpicture}
 
-    \node[
-        draw=blue!70!black,
-        fill=blue!8,
-        rounded corners,
-        very thick,
-        inner sep=10pt,
-        align=center
-    ] {
-        $\displaystyle
-        E
-        =
-        \qty[
-            \frac12 mv^2
-            +
-            \frac12 kx^2
-        ]
-        $\\[8pt]
-        $\displaystyle
-        A\cos\qty(\omega t+\varphi)
-        $
-    };
+        \node[
+            draw=blue!70!black,
+            fill=blue!8,
+            rounded corners,
+            very thick,
+            inner sep=10pt,
+            align=center
+        ] {
+            $\displaystyle
+            E
+            =
+            \qty[
+                \frac12 mv^2
+                +
+                \frac12 kx^2
+            ]
+            $\\[8pt]
+            $\displaystyle
+            A\cos\qty(\omega t+\varphi)
+            $
+        };
 
-\end{tikzpicture}
-</script>
-```
-````
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -705,147 +685,143 @@ Use:
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="physics"
-  data-tikz-libraries="arrows.meta"
->
-\begin{tikzpicture}[
-    >=Stealth
-]
-
-    \coordinate (O) at (0,0);
-    \coordinate (V) at (3,2);
-
-    \draw[
-        ->,
-        gray!70!black
+    <script
+      type="text/tikz"
+      data-tex-packages="physics"
+      data-tikz-libraries="arrows.meta"
+    >
+    \begin{tikzpicture}[
+        >=Stealth
     ]
-        (-0.5,0) -- (4,0)
-        node[right] {$x$};
 
-    \draw[
-        ->,
-        gray!70!black
-    ]
-        (0,-0.5) -- (0,3)
-        node[above] {$y$};
+        \coordinate (O) at (0,0);
+        \coordinate (V) at (3,2);
 
-    \draw[
-        -{Stealth[length=4mm]},
-        blue,
-        very thick
-    ]
-        (O) -- (V)
-        node[
-            midway,
-            above left
-        ] {
-            $\vb{v}$
+        \draw[
+            ->,
+            gray!70!black
+        ]
+            (-0.5,0) -- (4,0)
+            node[right] {$x$};
+
+        \draw[
+            ->,
+            gray!70!black
+        ]
+            (0,-0.5) -- (0,3)
+            node[above] {$y$};
+
+        \draw[
+            -{Stealth[length=4mm]},
+            blue,
+            very thick
+        ]
+            (O) -- (V)
+            node[
+                midway,
+                above left
+            ] {
+                $\vb{v}$
+            };
+
+        \draw[
+            dashed,
+            gray
+        ]
+            (V) -- (3,0);
+
+        \draw[
+            dashed,
+            gray
+        ]
+            (V) -- (0,2);
+
+        \node[
+            draw,
+            fill=yellow!12,
+            rounded corners,
+            below
+        ] at (2,-0.7) {
+            $\displaystyle
+            \norm{\vb{v}}
+            =
+            \sqrt{v_x^2+v_y^2}
+            $
         };
 
-    \draw[
-        dashed,
-        gray
-    ]
-        (V) -- (3,0);
-
-    \draw[
-        dashed,
-        gray
-    ]
-        (V) -- (0,2);
-
-    \node[
-        draw,
-        fill=yellow!12,
-        rounded corners,
-        below
-    ] at (2,-0.7) {
-        $\displaystyle
-        \norm{\vb{v}}
-        =
-        \sqrt{v_x^2+v_y^2}
-        $
-    };
-
-\end{tikzpicture}
-</script>
-```
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="physics"
-  data-tikz-libraries="arrows.meta"
->
-\begin{tikzpicture}[
-    >=Stealth
-]
-
-    \coordinate (O) at (0,0);
-    \coordinate (V) at (3,2);
-
-    \draw[
-        ->,
-        gray!70!black
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="physics"
+      data-tikz-libraries="arrows.meta"
+    >
+    \begin{tikzpicture}[
+        >=Stealth
     ]
-        (-0.5,0) -- (4,0)
-        node[right] {$x$};
 
-    \draw[
-        ->,
-        gray!70!black
-    ]
-        (0,-0.5) -- (0,3)
-        node[above] {$y$};
+        \coordinate (O) at (0,0);
+        \coordinate (V) at (3,2);
 
-    \draw[
-        -{Stealth[length=4mm]},
-        blue,
-        very thick
-    ]
-        (O) -- (V)
-        node[
-            midway,
-            above left
-        ] {
-            $\vb{v}$
+        \draw[
+            ->,
+            gray!70!black
+        ]
+            (-0.5,0) -- (4,0)
+            node[right] {$x$};
+
+        \draw[
+            ->,
+            gray!70!black
+        ]
+            (0,-0.5) -- (0,3)
+            node[above] {$y$};
+
+        \draw[
+            -{Stealth[length=4mm]},
+            blue,
+            very thick
+        ]
+            (O) -- (V)
+            node[
+                midway,
+                above left
+            ] {
+                $\vb{v}$
+            };
+
+        \draw[
+            dashed,
+            gray
+        ]
+            (V) -- (3,0);
+
+        \draw[
+            dashed,
+            gray
+        ]
+            (V) -- (0,2);
+
+        \node[
+            draw,
+            fill=yellow!12,
+            rounded corners,
+            below
+        ] at (2,-0.7) {
+            $\displaystyle
+            \norm{\vb{v}}
+            =
+            \sqrt{v_x^2+v_y^2}
+            $
         };
 
-    \draw[
-        dashed,
-        gray
-    ]
-        (V) -- (3,0);
-
-    \draw[
-        dashed,
-        gray
-    ]
-        (V) -- (0,2);
-
-    \node[
-        draw,
-        fill=yellow!12,
-        rounded corners,
-        below
-    ] at (2,-0.7) {
-        $\displaystyle
-        \norm{\vb{v}}
-        =
-        \sqrt{v_x^2+v_y^2}
-        $
-    };
-
-\end{tikzpicture}
-</script>
-```
-````
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -855,75 +831,71 @@ The package provides `\dd` for differential elements.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="physics"
->
-\begin{tikzpicture}
+    <script
+      type="text/tikz"
+      data-tex-packages="physics"
+    >
+    \begin{tikzpicture}
 
-    \node[
-        draw=green!50!black,
-        fill=green!8,
-        rounded corners,
-        very thick,
-        inner sep=10pt,
-        align=center
-    ] {
-        $\displaystyle
-        W
-        =
-        \int_A^B
-        \vb{F}\cdot\dd{\vb{r}}
-        $\\[8pt]
-        $\displaystyle
-        Q
-        =
-        \int_{t_0}^{t_1}
-        I(t)\dd{t}
-        $
-    };
+        \node[
+            draw=green!50!black,
+            fill=green!8,
+            rounded corners,
+            very thick,
+            inner sep=10pt,
+            align=center
+        ] {
+            $\displaystyle
+            W
+            =
+            \int_A^B
+            \vb{F}\cdot\dd{\vb{r}}
+            $\\[8pt]
+            $\displaystyle
+            Q
+            =
+            \int_{t_0}^{t_1}
+            I(t)\dd{t}
+            $
+        };
 
-\end{tikzpicture}
-</script>
-```
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="physics"
->
-\begin{tikzpicture}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="physics"
+    >
+    \begin{tikzpicture}
 
-    \node[
-        draw=green!50!black,
-        fill=green!8,
-        rounded corners,
-        very thick,
-        inner sep=10pt,
-        align=center
-    ] {
-        $\displaystyle
-        W
-        =
-        \int_A^B
-        \vb{F}\cdot\dd{\vb{r}}
-        $\\[8pt]
-        $\displaystyle
-        Q
-        =
-        \int_{t_0}^{t_1}
-        I(t)\dd{t}
-        $
-    };
+        \node[
+            draw=green!50!black,
+            fill=green!8,
+            rounded corners,
+            very thick,
+            inner sep=10pt,
+            align=center
+        ] {
+            $\displaystyle
+            W
+            =
+            \int_A^B
+            \vb{F}\cdot\dd{\vb{r}}
+            $\\[8pt]
+            $\displaystyle
+            Q
+            =
+            \int_{t_0}^{t_1}
+            I(t)\dd{t}
+            $
+        };
 
-\end{tikzpicture}
-</script>
-```
-````
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -941,143 +913,139 @@ The `physics` package also provides common quantum-mechanics notation.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="physics"
-  data-tikz-libraries="positioning,arrows.meta"
->
-\begin{tikzpicture}[
-    state/.style={
-        draw=purple!70!black,
-        fill=purple!8,
-        rounded corners,
-        very thick,
-        minimum width=2.3cm,
-        minimum height=1.1cm
-    }
-]
-
-    \node[
-        state
-    ] (psi) {
-        $\ket{\psi}$
-    };
-
-    \node[
-        state,
-        right=2.5cm of psi,
-        fill=blue!8,
-        draw=blue!70!black
-    ] (phi) {
-        $\ket{\phi}$
-    };
-
-    \draw[
-        -{Stealth[length=4mm]},
-        very thick,
-        orange!80!black
+    <script
+      type="text/tikz"
+      data-tex-packages="physics"
+      data-tikz-libraries="positioning,arrows.meta"
+    >
+    \begin{tikzpicture}[
+        state/.style={
+            draw=purple!70!black,
+            fill=purple!8,
+            rounded corners,
+            very thick,
+            minimum width=2.3cm,
+            minimum height=1.1cm
+        }
     ]
-        (psi) -- (phi)
-        node[
-            midway,
-            above
-        ] {
-            $\hat{U}$
+
+        \node[
+            state
+        ] (psi) {
+            $\ket{\psi}$
         };
 
-    \node[
-        below=1cm of psi,
-        align=center
-    ] {
-        $\displaystyle
-        \braket{\psi}{\psi}=1
-        $
-    };
+        \node[
+            state,
+            right=2.5cm of psi,
+            fill=blue!8,
+            draw=blue!70!black
+        ] (phi) {
+            $\ket{\phi}$
+        };
 
-    \node[
-        below=1cm of phi,
-        align=center
-    ] {
-        $\displaystyle
-        \mel{\phi}{\hat{A}}{\psi}
-        $
-    };
+        \draw[
+            -{Stealth[length=4mm]},
+            very thick,
+            orange!80!black
+        ]
+            (psi) -- (phi)
+            node[
+                midway,
+                above
+            ] {
+                $\hat{U}$
+            };
 
-\end{tikzpicture}
-</script>
-```
+        \node[
+            below=1cm of psi,
+            align=center
+        ] {
+            $\displaystyle
+            \braket{\psi}{\psi}=1
+            $
+        };
+
+        \node[
+            below=1cm of phi,
+            align=center
+        ] {
+            $\displaystyle
+            \mel{\phi}{\hat{A}}{\psi}
+            $
+        };
+
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="physics"
-  data-tikz-libraries="positioning,arrows.meta"
->
-\begin{tikzpicture}[
-    state/.style={
-        draw=purple!70!black,
-        fill=purple!8,
-        rounded corners,
-        very thick,
-        minimum width=2.3cm,
-        minimum height=1.1cm
-    }
-]
-
-    \node[
-        state
-    ] (psi) {
-        $\ket{\psi}$
-    };
-
-    \node[
-        state,
-        right=2.5cm of psi,
-        fill=blue!8,
-        draw=blue!70!black
-    ] (phi) {
-        $\ket{\phi}$
-    };
-
-    \draw[
-        -{Stealth[length=4mm]},
-        very thick,
-        orange!80!black
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="physics"
+      data-tikz-libraries="positioning,arrows.meta"
+    >
+    \begin{tikzpicture}[
+        state/.style={
+            draw=purple!70!black,
+            fill=purple!8,
+            rounded corners,
+            very thick,
+            minimum width=2.3cm,
+            minimum height=1.1cm
+        }
     ]
-        (psi) -- (phi)
-        node[
-            midway,
-            above
-        ] {
-            $\hat{U}$
+
+        \node[
+            state
+        ] (psi) {
+            $\ket{\psi}$
         };
 
-    \node[
-        below=1cm of psi,
-        align=center
-    ] {
-        $\displaystyle
-        \braket{\psi}{\psi}=1
-        $
-    };
+        \node[
+            state,
+            right=2.5cm of psi,
+            fill=blue!8,
+            draw=blue!70!black
+        ] (phi) {
+            $\ket{\phi}$
+        };
 
-    \node[
-        below=1cm of phi,
-        align=center
-    ] {
-        $\displaystyle
-        \mel{\phi}{\hat{A}}{\psi}
-        $
-    };
+        \draw[
+            -{Stealth[length=4mm]},
+            very thick,
+            orange!80!black
+        ]
+            (psi) -- (phi)
+            node[
+                midway,
+                above
+            ] {
+                $\hat{U}$
+            };
 
-\end{tikzpicture}
-</script>
-```
-````
+        \node[
+            below=1cm of psi,
+            align=center
+        ] {
+            $\displaystyle
+            \braket{\psi}{\psi}=1
+            $
+        };
+
+        \node[
+            below=1cm of phi,
+            align=center
+        ] {
+            $\displaystyle
+            \mel{\phi}{\hat{A}}{\psi}
+            $
+        };
+
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -1085,71 +1053,67 @@ The `physics` package also provides common quantum-mechanics notation.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="physics"
->
-\begin{tikzpicture}
+    <script
+      type="text/tikz"
+      data-tex-packages="physics"
+    >
+    \begin{tikzpicture}
 
-    \node[
-        draw=red!70!black,
-        fill=red!7,
-        rounded corners,
-        very thick,
-        inner sep=10pt,
-        align=center
-    ] {
-        $\displaystyle
-        \comm{\hat{x}}{\hat{p}}
-        =
-        i\hbar
-        $\\[8pt]
-        $\displaystyle
-        \expval{\hat{H}}{\psi}
-        =
-        \bra{\psi}\hat{H}\ket{\psi}
-        $
-    };
+        \node[
+            draw=red!70!black,
+            fill=red!7,
+            rounded corners,
+            very thick,
+            inner sep=10pt,
+            align=center
+        ] {
+            $\displaystyle
+            \comm{\hat{x}}{\hat{p}}
+            =
+            i\hbar
+            $\\[8pt]
+            $\displaystyle
+            \expval{\hat{H}}{\psi}
+            =
+            \bra{\psi}\hat{H}\ket{\psi}
+            $
+        };
 
-\end{tikzpicture}
-</script>
-```
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="physics"
->
-\begin{tikzpicture}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="physics"
+    >
+    \begin{tikzpicture}
 
-    \node[
-        draw=red!70!black,
-        fill=red!7,
-        rounded corners,
-        very thick,
-        inner sep=10pt,
-        align=center
-    ] {
-        $\displaystyle
-        \comm{\hat{x}}{\hat{p}}
-        =
-        i\hbar
-        $\\[8pt]
-        $\displaystyle
-        \expval{\hat{H}}{\psi}
-        =
-        \bra{\psi}\hat{H}\ket{\psi}
-        $
-    };
+        \node[
+            draw=red!70!black,
+            fill=red!7,
+            rounded corners,
+            very thick,
+            inner sep=10pt,
+            align=center
+        ] {
+            $\displaystyle
+            \comm{\hat{x}}{\hat{p}}
+            =
+            i\hbar
+            $\\[8pt]
+            $\displaystyle
+            \expval{\hat{H}}{\psi}
+            =
+            \bra{\psi}\hat{H}\ket{\psi}
+            $
+        };
 
-\end{tikzpicture}
-</script>
-```
-````
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -1184,11 +1148,9 @@ Use JSON when a package requires options.
 
 !!! note
 
-```
-Loading packages together does not guarantee that every possible combination is conflict-free.
+    Loading packages together does not guarantee that every possible combination is conflict-free.
 
-Keep package declarations local and include only the packages required by the diagram.
-```
+    Keep package declarations local and include only the packages required by the diagram.
 
 ---
 
@@ -1214,17 +1176,15 @@ data-tex-packages="physics"
 
 !!! warning "Performance"
 
-````
-A globally configured package is inserted into the preamble of every diagram:
+    A globally configured package is inserted into the preamble of every diagram:
 
-```latex
-\usepackage{physics}
-```
+    ```latex
+    \usepackage{physics}
+    ```
 
-This is convenient, but it also affects diagrams that do not use any `physics` command.
+    This is convenient, but it also affects diagrams that do not use any `physics` command.
 
-Prefer local loading unless the package is required throughout the site.
-````
+    Prefer local loading unless the package is required throughout the site.
 
 ---
 
@@ -1236,58 +1196,52 @@ Therefore, fenced blocks using `physics` commands work only when the package is 
 
 === "Rendering"
 
-````
-```tikzjax
-\begin{tikzpicture}
-    \node[
-        draw,
-        rounded corners,
-        fill=blue!8,
-        inner sep=8pt
-    ] {
-        $\displaystyle
-        \vb{F}=m\vb{a}
-        $
-    };
-\end{tikzpicture}
-```
-````
+    <script type="text/tikz">
+    \begin{tikzpicture}
+        \node[
+            draw,
+            rounded corners,
+            fill=blue!8,
+            inner sep=8pt
+        ] {
+            $\displaystyle
+            \vb{F}=m\vb{a}
+            $
+        };
+    \end{tikzpicture}
+    </script>
 
 === ":fa-markdown: Markdown"
 
-`````
-````markdown
-```tikzjax
-\begin{tikzpicture}
-    \node[
-        draw,
-        rounded corners,
-        fill=blue!8,
-        inner sep=8pt
-    ] {
-        $\displaystyle
-        \vb{F}=m\vb{a}
-        $
-    };
-\end{tikzpicture}
-```
-````
-`````
+    ````markdown
+    ```tikzjax
+    \begin{tikzpicture}
+        \node[
+            draw,
+            rounded corners,
+            fill=blue!8,
+            inner sep=8pt
+        ] {
+            $\displaystyle
+            \vb{F}=m\vb{a}
+            $
+        };
+    \end{tikzpicture}
+    ```
+    ````
 
 !!! important
 
-````
-For portable local loading, prefer:
+    For portable local loading, prefer:
 
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="physics"
->
-...
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="physics"
+    >
+    ...
+    </script>
+    ```
 
 ---
 
@@ -1295,103 +1249,99 @@ For portable local loading, prefer:
 
 === "Rendering"
 
-```
-=== "Question"
+    === "Question"
 
-    Represent a force and write Newton's second law.
+        Represent a force and write Newton's second law.
 
-=== "Solution"
+    === "Solution"
 
-    <script
-      type="text/tikz"
-      data-tex-packages="physics"
-      data-tikz-libraries="arrows.meta"
-    >
-    \begin{tikzpicture}
+        <script
+          type="text/tikz"
+          data-tex-packages="physics"
+          data-tikz-libraries="arrows.meta"
+        >
+        \begin{tikzpicture}
 
-        \node[
-            draw,
-            fill=blue!10,
-            rounded corners,
-            minimum width=1.5cm,
-            minimum height=1cm
-        ] (m) {
-            $m$
-        };
-
-        \draw[
-            -{Stealth[length=4mm]},
-            red,
-            very thick
-        ]
-            (m.east) -- ++(2,0)
-            node[
-                midway,
-                above
-            ] {
-                $\vb{F}$
+            \node[
+                draw,
+                fill=blue!10,
+                rounded corners,
+                minimum width=1.5cm,
+                minimum height=1cm
+            ] (m) {
+                $m$
             };
 
-        \node[
-            below=0.9cm
-        ] at (m) {
-            $\vb{F}_{\mathrm{net}}=m\vb{a}$
-        };
+            \draw[
+                -{Stealth[length=4mm]},
+                red,
+                very thick
+            ]
+                (m.east) -- ++(2,0)
+                node[
+                    midway,
+                    above
+                ] {
+                    $\vb{F}$
+                };
 
-    \end{tikzpicture}
-    </script>
-```
+            \node[
+                below=0.9cm
+            ] at (m) {
+                $\vb{F}_{\mathrm{net}}=m\vb{a}$
+            };
+
+        \end{tikzpicture}
+        </script>
 
 === ":fa-markdown: Markdown"
 
-`````
-````markdown
-=== "Question"
+    ````markdown
+    === "Question"
 
-    Represent a force and write Newton's second law.
+        Represent a force and write Newton's second law.
 
-=== "Solution"
+    === "Solution"
 
-    <script
-      type="text/tikz"
-      data-tex-packages="physics"
-      data-tikz-libraries="arrows.meta"
-    >
-    \begin{tikzpicture}
+        <script
+          type="text/tikz"
+          data-tex-packages="physics"
+          data-tikz-libraries="arrows.meta"
+        >
+        \begin{tikzpicture}
 
-        \node[
-            draw,
-            fill=blue!10,
-            rounded corners,
-            minimum width=1.5cm,
-            minimum height=1cm
-        ] (m) {
-            $m$
-        };
-
-        \draw[
-            -{Stealth[length=4mm]},
-            red,
-            very thick
-        ]
-            (m.east) -- ++(2,0)
-            node[
-                midway,
-                above
-            ] {
-                $\vb{F}$
+            \node[
+                draw,
+                fill=blue!10,
+                rounded corners,
+                minimum width=1.5cm,
+                minimum height=1cm
+            ] (m) {
+                $m$
             };
 
-        \node[
-            below=0.9cm
-        ] at (m) {
-            $\vb{F}_{\mathrm{net}}=m\vb{a}$
-        };
+            \draw[
+                -{Stealth[length=4mm]},
+                red,
+                very thick
+            ]
+                (m.east) -- ++(2,0)
+                node[
+                    midway,
+                    above
+                ] {
+                    $\vb{F}$
+                };
 
-    \end{tikzpicture}
-    </script>
-````
-`````
+            \node[
+                below=0.9cm
+            ] at (m) {
+                $\vb{F}_{\mathrm{net}}=m\vb{a}$
+            };
+
+        \end{tikzpicture}
+        </script>
+    ````
 
 TikZJax automatically rescans MkDocs Material content tabs when they become visible.
 

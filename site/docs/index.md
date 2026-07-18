@@ -3,6 +3,10 @@
 [![GitHub repository](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-181717?logo=github\&logoColor=white)](https://github.com/rod2ik/tikzjax)
 [![npm package](https://img.shields.io/badge/npm-%40rod2ik%2Ftikzjax-CB3837?logo=npm\&logoColor=white)](https://www.npmjs.com/package/@rod2ik/tikzjax)
 [![License: GPL v3+](https://img.shields.io/badge/License-GPLv3%2B-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Material themes](https://img.shields.io/badge/Material-Light%20%2F%20Dark-success?style=flat-square&logo=materialformkdocs&logoColor=white)](themes.md)
+[![Web Workers](https://img.shields.io/badge/rendering-adaptive%20worker%20pool-success?style=flat-square)](parallel-rendering.md)
+[![Packages](https://img.shields.io/badge/optional%20packages-8-success?style=flat-square&logo=latex&logoColor=white)](#supported-optional-packages)
+[![Browser TeX](https://img.shields.io/badge/TeX-WebAssembly-success?style=flat-square)](architecture.md)
 
 TikZJax renders **TikZ and supported LaTeX packages directly in the browser**.
 
@@ -24,14 +28,15 @@ TikZJax runs TeX through WebAssembly inside Web Workers. It does not require a s
 | ----------------------------------------- | --------------------------------------------------------------------------------- |
 | Documentation and live demonstration site | [rod2ik.github.io/tikzjax](https://rod2ik.github.io/tikzjax)                      |
 | Minimal MkDocs test repository            | [rod2ik/minimal-mkdocs-tikzjax](https://github.com/rod2ik/minimal-mkdocs-tikzjax) |
-| Source repository                         | [rod2ik/tikzjax](https://github.com/rod2ik/tikzjax)                               |
+| Source repository                         | [rod2ik/tikzjax](https://github.com/rod2ik/tikzjax)                      |
 | npm package                               | [@rod2ik/tikzjax](https://www.npmjs.com/package/@rod2ik/tikzjax)                  |
+| jsDeliver CDN                             | [@rod2ik/tikzjax](https://www.jsdelivr.com/package/npm/@rod2ik/tikzjax)                  |
 
 The minimal MkDocs repository can be cloned and run locally to test the integration in an isolated project.
 
 ---
 
-# Project lineage
+## Project lineage
 
 `rod2ik/TikZJax` is based on the historical work of:
 
@@ -49,153 +54,198 @@ The original projects provided the foundation for rendering TikZ in a browser. T
 
 ---
 
-# Feature labels
+## Visual feature badges
 
-The following labels are used throughout this page:
+The following Shields badges identify the origin of the features described on this page:
 
-* **🧱 ORIGINAL** — inherited from the historical TikZJax projects;
-* **🛠 EXTENDED** — an inherited feature substantially expanded in this fork;
-* **🆕 NEW** — functionality added by `rod2ik/TikZJax`.
+* [![ORIGINAL](https://img.shields.io/badge/ORIGINAL-blue?style=flat-square)](https://github.com/rod2ik/tikzjax) inherited from the historical TikZJax projects;
+* [![EXTENDED](https://img.shields.io/badge/EXTENDED-orange?style=flat-square)](https://github.com/rod2ik/tikzjax) inherited behavior substantially expanded in this fork;
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) functionality added by `rod2ik/TikZJax`.
 
----
-
-# What is different in `rod2ik/TikZJax`?
-
-## Core rendering
-
-* **🧱 ORIGINAL** Browser-side TikZ rendering through TeX compiled to WebAssembly.
-* **🧱 ORIGINAL** Support for `<script type="text/tikz">` source blocks.
-* **🧱 ORIGINAL** DVI conversion to browser-compatible SVG and HTML.
-* **🛠 EXTENDED** The original TikZ rendering pipeline has been refactored into a modern ESM-based project.
-* **🛠 EXTENDED** Runtime TeX assets and optional dependencies are organized for dynamic browser loading.
-
-## LaTeX and diagram support
-
-* **🆕 NEW** Native support for `tkz-tab` variation tables and sign tables.
-* **🆕 NEW** Support for optional LaTeX packages loaded at runtime.
-* **🆕 NEW** Support for package-specific examples including:
-
-  * `physics`;
-  * `circuitikz`;
-  * `chemfig`;
-  * `yquant`;
-  * `tikz-feynhand`;
-  * `pgf-spectra`;
-  * `kinematikz`.
-* **🆕 NEW** Support for additional TikZ libraries such as `braids`.
-* **🆕 NEW** Per-diagram TeX package declarations with `data-tex-packages`.
-* **🆕 NEW** Per-diagram TikZ library declarations with `data-tikz-libraries`.
-* **🆕 NEW** Per-diagram custom LaTeX preambles with `data-add-to-preamble`.
-* **🆕 NEW** Global and local configuration for generated `tkz-tab` macros.
-
-## Configuration
-
-* **🆕 NEW** Global configuration through `window.TikzJaxOptions`.
-* **🆕 NEW** Runtime partial updates through `window.TikzJaxConfigure()`.
-* **🆕 NEW** Recursive configuration merging for plain objects.
-* **🆕 NEW** Array merging with duplicate removal.
-* **🆕 NEW** Separate global and local configuration scopes.
-* **🛠 EXTENDED** Per-diagram `data-*` options now cover packages, libraries, preambles, timeouts, retries, caching, diagnostics, loader dimensions, and fallback images.
-* **🆕 NEW** Complex local configuration through `data-tikzjax-options`.
-* **🆕 NEW** Local nested TeX configuration through `data-tex`.
-
-## MkDocs and documentation integration
-
-* **🆕 NEW** Native recognition of fenced `tikzjax` Markdown blocks.
-* **🆕 NEW** Compatibility with Material for MkDocs light and dark palettes.
-* **🆕 NEW** Compatibility with Material admonitions.
-* **🆕 NEW** Compatibility with collapsible details and admonitions.
-* **🆕 NEW** Compatibility with Material content tabs.
-* **🆕 NEW** Detection of diagrams added through client-side navigation.
-* **🆕 NEW** Centralized DOM observation for dynamically inserted content.
-* **🆕 NEW** Delayed rescanning and reprioritization when hidden content becomes visible.
-* **🆕 NEW** Generated wrappers include `mathjax_ignore` to reduce conflicts with MathJax rescans.
-
-## Themes
-
-* **🆕 NEW** Automatic light and dark theme adaptation for generated SVGs.
-* **🆕 NEW** Detection of common theme attributes such as:
-
-  * `data-theme`;
-  * `data-bs-theme`;
-  * `data-color-scheme`;
-  * `data-md-color-scheme`.
-* **🆕 NEW** Support for class-based theme detection.
-* **🆕 NEW** Optional fallback to `prefers-color-scheme`.
-* **🆕 NEW** Dynamic updates of existing SVGs when the site theme changes.
-* **🆕 NEW** Cached SVGs are adapted to the current theme after insertion without recompiling TeX.
-
-## Rendering performance
-
-* **🆕 NEW** Adaptive bounded Web Worker pool.
-* **🆕 NEW** Parallel rendering of independent diagrams.
-* **🆕 NEW** Configurable maximum worker count.
-* **🆕 NEW** CPU-aware worker-pool sizing.
-* **🆕 NEW** Optional device-memory-aware worker-pool sizing.
-* **🆕 NEW** Lazy worker initialization only when uncached work exists.
-* **🆕 NEW** One active TeX job per worker.
-* **🆕 NEW** Global rendering queue shared by all diagrams.
-* **🆕 NEW** Viewport-based render priority.
-* **🆕 NEW** Reprioritization when diagrams become visible.
-* **🆕 NEW** Dependency-cache affinity as a worker-selection tie-breaker.
-* **🆕 NEW** Pending-job deduplication for identical diagrams.
-* **🆕 NEW** Partial worker-pool recovery when one worker fails.
-
-## Caching
-
-* **🛠 EXTENDED** Persistent browser-side SVG caching through IndexedDB.
-* **🆕 NEW** Cache identities include the exact source and effective worker dataset.
-* **🆕 NEW** Pending identical diagrams can share one active compilation.
-* **🆕 NEW** Each worker retains its initialized WebAssembly runtime.
-* **🆕 NEW** Each worker maintains its own decompressed TeX dependency cache.
-* **🆕 NEW** Cache bypass can be enabled for an individual diagram with `data-disable-cache`.
-
-## Reliability and diagnostics
-
-* **🛠 EXTENDED** Finite rendering timeouts.
-* **🛠 EXTENDED** Configurable retry handling.
-* **🛠 EXTENDED** Worker restart after failure.
-* **🆕 NEW** Worker initialization retries.
-* **🆕 NEW** Failed workers can be replaced without stopping healthy workers.
-* **🆕 NEW** Per-diagram TeX console output with `data-show-console`.
-* **🆕 NEW** Per-diagram timing diagnostics with `data-debug-timings`.
-* **🆕 NEW** Custom global fallback error images.
-* **🆕 NEW** Custom per-diagram fallback images.
-* **🆕 NEW** Several fallback image designs are included in the package.
-* **🆕 NEW** A `tikzjax-load-finished` event is dispatched for each inserted SVG.
+The badges are ordinary linked images generated by [Shields.io](https://shields.io/) and render correctly in Material for MkDocs.
 
 ---
 
-# Feature comparison
+## Supported optional packages
+
+The distributed browser runtime includes the files required by all of these optional packages:
+
+[![tkz-tab](https://img.shields.io/badge/tkz--tab-supported-success?style=flat-square&logo=latex&logoColor=white)](examples/tkz-tab.md)
+[![physics](https://img.shields.io/badge/physics-supported-success?style=flat-square&logo=latex&logoColor=white)](examples/physics.md)
+[![circuitikz](https://img.shields.io/badge/circuitikz-supported-success?style=flat-square&logo=latex&logoColor=white)](examples/circuitikz.md)
+[![chemfig](https://img.shields.io/badge/chemfig-supported-success?style=flat-square&logo=latex&logoColor=white)](examples/chemfig.md)
+[![yquant](https://img.shields.io/badge/yquant-supported-success?style=flat-square&logo=latex&logoColor=white)](examples/yquant.md)
+[![tikz-feynhand](https://img.shields.io/badge/tikz--feynhand-supported-success?style=flat-square&logo=latex&logoColor=white)](examples/tikz-feynhand.md)
+[![pgf-spectra](https://img.shields.io/badge/pgf--spectra-supported-success?style=flat-square&logo=latex&logoColor=white)](examples/pgf-spectra.md)
+[![kinematikz](https://img.shields.io/badge/kinematikz-supported-success?style=flat-square&logo=latex&logoColor=white)](examples/kinematikz.md)
+
+```json
+[
+    "tkz-tab",
+    "physics",
+    "circuitikz",
+    "chemfig",
+    "yquant",
+    "tikz-feynhand",
+    "pgf-spectra",
+    "kinematikz"
+]
+```
+
+The runtime files are available, but packages are loaded into a diagram only when declared globally or with `data-tex-packages`.
+
+```html
+<script
+  type="text/tikz"
+  data-tex-packages="chemfig"
+>
+\chemfig{H_3C-CH_2-OH}
+</script>
+```
+
+See the [complete examples catalogue](examples/index.md).
+
+---
+
+## What is different in `rod2ik/TikZJax`?
+
+### Core rendering
+
+* [![ORIGINAL](https://img.shields.io/badge/ORIGINAL-blue?style=flat-square)](https://github.com/rod2ik/tikzjax) Browser-side TikZ rendering through TeX compiled to WebAssembly.
+* [![ORIGINAL](https://img.shields.io/badge/ORIGINAL-blue?style=flat-square)](https://github.com/rod2ik/tikzjax) Support for `<script type="text/tikz">` source blocks.
+* [![ORIGINAL](https://img.shields.io/badge/ORIGINAL-blue?style=flat-square)](https://github.com/rod2ik/tikzjax) DVI conversion to browser-compatible SVG and HTML.
+* [![EXTENDED](https://img.shields.io/badge/EXTENDED-orange?style=flat-square)](https://github.com/rod2ik/tikzjax) The original TikZ rendering pipeline has been refactored into a modern ESM-based project.
+* [![EXTENDED](https://img.shields.io/badge/EXTENDED-orange?style=flat-square)](https://github.com/rod2ik/tikzjax) Runtime TeX assets and optional dependencies are organized for dynamic browser loading.
+
+### LaTeX and diagram support
+
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Native support for `tkz-tab` variation tables and sign tables.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Support for optional LaTeX packages loaded at runtime.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Support for package-specific examples including:
+
+    * `physics`;
+    * `circuitikz`;
+    * `chemfig`;
+    * `yquant`;
+    * `tikz-feynhand`;
+    * `pgf-spectra`;
+    * `kinematikz`.
+
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Support for additional TikZ libraries such as `braids`.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Per-diagram TeX package declarations with `data-tex-packages`.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Per-diagram TikZ library declarations with `data-tikz-libraries`.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Per-diagram custom LaTeX preambles with `data-add-to-preamble`.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Global and local `tkz-tab` configuration with public helper macros and automatic native defaults.
+
+### Configuration
+
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Global configuration through `window.TikzJaxOptions`.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Runtime partial updates through `window.TikzJaxConfigure()`.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Recursive configuration merging for plain objects.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Array merging with duplicate removal.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Separate global and local configuration scopes.
+* [![EXTENDED](https://img.shields.io/badge/EXTENDED-orange?style=flat-square)](https://github.com/rod2ik/tikzjax) Per-diagram `data-*` options now cover packages, libraries, preambles, timeouts, retries, caching, diagnostics, loader dimensions, and fallback images.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Complex local configuration through `data-tikzjax-options`.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Local nested TeX configuration through `data-tex`.
+
+### MkDocs and documentation integration
+
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Native recognition of fenced `tikzjax` Markdown blocks.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Compatibility with Material for MkDocs light and dark palettes.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Compatibility with Material admonitions.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Compatibility with collapsible details and admonitions.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Compatibility with Material content tabs.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Detection of diagrams added through client-side navigation.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Centralized DOM observation for dynamically inserted content.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Delayed rescanning and reprioritization when hidden content becomes visible.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Generated wrappers include `mathjax_ignore` to reduce conflicts with MathJax rescans.
+
+### Themes
+
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Automatic light and dark theme adaptation for generated SVGs.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Detection of common theme attributes such as:
+
+    * `data-theme`;
+    * `data-bs-theme`;
+    * `data-color-scheme`;
+    * `data-md-color-scheme`.
+
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Support for class-based theme detection.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Optional fallback to `prefers-color-scheme`.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Dynamic updates of existing SVGs when the site theme changes.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Cached SVGs are adapted to the current theme after insertion without recompiling TeX.
+
+### Rendering performance
+
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Adaptive bounded Web Worker pool.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Parallel rendering of independent diagrams.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Configurable maximum worker count.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) CPU-aware worker-pool sizing.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Optional device-memory-aware worker-pool sizing.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Lazy worker initialization only when uncached work exists.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) One active TeX job per worker.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Global rendering queue shared by all diagrams.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Viewport-based render priority.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Reprioritization when diagrams become visible.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Dependency-cache affinity as a worker-selection tie-breaker.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Pending-job deduplication for identical diagrams.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Partial worker-pool recovery when one worker fails.
+
+### Caching
+
+* [![EXTENDED](https://img.shields.io/badge/EXTENDED-orange?style=flat-square)](https://github.com/rod2ik/tikzjax) Persistent browser-side SVG caching through IndexedDB.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Cache identities include the exact source and effective worker dataset.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Pending identical diagrams can share one active compilation.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Each worker retains its initialized WebAssembly runtime.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Each worker maintains its own decompressed TeX dependency cache.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Cache bypass can be enabled for an individual diagram with `data-disable-cache`.
+
+### Reliability and diagnostics
+
+* [![EXTENDED](https://img.shields.io/badge/EXTENDED-orange?style=flat-square)](https://github.com/rod2ik/tikzjax) Finite rendering timeouts.
+* [![EXTENDED](https://img.shields.io/badge/EXTENDED-orange?style=flat-square)](https://github.com/rod2ik/tikzjax) Configurable retry handling.
+* [![EXTENDED](https://img.shields.io/badge/EXTENDED-orange?style=flat-square)](https://github.com/rod2ik/tikzjax) Worker restart after failure.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Worker initialization retries.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Failed workers can be replaced without stopping healthy workers.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Per-diagram TeX console output with `data-show-console`.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Per-diagram timing diagnostics with `data-debug-timings`.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Custom global fallback error images.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Custom per-diagram fallback images.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Several fallback image designs are included in the package.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) A `tikzjax-load-finished` event is dispatched for each inserted SVG.
+
+---
+
+## Feature comparison
 
 | Feature                            | Historical TikZJax | `rod2ik/TikZJax` |
 | ---------------------------------- | -----------------: | ---------------: |
-| Browser-side TikZ rendering        |    **🧱 ORIGINAL** |              Yes |
-| `<script type="text/tikz">` blocks |    **🧱 ORIGINAL** |              Yes |
-| `tkz-tab` support                  |                  — |       **🆕 NEW** |
-| Optional runtime LaTeX packages    |                  — |       **🆕 NEW** |
-| Fenced MkDocs `tikzjax` blocks     |                  — |       **🆕 NEW** |
-| Global configuration API           |                  — |       **🆕 NEW** |
-| Per-diagram package configuration  |                  — |       **🆕 NEW** |
-| Per-diagram TikZ libraries         |                  — |       **🆕 NEW** |
-| Light and dark theme adaptation    |                  — |       **🆕 NEW** |
-| Dynamic Material theme updates     |                  — |       **🆕 NEW** |
-| Material tabs and admonitions      |                  — |       **🆕 NEW** |
-| Adaptive worker pool               |                  — |       **🆕 NEW** |
-| Parallel TeX rendering             |                  — |       **🆕 NEW** |
-| Viewport-priority scheduling       |                  — |       **🆕 NEW** |
-| Pending-job deduplication          |                  — |       **🆕 NEW** |
-| IndexedDB SVG cache                |    **🧱 ORIGINAL** |  **🛠 EXTENDED** |
-| Timeout and restart handling       |    **🧱 ORIGINAL** |  **🛠 EXTENDED** |
-| Custom fallback images             |                  — |       **🆕 NEW** |
-| TeX console diagnostics            |                  — |       **🆕 NEW** |
-| Worker timing diagnostics          |                  — |       **🆕 NEW** |
+| Browser-side TikZ rendering        |    [![ORIGINAL](https://img.shields.io/badge/ORIGINAL-blue?style=flat-square)](https://github.com/rod2ik/tikzjax) |              Yes |
+| `<script type="text/tikz">` blocks |    [![ORIGINAL](https://img.shields.io/badge/ORIGINAL-blue?style=flat-square)](https://github.com/rod2ik/tikzjax) |              Yes |
+| `tkz-tab` support                  |                  — |       [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) |
+| Optional runtime LaTeX packages    |                  — |       [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) |
+| Fenced MkDocs `tikzjax` blocks     |                  — |       [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) |
+| Global configuration API           |                  — |       [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) |
+| Per-diagram package configuration  |                  — |       [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) |
+| Per-diagram TikZ libraries         |                  — |       [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) |
+| Light and dark theme adaptation    |                  — |       [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) |
+| Dynamic Material theme updates     |                  — |       [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) |
+| Material tabs and admonitions      |                  — |       [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) |
+| Adaptive worker pool               |                  — |       [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) |
+| Parallel TeX rendering             |                  — |       [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) |
+| Viewport-priority scheduling       |                  — |       [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) |
+| Pending-job deduplication          |                  — |       [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) |
+| IndexedDB SVG cache                |    [![ORIGINAL](https://img.shields.io/badge/ORIGINAL-blue?style=flat-square)](https://github.com/rod2ik/tikzjax) |  [![EXTENDED](https://img.shields.io/badge/EXTENDED-orange?style=flat-square)](https://github.com/rod2ik/tikzjax) |
+| Timeout and restart handling       |    [![ORIGINAL](https://img.shields.io/badge/ORIGINAL-blue?style=flat-square)](https://github.com/rod2ik/tikzjax) |  [![EXTENDED](https://img.shields.io/badge/EXTENDED-orange?style=flat-square)](https://github.com/rod2ik/tikzjax) |
+| Custom fallback images             |                  — |       [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) |
+| TeX console diagnostics            |                  — |       [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) |
+| Worker timing diagnostics          |                  — |       [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) |
 
 ---
 
-# Quick installation
+## Quick installation
 
-## jsDelivr
+### jsDelivr
 
 ```html
 <script src="/assets/javascripts/tikzjax.config.js"></script>
@@ -211,7 +261,7 @@ The following labels are used throughout this page:
 ></script>
 ```
 
-## unpkg
+### unpkg
 
 ```html
 <script src="/assets/javascripts/tikzjax.config.js"></script>
@@ -227,13 +277,13 @@ The following labels are used throughout this page:
 ></script>
 ```
 
-## npm
+### npm
 
 ```bash
 npm install @rod2ik/tikzjax
 ```
 
-## Yarn
+### Yarn
 
 ```bash
 yarn add @rod2ik/tikzjax
@@ -247,7 +297,7 @@ See:
 
 ---
 
-# Recommended configuration
+## Recommended configuration
 
 ```js
 window.TikzJaxOptions = {
@@ -267,22 +317,22 @@ window.TikzJaxOptions = {
 
 This enables:
 
-* **🆕 NEW** bounded parallel rendering;
-* **🆕 NEW** adaptive worker-pool sizing;
-* **🆕 NEW** worker initialization retries;
-* **🛠 EXTENDED** rendering retries;
-* **🛠 EXTENDED** failed-worker replacement;
-* **🛠 EXTENDED** finite rendering timeouts.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) bounded parallel rendering;
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) adaptive worker-pool sizing;
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) worker initialization retries;
+* [![EXTENDED](https://img.shields.io/badge/EXTENDED-orange?style=flat-square)](https://github.com/rod2ik/tikzjax) rendering retries;
+* [![EXTENDED](https://img.shields.io/badge/EXTENDED-orange?style=flat-square)](https://github.com/rod2ik/tikzjax) failed-worker replacement;
+* [![EXTENDED](https://img.shields.io/badge/EXTENDED-orange?style=flat-square)](https://github.com/rod2ik/tikzjax) finite rendering timeouts.
 
 See [Configuration](configuration.md).
 
 ---
 
-# Basic TikZ example
+## Basic TikZ example
 
-## HTML syntax
+### HTML syntax
 
-**🧱 ORIGINAL**, retained and extended:
+[![ORIGINAL](https://img.shields.io/badge/ORIGINAL-blue?style=flat-square)](https://github.com/rod2ik/tikzjax), retained and extended:
 
 ```html
 <script type="text/tikz">
@@ -305,9 +355,9 @@ On the documentation site, TikZJax replaces this source with a generated SVG.
 
 ---
 
-## MkDocs fenced syntax
+### MkDocs fenced syntax
 
-**🆕 NEW** in `rod2ik/TikZJax`:
+[![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) in `rod2ik/TikZJax`:
 
 ````markdown
 ```tikzjax
@@ -332,26 +382,26 @@ Use an HTML source block when local `data-*` configuration is required.
 
 ---
 
-# `tkz-tab` example
+## `tkz-tab` example
 
-Native `tkz-tab` rendering is **🆕 NEW** in `rod2ik/TikZJax`.
+Native `tkz-tab` rendering is [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) in `rod2ik/TikZJax`.
 
 ```html
 <script
   type="text/tikz"
   data-tex-packages="tkz-tab"
+  data-tkz-tab='{
+    "autoApply": true,
+    "lineWidth": "1.2pt",
+    "font": "\\Large",
+    "firstColumnWidth": 6,
+    "espcl": 3
+  }'
   data-width="760"
   data-height="260"
 >
-\begin{tikzpicture}[
-    line width=1.2pt,
-    font=\Large
-]
-    \tkzTabInit[
-        lgt=6,
-        espcl=3,
-        lw=1.2pt
-    ]
+\begin{tikzpicture}
+    \tkzTabInit
         {
             $x$/1.5,
             $f'(x)=3(x+1)(x-2)$/1.5,
@@ -382,19 +432,22 @@ Native `tkz-tab` rendering is **🆕 NEW** in `rod2ik/TikZJax`.
 </script>
 ```
 
-The package is loaded locally with:
+Package loading and table configuration are separate:
 
 ```html
 data-tex-packages="tkz-tab"
+data-tkz-tab='{ ... }'
 ```
+
+With `autoApply` enabled, the source does not need to repeat native `lw`, `lgt`, `espcl`, or node-font settings.
 
 See the [`tkz-tab` examples](examples/tkz-tab.md).
 
 ---
 
-# Optional package example
+## Optional package example
 
-Per-diagram package loading is **🆕 NEW**.
+Per-diagram package loading is [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax).
 
 ```html
 <script
@@ -432,9 +485,9 @@ See [Global and Local Configuration](configuration-scopes.md).
 
 ---
 
-# TikZ library example
+## TikZ library example
 
-Per-diagram TikZ libraries are **🆕 NEW**.
+Per-diagram TikZ libraries are [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax).
 
 ```html
 <script
@@ -468,9 +521,9 @@ data-tikz-libraries="braids"
 
 ---
 
-# Light and dark themes
+## Light and dark themes
 
-Theme adaptation is **🆕 NEW**.
+Theme adaptation is [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax).
 
 A Material for MkDocs configuration can use:
 
@@ -493,9 +546,9 @@ See [Light and Dark Themes](themes.md).
 
 ---
 
-# Parallel rendering
+## Parallel rendering
 
-The adaptive Web Worker pool is **🆕 NEW**.
+The adaptive Web Worker pool is [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax).
 
 ```text
 global render queue
@@ -520,18 +573,18 @@ See [Parallel Rendering and the Worker Pool](parallel-rendering.md).
 
 ---
 
-# Cache and performance
+## Cache and performance
 
-Browser-side SVG caching is an **🛠 EXTENDED** historical capability.
+Browser-side SVG caching is an [![EXTENDED](https://img.shields.io/badge/EXTENDED-orange?style=flat-square)](https://github.com/rod2ik/tikzjax) historical capability.
 
 The current implementation also provides:
 
-* **🆕 NEW** rendering identities based on exact source and effective options;
-* **🆕 NEW** pending-job deduplication;
-* **🆕 NEW** worker-local TeX dependency caches;
-* **🆕 NEW** worker runtime reuse;
-* **🆕 NEW** viewport-priority scheduling;
-* **🆕 NEW** local cache bypass.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) rendering identities based on exact source and effective options;
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) pending-job deduplication;
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) worker-local TeX dependency caches;
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) worker runtime reuse;
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) viewport-priority scheduling;
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) local cache bypass.
 
 Disable the persistent SVG cache for one debugging block with:
 
@@ -543,11 +596,11 @@ See [Cache and Performance](cache-performance.md).
 
 ---
 
-# Error handling
+## Error handling
 
-Timeout, retry, and worker-restart behavior are **🛠 EXTENDED**.
+Timeout, retry, and worker-restart behavior are [![EXTENDED](https://img.shields.io/badge/EXTENDED-orange?style=flat-square)](https://github.com/rod2ik/tikzjax).
 
-Custom fallback images are **🆕 NEW**.
+Custom fallback images are [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax).
 
 ```js
 window.TikzJaxOptions = {
@@ -570,7 +623,7 @@ See [Fallback and Error Images](fallback-error-images.md).
 
 ---
 
-# Intentionally invalid example
+## Intentionally invalid example
 
 The following source is intentionally invalid so that the fallback path can be tested.
 
@@ -592,9 +645,9 @@ The configured fallback image should appear after all permitted attempts fail.
 
 ---
 
-# Documentation
+## Documentation
 
-## Getting started
+### Getting started
 
 * [Installation overview](installation/index.md)
 * [Standalone HTML installation](installation/html.md)
@@ -602,19 +655,19 @@ The configured fallback image should appear after all permitted attempts fail.
 * [Configuration](configuration.md)
 * [Global and Local Configuration](configuration-scopes.md)
 
-## Rendering and performance
+### Rendering and performance
 
 * [Parallel Rendering and the Worker Pool](parallel-rendering.md)
 * [Cache and Performance](cache-performance.md)
 * [Runtime Architecture](architecture.md)
 
-## Appearance and errors
+### Appearance and errors
 
 * [Light and Dark Themes](themes.md)
 * [Fallback and Error Images](fallback-error-images.md)
 * [Troubleshooting](troubleshooting.md)
 
-## Reference and examples
+### Reference and examples
 
 * [API Reference](api-reference.md)
 * [Examples](examples/index.md)
@@ -630,11 +683,11 @@ The configured fallback image should appear after all permitted attempts fail.
 
 ---
 
-# Credits
+## Credits
 
 TikZJax exists because of the foundational work of the original TikZJax, Web2JS, and DVI-to-HTML projects and their contributors.
 
-`rod2ik/TikZJax` preserves the original browser-side TikZ rendering concept while adding **🆕 NEW** functionality for:
+`rod2ik/TikZJax` preserves the original browser-side TikZ rendering concept while adding [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) functionality for:
 
 * `tkz-tab`;
 * optional package loading;

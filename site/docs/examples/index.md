@@ -1,4 +1,4 @@
-# Examples of Index.md
+# Examples
 
 TikZJax can render standard TikZ diagrams and several optional LaTeX or TikZ packages directly in the browser.
 
@@ -20,7 +20,7 @@ The examples are organized into separate pages so that each package can document
 
   ---
 
-  Sign tables, variation tables, reusable styling macros, and local or global package loading.
+  Sign tables, variation tables, automatic native defaults, local or global configuration, and reusable row-height helper macros.
 
   [:octicons-arrow-right-24: Open tkz-tab examples](tkz-tab.md)
 
@@ -143,17 +143,15 @@ Local package declarations are merged with the global configuration. They do not
 
 !!! tip "Why local loading is recommended"
 
-```
-Local loading keeps each TeX preamble as small as possible.
+    Local loading keeps each TeX preamble as small as possible.
 
-This generally provides:
+    This generally provides:
 
-- faster cold rendering;
-- fewer downloaded runtime files;
-- less work for the TeX engine;
-- fewer package and TikZ-library conflicts;
-- more predictable diagrams.
-```
+    - faster cold rendering;
+    - fewer downloaded runtime files;
+    - less work for the TeX engine;
+    - fewer package and TikZ-library conflicts;
+    - more predictable diagrams.
 
 ## Local TikZ libraries
 
@@ -176,23 +174,21 @@ Local libraries are added to globally configured libraries.
 
 !!! warning "Packages and TikZ libraries are different"
 
-````
-Use:
+    Use:
 
-```html
-data-tex-packages="circuitikz"
-```
+    ```html
+    data-tex-packages="circuitikz"
+    ```
 
-for a LaTeX package, and:
+    for a LaTeX package, and:
 
-```html
-data-tikz-libraries="calc,positioning"
-```
+    ```html
+    data-tikz-libraries="calc,positioning"
+    ```
 
-for TikZ libraries.
+    for TikZ libraries.
 
-Do not place package names in `data-tikz-libraries`.
-````
+    Do not place package names in `data-tikz-libraries`.
 
 ## Global loading remains available
 
@@ -221,20 +217,18 @@ This is useful for sites with a consistent set of requirements, but it is a deli
 
 !!! warning "Global dependencies affect every diagram"
 
-```
-Every globally configured package generates a `\usepackage{...}` instruction for every rendered diagram.
+    Every globally configured package generates a `\usepackage{...}` instruction for every rendered diagram.
 
-Every globally configured TikZ library is added to every diagram with `\usetikzlibrary{...}`.
+    Every globally configured TikZ library is added to every diagram with `\usetikzlibrary{...}`.
 
-A large global configuration can therefore:
+    A large global configuration can therefore:
 
-- increase initial download activity;
-- increase TeX compilation time;
-- increase memory usage in each worker;
-- introduce package or library conflicts.
+    - increase initial download activity;
+    - increase TeX compilation time;
+    - increase memory usage in each worker;
+    - introduce package or library conflicts.
 
-Keep the global list as small as reasonably possible and prefer local declarations for specialized packages.
-```
+    Keep the global list as small as reasonably possible and prefer local declarations for specialized packages.
 
 ## Multiple workers and parallel rendering
 
@@ -289,13 +283,11 @@ window.TikzJaxOptions = {
 
 !!! note "Rendering order"
 
-```
-Diagrams are inserted as soon as their own rendering finishes.
+    Diagrams are inserted as soon as their own rendering finishes.
 
-A simpler diagram may therefore appear before an earlier but more complex diagram.
+    A simpler diagram may therefore appear before an earlier but more complex diagram.
 
-TikZJax also gives higher priority to diagrams that are visible or close to the browser viewport.
-```
+    TikZJax also gives higher priority to diagrams that are visible or close to the browser viewport.
 
 ## Lazy worker initialization
 
@@ -417,5 +409,7 @@ Use an appropriate render timeout and inspect the console if a spectrum produces
 
 * [Installation](../installation/index.md)
 * [Configuration](../configuration.md)
+* [Global and Local Configuration](../configuration-scopes.md)
+* [Cache and Performance](../cache-performance.md)
+* [Troubleshooting](../troubleshooting.md)
 * [API Reference](../api-reference.md)
-* [Advanced Examples](../advanced-examples.md)

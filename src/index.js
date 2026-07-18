@@ -1431,6 +1431,122 @@ const normalizeSvgForTheme = (svg) => {
         return;
     }
 
+    /*
+     * TeX représente certaines parties mathématiques par des
+     * rectangles remplis :
+     *
+     * - barres de fractions ;
+     * - barres de racines ;
+     * - surlignements et règles typographiques.
+     *
+     * Ces rectangles sont généralement des frères directs
+     * d'éléments <text> dans le même groupe SVG.
+     */
+    const isMathRuleNode = (node) => {
+        if (
+            node?.tagName?.toLowerCase() !==
+            'rect'
+        ) {
+            return false;
+        }
+
+        const parent = node.parentElement;
+
+        if (!parent) {
+            return false;
+        }
+
+        return Array
+            .from(parent.children)
+            .some((child) => {
+                return isTextNode(child);
+            });
+    };
+
+    const isMathInkNode = (node) => {
+        return (
+            isTextNode(node) ||
+            isMathRuleNode(node)
+        );
+    };
+
+    /*
+     * Détermine la couleur typographique avant toute
+     * modification des groupes parents.
+     */
+    const getOriginalMathInkPaint = (node) => {
+        let current = node;
+
+        while (current && current !== svg) {
+            const fill =
+                current.style?.getPropertyValue(
+                    'fill'
+                ) ||
+                current.getAttribute?.('fill') ||
+                '';
+
+            const color =
+                current.style?.getPropertyValue(
+                    'color'
+                ) ||
+                current.getAttribute?.('color') ||
+                '';
+
+            for (const value of [fill, color]) {
+                if (
+                    !value ||
+                    isTransparentValue(value) ||
+                    isNoneValue(value) ||
+                    isPaintServerValue(value)
+                ) {
+                    continue;
+                }
+
+                /*
+                 * Le noir ou le blanc TeX correspond à la couleur
+                 * normale du texte du thème.
+                 */
+                if (
+                    isBlackValue(value) ||
+                    isWhiteValue(value) ||
+                    isCurrentColorValue(value)
+                ) {
+                    return 'currentColor';
+                }
+
+                /*
+                 * Une couleur réellement explicite, comme rouge,
+                 * bleu ou gris, doit rester inchangée.
+                 */
+                if (isExplicitColorValue(value)) {
+                    return value;
+                }
+            }
+
+            current = current.parentElement;
+        }
+
+        return 'currentColor';
+    };
+
+    /*
+     * Sauvegarde les couleurs de tous les éléments typographiques
+     * avant de modifier les fills des groupes SVG.
+     */
+    const originalMathInkPaint = new Map();
+
+    svg.querySelectorAll('text, tspan, rect')
+        .forEach((node) => {
+            if (!isMathInkNode(node)) {
+                return;
+            }
+
+            originalMathInkPaint.set(
+                node,
+                getOriginalMathInkPaint(node)
+            );
+        });
+
     svg.dataset.tikzjaxThemeNormalized =
         'true';
 
@@ -1458,14 +1574,16 @@ const normalizeSvgForTheme = (svg) => {
                 const fill =
                     node.getAttribute('fill');
 
-                if (isTextNode(node)) {
+                if (isMathInkNode(node)) {
                     if (
                         isBlackValue(fill) ||
                         isWhiteValue(fill) ||
                         isCurrentColorValue(fill)
                     ) {
                         const replacement =
-                            inheritedFillColor ||
+                            originalMathInkPaint.get(
+                                node
+                            ) ||
                             'currentColor';
 
                         node.setAttribute(
@@ -1538,78 +1656,34 @@ const normalizeSvgForTheme = (svg) => {
             }
         });
 
-    svg.querySelectorAll('text, tspan')
-        .forEach((node) => {
-            const fill =
-                node.style.getPropertyValue(
-                    'fill'
-                ) ||
-                node.getAttribute('fill') ||
-                '';
-
-            const color =
-                node.style.getPropertyValue(
-                    'color'
-                ) ||
-                node.getAttribute('color') ||
-                '';
-
-            const inheritedFillColor =
-                getInheritedExplicitColor(
-                    node,
-                    ['fill', 'color']
-                );
-
-            const effectiveColor =
-                fill ||
-                color ||
-                inheritedFillColor;
-
-            if (
-                inheritedFillColor &&
-                (
-                    !fill ||
-                    isBlackValue(fill) ||
-                    isWhiteValue(fill) ||
-                    isCurrentColorValue(fill)
-                )
-            ) {
-                node.setAttribute(
-                    'fill',
-                    inheritedFillColor
-                );
-
-                node.style.setProperty(
-                    'fill',
-                    inheritedFillColor,
-                    'important'
-                );
-            } else if (
-                !effectiveColor ||
-                isCurrentColorValue(
-                    effectiveColor
-                ) ||
-                isBlackValue(effectiveColor) ||
-                isWhiteValue(effectiveColor)
-            ) {
-                node.setAttribute(
-                    'fill',
-                    'currentColor'
-                );
-
-                node.style.setProperty(
-                    'fill',
-                    'currentColor',
-                    'important'
-                );
+    /*
+     * Restaure les textes et les règles mathématiques après
+     * la normalisation des groupes parents.
+     */
+    originalMathInkPaint.forEach(
+        (replacement, node) => {
+            if (!node.isConnected) {
+                return;
             }
+
+            node.setAttribute(
+                'fill',
+                replacement
+            );
+
+            node.style.setProperty(
+                'fill',
+                replacement,
+                'important'
+            );
 
             node.style.setProperty(
                 'opacity',
                 '1',
                 'important'
             );
-        });
+        }
+    );
 };
 
 const getConfiguredThemeTargets = () => {
@@ -1879,6 +1953,519 @@ const getThemeForWrapper = (wrapper) => {
 const applyThemeToTikz = (
     root = document
 ) => {
+    const clamp = (
+        value,
+        minimum,
+        maximum
+    ) => {
+        return Math.min(
+            maximum,
+            Math.max(minimum, value)
+        );
+    };
+
+    const parseSvgColor = (value) => {
+        if (!value) {
+            return null;
+        }
+
+        const normalized =
+            String(value)
+                .trim()
+                .toLowerCase();
+
+        if (
+            isTransparentValue(normalized) ||
+            isNoneValue(normalized) ||
+            isCurrentColorValue(normalized) ||
+            isPaintServerValue(normalized)
+        ) {
+            return null;
+        }
+
+        let match = normalized.match(
+            /^#([0-9a-f]{3})$/i
+        );
+
+        if (match) {
+            const digits = match[1];
+
+            return {
+                red: parseInt(
+                    digits[0] + digits[0],
+                    16
+                ),
+                green: parseInt(
+                    digits[1] + digits[1],
+                    16
+                ),
+                blue: parseInt(
+                    digits[2] + digits[2],
+                    16
+                )
+            };
+        }
+
+        match = normalized.match(
+            /^#([0-9a-f]{6})$/i
+        );
+
+        if (match) {
+            const digits = match[1];
+
+            return {
+                red: parseInt(
+                    digits.slice(0, 2),
+                    16
+                ),
+                green: parseInt(
+                    digits.slice(2, 4),
+                    16
+                ),
+                blue: parseInt(
+                    digits.slice(4, 6),
+                    16
+                )
+            };
+        }
+
+        match = normalized.match(
+            /^rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)(?:\s*,\s*([\d.]+))?\s*\)$/i
+        );
+
+        if (match) {
+            if (
+                match[4] !== undefined &&
+                Number(match[4]) <= 0
+            ) {
+                return null;
+            }
+
+            return {
+                red: clamp(
+                    Number(match[1]),
+                    0,
+                    255
+                ),
+                green: clamp(
+                    Number(match[2]),
+                    0,
+                    255
+                ),
+                blue: clamp(
+                    Number(match[3]),
+                    0,
+                    255
+                )
+            };
+        }
+
+        return null;
+    };
+
+    const rgbToHsl = (
+        red,
+        green,
+        blue
+    ) => {
+        const r = red / 255;
+        const g = green / 255;
+        const b = blue / 255;
+
+        const maximum = Math.max(r, g, b);
+        const minimum = Math.min(r, g, b);
+        const delta = maximum - minimum;
+
+        let hue = 0;
+        let saturation = 0;
+
+        const lightness =
+            (maximum + minimum) / 2;
+
+        if (delta !== 0) {
+            saturation =
+                delta /
+                (
+                    1 -
+                    Math.abs(
+                        2 * lightness - 1
+                    )
+                );
+
+            if (maximum === r) {
+                hue =
+                    60 *
+                    (
+                        (
+                            (g - b) /
+                            delta
+                        ) % 6
+                    );
+            } else if (maximum === g) {
+                hue =
+                    60 *
+                    (
+                        (b - r) /
+                        delta +
+                        2
+                    );
+            } else {
+                hue =
+                    60 *
+                    (
+                        (r - g) /
+                        delta +
+                        4
+                    );
+            }
+        }
+
+        if (hue < 0) {
+            hue += 360;
+        }
+
+        return {
+            hue,
+            saturation:
+                Number.isFinite(saturation)
+                    ? saturation
+                    : 0,
+            lightness
+        };
+    };
+
+    const hslToRgb = (
+        hue,
+        saturation,
+        lightness
+    ) => {
+        const chroma =
+            (
+                1 -
+                Math.abs(
+                    2 * lightness - 1
+                )
+            ) *
+            saturation;
+
+        const section = hue / 60;
+
+        const intermediate =
+            chroma *
+            (
+                1 -
+                Math.abs(
+                    section % 2 - 1
+                )
+            );
+
+        let red = 0;
+        let green = 0;
+        let blue = 0;
+
+        if (section >= 0 && section < 1) {
+            red = chroma;
+            green = intermediate;
+        } else if (
+            section >= 1 &&
+            section < 2
+        ) {
+            red = intermediate;
+            green = chroma;
+        } else if (
+            section >= 2 &&
+            section < 3
+        ) {
+            green = chroma;
+            blue = intermediate;
+        } else if (
+            section >= 3 &&
+            section < 4
+        ) {
+            green = intermediate;
+            blue = chroma;
+        } else if (
+            section >= 4 &&
+            section < 5
+        ) {
+            red = intermediate;
+            blue = chroma;
+        } else {
+            red = chroma;
+            blue = intermediate;
+        }
+
+        const offset =
+            lightness -
+            chroma / 2;
+
+        return {
+            red: Math.round(
+                (red + offset) * 255
+            ),
+            green: Math.round(
+                (green + offset) * 255
+            ),
+            blue: Math.round(
+                (blue + offset) * 255
+            )
+        };
+    };
+
+    const rgbToHex = ({
+        red,
+        green,
+        blue
+    }) => {
+        const toHex = (component) => {
+            return clamp(
+                Math.round(component),
+                0,
+                255
+            )
+                .toString(16)
+                .padStart(2, '0');
+        };
+
+        return (
+            '#' +
+            toHex(red) +
+            toHex(green) +
+            toHex(blue)
+        );
+    };
+
+    /*
+     * Les barres de fractions, de racines et les autres règles
+     * typographiques sont souvent des <rect> placés dans le même
+     * groupe que les éléments <text>.
+     *
+     * Elles ne doivent jamais être traitées comme des fonds.
+     */
+    const isMathRuleNode = (node) => {
+        if (
+            node?.tagName?.toLowerCase() !==
+            'rect'
+        ) {
+            return false;
+        }
+
+        const parent = node.parentElement;
+
+        if (!parent) {
+            return false;
+        }
+
+        return Array
+            .from(parent.children)
+            .some((child) => {
+                return isTextNode(child);
+            });
+    };
+
+    const getAdaptiveDarkFill = (
+        originalFill,
+        adaptiveOptions
+    ) => {
+        const rgb =
+            parseSvgColor(originalFill);
+
+        if (!rgb) {
+            return '';
+        }
+
+        const hsl = rgbToHsl(
+            rgb.red,
+            rgb.green,
+            rgb.blue
+        );
+
+        const lightnessThreshold =
+            clamp(
+                Number(
+                    adaptiveOptions
+                        .lightnessThreshold ??
+                    0.82
+                ),
+                0.5,
+                1
+            );
+
+        /*
+         * Seules les couleurs très claires sont adaptées.
+         * Les couleurs normales, sombres ou fortement significatives
+         * restent inchangées.
+         */
+        if (
+            hsl.lightness <
+            lightnessThreshold
+        ) {
+            return '';
+        }
+
+        const darkLightness =
+            clamp(
+                Number(
+                    adaptiveOptions
+                        .darkLightness ??
+                    0.23
+                ),
+                0.1,
+                0.45
+            );
+
+        const minimumSaturation =
+            clamp(
+                Number(
+                    adaptiveOptions
+                        .minimumSaturation ??
+                    0.18
+                ),
+                0,
+                0.7
+            );
+
+        const maximumSaturation =
+            clamp(
+                Number(
+                    adaptiveOptions
+                        .maximumSaturation ??
+                    0.46
+                ),
+                minimumSaturation,
+                0.9
+            );
+
+        const darkSaturation =
+            hsl.saturation < 0.04
+                ? 0
+                : clamp(
+                    hsl.saturation * 0.5,
+                    minimumSaturation,
+                    maximumSaturation
+                );
+
+        const adjustedLightness =
+            clamp(
+                darkLightness +
+                Math.min(
+                    hsl.saturation * 0.025,
+                    0.025
+                ),
+                0.1,
+                0.45
+            );
+
+        return rgbToHex(
+            hslToRgb(
+                hsl.hue,
+                darkSaturation,
+                adjustedLightness
+            )
+        );
+    };
+
+    const applyAdaptiveSvgFills = (
+        svg,
+        theme
+    ) => {
+        const themeOptions =
+            getThemeOptions();
+
+        const adaptiveOptions =
+            isPlainObject(
+                themeOptions.adaptiveFills
+            )
+                ? themeOptions.adaptiveFills
+                : {};
+
+        const enabled =
+            parseBooleanOption(
+                adaptiveOptions.enabled,
+                true
+            );
+
+        svg
+            .querySelectorAll(
+                '[fill], [style*="fill"]'
+            )
+            .forEach((node) => {
+                if (
+                    isTextNode(node) ||
+                    isMathRuleNode(node)
+                ) {
+                    return;
+                }
+
+                const currentFill =
+                    getNodePresentationValue(
+                        node,
+                        'fill'
+                    );
+
+                if (
+                    !node.dataset
+                        .tikzjaxOriginalFill
+                ) {
+                    if (
+                        !currentFill ||
+                        isTransparentValue(
+                            currentFill
+                        ) ||
+                        isNoneValue(
+                            currentFill
+                        ) ||
+                        isCurrentColorValue(
+                            currentFill
+                        ) ||
+                        isPaintServerValue(
+                            currentFill
+                        )
+                    ) {
+                        return;
+                    }
+
+                    node.dataset
+                        .tikzjaxOriginalFill =
+                        currentFill;
+                }
+
+                const originalFill =
+                    node.dataset
+                        .tikzjaxOriginalFill;
+
+                let replacement =
+                    originalFill;
+
+                if (
+                    enabled &&
+                    theme === 'dark'
+                ) {
+                    replacement =
+                        getAdaptiveDarkFill(
+                            originalFill,
+                            adaptiveOptions
+                        ) ||
+                        originalFill;
+                }
+
+                /*
+                 * Le mode clair restaure toujours la couleur SVG
+                 * originale.
+                 */
+                node.setAttribute(
+                    'fill',
+                    replacement
+                );
+
+                node.style.setProperty(
+                    'fill',
+                    replacement,
+                    'important'
+                );
+            });
+    };
+
     getTikzWrappers(root)
         .forEach((wrapper) => {
             const theme =
@@ -1906,7 +2493,19 @@ const applyThemeToTikz = (
             wrapper
                 .querySelectorAll('svg')
                 .forEach((svg) => {
+                    /*
+                     * Cette normalisation n'est exécutée qu'une fois.
+                     */
                     normalizeSvgForTheme(svg);
+
+                    /*
+                     * Cette adaptation est réexécutée à chaque
+                     * changement de thème.
+                     */
+                    applyAdaptiveSvgFills(
+                        svg,
+                        theme
+                    );
                 });
         });
 };

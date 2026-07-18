@@ -73,17 +73,15 @@ They do not replace the global configuration.
 
 !!! tip "Why local loading is recommended"
 
-```
-`yquant` is useful only for quantum-circuit diagrams.
+    `yquant` is useful only for quantum-circuit diagrams.
 
-Loading it locally:
+    Loading it locally:
 
-- keeps ordinary TikZ diagrams lighter;
-- reduces unnecessary TeX processing;
-- limits possible package interactions;
-- avoids adding quantum-circuit definitions to every diagram;
-- allows each circuit to declare exactly what it needs.
-```
+    - keeps ordinary TikZ diagrams lighter;
+    - reduces unnecessary TeX processing;
+    - limits possible package interactions;
+    - avoids adding quantum-circuit definitions to every diagram;
+    - allows each circuit to declare exactly what it needs.
 
 ---
 
@@ -98,45 +96,41 @@ This example creates:
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit q[2];
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit q[2];
 
-    h q[0];
-    cnot q[1] | q[0];
+        h q[0];
+        cnot q[1] | q[0];
 
-    measure q;
-\end{yquant}
-\end{tikzpicture}
-</script>
-```
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit q[2];
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit q[2];
 
-    h q[0];
-    cnot q[1] | q[0];
+        h q[0];
+        cnot q[1] | q[0];
 
-    measure q;
-\end{yquant}
-\end{tikzpicture}
-</script>
-```
-````
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -166,9 +160,7 @@ measure q;
 
 !!! warning
 
-```
-Missing semicolons are a common source of compilation errors.
-```
+    Missing semicolons are a common source of compilation errors.
 
 ---
 
@@ -200,41 +192,37 @@ A label can be supplied when the register is declared:
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit {$\lvert\psi\rangle$} q;
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit {$\lvert\psi\rangle$} q;
 
-    h q;
-    measure q;
-\end{yquant}
-\end{tikzpicture}
-</script>
-```
+        h q;
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit {$\lvert\psi\rangle$} q;
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit {$\lvert\psi\rangle$} q;
 
-    h q;
-    measure q;
-\end{yquant}
-\end{tikzpicture>
-</script>
-```
-````
+        h q;
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -242,55 +230,51 @@ A label can be supplied when the register is declared:
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
-  data-width="520"
-  data-height="220"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit {$\lvert 0\rangle$} a;
-    qubit {$\lvert 1\rangle$} b;
-    qubit {$\lvert\psi\rangle$} c;
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+      data-width="520"
+      data-height="220"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit {$\lvert 0\rangle$} a;
+        qubit {$\lvert 1\rangle$} b;
+        qubit {$\lvert\psi\rangle$} c;
 
-    h a;
-    x b;
-    z c;
+        h a;
+        x b;
+        z c;
 
-    measure a, b, c;
-\end{yquant}
-\end{tikzpicture}
-</script>
-```
+        measure a, b, c;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
-  data-width="520"
-  data-height="220"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit {$\lvert 0\rangle$} a;
-    qubit {$\lvert 1\rangle$} b;
-    qubit {$\lvert\psi\rangle$} c;
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+      data-width="520"
+      data-height="220"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit {$\lvert 0\rangle$} a;
+        qubit {$\lvert 1\rangle$} b;
+        qubit {$\lvert\psi\rangle$} c;
 
-    h a;
-    x b;
-    z c;
+        h a;
+        x b;
+        z c;
 
-    measure a, b, c;
-\end{yquant}
-\end{tikzpicture>
-</script>
-```
-````
+        measure a, b, c;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -311,49 +295,45 @@ t    phase gate T
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit {$\lvert 0\rangle$} q;
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit {$\lvert 0\rangle$} q;
 
-    h q;
-    x q;
-    z q;
-    h q;
+        h q;
+        x q;
+        z q;
+        h q;
 
-    measure q;
-\end{yquant}
-\end{tikzpicture}
-</script>
-```
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit {$\lvert 0\rangle$} q;
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit {$\lvert 0\rangle$} q;
 
-    h q;
-    x q;
-    z q;
-    h q;
+        h q;
+        x q;
+        z q;
+        h q;
 
-    measure q;
-\end{yquant}
-\end{tikzpicture>
-</script>
-```
-````
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -371,47 +351,43 @@ z q[2];
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit q[3];
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit q[3];
 
-    h q[0];
-    x q[1];
-    z q[2];
+        h q[0];
+        x q[1];
+        z q[2];
 
-    measure q;
-\end{yquant}
-\end{tikzpicture}
-</script>
-```
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit q[3];
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit q[3];
 
-    h q[0];
-    x q[1];
-    z q[2];
+        h q[0];
+        x q[1];
+        z q[2];
 
-    measure q;
-\end{yquant}
-\end{tikzpicture>
-</script>
-```
-````
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -426,41 +402,37 @@ measure q;
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit q[3];
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit q[3];
 
-    h q;
-    measure q;
-\end{yquant}
-\end{tikzpicture}
-</script>
-```
+        h q;
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit q[3];
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit q[3];
 
-    h q;
-    measure q;
-\end{yquant}
-\end{tikzpicture>
-</script>
-```
-````
+        h q;
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
+    ```
 
 The operation is applied independently to each sub-register.
 
@@ -489,57 +461,51 @@ q[1] is the target
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit q[2];
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit q[2];
 
-    h q[0];
-    cnot q[1] | q[0];
+        h q[0];
+        cnot q[1] | q[0];
 
-    measure q;
-\end{yquant}
-\end{tikzpicture}
-</script>
-```
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit q[2];
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit q[2];
 
-    h q[0];
-    cnot q[1] | q[0];
+        h q[0];
+        cnot q[1] | q[0];
 
-    measure q;
-\end{yquant}
-\end{tikzpicture>
-</script>
-```
-````
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
+    ```
 
 !!! important
 
-````
-The target appears before the vertical bar.
+    The target appears before the vertical bar.
 
-The control appears after the vertical bar:
+    The control appears after the vertical bar:
 
-```latex
-cnot target | control;
-```
-````
+    ```latex
+    cnot target | control;
+    ```
 
 ---
 
@@ -549,49 +515,45 @@ A Hadamard gate followed by a controlled-NOT gate produces the standard Bell-sta
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
-  data-width="440"
-  data-height="220"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit {$\lvert 0\rangle$} q[2];
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+      data-width="440"
+      data-height="220"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit {$\lvert 0\rangle$} q[2];
 
-    h q[0];
-    cnot q[1] | q[0];
+        h q[0];
+        cnot q[1] | q[0];
 
-    measure q;
-\end{yquant}
-\end{tikzpicture}
-</script>
-```
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
-  data-width="440"
-  data-height="220"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit {$\lvert 0\rangle$} q[2];
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+      data-width="440"
+      data-height="220"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit {$\lvert 0\rangle$} q[2];
 
-    h q[0];
-    cnot q[1] | q[0];
+        h q[0];
+        cnot q[1] | q[0];
 
-    measure q;
-\end{yquant}
-\end{tikzpicture>
-</script>
-```
-````
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -599,59 +561,55 @@ A Hadamard gate followed by a controlled-NOT gate produces the standard Bell-sta
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
-  data-width="560"
-  data-height="250"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit q[3];
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+      data-width="560"
+      data-height="250"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit q[3];
 
-    h q[0];
+        h q[0];
 
-    cnot q[1] | q[0];
-    cnot q[2] | q[1];
+        cnot q[1] | q[0];
+        cnot q[2] | q[1];
 
-    x q[0];
-    z q[2];
+        x q[0];
+        z q[2];
 
-    measure q;
-\end{yquant}
-\end{tikzpicture}
-</script>
-```
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
-  data-width="560"
-  data-height="250"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit q[3];
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+      data-width="560"
+      data-height="250"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit q[3];
 
-    h q[0];
+        h q[0];
 
-    cnot q[1] | q[0];
-    cnot q[2] | q[1];
+        cnot q[1] | q[0];
+        cnot q[2] | q[1];
 
-    x q[0];
-    z q[2];
+        x q[0];
+        z q[2];
 
-    measure q;
-\end{yquant}
-\end{tikzpicture>
-</script>
-```
-````
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -669,47 +627,43 @@ creates a controlled (U) operation.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit q[2];
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit q[2];
 
-    h q[0];
-    box {$U$} q[1] | q[0];
-    h q[0];
+        h q[0];
+        box {$U$} q[1] | q[0];
+        h q[0];
 
-    measure q;
-\end{yquant}
-\end{tikzpicture}
-</script>
-```
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit q[2];
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit q[2];
 
-    h q[0];
-    box {$U$} q[1] | q[0];
-    h q[0];
+        h q[0];
+        box {$U$} q[1] | q[0];
+        h q[0];
 
-    measure q;
-\end{yquant}
-\end{tikzpicture>
-</script>
-```
-````
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -725,51 +679,47 @@ box {$\sqrt{X}$} q;
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
-  data-width="520"
-  data-height="190"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit q;
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+      data-width="520"
+      data-height="190"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit q;
 
-    box {$U$} q;
-    box {$R_x(\theta)$} q;
-    box {$\sqrt{X}$} q;
+        box {$U$} q;
+        box {$R_x(\theta)$} q;
+        box {$\sqrt{X}$} q;
 
-    measure q;
-\end{yquant}
-\end{tikzpicture}
-</script>
-```
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
-  data-width="520"
-  data-height="190"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit q;
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+      data-width="520"
+      data-height="190"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit q;
 
-    box {$U$} q;
-    box {$R_x(\theta)$} q;
-    box {$\sqrt{X}$} q;
+        box {$U$} q;
+        box {$R_x(\theta)$} q;
+        box {$\sqrt{X}$} q;
 
-    measure q;
-\end{yquant}
-\end{tikzpicture>
-</script>
-```
-````
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -783,53 +733,49 @@ box {$U$} (q[0-1]);
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
-  data-width="520"
-  data-height="240"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit q[3];
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+      data-width="520"
+      data-height="240"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit q[3];
 
-    h q[0];
+        h q[0];
 
-    box {$U$} (q[0-1]);
-    box {$V$} (q[1-2]);
+        box {$U$} (q[0-1]);
+        box {$V$} (q[1-2]);
 
-    measure q;
-\end{yquant}
-\end{tikzpicture}
-</script>
-```
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
-  data-width="520"
-  data-height="240"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit q[3];
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+      data-width="520"
+      data-height="240"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit q[3];
 
-    h q[0];
+        h q[0];
 
-    box {$U$} (q[0-1]);
-    box {$V$} (q[1-2]);
+        box {$U$} (q[0-1]);
+        box {$V$} (q[1-2]);
 
-    measure q;
-\end{yquant}
-\end{tikzpicture>
-</script>
-```
-````
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -843,59 +789,55 @@ box {$U$} (q[1-2]) | q[0];
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
-  data-width="560"
-  data-height="250"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit q[3];
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+      data-width="560"
+      data-height="250"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit q[3];
 
-    h q[0];
+        h q[0];
 
-    box {$U$} (q[1-2]) | q[0];
+        box {$U$} (q[1-2]) | q[0];
 
-    h q[0];
+        h q[0];
 
-    box {$V$} (q[0-1]) | q[2];
+        box {$V$} (q[0-1]) | q[2];
 
-    measure q;
-\end{yquant}
-\end{tikzpicture}
-</script>
-```
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
-  data-width="560"
-  data-height="250"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit q[3];
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+      data-width="560"
+      data-height="250"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit q[3];
 
-    h q[0];
+        h q[0];
 
-    box {$U$} (q[1-2]) | q[0];
+        box {$U$} (q[1-2]) | q[0];
 
-    h q[0];
+        h q[0];
 
-    box {$V$} (q[0-1]) | q[2];
+        box {$V$} (q[0-1]) | q[2];
 
-    measure q;
-\end{yquant}
-\end{tikzpicture>
-</script>
-```
-````
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -943,47 +885,43 @@ The second creates one multi-qubit box spanning the complete register.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
-  data-width="480"
-  data-height="250"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit q[3];
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+      data-width="480"
+      data-height="250"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit q[3];
 
-    h q;
-    box {$U_{f(x,y)}$} (q);
-    measure q;
-\end{yquant}
-\end{tikzpicture}
-</script>
-```
+        h q;
+        box {$U_{f(x,y)}$} (q);
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
-  data-width="480"
-  data-height="250"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit q[3];
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+      data-width="480"
+      data-height="250"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit q[3];
 
-    h q;
-    box {$U_{f(x,y)}$} (q);
-    measure q;
-\end{yquant}
-\end{tikzpicture>
-</script>
-```
-````
+        h q;
+        box {$U_{f(x,y)}$} (q);
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -997,49 +935,45 @@ swap (q[0,1]);
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit q[2];
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit q[2];
 
-    h q[0];
-    x q[1];
+        h q[0];
+        x q[1];
 
-    swap (q[0,1]);
+        swap (q[0,1]);
 
-    measure q;
-\end{yquant}
-\end{tikzpicture}
-</script>
-```
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit q[2];
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit q[2];
 
-    h q[0];
-    x q[1];
+        h q[0];
+        x q[1];
 
-    swap (q[0,1]);
+        swap (q[0,1]);
 
-    measure q;
-\end{yquant}
-\end{tikzpicture>
-</script>
-```
-````
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
+    ```
 
 The swap is drawn as two connected crosses.
 
@@ -1063,47 +997,43 @@ measure q;
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit q[2];
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit q[2];
 
-    h q[0];
-    cnot q[1] | q[0];
+        h q[0];
+        cnot q[1] | q[0];
 
-    measure {$Z$} q[0];
-    measure {$Z$} q[1];
-\end{yquant}
-\end{tikzpicture}
-</script>
-```
+        measure {$Z$} q[0];
+        measure {$Z$} q[1];
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit q[2];
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit q[2];
 
-    h q[0];
-    cnot q[1] | q[0];
+        h q[0];
+        cnot q[1] | q[0];
 
-    measure {$Z$} q[0];
-    measure {$Z$} q[1];
-\end{yquant}
-\end{tikzpicture>
-</script>
-```
-````
+        measure {$Z$} q[0];
+        measure {$Z$} q[1];
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -1113,57 +1043,53 @@ TikZ options can be applied locally to an individual operation by placing them b
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit q[2];
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit q[2];
 
-    [fill=blue!20, draw=blue!70!black]
-    h q[0];
+        [fill=blue!20, draw=blue!70!black]
+        h q[0];
 
-    [fill=orange!20, draw=orange!80!black]
-    x q[1];
+        [fill=orange!20, draw=orange!80!black]
+        x q[1];
 
-    [fill=green!15, draw=green!50!black]
-    box {$U$} q[1] | q[0];
+        [fill=green!15, draw=green!50!black]
+        box {$U$} q[1] | q[0];
 
-    measure q;
-\end{yquant}
-\end{tikzpicture}
-</script>
-```
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit q[2];
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit q[2];
 
-    [fill=blue!20, draw=blue!70!black]
-    h q[0];
+        [fill=blue!20, draw=blue!70!black]
+        h q[0];
 
-    [fill=orange!20, draw=orange!80!black]
-    x q[1];
+        [fill=orange!20, draw=orange!80!black]
+        x q[1];
 
-    [fill=green!15, draw=green!50!black]
-    box {$U$} q[1] | q[0];
+        [fill=green!15, draw=green!50!black]
+        box {$U$} q[1] | q[0];
 
-    measure q;
-\end{yquant}
-\end{tikzpicture>
-</script>
-```
-````
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
+    ```
 
 The options apply only to the operation immediately following them.
 
@@ -1173,59 +1099,55 @@ The options apply only to the operation immediately following them.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
-  data-width="620"
-  data-height="280"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit {$\lvert 0\rangle$} q[3];
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+      data-width="620"
+      data-height="280"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit {$\lvert 0\rangle$} q[3];
 
-    h q[0];
+        h q[0];
 
-    cnot q[1] | q[0];
-    cnot q[2] | q[1];
+        cnot q[1] | q[0];
+        cnot q[2] | q[1];
 
-    box {$R_z(\theta)$} q[0];
-    box {$U$} (q[1-2]) | q[0];
+        box {$R_z(\theta)$} q[0];
+        box {$U$} (q[1-2]) | q[0];
 
-    measure q;
-\end{yquant}
-\end{tikzpicture}
-</script>
-```
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
-  data-width="620"
-  data-height="280"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit {$\lvert 0\rangle$} q[3];
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+      data-width="620"
+      data-height="280"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit {$\lvert 0\rangle$} q[3];
 
-    h q[0];
+        h q[0];
 
-    cnot q[1] | q[0];
-    cnot q[2] | q[1];
+        cnot q[1] | q[0];
+        cnot q[2] | q[1];
 
-    box {$R_z(\theta)$} q[0];
-    box {$U$} (q[1-2]) | q[0];
+        box {$R_z(\theta)$} q[0];
+        box {$U$} (q[1-2]) | q[0];
 
-    measure q;
-\end{yquant}
-\end{tikzpicture>
-</script>
-```
-````
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
+    ```
 
 ---
 
@@ -1260,11 +1182,9 @@ Only include packages that are required by the current circuit.
 
 !!! warning
 
-```
-More packages produce a larger preamble and can increase compilation time.
+    More packages produce a larger preamble and can increase compilation time.
 
-Package combinations may also introduce conflicts that do not occur when each package is used independently.
-```
+    Package combinations may also introduce conflicts that do not occur when each package is used independently.
 
 ---
 
@@ -1274,53 +1194,49 @@ The `physics` package can provide bra-ket notation in custom gate labels.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="yquant,physics"
-  data-width="520"
-  data-height="230"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit {$\ket{0}$} q[2];
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant,physics"
+      data-width="520"
+      data-height="230"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit {$\ket{0}$} q[2];
 
-    h q[0];
-    cnot q[1] | q[0];
+        h q[0];
+        cnot q[1] | q[0];
 
-    box {$\ket{\Phi^+}$} (q);
+        box {$\ket{\Phi^+}$} (q);
 
-    measure q;
-\end{yquant}
-\end{tikzpicture}
-</script>
-```
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="yquant,physics"
-  data-width="520"
-  data-height="230"
->
-\begin{tikzpicture}
-\begin{yquant}
-    qubit {$\ket{0}$} q[2];
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant,physics"
+      data-width="520"
+      data-height="230"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit {$\ket{0}$} q[2];
 
-    h q[0];
-    cnot q[1] | q[0];
+        h q[0];
+        cnot q[1] | q[0];
 
-    box {$\ket{\Phi^+}$} (q);
+        box {$\ket{\Phi^+}$} (q);
 
-    measure q;
-\end{yquant}
-\end{tikzpicture>
-</script>
-```
-````
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
+    ```
 
 Without the `physics` package, use standard LaTeX notation:
 
@@ -1358,19 +1274,17 @@ data-tex-packages="yquant"
 
 !!! warning "Performance"
 
-````
-Global loading inserts:
+    Global loading inserts:
 
-```latex
-\usepackage{yquant}
-```
+    ```latex
+    \usepackage{yquant}
+    ```
 
-into every TikZJax document.
+    into every TikZJax document.
 
-This means that ordinary TikZ diagrams also process `yquant`, even when they contain no quantum circuit.
+    This means that ordinary TikZ diagrams also process `yquant`, even when they contain no quantum circuit.
 
-Prefer local loading unless quantum circuits are used throughout the site.
-````
+    Prefer local loading unless quantum circuits are used throughout the site.
 
 ---
 
@@ -1382,54 +1296,48 @@ Therefore, fenced blocks using `yquant` work only when the package is loaded glo
 
 === "Rendering"
 
-````
-```tikzjax
-\begin{tikzpicture}
-\begin{yquant}
-    qubit q[2];
+    <script type="text/tikz">
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit q[2];
 
-    h q[0];
-    cnot q[1] | q[0];
+        h q[0];
+        cnot q[1] | q[0];
 
-    measure q;
-\end{yquant}
-\end{tikzpicture}
-```
-````
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
 
 === ":fa-markdown: Markdown"
 
-`````
-````markdown
-```tikzjax
-\begin{tikzpicture}
-\begin{yquant}
-    qubit q[2];
+    ````markdown
+    ```tikzjax
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit q[2];
 
-    h q[0];
-    cnot q[1] | q[0];
+        h q[0];
+        cnot q[1] | q[0];
 
-    measure q;
-\end{yquant}
-\end{tikzpicture}
-```
-````
-`````
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    ```
+    ````
 
 !!! important
 
-````
-For portable local loading, prefer:
+    For portable local loading, prefer:
 
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="yquant"
->
-...
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+    >
+    ...
+    </script>
+    ```
 
 ---
 
@@ -1437,57 +1345,53 @@ For portable local loading, prefer:
 
 === "Rendering"
 
-```
-=== "Question"
+    === "Question"
 
-    Draw a two-qubit circuit containing a Hadamard gate and a controlled-NOT gate.
+        Draw a two-qubit circuit containing a Hadamard gate and a controlled-NOT gate.
 
-=== "Solution"
+    === "Solution"
 
-    <script
-      type="text/tikz"
-      data-tex-packages="yquant"
-    >
-    \begin{tikzpicture}
-    \begin{yquant}
-        qubit q[2];
+        <script
+          type="text/tikz"
+          data-tex-packages="yquant"
+        >
+        \begin{tikzpicture}
+        \begin{yquant}
+            qubit q[2];
 
-        h q[0];
-        cnot q[1] | q[0];
+            h q[0];
+            cnot q[1] | q[0];
 
-        measure q;
-    \end{yquant}
-    \end{tikzpicture}
-    </script>
-```
+            measure q;
+        \end{yquant}
+        \end{tikzpicture}
+        </script>
 
 === ":fa-markdown: Markdown"
 
-`````
-````markdown
-=== "Question"
+    ````markdown
+    === "Question"
 
-    Draw a two-qubit circuit containing a Hadamard gate and a controlled-NOT gate.
+        Draw a two-qubit circuit containing a Hadamard gate and a controlled-NOT gate.
 
-=== "Solution"
+    === "Solution"
 
-    <script
-      type="text/tikz"
-      data-tex-packages="yquant"
-    >
-    \begin{tikzpicture}
-    \begin{yquant}
-        qubit q[2];
+        <script
+          type="text/tikz"
+          data-tex-packages="yquant"
+        >
+        \begin{tikzpicture}
+        \begin{yquant}
+            qubit q[2];
 
-        h q[0];
-        cnot q[1] | q[0];
+            h q[0];
+            cnot q[1] | q[0];
 
-        measure q;
-    \end{yquant}
-    \end{tikzpicture}
-    </script>
-````
-`````
+            measure q;
+        \end{yquant}
+        \end{tikzpicture}
+        </script>
+    ````
 
 TikZJax automatically rescans MkDocs Material content tabs when they become visible.
 
@@ -1497,49 +1401,45 @@ TikZJax automatically rescans MkDocs Material content tabs when they become visi
 
 === "Rendering"
 
-```
-!!! example "Bell circuit"
+    !!! example "Bell circuit"
 
-    <script
-      type="text/tikz"
-      data-tex-packages="yquant"
-    >
-    \begin{tikzpicture}
-    \begin{yquant}
-        qubit {$\lvert 0\rangle$} q[2];
+        <script
+          type="text/tikz"
+          data-tex-packages="yquant"
+        >
+        \begin{tikzpicture}
+        \begin{yquant}
+            qubit {$\lvert 0\rangle$} q[2];
 
-        h q[0];
-        cnot q[1] | q[0];
+            h q[0];
+            cnot q[1] | q[0];
 
-        measure q;
-    \end{yquant}
-    \end{tikzpicture}
-    </script>
-```
+            measure q;
+        \end{yquant}
+        \end{tikzpicture}
+        </script>
 
 === ":fa-markdown: Markdown"
 
-`````
-````markdown
-!!! example "Bell circuit"
+    ````markdown
+    !!! example "Bell circuit"
 
-    <script
-      type="text/tikz"
-      data-tex-packages="yquant"
-    >
-    \begin{tikzpicture}
-    \begin{yquant}
-        qubit {$\lvert 0\rangle$} q[2];
+        <script
+          type="text/tikz"
+          data-tex-packages="yquant"
+        >
+        \begin{tikzpicture}
+        \begin{yquant}
+            qubit {$\lvert 0\rangle$} q[2];
 
-        h q[0];
-        cnot q[1] | q[0];
+            h q[0];
+            cnot q[1] | q[0];
 
-        measure q;
-    \end{yquant}
-    \end{tikzpicture}
-    </script>
-````
-`````
+            measure q;
+        \end{yquant}
+        \end{tikzpicture}
+        </script>
+    ````
 
 ---
 
@@ -1646,11 +1546,9 @@ The first `yquant` circuit handled by a worker may therefore take longer than la
 
 !!! tip
 
-```
-Local package loading remains fully compatible with parallel rendering.
+    Local package loading remains fully compatible with parallel rendering.
 
-The `yquant` package declaration travels with the individual diagram when it is assigned to a worker.
-```
+    The `yquant` package declaration travels with the individual diagram when it is assigned to a worker.
 
 ---
 

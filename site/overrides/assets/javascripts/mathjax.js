@@ -2,8 +2,8 @@
 
 window.MathJax = {
   loader: {
-    load: ['[tex]/tagformat', '[tex]/colortbl', '[tex]/extpfeil', '[tex]/mathtools', '[tex]/empheq', '[tex]/cases', '[tex]/cancel', '[tex]/textmacros', '[tex]/bbox', '[tex]/physics', '[tex]/unicode']
-    // load: ['[tex]/tagformat', '[tex]/colortbl', '[tex]/extpfeil', '[tex]/mathtools', '[tex]/empheq', '[tex]/cases', '[tex]/cancel', '[tex]/textmacros', '[tex]/bbox', '[tex]/unicode']
+    // load: ['[tex]/tagformat', '[tex]/colortbl', '[tex]/extpfeil', '[tex]/mathtools', '[tex]/empheq', '[tex]/cases', '[tex]/cancel', '[tex]/textmacros', '[tex]/bbox', '[tex]/physics', '[tex]/unicode']
+    load: ['[tex]/tagformat', '[tex]/colortbl', '[tex]/extpfeil', '[tex]/mathtools', '[tex]/empheq', '[tex]/cases', '[tex]/cancel', '[tex]/textmacros', '[tex]/bbox', '[tex]/unicode']
   },
   startup: {
     pageReady: () => {
@@ -92,9 +92,35 @@ window.MathJax = {
     // }
 };
 
-document$.subscribe(() => {
-  MathJax.startup.output.clearCache()
-  MathJax.typesetClear()
-  MathJax.texReset()
-  MathJax.typesetPromise()
-})
+let mathJaxTypesetQueue = Promise.resolve();
+
+document$.subscribe(({ body }) => {
+  mathJaxTypesetQueue = mathJaxTypesetQueue
+    .then(() => MathJax.startup.promise)
+    .then(() => {
+      /*
+       * clearCache() n'est pas indispensable pour un rendu normal.
+       * L'appel protégé évite néanmoins l'erreur si le moteur de sortie
+       * n'est pas encore disponible ou ne fournit pas cette méthode.
+       */
+      MathJax.startup.output?.clearCache?.();
+
+      /*
+       * Oublie les expressions de la page précédente.
+       */
+      MathJax.typesetClear();
+
+      /*
+       * Recommence la numérotation des équations sur chaque page.
+       */
+      MathJax.texReset();
+
+      /*
+       * Ne traite que le contenu de la nouvelle page Material.
+       */
+      return MathJax.typesetPromise([body]);
+    })
+    .catch((error) => {
+      console.error("MathJax typesetting failed:", error);
+    });
+});

@@ -54,16 +54,14 @@ They do not replace the global configuration.
 
 !!! tip "Why local loading is recommended"
 
-```
-`chemfig` is a specialized graphical package.
+    `chemfig` is a specialized graphical package.
 
-Loading it only for chemical diagrams:
+    Loading it only for chemical diagrams:
 
-- keeps ordinary TikZ diagrams lighter;
-- reduces unnecessary TeX processing;
-- limits package interactions;
-- avoids loading chemical-drawing commands into every worker task.
-```
+    - keeps ordinary TikZ diagrams lighter;
+    - reduces unnecessary TeX processing;
+    - limits package interactions;
+    - avoids loading chemical-drawing commands into every worker task.
 
 ---
 
@@ -100,27 +98,23 @@ This example represents a methanol-like structure with visible bonds.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="chemfig"
->
-\chemfig{H-C(-[2]H)(-[6]H)-O-H}
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="chemfig"
+    >
+    \chemfig{H-C(-[2]H)(-[6]H)-O-H}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="chemfig"
->
-\chemfig{H-C(-[2]H)(-[6]H)-O-H}
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="chemfig"
+    >
+    \chemfig{H-C(-[2]H)(-[6]H)-O-H}
+    </script>
+    ```
 
 The directions:
 
@@ -139,27 +133,23 @@ A compact formula can be written directly with atom groups:
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="chemfig"
->
-\chemfig{H_3C-CH_2-OH}
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="chemfig"
+    >
+    \chemfig{H_3C-CH_2-OH}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="chemfig"
->
-\chemfig{H_3C-CH_2-OH}
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="chemfig"
+    >
+    \chemfig{H_3C-CH_2-OH}
+    </script>
+    ```
 
 The hyphens represent visible single bonds.
 
@@ -171,27 +161,23 @@ This example represents a three-carbon chain with an alcohol branch.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="chemfig"
->
-\chemfig{H_3C-CH(-[2]OH)-CH_3}
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="chemfig"
+    >
+    \chemfig{H_3C-CH(-[2]OH)-CH_3}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="chemfig"
->
-\chemfig{H_3C-CH(-[2]OH)-CH_3}
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="chemfig"
+    >
+    \chemfig{H_3C-CH(-[2]OH)-CH_3}
+    </script>
+    ```
 
 The fragment:
 
@@ -207,45 +193,41 @@ creates a branch pointing upward.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="chemfig"
->
-\chemfig{
-    CH_3
-    -C(
-        -[2]CH_3
-    )(
-        -[6]CH_3
-    )
-    -CH_2
-    -OH
-}
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="chemfig"
+    >
+    \chemfig{
+        CH_3
+        -C(
+            -[2]CH_3
+        )(
+            -[6]CH_3
+        )
+        -CH_2
+        -OH
+    }
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="chemfig"
->
-\chemfig{
-    CH_3
-    -C(
-        -[2]CH_3
-    )(
-        -[6]CH_3
-    )
-    -CH_2
-    -OH
-}
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="chemfig"
+    >
+    \chemfig{
+        CH_3
+        -C(
+            -[2]CH_3
+        )(
+            -[6]CH_3
+        )
+        -CH_2
+        -OH
+    }
+    </script>
+    ```
 
 Whitespace and line breaks can be used to make long `chemfig` source easier to read.
 
@@ -261,27 +243,23 @@ A double bond is written with:
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="chemfig"
->
-\chemfig{H_2C=CH-CH_3}
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="chemfig"
+    >
+    \chemfig{H_2C=CH-CH_3}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="chemfig"
->
-\chemfig{H_2C=CH-CH_3}
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="chemfig"
+    >
+    \chemfig{H_2C=CH-CH_3}
+    </script>
+    ```
 
 ---
 
@@ -295,27 +273,23 @@ A triple bond is written with:
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="chemfig"
->
-\chemfig{H-C~C-CH_3}
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="chemfig"
+    >
+    \chemfig{H-C~C-CH_3}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="chemfig"
->
-\chemfig{H-C~C-CH_3}
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="chemfig"
+    >
+    \chemfig{H-C~C-CH_3}
+    </script>
+    ```
 
 ---
 
@@ -325,27 +299,23 @@ The following compact syntax creates a six-membered aromatic ring:
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="chemfig"
->
-\chemfig{*6(-=-=-=)}
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="chemfig"
+    >
+    \chemfig{*6(-=-=-=)}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="chemfig"
->
-\chemfig{*6(-=-=-=)}
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="chemfig"
+    >
+    \chemfig{*6(-=-=-=)}
+    </script>
+    ```
 
 The expression:
 
@@ -365,27 +335,23 @@ A substituent can be attached to one of the ring positions.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="chemfig"
->
-\chemfig{*6(-=-(-OH)=-=)}
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="chemfig"
+    >
+    \chemfig{*6(-=-(-OH)=-=)}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="chemfig"
->
-\chemfig{*6(-=-(-OH)=-=)}
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="chemfig"
+    >
+    \chemfig{*6(-=-(-OH)=-=)}
+    </script>
+    ```
 
 This example adds an `OH` group to the aromatic ring.
 
@@ -395,27 +361,23 @@ This example adds an `OH` group to the aromatic ring.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="chemfig"
->
-\chemfig{H_3C-C(=[2]O)-OH}
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="chemfig"
+    >
+    \chemfig{H_3C-C(=[2]O)-OH}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="chemfig"
->
-\chemfig{H_3C-C(=[2]O)-OH}
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="chemfig"
+    >
+    \chemfig{H_3C-C(=[2]O)-OH}
+    </script>
+    ```
 
 The fragment:
 
@@ -433,35 +395,31 @@ Use `\chemname` to place a name below a chemical structure.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="chemfig"
->
-\chemname{
-    \chemfig{H_3C-CH_2-OH}
-}{
-    Ethanol
-}
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="chemfig"
+    >
+    \chemname{
+        \chemfig{H_3C-CH_2-OH}
+    }{
+        Ethanol
+    }
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="chemfig"
->
-\chemname{
-    \chemfig{H_3C-CH_2-OH}
-}{
-    Ethanol
-}
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="chemfig"
+    >
+    \chemname{
+        \chemfig{H_3C-CH_2-OH}
+    }{
+        Ethanol
+    }
+    </script>
+    ```
 
 ---
 
@@ -471,63 +429,59 @@ Several structures can be placed in the same block.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="chemfig"
-  data-width="620"
-  data-height="220"
->
-\chemname{
-    \chemfig{H_3C-OH}
-}{
-    Methanol
-}
-\qquad
-\chemname{
-    \chemfig{H_3C-CH_2-OH}
-}{
-    Ethanol
-}
-\qquad
-\chemname{
-    \chemfig{H_3C-CH(-[2]OH)-CH_3}
-}{
-    Propan-2-ol
-}
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="chemfig"
+      data-width="620"
+      data-height="220"
+    >
+    \chemname{
+        \chemfig{H_3C-OH}
+    }{
+        Methanol
+    }
+    \qquad
+    \chemname{
+        \chemfig{H_3C-CH_2-OH}
+    }{
+        Ethanol
+    }
+    \qquad
+    \chemname{
+        \chemfig{H_3C-CH(-[2]OH)-CH_3}
+    }{
+        Propan-2-ol
+    }
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="chemfig"
-  data-width="620"
-  data-height="220"
->
-\chemname{
-    \chemfig{H_3C-OH}
-}{
-    Methanol
-}
-\qquad
-\chemname{
-    \chemfig{H_3C-CH_2-OH}
-}{
-    Ethanol
-}
-\qquad
-\chemname{
-    \chemfig{H_3C-CH(-[2]OH)-CH_3}
-}{
-    Propan-2-ol
-}
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="chemfig"
+      data-width="620"
+      data-height="220"
+    >
+    \chemname{
+        \chemfig{H_3C-OH}
+    }{
+        Methanol
+    }
+    \qquad
+    \chemname{
+        \chemfig{H_3C-CH_2-OH}
+    }{
+        Ethanol
+    }
+    \qquad
+    \chemname{
+        \chemfig{H_3C-CH(-[2]OH)-CH_3}
+    }{
+        Propan-2-ol
+    }
+    </script>
+    ```
 
 Use larger loader dimensions when displaying several molecules in the same block.
 
@@ -539,39 +493,35 @@ Use larger loader dimensions when displaying several molecules in the same block
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="chemfig"
-  data-width="600"
-  data-height="180"
->
-\schemestart
-    \chemfig{H_3C-CH_2-OH}
-    \arrow{->}
-    \chemfig{H_3C-CHO}
-\schemestop
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="chemfig"
+      data-width="600"
+      data-height="180"
+    >
+    \schemestart
+        \chemfig{H_3C-CH_2-OH}
+        \arrow{->}
+        \chemfig{H_3C-CHO}
+    \schemestop
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="chemfig"
-  data-width="600"
-  data-height="180"
->
-\schemestart
-    \chemfig{H_3C-CH_2-OH}
-    \arrow{->}
-    \chemfig{H_3C-CHO}
-\schemestop
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="chemfig"
+      data-width="600"
+      data-height="180"
+    >
+    \schemestart
+        \chemfig{H_3C-CH_2-OH}
+        \arrow{->}
+        \chemfig{H_3C-CHO}
+    \schemestop
+    </script>
+    ```
 
 The commands:
 
@@ -589,43 +539,39 @@ create the reaction layout and arrow.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="chemfig"
-  data-width="620"
-  data-height="180"
->
-\schemestart
-    \chemfig{A}
-    \+
-    \chemfig{B}
-    \arrow{<=>}
-    \chemfig{C}
-\schemestop
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="chemfig"
+      data-width="620"
+      data-height="180"
+    >
+    \schemestart
+        \chemfig{A}
+        \+
+        \chemfig{B}
+        \arrow{<=>}
+        \chemfig{C}
+    \schemestop
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="chemfig"
-  data-width="620"
-  data-height="180"
->
-\schemestart
-    \chemfig{A}
-    \+
-    \chemfig{B}
-    \arrow{<=>}
-    \chemfig{C}
-\schemestop
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="chemfig"
+      data-width="620"
+      data-height="180"
+    >
+    \schemestart
+        \chemfig{A}
+        \+
+        \chemfig{B}
+        \arrow{<=>}
+        \chemfig{C}
+    \schemestop
+    </script>
+    ```
 
 ---
 
@@ -637,31 +583,27 @@ A color can be applied to the entire molecule:
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="chemfig"
->
-{\color{blue!70!black}
-    \chemfig{H_3C-CH(-[2]OH)-CH_3}
-}
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="chemfig"
+    >
+    {\color{blue!70!black}
+        \chemfig{H_3C-CH(-[2]OH)-CH_3}
+    }
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="chemfig"
->
-{\color{blue!70!black}
-    \chemfig{H_3C-CH(-[2]OH)-CH_3}
-}
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="chemfig"
+    >
+    {\color{blue!70!black}
+        \chemfig{H_3C-CH(-[2]OH)-CH_3}
+    }
+    </script>
+    ```
 
 The explicit color is preserved when TikZJax adapts ordinary black text and strokes to the site theme.
 
@@ -675,43 +617,39 @@ For example:
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="chemfig"
-  data-width="520"
-  data-height="220"
->
-\setchemfig{
-    atom sep=2.6em,
-    bond offset=2pt,
-    double bond sep=3pt
-}
+    <script
+      type="text/tikz"
+      data-tex-packages="chemfig"
+      data-width="520"
+      data-height="220"
+    >
+    \setchemfig{
+        atom sep=2.6em,
+        bond offset=2pt,
+        double bond sep=3pt
+    }
 
-\chemfig{H_3C-CH(-[2]OH)-CH_2-CH_3}
-</script>
-```
+    \chemfig{H_3C-CH(-[2]OH)-CH_2-CH_3}
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="chemfig"
-  data-width="520"
-  data-height="220"
->
-\setchemfig{
-    atom sep=2.6em,
-    bond offset=2pt,
-    double bond sep=3pt
-}
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="chemfig"
+      data-width="520"
+      data-height="220"
+    >
+    \setchemfig{
+        atom sep=2.6em,
+        bond offset=2pt,
+        double bond sep=3pt
+    }
 
-\chemfig{H_3C-CH(-[2]OH)-CH_2-CH_3}
-</script>
-```
-````
+    \chemfig{H_3C-CH(-[2]OH)-CH_2-CH_3}
+    </script>
+    ```
 
 Common settings include:
 
@@ -756,11 +694,9 @@ Only include packages required by the current block.
 
 !!! warning
 
-```
-More packages produce a larger TeX preamble and can increase rendering time.
+    More packages produce a larger TeX preamble and can increase rendering time.
 
-Package combinations may also expose conflicts that do not occur when each package is used separately.
-```
+    Package combinations may also expose conflicts that do not occur when each package is used separately.
 
 ---
 
@@ -786,19 +722,17 @@ data-tex-packages="chemfig"
 
 !!! warning "Performance"
 
-````
-Global loading inserts:
+    Global loading inserts:
 
-```latex
-\usepackage{chemfig}
-```
+    ```latex
+    \usepackage{chemfig}
+    ```
 
-into every diagram.
+    into every diagram.
 
-This means that standard TikZ diagrams also process `chemfig`, even when they contain no chemical structure.
+    This means that standard TikZ diagrams also process `chemfig`, even when they contain no chemical structure.
 
-Prefer local loading unless chemical diagrams are used throughout the site.
-````
+    Prefer local loading unless chemical diagrams are used throughout the site.
 
 ---
 
@@ -810,36 +744,30 @@ Therefore, fenced blocks using `chemfig` work only when the package is loaded gl
 
 === "Rendering"
 
-````
-```tikzjax
-\chemfig{H_3C-CH_2-OH}
-```
-````
+    <script type="text/tikz">
+    \chemfig{H_3C-CH_2-OH}
+    </script>
 
 === ":fa-markdown: Markdown"
 
-`````
-````markdown
-```tikzjax
-\chemfig{H_3C-CH_2-OH}
-```
-````
-`````
+    ````markdown
+    ```tikzjax
+    \chemfig{H_3C-CH_2-OH}
+    ```
+    ````
 
 !!! important
 
-````
-For portable local loading, prefer:
+    For portable local loading, prefer:
 
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="chemfig"
->
-\chemfig{H_3C-CH_2-OH}
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="chemfig"
+    >
+    \chemfig{H_3C-CH_2-OH}
+    </script>
+    ```
 
 ---
 
@@ -847,47 +775,43 @@ For portable local loading, prefer:
 
 === "Rendering"
 
-```
-=== "Question"
+    === "Question"
 
-    Draw the structural formula of ethanol.
+        Draw the structural formula of ethanol.
 
-=== "Solution"
+    === "Solution"
 
-    <script
-      type="text/tikz"
-      data-tex-packages="chemfig"
-    >
-    \chemname{
-        \chemfig{H_3C-CH_2-OH}
-    }{
-        Ethanol
-    }
-    </script>
-```
+        <script
+          type="text/tikz"
+          data-tex-packages="chemfig"
+        >
+        \chemname{
+            \chemfig{H_3C-CH_2-OH}
+        }{
+            Ethanol
+        }
+        </script>
 
 === ":fa-markdown: Markdown"
 
-`````
-````markdown
-=== "Question"
+    ````markdown
+    === "Question"
 
-    Draw the structural formula of ethanol.
+        Draw the structural formula of ethanol.
 
-=== "Solution"
+    === "Solution"
 
-    <script
-      type="text/tikz"
-      data-tex-packages="chemfig"
-    >
-    \chemname{
-        \chemfig{H_3C-CH_2-OH}
-    }{
-        Ethanol
-    }
-    </script>
-````
-`````
+        <script
+          type="text/tikz"
+          data-tex-packages="chemfig"
+        >
+        \chemname{
+            \chemfig{H_3C-CH_2-OH}
+        }{
+            Ethanol
+        }
+        </script>
+    ````
 
 TikZJax automatically rescans MkDocs Material content tabs when they become visible.
 
@@ -897,39 +821,35 @@ TikZJax automatically rescans MkDocs Material content tabs when they become visi
 
 === "Rendering"
 
-```
-!!! example "Benzene"
+    !!! example "Benzene"
 
-    <script
-      type="text/tikz"
-      data-tex-packages="chemfig"
-    >
-    \chemname{
-        \chemfig{*6(-=-=-=)}
-    }{
-        Benzene
-    }
-    </script>
-```
+        <script
+          type="text/tikz"
+          data-tex-packages="chemfig"
+        >
+        \chemname{
+            \chemfig{*6(-=-=-=)}
+        }{
+            Benzene
+        }
+        </script>
 
 === ":fa-markdown: Markdown"
 
-`````
-````markdown
-!!! example "Benzene"
+    ````markdown
+    !!! example "Benzene"
 
-    <script
-      type="text/tikz"
-      data-tex-packages="chemfig"
-    >
-    \chemname{
-        \chemfig{*6(-=-=-=)}
-    }{
-        Benzene
-    }
-    </script>
-````
-`````
+        <script
+          type="text/tikz"
+          data-tex-packages="chemfig"
+        >
+        \chemname{
+            \chemfig{*6(-=-=-=)}
+        }{
+            Benzene
+        }
+        </script>
+    ````
 
 ---
 
@@ -1023,11 +943,9 @@ The first `chemfig` diagram handled by a worker may therefore take longer than l
 
 !!! tip
 
-```
-Local package loading remains fully compatible with parallel rendering.
+    Local package loading remains fully compatible with parallel rendering.
 
-The `chemfig` package declaration travels with the individual diagram when it is assigned to a worker.
-```
+    The `chemfig` package declaration travels with the individual diagram when it is assigned to a worker.
 
 ---
 

@@ -117,13 +117,11 @@ The effective pool may also remain smaller when the page contains fewer pending 
 
 !!! note
 
-```
-A worker is a relatively expensive resource.
+    A worker is a relatively expensive resource.
 
-It contains a TeX runtime, a WebAssembly module, a virtual filesystem, and worker-local dependency caches.
+    It contains a TeX runtime, a WebAssembly module, a virtual filesystem, and worker-local dependency caches.
 
-A larger pool is not automatically faster on every device.
-```
+    A larger pool is not automatically faster on every device.
 
 ---
 
@@ -193,13 +191,11 @@ Each worker has its own TeX runtime and caches, so memory consumption grows with
 
 !!! note
 
-```
-Browser hardware information is advisory.
+    Browser hardware information is advisory.
 
-Some browsers do not expose `deviceMemory`, and values such as `hardwareConcurrency` may be rounded or limited for privacy and implementation reasons.
+    Some browsers do not expose `deviceMemory`, and values such as `hardwareConcurrency` may be rounded or limited for privacy and implementation reasons.
 
-`maxWorkers` remains the explicit upper bound.
-```
+    `maxWorkers` remains the explicit upper bound.
 
 ---
 
@@ -277,11 +273,9 @@ This improves perceived performance because users see the diagrams they are curr
 
 !!! note
 
-```
-Priority affects pending jobs.
+    Priority affects pending jobs.
 
-A diagram that is already compiling is not normally interrupted merely because another diagram enters the viewport.
-```
+    A diagram that is already compiling is not normally interrupted merely because another diagram enters the viewport.
 
 The queue can be reprioritized as the user scrolls and as new diagrams are discovered.
 
@@ -313,9 +307,7 @@ Only the completion time differs.
 
 !!! important
 
-```
-Do not write application logic that assumes the first diagram in the HTML will be the first diagram to finish.
-```
+    Do not write application logic that assumes the first diagram in the HTML will be the first diagram to finish.
 
 Use the `tikzjax-load-finished` event when code must react to an individual completed diagram.
 
@@ -709,11 +701,9 @@ A new worker is then initialized and can receive pending or retried jobs.
 
 !!! note
 
-```
-Restarting one worker does not require restarting the entire pool.
+    Restarting one worker does not require restarting the entire pool.
 
-Other healthy workers can continue rendering their current jobs.
-```
+    Other healthy workers can continue rendering their current jobs.
 
 ---
 

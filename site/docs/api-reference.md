@@ -14,13 +14,13 @@ For practical examples, see:
 
 TikZJax reads its global configuration from:
 
-```js id="dms5kn"
+```js
 window.TikzJaxOptions = {};
 ```
 
 Define the initial configuration before loading `tikzjax.js` or `tikzjax.min.js`.
 
-```html id="wxv6d9"
+```html
 <script src="tikzjax.config.js"></script>
 
 <link
@@ -33,7 +33,7 @@ Define the initial configuration before loading `tikzjax.js` or `tikzjax.min.js`
 
 For debugging, use the non-minified files:
 
-```html id="4egp7s"
+```html
 <script src="tikzjax.config.js"></script>
 
 <link
@@ -50,7 +50,7 @@ For debugging, use the non-minified files:
 
 TikZJax builds the effective configuration in this order:
 
-```text id="8c4glc"
+```text
 TikZJax defaults
 < initial global configuration
 < later partial global configuration
@@ -80,7 +80,7 @@ TikZJax uses a recursive merge strategy.
 
 Example:
 
-```js id="gk8b7q"
+```js
 window.TikzJaxOptions = {
     tex: {
         tikzLibraries: [
@@ -93,7 +93,7 @@ window.TikzJaxOptions = {
 
 After TikZJax has loaded:
 
-```js id="sw4j8o"
+```js
 window.TikzJaxConfigure({
     tex: {
         tikzLibraries: [
@@ -106,7 +106,7 @@ window.TikzJaxConfigure({
 
 The resulting array is equivalent to:
 
-```js id="lg3uki"
+```js
 [
     "arrows.meta",
     "calc",
@@ -115,20 +115,17 @@ The resulting array is equivalent to:
 ```
 
 !!! warning "Partial updates are additive"
+    The merge API is not a reset API.
 
-````
-The merge API is not a reset API.
+    For example, assigning an empty array does not remove libraries that were already configured:
 
-For example, assigning an empty array does not remove libraries that were already configured:
-
-```js
-window.TikzJaxConfigure({
-    tex: {
-        tikzLibraries: []
-    }
-});
-```
-````
+    ```js
+    window.TikzJaxConfigure({
+        tex: {
+            tikzLibraries: []
+        }
+    });
+    ```
 
 ---
 
@@ -136,7 +133,7 @@ window.TikzJaxConfigure({
 
 After TikZJax has loaded, update part of the global configuration with:
 
-```js id="ev6mvu"
+```js
 window.TikzJaxConfigure({
     brokenImageSrc: "/images/custom-tikz-error.svg"
 });
@@ -146,7 +143,7 @@ The function expects a plain JavaScript object.
 
 It returns the resulting merged configuration:
 
-```js id="4z8e04"
+```js
 const options = window.TikzJaxConfigure({
     renderTimeout: 45000
 });
@@ -156,7 +153,7 @@ console.log(options);
 
 A later assignment to `window.TikzJaxOptions` also uses the merge API after TikZJax has installed it:
 
-```js id="klnytn"
+```js
 window.TikzJaxOptions = {
     renderTimeout: 45000
 };
@@ -172,7 +169,7 @@ The following example shows the supported configuration groups.
 
 You do not need to define every property:
 
-```js id="550trn"
+```js
 window.TikzJaxOptions = {
     assetBaseUrl: undefined,
 
@@ -237,18 +234,24 @@ window.TikzJaxOptions = {
     },
 
     tkzTab: {
-        lineWidth: undefined,
-        font: undefined,
+        autoApply: true,
 
-        lgt: undefined,
+        lineWidth: "1.2pt",
+        font: "\\Large",
+
+        lgt: 10,
         firstColumnWidth: undefined,
-        espcl: undefined,
+        espcl: 3.2,
 
-        variableRowHeight: undefined,
-        signRowHeight: undefined,
-        variationRowHeight: undefined,
-        imageRowHeight: undefined,
-        antecedentRowHeight: undefined
+        init: {},
+        setup: {},
+        colors: {},
+
+        variableRowHeight: 1.2,
+        signRowHeight: 2.2,
+        variationRowHeight: 2.2,
+        imageRowHeight: 2.2,
+        antecedentRowHeight: 2.2
     }
 };
 ```
@@ -259,9 +262,9 @@ window.TikzJaxOptions = {
 
 ---
 
-# Global options
+## Global options
 
-## Root-option summary
+### Root-option summary
 
 | Option                | Type                           |                     Default | Description                                             |
 | --------------------- | ------------------------------ | --------------------------: | ------------------------------------------------------- |
@@ -281,13 +284,13 @@ window.TikzJaxOptions = {
 | `showTimings`         | `boolean`                      |                     `false` | Alias enabling worker timing logs                       |
 | `theme`               | `object`                       |         automatic detection | Theme-detection configuration                           |
 | `tex`                 | `object`                       |                        `{}` | Packages, libraries, preamble, and legacy safety values |
-| `tkzTab`              | `object`                       |                        `{}` | Values used to generate `tkz-tab` macros                |
+| `tkzTab`              | `object`                       |     built-in style defaults | Automatic native `tkz-tab` defaults and helper macros   |
 
 ---
 
-## `assetBaseUrl`
+### `assetBaseUrl`
 
-```js id="sl7bup"
+```js
 window.TikzJaxOptions = {
     assetBaseUrl: "/vendor/tikzjax"
 };
@@ -295,7 +298,7 @@ window.TikzJaxOptions = {
 
 `assetBaseUrl` is used to resolve runtime assets such as:
 
-```text id="db799x"
+```text
 run-tex.js
 tex.wasm.gz
 core.dump.gz
@@ -307,29 +310,26 @@ When omitted, TikZJax derives it from the directory containing the loaded `tikzj
 
 For example:
 
-```text id="tyfpqt"
+```text
 https://cdn.example.com/tikzjax/dist/tikzjax.min.js
 ```
 
 produces the default asset root:
 
-```text id="ql9o3w"
+```text
 https://cdn.example.com/tikzjax/dist
 ```
 
 !!! important
+    Configure `assetBaseUrl` before loading TikZJax.
 
-```
-Configure `assetBaseUrl` before loading TikZJax.
-
-The resolved asset root is established during TikZJax initialization.
-```
+    The resolved asset root is established during TikZJax initialization.
 
 ---
 
-## `workerUrl`
+### `workerUrl`
 
-```js id="d77hq6"
+```js
 window.TikzJaxOptions = {
     workerUrl: "/vendor/tikzjax/run-tex.js"
 };
@@ -339,7 +339,7 @@ A relative `workerUrl` is resolved against `assetBaseUrl`.
 
 The nested alias is:
 
-```js id="28ej55"
+```js
 window.TikzJaxOptions = {
     worker: {
         url: "/vendor/tikzjax/run-tex.js"
@@ -349,7 +349,7 @@ window.TikzJaxOptions = {
 
 When both are present, the root value takes precedence:
 
-```js id="k1dsh9"
+```js
 window.TikzJaxOptions = {
     workerUrl: "/workers/root-worker.js",
 
@@ -361,17 +361,17 @@ window.TikzJaxOptions = {
 
 The effective URL is:
 
-```text id="uu5c1d"
+```text
 /workers/root-worker.js
 ```
 
 ---
 
-## `workerMode`
+### `workerMode`
 
 Supported values are:
 
-```text id="a9ed7o"
+```text
 auto
 direct
 blob
@@ -379,9 +379,9 @@ blob
 
 Invalid values produce a warning and fall back to `"auto"`.
 
-### `"auto"`
+#### `"auto"`
 
-```js id="f0k5pa"
+```js
 window.TikzJaxOptions = {
     workerMode: "auto"
 };
@@ -396,9 +396,9 @@ Behavior:
 
 This is the recommended default for CDN usage.
 
-### `"direct"`
+#### `"direct"`
 
-```js id="nhk4a6"
+```js
 window.TikzJaxOptions = {
     assetBaseUrl: "/vendor/tikzjax",
     workerMode: "direct"
@@ -407,15 +407,15 @@ window.TikzJaxOptions = {
 
 TikZJax starts the worker with:
 
-```js id="fe6i6e"
+```js
 new Worker(workerUrl)
 ```
 
 Use direct mode for same-origin deployments or CSP policies that do not allow Blob workers.
 
-### `"blob"`
+#### `"blob"`
 
-```js id="2zjbq2"
+```js
 window.TikzJaxOptions = {
     workerMode: "blob"
 };
@@ -430,13 +430,13 @@ TikZJax:
 
 This requires a CSP that allows:
 
-```http id="gu3cdn"
+```http
 worker-src blob:;
 ```
 
-### Nested alias
+#### Nested alias
 
-```js id="228gml"
+```js
 window.TikzJaxOptions = {
     worker: {
         mode: "auto"
@@ -448,13 +448,13 @@ Root `workerMode` takes precedence over `worker.mode`.
 
 ---
 
-# Worker-pool options
+## Worker-pool options
 
-## `workerPool`
+### `workerPool`
 
 Recommended configuration:
 
-```js id="snfgwk"
+```js
 window.TikzJaxOptions = {
     workerPool: {
         enabled: true,
@@ -468,7 +468,7 @@ window.TikzJaxOptions = {
 
 Supported nested alias:
 
-```js id="1rynjr"
+```js
 window.TikzJaxOptions = {
     worker: {
         pool: {
@@ -486,13 +486,13 @@ A root `workerPool` object takes precedence over `worker.pool`.
 
 ---
 
-## `workerPool.enabled`
+### `workerPool.enabled`
 
 | Type      | Default |
 | --------- | ------: |
 | `boolean` |  `true` |
 
-```js id="c5arjp"
+```js
 window.TikzJaxOptions = {
     workerPool: {
         enabled: false
@@ -506,7 +506,7 @@ It does not disable Web Worker rendering entirely.
 
 Equivalent shorthand:
 
-```js id="0sm96x"
+```js
 window.TikzJaxOptions = {
     workerPool: false
 };
@@ -514,13 +514,13 @@ window.TikzJaxOptions = {
 
 ---
 
-## `workerPool.maxWorkers`
+### `workerPool.maxWorkers`
 
 | Type     | Default | Minimum |
 | -------- | ------: | ------: |
 | `number` |     `3` |     `1` |
 
-```js id="69fmya"
+```js
 window.TikzJaxOptions = {
     workerPool: {
         maxWorkers: 3
@@ -539,13 +539,13 @@ The effective count can be lower because of:
 
 ---
 
-## `workerPool.reserveCpuCores`
+### `workerPool.reserveCpuCores`
 
 | Type     | Default | Minimum |
 | -------- | ------: | ------: |
 | `number` |     `1` |     `0` |
 
-```js id="nci9aq"
+```js
 window.TikzJaxOptions = {
     workerPool: {
         reserveCpuCores: 1
@@ -555,7 +555,7 @@ window.TikzJaxOptions = {
 
 TikZJax calculates a CPU-based limit similar to:
 
-```text id="ay5ub7"
+```text
 max(
     1,
     navigator.hardwareConcurrency - reserveCpuCores
@@ -566,13 +566,13 @@ When `navigator.hardwareConcurrency` is unavailable or invalid, TikZJax uses `4`
 
 ---
 
-## `workerPool.useDeviceMemory`
+### `workerPool.useDeviceMemory`
 
 | Type      | Default |
 | --------- | ------: |
 | `boolean` |  `true` |
 
-```js id="hbnq0p"
+```js
 window.TikzJaxOptions = {
     workerPool: {
         useDeviceMemory: true
@@ -593,13 +593,13 @@ When device-memory information is unavailable, no memory-specific limit is added
 
 ---
 
-## `workerPool.initializationRetries`
+### `workerPool.initializationRetries`
 
 | Type     | Default | Minimum |
 | -------- | ------: | ------: |
 | `number` |     `1` |     `0` |
 
-```js id="whmcps"
+```js
 window.TikzJaxOptions = {
     workerPool: {
         initializationRetries: 1
@@ -611,13 +611,13 @@ The value is the number of retries after the initial worker-initialization attem
 
 With:
 
-```text id="g2gbbk"
+```text
 initializationRetries = 1
 ```
 
 TikZJax can make:
 
-```text id="ipdyvo"
+```text
 initial attempt
 + one retry
 ```
@@ -626,11 +626,11 @@ Initialization retries are separate from diagram-render retries.
 
 ---
 
-## Effective worker count
+### Effective worker count
 
 For an active workload, the effective worker count is bounded by:
 
-```text id="a4wl4i"
+```text
 pending and active workload
 maxWorkers
 CPU limit
@@ -639,7 +639,7 @@ memory limit
 
 Conceptually:
 
-```text id="bdnu4k"
+```text
 effective workers =
 max(
     1,
@@ -654,7 +654,7 @@ max(
 
 When no work is pending:
 
-```text id="x5x13j"
+```text
 effective workers = 0
 ```
 
@@ -664,15 +664,15 @@ See [Parallel Rendering and the Worker Pool](parallel-rendering.md).
 
 ---
 
-# Render-safety options
+## Render-safety options
 
-## `renderTimeout`
+### `renderTimeout`
 
 | Type     | Default | Minimum |
 | -------- | ------: | ------: |
 | `number` | `15000` |     `1` |
 
-```js id="2u6815"
+```js
 window.TikzJaxOptions = {
     renderTimeout: 30000
 };
@@ -682,7 +682,7 @@ The value is expressed in milliseconds and applies to each rendering attempt.
 
 A local value has the highest priority:
 
-```html id="u36hhv"
+```html
 <script
   type="text/tikz"
   data-render-timeout="45000"
@@ -693,7 +693,7 @@ A local value has the highest priority:
 
 Priority:
 
-```text id="qy7p46"
+```text
 local data-render-timeout
 > root renderTimeout
 > tex.renderTimeout
@@ -702,13 +702,13 @@ local data-render-timeout
 
 ---
 
-## `maxRetries`
+### `maxRetries`
 
 | Type     | Default | Minimum |
 | -------- | ------: | ------: |
 | `number` |     `0` |     `0` |
 
-```js id="hpvqrx"
+```js
 window.TikzJaxOptions = {
     maxRetries: 1
 };
@@ -718,20 +718,20 @@ This is the number of retries after the initial rendering attempt.
 
 With:
 
-```text id="3ow3e7"
+```text
 maxRetries = 1
 ```
 
 TikZJax can make:
 
-```text id="r0q7pm"
+```text
 initial attempt
 + one retry
 ```
 
 Priority:
 
-```text id="wdyl4v"
+```text
 local data-max-retries
 > root maxRetries
 > tex.maxRetries
@@ -740,13 +740,13 @@ local data-max-retries
 
 ---
 
-## `restartWorkerOnFail`
+### `restartWorkerOnFail`
 
 | Type      | Default |
 | --------- | ------: |
 | `boolean` |  `true` |
 
-```js id="hrumhx"
+```js
 window.TikzJaxOptions = {
     restartWorkerOnFail: true
 };
@@ -758,7 +758,7 @@ A timeout always requires the affected worker runtime to be restarted before reu
 
 Priority:
 
-```text id="mc1m4e"
+```text
 local data-restart-worker-on-fail
 > root restartWorkerOnFail
 > tex.restartWorkerOnFail
@@ -767,11 +767,11 @@ local data-restart-worker-on-fail
 
 ---
 
-## Nested `tex` safety aliases
+### Nested `tex` safety aliases
 
 The following legacy-compatible form remains supported:
 
-```js id="f9dt4r"
+```js
 window.TikzJaxOptions = {
     tex: {
         renderTimeout: 30000,
@@ -783,7 +783,7 @@ window.TikzJaxOptions = {
 
 Root-level values take precedence:
 
-```js id="ojf55d"
+```js
 window.TikzJaxOptions = {
     renderTimeout: 10000,
 
@@ -795,21 +795,21 @@ window.TikzJaxOptions = {
 
 The effective timeout is:
 
-```text id="ixmpbo"
+```text
 10000
 ```
 
 ---
 
-# Cache and loader options
+## Cache and loader options
 
-## `brokenImageSrc`
+### `brokenImageSrc`
 
 | Type     | Default                                                |
 | -------- | ------------------------------------------------------ |
 | `string` | `assets/broken-image.svg` resolved from the asset root |
 
-```js id="9mbh3y"
+```js
 window.TikzJaxOptions = {
     brokenImageSrc: "/images/tikz-error.svg"
 };
@@ -817,7 +817,7 @@ window.TikzJaxOptions = {
 
 Local override:
 
-```html id="56qwra"
+```html
 <script
   type="text/tikz"
   data-broken-image-src="/images/local-error.svg"
@@ -830,7 +830,7 @@ See [Fallback and Error Images](fallback-error-images.md).
 
 ---
 
-## `disableCache`
+### `disableCache`
 
 | Type      | Default |
 | --------- | ------: |
@@ -838,7 +838,7 @@ See [Fallback and Error Images](fallback-error-images.md).
 
 Global cache bypass:
 
-```js id="r971wb"
+```js
 window.TikzJaxOptions = {
     disableCache: true
 };
@@ -846,7 +846,7 @@ window.TikzJaxOptions = {
 
 Local cache bypass:
 
-```html id="qm6ev1"
+```html
 <script
   type="text/tikz"
   data-disable-cache="true"
@@ -865,7 +865,7 @@ Use this primarily during debugging.
 
 ---
 
-## `width`
+### `width`
 
 | Type     | Default |
 | -------- | ------: |
@@ -873,7 +873,7 @@ Use this primarily during debugging.
 
 Sets the minimum width of the loading placeholder in TeX points.
 
-```js id="1xjams"
+```js
 window.TikzJaxOptions = {
     width: 180
 };
@@ -881,7 +881,7 @@ window.TikzJaxOptions = {
 
 Local value:
 
-```html id="dq8rdj"
+```html
 <script
   type="text/tikz"
   data-width="320"
@@ -892,7 +892,7 @@ Local value:
 
 TikZJax applies the value as:
 
-```text id="g7vo0j"
+```text
 320pt
 ```
 
@@ -900,7 +900,7 @@ It does not resize the final SVG.
 
 ---
 
-## `height`
+### `height`
 
 | Type     | Default |
 | -------- | ------: |
@@ -908,7 +908,7 @@ It does not resize the final SVG.
 
 Sets the minimum height of the loading placeholder in TeX points.
 
-```html id="noeoxg"
+```html
 <script
   type="text/tikz"
   data-height="180"
@@ -921,15 +921,15 @@ It does not resize the final SVG.
 
 ---
 
-# Timing options
+## Timing options
 
-## `debugTimings`
+### `debugTimings`
 
 | Type      | Default |
 | --------- | ------: |
 | `boolean` | `false` |
 
-```js id="w989cp"
+```js
 window.TikzJaxOptions = {
     debugTimings: true
 };
@@ -937,7 +937,7 @@ window.TikzJaxOptions = {
 
 Local value:
 
-```html id="b3879f"
+```html
 <script
   type="text/tikz"
   data-debug-timings="true"
@@ -948,14 +948,14 @@ Local value:
 
 The worker logs stages such as:
 
-```text id="6t7rqh"
+```text
 [TikZJax timing] TeX compilation: 123.4 ms
 [TikZJax timing] DVI to HTML: 18.7 ms
 ```
 
 ---
 
-## `showTimings`
+### `showTimings`
 
 | Type      | Default |
 | --------- | ------: |
@@ -963,7 +963,7 @@ The worker logs stages such as:
 
 `showTimings` enables the same worker timing measurements as `debugTimings`.
 
-```html id="u8zgbh"
+```html
 <script
   type="text/tikz"
   data-show-timings="true"
@@ -976,7 +976,7 @@ Either option is sufficient.
 
 ---
 
-# Theme options
+## Theme options
 
 TikZJax can detect a theme from:
 
@@ -993,13 +993,13 @@ See [Themes](themes.md) for complete behavior.
 
 ---
 
-## `theme.selector`
+### `theme.selector`
 
 | Type     | Default |
 | -------- | ------- |
 | `string` | none    |
 
-```js id="kodvz8"
+```js
 window.TikzJaxOptions = {
     theme: {
         selector: "html"
@@ -1013,13 +1013,13 @@ An invalid selector produces a browser-console warning.
 
 ---
 
-## `theme.attribute`
+### `theme.attribute`
 
 | Type     | Default        |
 | -------- | -------------- |
 | `string` | `"data-theme"` |
 
-```js id="ezc1pb"
+```js
 window.TikzJaxOptions = {
     theme: {
         attribute: "data-color-mode"
@@ -1029,13 +1029,13 @@ window.TikzJaxOptions = {
 
 ---
 
-## `theme.darkValue`
+### `theme.darkValue`
 
 | Type     | Default  |
 | -------- | -------- |
 | `string` | `"dark"` |
 
-```js id="4a8zle"
+```js
 window.TikzJaxOptions = {
     theme: {
         darkValue: "night"
@@ -1045,13 +1045,13 @@ window.TikzJaxOptions = {
 
 ---
 
-## `theme.lightValue`
+### `theme.lightValue`
 
 | Type     | Default   |
 | -------- | --------- |
 | `string` | `"light"` |
 
-```js id="c9rd21"
+```js
 window.TikzJaxOptions = {
     theme: {
         lightValue: "day"
@@ -1061,13 +1061,13 @@ window.TikzJaxOptions = {
 
 ---
 
-## `theme.darkClass`
+### `theme.darkClass`
 
 | Type     | Default  |
 | -------- | -------- |
 | `string` | `"dark"` |
 
-```js id="5f5a26"
+```js
 window.TikzJaxOptions = {
     theme: {
         darkClass: "theme-dark"
@@ -1077,13 +1077,13 @@ window.TikzJaxOptions = {
 
 ---
 
-## `theme.lightClass`
+### `theme.lightClass`
 
 | Type     | Default   |
 | -------- | --------- |
 | `string` | `"light"` |
 
-```js id="nh56tx"
+```js
 window.TikzJaxOptions = {
     theme: {
         lightClass: "theme-light"
@@ -1093,13 +1093,13 @@ window.TikzJaxOptions = {
 
 ---
 
-## `theme.fallbackTheme`
+### `theme.fallbackTheme`
 
 | Type                  | Default   |
 | --------------------- | --------- |
 | `"light"` or `"dark"` | `"light"` |
 
-```js id="ehxfmy"
+```js
 window.TikzJaxOptions = {
     theme: {
         fallbackTheme: "dark"
@@ -1111,7 +1111,7 @@ window.TikzJaxOptions = {
 
 ---
 
-## `theme.defaultTheme`
+### `theme.defaultTheme`
 
 | Type                  | Default   |
 | --------------------- | --------- |
@@ -1121,13 +1121,13 @@ Legacy-compatible alias used when `fallbackTheme` is not defined.
 
 ---
 
-## `theme.followSystemTheme`
+### `theme.followSystemTheme`
 
 | Type      | Default |
 | --------- | ------: |
 | `boolean` | `false` |
 
-```js id="koxst5"
+```js
 window.TikzJaxOptions = {
     theme: {
         followSystemTheme: true
@@ -1139,9 +1139,9 @@ The system preference is used only when a valid `fallbackTheme` or `defaultTheme
 
 ---
 
-## Attribute-based theme example
+### Attribute-based theme example
 
-```js id="vfrcnp"
+```js
 window.TikzJaxOptions = {
     theme: {
         selector: "html",
@@ -1156,9 +1156,9 @@ window.TikzJaxOptions = {
 
 ---
 
-## Class-based theme example
+### Class-based theme example
 
-```js id="yuzwau"
+```js
 window.TikzJaxOptions = {
     theme: {
         selector: "body",
@@ -1171,9 +1171,9 @@ window.TikzJaxOptions = {
 
 ---
 
-# TeX options
+## TeX options
 
-## `tex.texPackages`
+### `tex.texPackages`
 
 | Accepted type          | Description                            |
 | ---------------------- | -------------------------------------- |
@@ -1184,7 +1184,7 @@ window.TikzJaxOptions = {
 
 Recommended global form:
 
-```js id="nhurc6"
+```js
 window.TikzJaxOptions = {
     tex: {
         texPackages: {
@@ -1198,7 +1198,7 @@ window.TikzJaxOptions = {
 
 Conceptual TeX output:
 
-```latex id="4th28v"
+```latex
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage[dvipsnames]{xcolor}
@@ -1206,7 +1206,7 @@ Conceptual TeX output:
 
 Values equal to:
 
-```text id="82whhx"
+```text
 undefined
 null
 false
@@ -1217,9 +1217,9 @@ produce a package without options.
 
 ---
 
-## Global package array
+### Global package array
 
-```js id="3m0h1p"
+```js
 window.TikzJaxOptions = {
     tex: {
         texPackages: [
@@ -1232,9 +1232,9 @@ window.TikzJaxOptions = {
 
 ---
 
-## Global comma-separated packages
+### Global comma-separated packages
 
-```js id="sr50c8"
+```js
 window.TikzJaxOptions = {
     tex: {
         texPackages: "amsfonts,physics"
@@ -1244,11 +1244,11 @@ window.TikzJaxOptions = {
 
 ---
 
-## Local packages
+### Local packages
 
 One package:
 
-```html id="bopvwp"
+```html
 <script
   type="text/tikz"
   data-tex-packages="physics"
@@ -1259,7 +1259,7 @@ One package:
 
 Several packages:
 
-```html id="8vcfbc"
+```html
 <script
   type="text/tikz"
   data-tex-packages="physics,chemfig"
@@ -1270,7 +1270,7 @@ Several packages:
 
 Packages with options:
 
-```html id="w7ttjw"
+```html
 <script
   type="text/tikz"
   data-tex-packages='{
@@ -1286,7 +1286,7 @@ If the same package exists globally and locally, the local option string replace
 
 ---
 
-## `tex.tikzLibraries`
+### `tex.tikzLibraries`
 
 | Accepted type          | Description                    |
 | ---------------------- | ------------------------------ |
@@ -1295,7 +1295,7 @@ If the same package exists globally and locally, the local option string replace
 
 Array:
 
-```js id="5ghpju"
+```js
 window.TikzJaxOptions = {
     tex: {
         tikzLibraries: [
@@ -1309,7 +1309,7 @@ window.TikzJaxOptions = {
 
 String:
 
-```js id="0qzt7l"
+```js
 window.TikzJaxOptions = {
     tex: {
         tikzLibraries:
@@ -1320,7 +1320,7 @@ window.TikzJaxOptions = {
 
 Local libraries:
 
-```html id="8x3buf"
+```html
 <script
   type="text/tikz"
   data-tikz-libraries="calc,positioning"
@@ -1333,13 +1333,13 @@ Global and local libraries are combined without duplicate entries.
 
 ---
 
-## `tex.addToPreamble`
+### `tex.addToPreamble`
 
 | Type     | Default |
 | -------- | ------- |
 | `string` | `""`    |
 
-```js id="k4744g"
+```js
 window.TikzJaxOptions = {
     tex: {
         addToPreamble: String.raw`
@@ -1352,13 +1352,13 @@ window.TikzJaxOptions = {
 
 The custom source is inserted before:
 
-```latex id="rb7md4"
+```latex
 \begin{document}
 ```
 
-### Local preamble
+#### Local preamble
 
-```html id="njcau7"
+```html
 <script
   type="text/tikz"
   data-add-to-preamble="\newcommand{\localR}{\mathbb{R}}"
@@ -1368,24 +1368,21 @@ The custom source is inserted before:
 ```
 
 !!! important "Replacement behavior"
+    `addToPreamble` is a scalar string.
 
-```
-`addToPreamble` is a scalar string.
+    Therefore, a local `data-add-to-preamble` value replaces the global custom `tex.addToPreamble` value for that diagram.
 
-Therefore, a local `data-add-to-preamble` value replaces the global custom `tex.addToPreamble` value for that diagram.
+    It is not automatically appended to the global custom preamble.
 
-It is not automatically appended to the global custom preamble.
-
-TikZJax-generated `tkz-tab` macros are still placed before the resulting custom preamble.
-```
+    The TikZJax-generated `tkz-tab` preamble, including helper macros and automatic native defaults, is still placed before the resulting custom preamble.
 
 ---
 
-## Legacy root TeX aliases
+### Legacy root TeX aliases
 
 These aliases remain supported:
 
-```js id="8p1dqp"
+```js
 window.TikzJaxOptions = {
     texPackages: {
         amsfonts: ""
@@ -1401,7 +1398,7 @@ window.TikzJaxOptions = {
 
 The recommended form is:
 
-```js id="w2ql3j"
+```js
 window.TikzJaxOptions = {
     tex: {
         texPackages: {
@@ -1421,71 +1418,343 @@ window.TikzJaxOptions = {
 
 ---
 
-# `tkzTab` options
+## `tkzTab` options
 
-The `tkzTab` configuration generates reusable TeX macros.
+The `tkzTab` object centralizes defaults for `tkz-tab` tables.
 
-| Option                       | Generated macro                     |
-| ---------------------------- | ----------------------------------- |
-| `tkzTab.lineWidth`           | `\tikzjaxTkzTabLineWidth`           |
-| `tkzTab.font`                | `\tikzjaxTkzTabFont`                |
-| `tkzTab.lgt`                 | `\tikzjaxTkzTabLgt`                 |
-| `tkzTab.firstColumnWidth`    | `\tikzjaxTkzTabFirstColumnWidth`    |
-| `tkzTab.espcl`               | `\tikzjaxTkzTabEspcl`               |
-| `tkzTab.variableRowHeight`   | `\tikzjaxTkzTabVariableRowHeight`   |
-| `tkzTab.signRowHeight`       | `\tikzjaxTkzTabSignRowHeight`       |
-| `tkzTab.variationRowHeight`  | `\tikzjaxTkzTabVariationRowHeight`  |
-| `tkzTab.imageRowHeight`      | `\tikzjaxTkzTabImageRowHeight`      |
-| `tkzTab.antecedentRowHeight` | `\tikzjaxTkzTabAntecedentRowHeight` |
+It has two distinct roles:
+
+1. it generates public `\tikzjaxTkzTab...` helper macros;
+2. when `autoApply` is enabled, it converts supported values into native `tkz-tab` defaults.
+
+The styling object does not load the LaTeX package by itself. Load `tkz-tab` globally through `tex.texPackages`, or locally with `data-tex-packages="tkz-tab"`.
+
+### `tkzTab` priority
+
+The effective priority is:
+
+```text
+native tkz-tab defaults
+< built-in TikZJax tkzTab defaults
+< initial global configuration
+< later partial global configuration
+< local data-tkz-tab configuration
+< explicit TeX options such as \tkzTabInit[lw=...]
+```
+
+Values on the right have higher priority.
+
+Within one merged `tkzTab` object, keys in `tkzTab.init` override the corresponding automatically derived `lgt`, `espcl`, and `lw` values.
+
+### `tkzTab` option summary
+
+| Option                           | Type      | Default    | Automatic behavior |
+| -------------------------------- | --------- | ---------- | ------------------ |
+| `tkzTab.autoApply`               | `boolean` | `true`     | Enables conversion into native `tkz-tab` defaults |
+| `tkzTab.lineWidth`               | scalar    | `"1.2pt"`  | Sets native `lw`, refreshes package line styles, and defines `\tikzjaxTkzTabLineWidth` |
+| `tkzTab.font`                    | scalar    | `"\\Large"` | Appends the font to every node in the current `tkz-tab` render and defines `\tikzjaxTkzTabFont` |
+| `tkzTab.lgt`                     | scalar    | `10`       | Used as the first-column width when `firstColumnWidth` is absent; also defines `\tikzjaxTkzTabLgt` |
+| `tkzTab.firstColumnWidth`        | scalar    | `undefined` | Overrides the automatic native `lgt` value and defines `\tikzjaxTkzTabFirstColumnWidth` |
+| `tkzTab.espcl`                   | scalar    | `3.2`      | Sets native `espcl` and defines `\tikzjaxTkzTabEspcl` |
+| `tkzTab.init`                    | object    | `{}`       | Adds or overrides native `\tkzTabInit` preset keys |
+| `tkzTab.setup`                   | object    | `{}`       | Passes options to native `\tkzTabSetup` |
+| `tkzTab.colors`                  | object    | `{}`       | Passes options to native `\tkzTabColors` |
+| `tkzTab.variableRowHeight`       | scalar    | `1.2`      | Defines a helper macro only |
+| `tkzTab.signRowHeight`           | scalar    | `2.2`      | Defines a helper macro only |
+| `tkzTab.variationRowHeight`      | scalar    | `2.2`      | Defines a helper macro only |
+| `tkzTab.imageRowHeight`          | scalar    | `2.2`      | Defines a helper macro only |
+| `tkzTab.antecedentRowHeight`     | scalar    | `2.2`      | Defines a helper macro only |
+
+A scalar value may be a string, number, or boolean accepted by the corresponding TeX key.
+
+### Automatic global defaults
 
 Example:
 
-```js id="5stjcl"
+```js
 window.TikzJaxOptions = {
-    tkzTab: {
-        lineWidth: "1.2pt",
-        font: "\\Large",
-        lgt: "10",
-        firstColumnWidth: "10",
-        espcl: "3.2",
+    tex: {
+        texPackages: {
+            "tkz-tab": ""
+        }
+    },
 
-        variableRowHeight: "1.5",
-        signRowHeight: "2.5",
-        variationRowHeight: "2.5",
-        imageRowHeight: "2.5",
-        antecedentRowHeight: "2.5"
+    tkzTab: {
+        lineWidth: "1.6pt",
+        font: "\\large",
+        lgt: 5,
+        espcl: 2.6
     }
 };
 ```
 
-Local configuration:
+With `autoApply: true`, the following source automatically receives those values even though it contains no TikZJax helper macros:
 
-```html id="xlshw6"
+```html
+<script type="text/tikz">
+\begin{tikzpicture}
+    \tkzTabInit
+        {$x$/1,$f'(x)$/1,$f(x)$/2}
+        {$-\infty$,$0$,$+\infty$}
+
+    \tkzTabLine{,-,z,+,}
+    \tkzTabVar{+/$+\infty$,-/$0$,+/$+\infty$}
+\end{tikzpicture}
+</script>
+```
+
+An explicit option remains higher priority:
+
+```latex
+\tkzTabInit[
+    lw=0.6pt,
+    lgt=3
+]
+```
+
+### `tkzTab.autoApply`
+
+| Type      | Default |
+| --------- | ------: |
+| `boolean` |  `true` |
+
+Disable automatic native defaults with:
+
+```js
+window.TikzJaxOptions = {
+    tkzTab: {
+        autoApply: false
+    }
+};
+```
+
+The public helper macros are still generated when `autoApply` is disabled.
+
+### `tkzTab.lineWidth`
+
+| Type     | Default   |
+| -------- | --------- |
+| scalar   | `"1.2pt"` |
+
+When automatic application is enabled, this value:
+
+- becomes the default `lw` value of `\tkzTabInit`;
+- replaces the package default line width used when native styles are refreshed;
+- remains available as `\tikzjaxTkzTabLineWidth`.
+
+Example:
+
+```js
+window.TikzJaxOptions = {
+    tkzTab: {
+        lineWidth: "2pt"
+    }
+};
+```
+
+### `tkzTab.font`
+
+| Type   | Default    |
+| ------ | ---------- |
+| scalar | `"\\Large"` |
+
+The font is appended to the `every node` TikZ style for a render that loads `tkz-tab`.
+
+It remains available as:
+
+```text
+\tikzjaxTkzTabFont
+```
+
+### `tkzTab.lgt` and `tkzTab.firstColumnWidth`
+
+The effective automatic first-column width is:
+
+```text
+tkzTab.firstColumnWidth
+?? tkzTab.lgt
+```
+
+Therefore:
+
+```js
+window.TikzJaxOptions = {
+    tkzTab: {
+        lgt: 5
+    }
+};
+```
+
+automatically sets native `lgt=5`.
+
+This form separates the native first-column width from the reusable `lgt` helper:
+
+```js
+window.TikzJaxOptions = {
+    tkzTab: {
+        lgt: 5,
+        firstColumnWidth: 6
+    }
+};
+```
+
+The native table default becomes `lgt=6`, while `\tikzjaxTkzTabLgt` remains `5`.
+
+### `tkzTab.espcl`
+
+| Type   | Default |
+| ------ | ------: |
+| scalar |   `3.2` |
+
+The value becomes the native `espcl` default and remains available as:
+
+```text
+\tikzjaxTkzTabEspcl
+```
+
+### `tkzTab.init`
+
+`tkzTab.init` is serialized as native `\tkzTabInit` preset keys.
+
+Example:
+
+```js
+window.TikzJaxOptions = {
+    tkzTab: {
+        lineWidth: "1.6pt",
+        lgt: 5,
+        espcl: 2.6,
+
+        init: {
+            lw: "2pt",
+            lgt: 6,
+            deltacl: 0.8
+        }
+    }
+};
+```
+
+In this example, the `init` values `lw=2pt` and `lgt=6` override the automatically derived values from `lineWidth` and `lgt`.
+
+Only scalar values are serialized. Invalid key names and nested objects are ignored.
+
+### `tkzTab.setup`
+
+`tkzTab.setup` is serialized and passed to native `\tkzTabSetup`.
+
+Example:
+
+```js
+window.TikzJaxOptions = {
+    tkzTab: {
+        setup: {
+            arrowlinewidth: "1.2pt",
+            fromstyle: "dashed"
+        }
+    }
+};
+```
+
+Only scalar values are serialized. Invalid key names and nested objects are ignored.
+
+### `tkzTab.colors`
+
+`tkzTab.colors` is serialized and passed to native `\tkzTabColors`.
+
+Example:
+
+```js
+window.TikzJaxOptions = {
+    tkzTab: {
+        colors: {
+            color: "black",
+            backgroundcolor: "white"
+        }
+    }
+};
+```
+
+Only scalar values are serialized. Invalid key names and nested objects are ignored.
+
+### Row-height helper macros
+
+Row heights are part of the mandatory `label/height` list passed directly to `\tkzTabInit`.
+
+TikZJax cannot safely infer which row is a variable row, sign row, variation row, image row, or antecedent row. These values therefore remain explicit helper macros:
+
+| Option                           | Generated macro                     |
+| -------------------------------- | ----------------------------------- |
+| `tkzTab.variableRowHeight`       | `\tikzjaxTkzTabVariableRowHeight`   |
+| `tkzTab.signRowHeight`           | `\tikzjaxTkzTabSignRowHeight`       |
+| `tkzTab.variationRowHeight`      | `\tikzjaxTkzTabVariationRowHeight`  |
+| `tkzTab.imageRowHeight`          | `\tikzjaxTkzTabImageRowHeight`      |
+| `tkzTab.antecedentRowHeight`     | `\tikzjaxTkzTabAntecedentRowHeight` |
+
+Example:
+
+```latex
+\tkzTabInit
+    {
+        $x$/\tikzjaxTkzTabVariableRowHeight,
+        $f'(x)$/\tikzjaxTkzTabSignRowHeight,
+        $f(x)$/\tikzjaxTkzTabVariationRowHeight
+    }
+    {$-\infty$,$0$,$+\infty$}
+```
+
+### Complete helper-macro list
+
+The following macros remain available:
+
+```text
+\tikzjaxTkzTabLineWidth
+\tikzjaxTkzTabFont
+\tikzjaxTkzTabLgt
+\tikzjaxTkzTabFirstColumnWidth
+\tikzjaxTkzTabEspcl
+\tikzjaxTkzTabVariableRowHeight
+\tikzjaxTkzTabSignRowHeight
+\tikzjaxTkzTabVariationRowHeight
+\tikzjaxTkzTabImageRowHeight
+\tikzjaxTkzTabAntecedentRowHeight
+```
+
+### Local `tkzTab` configuration
+
+A diagram can override or extend the merged global values with `data-tkz-tab`:
+
+```html
 <script
   type="text/tikz"
   data-tex-packages="tkz-tab"
   data-tkz-tab='{
     "lineWidth": "1.4pt",
     "font": "\\Large",
-    "lgt": "5",
-    "espcl": "3"
+    "firstColumnWidth": 5,
+    "espcl": 3,
+    "init": {
+      "deltacl": 0.8
+    },
+    "setup": {
+      "arrowlinewidth": "1pt"
+    }
   }'
 >
 ...
 </script>
 ```
 
-Local `tkzTab` values are recursively merged with global `tkzTab` values.
+Local values affect only that diagram.
 
 See the [`tkz-tab` examples](examples/tkz-tab.md).
 
 ---
 
-# Local diagram attributes
+## Local diagram attributes
 
 Local attributes are normally placed on:
 
-```html id="llwtpf"
+```html
 <script type="text/tikz">
 ...
 </script>
@@ -1495,7 +1764,7 @@ They affect only the current diagram.
 
 ---
 
-## Attribute summary
+### Attribute summary
 
 | HTML attribute                | Dataset key           | Type                   | Purpose                          |
 | ----------------------------- | --------------------- | ---------------------- | -------------------------------- |
@@ -1520,11 +1789,11 @@ They affect only the current diagram.
 
 ---
 
-## Local parsing order
+### Local parsing order
 
 Local configuration is interpreted in this order:
 
-```text id="qk5n69"
+```text
 data-options
 < data-tikzjax-options
 < data-tex
@@ -1539,7 +1808,7 @@ Later entries have higher local priority when they define the same property.
 
 Dedicated scalar attributes are:
 
-```text id="0j2z4p"
+```text
 data-render-timeout
 data-max-retries
 data-restart-worker-on-fail
@@ -1555,11 +1824,11 @@ data-show-timings
 
 ---
 
-## `data-options`
+### `data-options`
 
 Legacy JSON configuration attribute:
 
-```html id="a23ea9"
+```html
 <script
   type="text/tikz"
   data-options='{
@@ -1574,9 +1843,9 @@ Legacy JSON configuration attribute:
 
 ---
 
-## `data-tikzjax-options`
+### `data-tikzjax-options`
 
-```html id="l63slp"
+```html
 <script
   type="text/tikz"
   data-tikzjax-options='{
@@ -1601,11 +1870,11 @@ The value must be a valid JSON object.
 
 ---
 
-## `data-tex`
+### `data-tex`
 
 Provides a local nested `tex` object:
 
-```html id="yputq5"
+```html
 <script
   type="text/tikz"
   data-tex='{
@@ -1625,23 +1894,23 @@ Provides a local nested `tex` object:
 
 ---
 
-## `data-tex-packages`
+### `data-tex-packages`
 
 Simple syntax:
 
-```html id="1n0y3m"
+```html
 data-tex-packages="physics"
 ```
 
 Comma-separated syntax:
 
-```html id="gdfyzc"
+```html
 data-tex-packages="physics,chemfig"
 ```
 
 JSON syntax:
 
-```html id="w1zlmu"
+```html
 data-tex-packages='{
   "physics": "",
   "xcolor": "dvipsnames"
@@ -1650,9 +1919,9 @@ data-tex-packages='{
 
 ---
 
-## `data-tikz-libraries`
+### `data-tikz-libraries`
 
-```html id="h4w0gi"
+```html
 data-tikz-libraries="arrows.meta,calc,positioning"
 ```
 
@@ -1660,9 +1929,9 @@ Whitespace is removed around individual library names.
 
 ---
 
-## `data-add-to-preamble`
+### `data-add-to-preamble`
 
-```html id="3qaj84"
+```html
 data-add-to-preamble="\newcommand{\localR}{\mathbb{R}}"
 ```
 
@@ -1670,23 +1939,41 @@ This replaces the configured global custom `addToPreamble` string for the curren
 
 ---
 
-## `data-tkz-tab`
+### `data-tkz-tab`
 
-```html id="qq4bql"
+The value must be a valid JSON object:
+
+```html
 data-tkz-tab='{
   "lineWidth": "1.4pt",
   "font": "\\Large",
-  "espcl": "3"
+  "firstColumnWidth": 5,
+  "espcl": 3,
+  "init": {
+    "deltacl": 0.8
+  },
+  "setup": {
+    "arrowlinewidth": "1pt"
+  },
+  "colors": {
+    "color": "black",
+    "backgroundcolor": "white"
+  }
 }'
 ```
 
-The object is recursively merged with global `tkzTab` values.
+The object is recursively merged with the global `tkzTab` configuration.
+
+When `autoApply` is enabled, supported local values become native `tkz-tab` defaults for this diagram. Explicit TeX options in `\tkzTabInit[...]` still have higher priority.
+
+Backslashes inside JSON strings must be escaped.
+
 
 ---
 
-## `data-render-timeout`
+### `data-render-timeout`
 
-```html id="w0k8bo"
+```html
 data-render-timeout="45000"
 ```
 
@@ -1696,9 +1983,9 @@ Invalid values fall back to the next available configured value.
 
 ---
 
-## `data-max-retries`
+### `data-max-retries`
 
-```html id="6ieigk"
+```html
 data-max-retries="1"
 ```
 
@@ -1706,15 +1993,15 @@ The minimum valid value is `0`.
 
 ---
 
-## `data-restart-worker-on-fail`
+### `data-restart-worker-on-fail`
 
-```html id="0psl5s"
+```html
 data-restart-worker-on-fail="true"
 ```
 
 Common accepted values include:
 
-```text id="mkjt6t"
+```text
 true
 false
 1
@@ -1727,9 +2014,9 @@ off
 
 ---
 
-## `data-broken-image-src`
+### `data-broken-image-src`
 
-```html id="mcbnre"
+```html
 data-broken-image-src="/images/local-error.svg"
 ```
 
@@ -1737,9 +2024,9 @@ The value applies only if this diagram fails.
 
 ---
 
-## `data-disable-cache`
+### `data-disable-cache`
 
-```html id="q7rmtq"
+```html
 data-disable-cache="true"
 ```
 
@@ -1747,37 +2034,37 @@ Use this during development when every reload should trigger a new TeX compilati
 
 ---
 
-## `data-width`
+### `data-width`
 
-```html id="97f0qr"
+```html
 data-width="420"
 ```
 
 The loader reserves a minimum width of:
 
-```text id="rwbil9"
+```text
 420pt
 ```
 
 ---
 
-## `data-height`
+### `data-height`
 
-```html id="qf0xvz"
+```html
 data-height="220"
 ```
 
 The loader reserves a minimum height of:
 
-```text id="rzwbfd"
+```text
 220pt
 ```
 
 ---
 
-## `data-debug-timings`
+### `data-debug-timings`
 
-```html id="hzelz0"
+```html
 data-debug-timings="true"
 ```
 
@@ -1785,9 +2072,9 @@ Enables worker timing logs.
 
 ---
 
-## `data-show-timings`
+### `data-show-timings`
 
-```html id="epai70"
+```html
 data-show-timings="true"
 ```
 
@@ -1795,9 +2082,9 @@ Alias that enables the same timing logs.
 
 ---
 
-## `data-show-console`
+### `data-show-console`
 
-```html id="hjd38w"
+```html
 data-show-console="true"
 ```
 
@@ -1806,24 +2093,21 @@ Streams TeX console output to the browser console.
 This can produce a large amount of output.
 
 !!! important
+    Enable this option with:
 
-````
-Enable this option with:
+    ```html
+    data-show-console="true"
+    ```
 
-```html
-data-show-console="true"
-```
+    Omit the attribute to disable it.
 
-Omit the attribute to disable it.
-
-Do not rely on `data-show-console="false"` as a disabling form.
-````
+    Do not rely on `data-show-console="false"` as a disabling form.
 
 ---
 
-## `data-render-priority`
+### `data-render-priority`
 
-```html id="fg1xkk"
+```html
 <script
   type="text/tikz"
   data-render-priority="-10"
@@ -1853,13 +2137,13 @@ Use automatic viewport priority unless a specific application requires an explic
 
 ---
 
-## Boolean parsing
+### Boolean parsing
 
 Options processed through the TikZJax boolean parser accept:
 
-### Enabled
+#### Enabled
 
-```text id="x2onpf"
+```text
 true
 1
 yes
@@ -1867,9 +2151,9 @@ on
 empty attribute
 ```
 
-### Disabled
+#### Disabled
 
-```text id="kyihq8"
+```text
 false
 0
 no
@@ -1878,7 +2162,7 @@ off
 
 Example:
 
-```html id="r8bhfv"
+```html
 <script
   type="text/tikz"
   data-disable-cache="yes"
@@ -1891,11 +2175,11 @@ Example:
 
 ---
 
-## Global-only options
+### Global-only options
 
 The following options should be configured globally:
 
-```text id="2fx701"
+```text
 assetBaseUrl
 workerMode
 workerUrl
@@ -1910,11 +2194,11 @@ Do not attempt to configure a separate worker pool for one diagram.
 
 ---
 
-# Source formats
+## Source formats
 
-## HTML source
+### HTML source
 
-```html id="2hgb4o"
+```html
 <script type="text/tikz">
 \begin{tikzpicture}
     \draw (0,0) circle (1);
@@ -1926,9 +2210,9 @@ This format supports local `data-*` attributes.
 
 ---
 
-## Markdown fenced source
+### Markdown fenced source
 
-````markdown id="hnplpv"
+````markdown
 ```tikzjax
 \begin{tikzpicture}
     \draw (0,0) circle (1);
@@ -1942,7 +2226,7 @@ They use global configuration.
 
 ---
 
-## Recognized fenced-block classes
+### Recognized fenced-block classes
 
 TikZJax recognizes `<pre>` elements with these classes:
 
@@ -1957,9 +2241,9 @@ TikZJax extracts source text from a nested `<code>` element when present.
 
 ---
 
-# Scheduler and rendering behavior
+## Scheduler and rendering behavior
 
-## Viewport priority
+### Viewport priority
 
 Pending diagrams are ordered by their viewport priority.
 
@@ -1969,7 +2253,7 @@ Dependency affinity is a tie-breaker after priority, not a replacement for load 
 
 ---
 
-## Pending-job deduplication
+### Pending-job deduplication
 
 Pending diagrams with the same source and worker dataset can share one rendering group.
 
@@ -1979,11 +2263,11 @@ Cache-disabled jobs are not grouped through the persistent-cache identity.
 
 ---
 
-## Cache key
+### Cache key
 
 The persistent cache identity is formed from:
 
-```text id="ljkxfm"
+```text
 serialized worker dataset
 +
 exact TikZ source
@@ -1995,11 +2279,11 @@ Relevant configuration changes therefore create a different cache entry.
 
 ---
 
-## Persistent cache
+### Persistent cache
 
 TikZJax uses IndexedDB:
 
-```text id="xslcps"
+```text
 database: TikzJax
 version: 2
 object store: svgImages
@@ -2007,7 +2291,7 @@ object store: svgImages
 
 Clear it with:
 
-```js id="z7vfhd"
+```js
 indexedDB.deleteDatabase("TikzJax");
 location.reload();
 ```
@@ -2016,11 +2300,11 @@ See [Cache and Performance](cache-performance.md).
 
 ---
 
-# CSS helper classes
+## CSS helper classes
 
-## `tikzjax-container`
+### `tikzjax-container`
 
-```html id="x3gi5w"
+```html
 <div class="tikzjax-container">
     <script type="text/tikz">
     \begin{tikzpicture}
@@ -2034,9 +2318,9 @@ The generated SVG receives visible overflow behavior.
 
 ---
 
-## `tikzjax-scaled-container`
+### `tikzjax-scaled-container`
 
-```html id="g1cxmc"
+```html
 <div class="tikzjax-scaled-container">
     <script type="text/tikz">
     \begin{tikzpicture}
@@ -2048,7 +2332,7 @@ The generated SVG receives visible overflow behavior.
 
 The generated SVG receives behavior equivalent to:
 
-```text id="xrij8o"
+```text
 overflow: visible
 width: 100%
 height: 100%
@@ -2056,11 +2340,11 @@ height: 100%
 
 ---
 
-# Generated wrapper classes
+## Generated wrapper classes
 
 TikZJax places generated output inside a wrapper similar to:
 
-```html id="5s7igf"
+```html
 <span class="tikzjax-wrapper mathjax_ignore">
     <svg>...</svg>
 </span>
@@ -2068,7 +2352,7 @@ TikZJax places generated output inside a wrapper similar to:
 
 While loading, the wrapper also contains:
 
-```text id="j7ytbe"
+```text
 tikzjax-loading
 ```
 
@@ -2076,11 +2360,11 @@ The `mathjax_ignore` class reduces the risk of MathJax processing generated TikZ
 
 ---
 
-# Render-completion event
+## Render-completion event
 
 After a successful SVG is inserted, TikZJax dispatches:
 
-```text id="ca4rbp"
+```text
 tikzjax-load-finished
 ```
 
@@ -2091,7 +2375,7 @@ The event:
 * is emitted for each rendered target;
 * may occur in a different order from the HTML source order.
 
-```js id="mos99z"
+```js
 document.addEventListener(
     "tikzjax-load-finished",
     function (event) {
@@ -2109,13 +2393,13 @@ The event is also dispatched when cached SVG HTML is inserted successfully.
 
 ---
 
-# Dynamic content
+## Dynamic content
 
 TikZJax observes DOM mutations and detects newly added source blocks.
 
 Recognized dynamic sources include:
 
-```text id="qjnzsu"
+```text
 script[type="text/tikz"]
 pre.language-tikzjax
 pre.tikzjax
@@ -2129,11 +2413,11 @@ TikZJax also schedules rescans for MkDocs Material content-tab interactions.
 
 ---
 
-# Runtime assets
+## Runtime assets
 
 The npm distribution includes files such as:
 
-```text id="pewh3x"
+```text
 dist/tikzjax.js
 dist/tikzjax.min.js
 dist/run-tex.js
@@ -2150,17 +2434,17 @@ The JavaScript bundle, worker, WebAssembly runtime, core dump, and `tex_files` d
 
 ---
 
-## Runtime asset resolution
+### Runtime asset resolution
 
 With:
 
-```text id="1eyxuh"
+```text
 assetBaseUrl = https://example.com/tikzjax/dist
 ```
 
 TikZJax resolves:
 
-```text id="d49knm"
+```text
 https://example.com/tikzjax/dist/run-tex.js
 https://example.com/tikzjax/dist/tex.wasm.gz
 https://example.com/tikzjax/dist/core.dump.gz
@@ -2170,7 +2454,7 @@ https://example.com/tikzjax/dist/assets/broken-image.svg
 
 ---
 
-## Worker runtime caching
+### Worker runtime caching
 
 Each initialized worker retains:
 
@@ -2184,11 +2468,11 @@ A worker restart clears that worker's local runtime state.
 
 ---
 
-# CDN configuration
+## CDN configuration
 
-## jsDelivr
+### jsDelivr
 
-```html id="8eyimf"
+```html
 <script src="tikzjax.config.js"></script>
 
 <link
@@ -2203,9 +2487,9 @@ In most cases, no explicit `assetBaseUrl` is required.
 
 ---
 
-## unpkg
+### unpkg
 
-```html id="c5zh5y"
+```html
 <script src="tikzjax.config.js"></script>
 
 <link
@@ -2218,9 +2502,9 @@ In most cases, no explicit `assetBaseUrl` is required.
 
 ---
 
-## Same-origin hosting
+### Same-origin hosting
 
-```js id="ac7aqc"
+```js
 window.TikzJaxOptions = {
     assetBaseUrl: "/vendor/tikzjax",
     workerMode: "direct"
@@ -2229,7 +2513,7 @@ window.TikzJaxOptions = {
 
 Expected files:
 
-```text id="mrj50e"
+```text
 /vendor/tikzjax/tikzjax.min.js
 /vendor/tikzjax/run-tex.js
 /vendor/tikzjax/fonts.min.css
@@ -2241,13 +2525,13 @@ Expected files:
 
 ---
 
-# Content Security Policy
+## Content Security Policy
 
-## CDN and Blob workers
+### CDN and Blob workers
 
 A typical policy can include:
 
-```http id="bhb0wo"
+```http
 default-src 'self';
 script-src 'self' https://cdn.jsdelivr.net https://unpkg.com 'wasm-unsafe-eval';
 style-src 'self' https://cdn.jsdelivr.net https://unpkg.com 'unsafe-inline';
@@ -2261,9 +2545,9 @@ base-uri 'self';
 
 ---
 
-## Same-origin direct workers
+### Same-origin direct workers
 
-```http id="wbx4ym"
+```http
 default-src 'self';
 script-src 'self' 'wasm-unsafe-eval';
 style-src 'self' 'unsafe-inline';
@@ -2279,61 +2563,73 @@ The complete CSP must be adapted to the rest of the site.
 
 ---
 
-# Common configuration checks
+## Common configuration checks
 
-## Inspect the global configuration
+### Inspect the global configuration
 
-```js id="kmsy20"
+```js
 window.TikzJaxOptions
 ```
 
-## Inspect the worker pool
+### Inspect the worker pool
 
-```js id="ll60yp"
+```js
 window.TikzJaxOptions?.workerPool
 ```
 
-## Inspect packages
+### Inspect packages
 
-```js id="q682fq"
+```js
 window.TikzJaxOptions?.tex?.texPackages
 ```
 
-## Inspect TikZ libraries
+### Inspect TikZ libraries
 
-```js id="2u3m8g"
+```js
 window.TikzJaxOptions?.tex?.tikzLibraries
 ```
 
-## Apply a partial update
+### Inspect `tkzTab` defaults
 
-```js id="f6gh4p"
+```js
+window.TikzJaxOptions?.tkzTab
+```
+
+Inspect one effective value:
+
+```js
+window.TikzJaxOptions?.tkzTab?.lineWidth
+```
+
+### Apply a partial update
+
+```js
 window.TikzJaxConfigure({
     renderTimeout: 45000
 });
 ```
 
-## Force a fresh render
+### Force a fresh render
 
-```html id="oqae6d"
+```html
 data-disable-cache="true"
 ```
 
-## Show TeX output
+### Show TeX output
 
-```html id="3ozemg"
+```html
 data-show-console="true"
 ```
 
-## Show timing output
+### Show timing output
 
-```html id="8bl45r"
+```html
 data-debug-timings="true"
 ```
 
 ---
 
-# Related documentation
+## Related documentation
 
 * [Configuration](configuration.md)
 * [Global and Local Configuration](configuration-scopes.md)
@@ -2344,3 +2640,4 @@ data-debug-timings="true"
 * [Runtime Architecture](architecture.md)
 * [Troubleshooting](troubleshooting.md)
 * [Examples](examples/index.md)
+

@@ -17,7 +17,7 @@ Possible causes include:
 
 The fallback image is controlled by:
 
-```js id="l07nfc"
+```js
 brokenImageSrc
 ```
 
@@ -35,7 +35,7 @@ A fallback image is not necessarily displayed after the first worker error.
 
 The rendering lifecycle can include retries and worker replacement:
 
-```text id="beh8x8"
+```text
 render attempt
     |
     +-- success
@@ -65,7 +65,7 @@ The fallback is displayed only after TikZJax determines that the diagram cannot 
 
 ## Recommended safety configuration
 
-```js id="n5p0nw"
+```js
 window.TikzJaxOptions = {
     renderTimeout: 30000,
     maxRetries: 1,
@@ -93,17 +93,17 @@ This configuration:
 
 ---
 
-# Default fallback image
+## Default fallback image
 
 TikZJax includes a default fallback image:
 
-```text id="5rgl28"
+```text
 dist/assets/broken-image.svg
 ```
 
 No configuration is required to use it:
 
-```js id="8s9hnj"
+```js
 window.TikzJaxOptions = {};
 ```
 
@@ -111,21 +111,21 @@ The default image is resolved relative to the TikZJax runtime asset directory.
 
 When the JavaScript bundle is loaded from:
 
-```text id="hyxycg"
+```text
 https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js
 ```
 
 the default image is resolved from:
 
-```text id="gihdgw"
+```text
 https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image.svg
 ```
 
 ---
 
-## Explicit jsDelivr URL
+### Explicit jsDelivr URL
 
-```js id="rbnr89"
+```js
 window.TikzJaxOptions = {
     brokenImageSrc:
         "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image.svg"
@@ -134,9 +134,9 @@ window.TikzJaxOptions = {
 
 ---
 
-## Explicit unpkg URL
+### Explicit unpkg URL
 
-```js id="4ddqlx"
+```js
 window.TikzJaxOptions = {
     brokenImageSrc:
         "https://unpkg.com/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image.svg"
@@ -147,7 +147,7 @@ An explicit URL is useful when the error image is intentionally hosted separatel
 
 ---
 
-# Included fallback images
+## Included fallback images
 
 The package includes several fallback designs.
 
@@ -179,11 +179,11 @@ The preview paths are documentation assets. The runtime images remain under the 
 
 ---
 
-# Global configuration
+## Global configuration
 
 Set one fallback for every diagram in `tikzjax.config.js`:
 
-```js id="y9vqef"
+```js
 window.TikzJaxOptions = {
     brokenImageSrc:
         "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image-moderne.svg"
@@ -192,7 +192,7 @@ window.TikzJaxOptions = {
 
 Load the configuration before TikZJax:
 
-```html id="e8ez7g"
+```html
 <script src="/assets/javascripts/tikzjax.config.js"></script>
 
 <link
@@ -205,74 +205,74 @@ Load the configuration before TikZJax:
 
 ---
 
-## Global examples
+### Global examples
 
-### Default
+#### Default
 
-```js id="q1y989"
+```js
 window.TikzJaxOptions = {
     brokenImageSrc:
         "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image.svg"
 };
 ```
 
-### Gradient
+#### Gradient
 
-```js id="33uz5p"
+```js
 window.TikzJaxOptions = {
     brokenImageSrc:
         "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image-degrade.svg"
 };
 ```
 
-### Emoji
+#### Emoji
 
-```js id="s5c498"
+```js
 window.TikzJaxOptions = {
     brokenImageSrc:
         "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image-emoji.svg"
 };
 ```
 
-### Clean
+#### Clean
 
-```js id="axqmqs"
+```js
 window.TikzJaxOptions = {
     brokenImageSrc:
         "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image-epuree.svg"
 };
 ```
 
-### Sketch
+#### Sketch
 
-```js id="9frrw5"
+```js
 window.TikzJaxOptions = {
     brokenImageSrc:
         "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image-esquisse.svg"
 };
 ```
 
-### Material
+#### Material
 
-```js id="pd11kv"
+```js
 window.TikzJaxOptions = {
     brokenImageSrc:
         "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image-materielle.svg"
 };
 ```
 
-### Minimalist
+#### Minimalist
 
-```js id="b9sdu6"
+```js
 window.TikzJaxOptions = {
     brokenImageSrc:
         "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image-minimaliste.svg"
 };
 ```
 
-### Modern
+#### Modern
 
-```js id="6i6xuh"
+```js
 window.TikzJaxOptions = {
     brokenImageSrc:
         "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image-moderne.svg"
@@ -281,7 +281,7 @@ window.TikzJaxOptions = {
 
 ---
 
-# Custom fallback image
+## Custom fallback image
 
 `brokenImageSrc` can reference:
 
@@ -290,18 +290,18 @@ window.TikzJaxOptions = {
 * a page-relative path;
 * a `data:` URL.
 
-## Root-relative path
+### Root-relative path
 
-```js id="860tmo"
+```js
 window.TikzJaxOptions = {
     brokenImageSrc:
         "/assets/images/tikz-error.svg"
 };
 ```
 
-## Relative path
+### Relative path
 
-```js id="g8hjcp"
+```js
 window.TikzJaxOptions = {
     brokenImageSrc:
         "./images/tikz-error.svg"
@@ -312,9 +312,9 @@ A relative path is interpreted by the browser relative to the current page URL.
 
 It is not automatically resolved relative to `tikzjax.config.js`.
 
-## Absolute URL
+### Absolute URL
 
-```js id="0j04a4"
+```js
 window.TikzJaxOptions = {
     brokenImageSrc:
         "https://example.com/assets/tikz-error.svg"
@@ -323,7 +323,7 @@ window.TikzJaxOptions = {
 
 ---
 
-## Choosing an image format
+### Choosing an image format
 
 SVG is generally recommended because it:
 
@@ -339,11 +339,11 @@ The image URL must be permitted by the site's Content Security Policy.
 
 ---
 
-# Fallback priority
+## Fallback priority
 
 TikZJax resolves the fallback source in this order:
 
-```text id="1ryr7a"
+```text
 bundled default image
 < initial global brokenImageSrc
 < later global brokenImageSrc update
@@ -360,11 +360,11 @@ A local fallback:
 
 ---
 
-# Local fallback image
+## Local fallback image
 
 Set a fallback for one diagram with:
 
-```html id="j7ex6l"
+```html
 <script
   type="text/tikz"
   data-broken-image-src="/assets/images/local-tikz-error.svg"
@@ -381,7 +381,7 @@ The attribute must be placed directly on the TikZJax source element.
 
 Incorrect:
 
-```html id="udz3nn"
+```html
 <div data-broken-image-src="/assets/images/local-error.svg">
     <script type="text/tikz">
     ...
@@ -391,7 +391,7 @@ Incorrect:
 
 Correct:
 
-```html id="w68si3"
+```html
 <script
   type="text/tikz"
   data-broken-image-src="/assets/images/local-error.svg"
@@ -402,11 +402,11 @@ Correct:
 
 ---
 
-## Local data URL
+### Local data URL
 
 A compact inline SVG can be provided as a `data:` URL:
 
-```html id="ak3t4o"
+```html
 <script
   type="text/tikz"
   data-broken-image-src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='110' viewBox='0 0 220 110'%3E%3Crect width='220' height='110' rx='12' fill='%23fff7ed' stroke='%23ea580c' stroke-width='5'/%3E%3Ctext x='110' y='48' text-anchor='middle' font-family='Arial,sans-serif' font-size='20' font-weight='700' fill='%23c2410c'%3ERENDER ERROR%3C/text%3E%3Ctext x='110' y='74' text-anchor='middle' font-family='Arial,sans-serif' font-size='13' fill='%239a3412'%3ETikZJax%3C/text%3E%3C/svg%3E"
@@ -419,7 +419,7 @@ A compact inline SVG can be provided as a `data:` URL:
 
 The site's CSP must permit `data:` images:
 
-```http id="hq78ks"
+```http
 img-src 'self' data:;
 ```
 
@@ -427,11 +427,11 @@ Long data URLs can make Markdown and HTML difficult to maintain. A regular SVG f
 
 ---
 
-# Runtime global updates
+## Runtime global updates
 
 After TikZJax has loaded, update the global fallback with:
 
-```js id="uzfdgl"
+```js
 window.TikzJaxConfigure({
     brokenImageSrc:
         "/assets/images/new-tikz-error.svg"
@@ -442,7 +442,7 @@ This does not erase unrelated options.
 
 The equivalent later assignment is:
 
-```js id="fx1hc8"
+```js
 window.TikzJaxOptions = {
     brokenImageSrc:
         "/assets/images/new-tikz-error.svg"
@@ -453,15 +453,13 @@ window.TikzJaxOptions = {
 
 !!! warning
 
-```
-Before TikZJax installs its configuration API, normal JavaScript assignment rules apply.
+    Before TikZJax installs its configuration API, normal JavaScript assignment rules apply.
 
-Use one complete initial `window.TikzJaxOptions` object before loading the bundle.
-```
+    Use one complete initial `window.TikzJaxOptions` object before loading the bundle.
 
 ---
 
-## Effect of a runtime update
+### Effect of a runtime update
 
 A runtime update affects diagrams whose effective configuration is built after the update.
 
@@ -471,13 +469,13 @@ To replace an existing error image, update the DOM directly or trigger a fresh r
 
 ---
 
-# Fenced blocks
+## Fenced blocks
 
 Fenced `tikzjax` blocks cannot carry local HTML attributes.
 
 This block uses the global fallback:
 
-````markdown id="qrugce"
+````markdown
 ```tikzjax
 \begin{tikzpicture}
     \ThisCommandDoesNotExist
@@ -487,7 +485,7 @@ This block uses the global fallback:
 
 To use `data-broken-image-src`, use an HTML source block instead:
 
-```html id="d4opau"
+```html
 <script
   type="text/tikz"
   data-broken-image-src="/assets/images/local-error.svg"
@@ -500,13 +498,13 @@ To use `data-broken-image-src`, use an HTML source block instead:
 
 ---
 
-# Fallbacks and parallel rendering
+## Fallbacks and parallel rendering
 
 Each queued diagram has its own effective configuration.
 
 When several diagrams render in parallel:
 
-```text id="jy8dvp"
+```text
 worker 1 --> diagram A --> success
 worker 2 --> diagram B --> failure
 worker 3 --> diagram C --> success
@@ -522,11 +520,11 @@ See [Parallel Rendering and the Worker Pool](parallel-rendering.md).
 
 ---
 
-## Grouped identical diagrams
+### Grouped identical diagrams
 
 Identical diagrams discovered while one matching render is pending may share a single compilation job.
 
-```text id="w69nxa"
+```text
 target A ─┐
 target B ─┼──> one pending rendering job
 target C ─┘
@@ -540,7 +538,7 @@ Diagrams with different effective fallback configuration do not necessarily have
 
 ---
 
-# Fallbacks and caching
+## Fallbacks and caching
 
 A previously cached successful SVG can be inserted without executing TeX again.
 
@@ -548,7 +546,7 @@ This can hide a current failure while testing a changed runtime or missing depen
 
 Force a fresh rendering attempt with:
 
-```html id="li7hsx"
+```html
 <script
   type="text/tikz"
   data-disable-cache="true"
@@ -562,7 +560,7 @@ Force a fresh rendering attempt with:
 
 Or clear IndexedDB:
 
-```js id="av6osz"
+```js
 indexedDB.deleteDatabase("TikzJax");
 location.reload();
 ```
@@ -573,35 +571,31 @@ See [Cache and Performance](cache-performance.md).
 
 ---
 
-# Testing the global fallback
+## Testing the global fallback
 
 Use a structurally complete document containing an invalid command:
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-disable-cache="true"
-  data-show-console="true"
->
-\begin{tikzpicture}
-    \ThisCommandDoesNotExist
-\end{tikzpicture}
-</script>
-```
+    <script
+      type="text/tikz"
+      data-disable-cache="true"
+      data-show-console="true"
+    >
+    \begin{tikzpicture}
+        \ThisCommandDoesNotExist
+    \end{tikzpicture}
+    </script>
 
-=== "Markdown"
+=== ":fa-markdown: Markdown"
 
-`````
-````markdown
-```tikzjax
-\begin{tikzpicture}
-    \ThisCommandDoesNotExist
-\end{tikzpicture}
-```
-````
-`````
+    ````markdown
+    ```tikzjax
+    \begin{tikzpicture}
+        \ThisCommandDoesNotExist
+    \end{tikzpicture}
+    ```
+    ````
 
 The invalid command should produce a deterministic TeX error.
 
@@ -609,21 +603,19 @@ The diagram should display the configured global fallback after all attempts fai
 
 !!! warning "Avoid incomplete test documents"
 
-````
-Do not test fallback behavior by removing:
+    Do not test fallback behavior by removing:
 
-```latex
-\end{tikzpicture}
-```
+    ```latex
+    \end{tikzpicture}
+    ```
 
-An incomplete document can cause TeX to wait for more input until the timeout expires instead of producing an immediate error.
-````
+    An incomplete document can cause TeX to wait for more input until the timeout expires instead of producing an immediate error.
 
 ---
 
-# Testing a local fallback
+## Testing a local fallback
 
-```html id="0z9at9"
+```html
 <script
   type="text/tikz"
   data-disable-cache="true"
@@ -638,17 +630,17 @@ An incomplete document can cause TeX to wait for more input until the timeout ex
 
 Only this source uses:
 
-```text id="q63gct"
+```text
 /assets/images/local-tikz-error.svg
 ```
 
 ---
 
-# Testing retries and fallback timing
+## Testing retries and fallback timing
 
 Use:
 
-```html id="gls39n"
+```html
 <script
   type="text/tikz"
   data-disable-cache="true"
@@ -665,7 +657,7 @@ Use:
 
 With `data-max-retries="1"`, TikZJax can perform:
 
-```text id="hezyj8"
+```text
 initial attempt
 + one retry
 ```
@@ -676,7 +668,7 @@ For a deterministic syntax error, the retry is expected to fail in the same way.
 
 ---
 
-# Custom fallback design
+## Custom fallback design
 
 A useful fallback image should:
 
@@ -695,11 +687,11 @@ Detailed diagnostics belong in the browser Console, not inside the public error 
 
 ---
 
-# Accessibility
+## Accessibility
 
 Consider using an SVG that contains visible text such as:
 
-```text id="0mqfye"
+```text
 Diagram unavailable
 ```
 
@@ -716,19 +708,19 @@ Provide surrounding explanatory text when the diagram is essential to understand
 
 ---
 
-# Content Security Policy
+## Content Security Policy
 
-## CDN fallback images
+### CDN fallback images
 
 For jsDelivr or unpkg:
 
-```http id="knp73h"
+```http
 img-src 'self' https://cdn.jsdelivr.net https://unpkg.com data: blob:;
 ```
 
-## Same-origin fallback images
+### Same-origin fallback images
 
-```http id="ln9hy6"
+```http
 img-src 'self' data: blob:;
 ```
 
@@ -738,19 +730,19 @@ The fallback image host must be explicitly permitted.
 
 ---
 
-# MkDocs paths
+## MkDocs paths
 
 In MkDocs, a relative URL is resolved from the generated page URL.
 
 Suppose a page is generated at:
 
-```text id="phpd7c"
+```text
 /guide/installation/
 ```
 
 Then:
 
-```js id="91eg7n"
+```js
 brokenImageSrc:
     "./images/tikz-error.svg"
 ```
@@ -765,23 +757,23 @@ For a site-wide global fallback, prefer:
 
 ---
 
-## MkDocs site under a subpath
+### MkDocs site under a subpath
 
 A root-relative URL such as:
 
-```text id="rgzzei"
+```text
 /assets/images/tikz-error.svg
 ```
 
 does not include a deployment prefix such as:
 
-```text id="hvt6uc"
+```text
 /project-name/
 ```
 
 For a site deployed under a subpath, define the URL in the template:
 
-```html id="xmvw84"
+```html
 <script>
 window.TikzJaxOptions = {
     brokenImageSrc:
@@ -794,9 +786,9 @@ This allows MkDocs to generate the correct path for the deployment.
 
 ---
 
-# Complete configuration example
+## Complete configuration example
 
-```js id="shg6ye"
+```js
 window.TikzJaxOptions = {
     renderTimeout: 30000,
     maxRetries: 1,
@@ -824,15 +816,15 @@ Specialized packages should normally remain local to the diagrams that require t
 
 ---
 
-# Troubleshooting
+## Troubleshooting
 
-## The fallback image is not displayed
+### The fallback image is not displayed
 
 First verify that the diagram actually reaches the failure path.
 
 Use:
 
-```html id="lgyh93"
+```html
 <script
   type="text/tikz"
   data-disable-cache="true"
@@ -848,7 +840,7 @@ Then inspect the Console for the TeX or worker error.
 
 ---
 
-## A missing-image icon appears
+### A missing-image icon appears
 
 The render failed, but the fallback image URL also failed.
 
@@ -866,11 +858,11 @@ Check:
 
 ---
 
-## The bundled default image is used
+### The bundled default image is used
 
 Inspect the active global value:
 
-```js id="3qh57i"
+```js
 window.TikzJaxOptions?.brokenImageSrc
 ```
 
@@ -883,7 +875,7 @@ Verify that:
 
 ---
 
-## A local fallback is ignored
+### A local fallback is ignored
 
 Verify that:
 
@@ -895,13 +887,13 @@ Verify that:
 
 Force a fresh render with:
 
-```html id="1ngid6"
+```html
 data-disable-cache="true"
 ```
 
 ---
 
-## The fallback appears only after a long delay
+### The fallback appears only after a long delay
 
 Possible causes include:
 
@@ -913,7 +905,7 @@ Possible causes include:
 
 Inspect:
 
-```js id="wa6wh9"
+```js
 window.TikzJaxOptions?.renderTimeout
 window.TikzJaxOptions?.maxRetries
 window.TikzJaxOptions?.workerPool
@@ -923,7 +915,7 @@ Use a complete invalid command when testing.
 
 ---
 
-## The fallback appears immediately
+### The fallback appears immediately
 
 Possible causes include:
 
@@ -936,7 +928,7 @@ Possible causes include:
 
 Enable:
 
-```html id="vlvzdr"
+```html
 data-show-console="true"
 ```
 
@@ -944,7 +936,7 @@ and inspect the Network panel.
 
 ---
 
-## The image works locally but not after deployment
+### The image works locally but not after deployment
 
 Check:
 
@@ -960,24 +952,24 @@ Use the browser's failed request URL as the source of truth.
 
 ---
 
-## A cached diagram prevents the fallback test
+### A cached diagram prevents the fallback test
 
 Use:
 
-```html id="m0gkge"
+```html
 data-disable-cache="true"
 ```
 
 or clear the TikZJax database:
 
-```js id="4c2rdp"
+```js
 indexedDB.deleteDatabase("TikzJax");
 location.reload();
 ```
 
 ---
 
-## Only one diagram displays a fallback
+### Only one diagram displays a fallback
 
 This is normally expected.
 
@@ -987,7 +979,7 @@ A failure in one worker does not imply that all diagrams should fail.
 
 ---
 
-# Related documentation
+## Related documentation
 
 * [Configuration](configuration.md)
 * [Global and Local Configuration](configuration-scopes.md)

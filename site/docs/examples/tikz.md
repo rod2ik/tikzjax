@@ -22,91 +22,87 @@ For other supported packages, return to the [Examples overview](index.md).
 
 === "Rendering"
 
-```
-<script type="text/tikz">
-\begin{tikzpicture}
-    \draw[very thick, blue] (0,0) circle (1);
-    \fill[orange] (0,0) circle (2pt);
-\end{tikzpicture}
-</script>
-```
+    <script type="text/tikz">
+    \begin{tikzpicture}
+        \draw[very thick, blue] (0,0) circle (1);
+        \fill[orange] (0,0) circle (2pt);
+    \end{tikzpicture}
+    </script>
+
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script type="text/tikz">
-\begin{tikzpicture}
-    \draw[very thick, blue] (0,0) circle (1);
-    \fill[orange] (0,0) circle (2pt);
-\end{tikzpicture}
-</script>
-```
-````
+    ```html
+    <script type="text/tikz">
+    \begin{tikzpicture}
+        \draw[very thick, blue] (0,0) circle (1);
+        \fill[orange] (0,0) circle (2pt);
+    \end{tikzpicture}
+    </script>
+    ```
+
 
 ### Coordinate system and line
 
 === "Rendering"
 
-```
-<script type="text/tikz">
-\begin{tikzpicture}[scale=0.9]
-    \draw[->, thick] (-1,0) -- (5,0)
-        node[right] {$x$};
+    <script type="text/tikz">
+    \begin{tikzpicture}[scale=0.9]
+        \draw[->, thick] (-1,0) -- (5,0)
+            node[right] {$x$};
 
-    \draw[->, thick] (0,-1) -- (0,4)
-        node[above] {$y$};
+        \draw[->, thick] (0,-1) -- (0,4)
+            node[above] {$y$};
 
-    \draw[
-        domain=0:4,
-        smooth,
-        variable=\x,
-        blue,
-        very thick
-    ]
-        plot ({\x},{0.75*\x});
+        \draw[
+            domain=0:4,
+            smooth,
+            variable=\x,
+            blue,
+            very thick
+        ]
+            plot ({\x},{0.75*\x});
 
-    \node[
-        blue,
-        above
-    ] at (2.7,2.2) {
-        $y=\dfrac{3}{4}x$
-    };
-\end{tikzpicture}
-</script>
-```
+        \node[
+            blue,
+            above
+        ] at (2.7,2.2) {
+            $y=\dfrac{3}{4}x$
+        };
+    \end{tikzpicture}
+    </script>
+
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script type="text/tikz">
-\begin{tikzpicture}[scale=0.9]
-    \draw[->, thick] (-1,0) -- (5,0)
-        node[right] {$x$};
+    ```html
+    <script type="text/tikz">
+    \begin{tikzpicture}[scale=0.9]
+        \draw[->, thick] (-1,0) -- (5,0)
+            node[right] {$x$};
 
-    \draw[->, thick] (0,-1) -- (0,4)
-        node[above] {$y$};
+        \draw[->, thick] (0,-1) -- (0,4)
+            node[above] {$y$};
 
-    \draw[
-        domain=0:4,
-        smooth,
-        variable=\x,
-        blue,
-        very thick
-    ]
-        plot ({\x},{0.75*\x});
+        \draw[
+            domain=0:4,
+            smooth,
+            variable=\x,
+            blue,
+            very thick
+        ]
+            plot ({\x},{0.75*\x});
 
-    \node[
-        blue,
-        above
-    ] at (2.7,2.2) {
-        $y=\dfrac{3}{4}x$
-    };
-\end{tikzpicture}
-</script>
-```
-````
+        \node[
+            blue,
+            above
+        ] at (2.7,2.2) {
+            $y=\dfrac{3}{4}x$
+        };
+    \end{tikzpicture}
+    </script>
+    ```
+
 
 ## MkDocs fenced blocks
 
@@ -114,67 +110,64 @@ When using MkDocs, TikZJax diagrams can also be written with a fenced `tikzjax` 
 
 === "Rendering"
 
-````
-```tikzjax
-\begin{tikzpicture}
-    \draw[
-        rounded corners,
-        very thick,
-        fill=blue!10,
-        draw=blue!70!black
-    ]
-        (0,0) rectangle (4,2);
+    <script type="text/tikz">
+    \begin{tikzpicture}
+        \draw[
+            rounded corners,
+            very thick,
+            fill=blue!10,
+            draw=blue!70!black
+        ]
+            (0,0) rectangle (4,2);
 
-    \node[
-        font=\Large,
-        text=blue!70!black
-    ] at (2,1) {
-        TikZJax
-    };
-\end{tikzpicture}
-```
-````
+        \node[
+            font=\Large,
+            text=blue!70!black
+        ] at (2,1) {
+            TikZJax
+        };
+    \end{tikzpicture}
+    </script>
+
 
 === ":fa-markdown: Markdown"
 
-`````
-````markdown
-```tikzjax
-\begin{tikzpicture}
-    \draw[
-        rounded corners,
-        very thick,
-        fill=blue!10,
-        draw=blue!70!black
-    ]
-        (0,0) rectangle (4,2);
+    ````markdown
+    ```tikzjax
+    \begin{tikzpicture}
+        \draw[
+            rounded corners,
+            very thick,
+            fill=blue!10,
+            draw=blue!70!black
+        ]
+            (0,0) rectangle (4,2);
 
-    \node[
-        font=\Large,
-        text=blue!70!black
-    ] at (2,1) {
-        TikZJax
-    };
-\end{tikzpicture}
-```
-````
-`````
+        \node[
+            font=\Large,
+            text=blue!70!black
+        ] at (2,1) {
+            TikZJax
+        };
+    \end{tikzpicture}
+    ```
+    ````
+
 
 !!! note
 
-````
-A fenced `tikzjax` block is convenient for a plain TikZ diagram.
+    A fenced `tikzjax` block is convenient for a plain TikZ diagram.
 
-Use a `<script type="text/tikz">` block when the diagram needs local `data-*` attributes such as:
+    Use a `<script type="text/tikz">` block when the diagram needs local `data-*` attributes such as:
 
-```text
-data-tikz-libraries
-data-tex-packages
-data-render-timeout
-data-disable-cache
-data-show-console
-```
-````
+    ```text
+    data-tikz-libraries
+    data-tex-packages
+    data-render-timeout
+    data-disable-cache
+    data-show-console
+    ```
+
 
 ## MkDocs admonitions
 
@@ -182,115 +175,111 @@ data-show-console
 
 === "Rendering"
 
-````
-!!! success "Rendered with TikZJax"
+    !!! success "Rendered with TikZJax"
 
-    ```tikzjax
-    \begin{tikzpicture}
-        \draw[
-            very thick,
-            green!60!black,
-            fill=green!10
-        ]
-            (0,0) circle (1);
+        <script type="text/tikz">
+        \begin{tikzpicture}
+            \draw[
+                very thick,
+                green!60!black,
+                fill=green!10
+            ]
+                (0,0) circle (1);
 
-        \node[
-            green!40!black,
-            font=\bfseries
-        ] at (0,0) {
-            OK
-        };
-    \end{tikzpicture}
-    ```
-````
+            \node[
+                green!40!black,
+                font=\bfseries
+            ] at (0,0) {
+                OK
+            };
+        \end{tikzpicture}
+        </script>
+
 
 === ":fa-markdown: Markdown"
 
-`````
-````markdown
-!!! success "Rendered with TikZJax"
+    ````markdown
+    !!! success "Rendered with TikZJax"
 
-    ```tikzjax
-    \begin{tikzpicture}
-        \draw[
-            very thick,
-            green!60!black,
-            fill=green!10
-        ]
-            (0,0) circle (1);
+        ```tikzjax
+        \begin{tikzpicture}
+            \draw[
+                very thick,
+                green!60!black,
+                fill=green!10
+            ]
+                (0,0) circle (1);
 
-        \node[
-            green!40!black,
-            font=\bfseries
-        ] at (0,0) {
-            OK
-        };
-    \end{tikzpicture}
-    ```
-````
-`````
+            \node[
+                green!40!black,
+                font=\bfseries
+            ] at (0,0) {
+                OK
+            };
+        \end{tikzpicture}
+        ```
+    ````
+
 
 ### Collapsible admonition
 
 === "Rendering"
 
-````
-??? example "Open the diagram"
+    ??? example "Open the diagram"
 
-    ```tikzjax
-    \begin{tikzpicture}
-        \draw[
-            very thick,
-            purple,
-            fill=purple!10
-        ]
-            (-1,-1) rectangle (1,1);
+        <script type="text/tikz">
+        \begin{tikzpicture}
+            \draw[
+                very thick,
+                purple,
+                fill=purple!10
+            ]
+                (-1,-1) rectangle (1,1);
 
-        \draw[
-            very thick,
-            orange
-        ]
-            (-1,-1) -- (1,1);
+            \draw[
+                very thick,
+                orange
+            ]
+                (-1,-1) -- (1,1);
 
-        \draw[
-            very thick,
-            orange
-        ]
-            (-1,1) -- (1,-1);
-    \end{tikzpicture}
-    ```
-````
+            \draw[
+                very thick,
+                orange
+            ]
+                (-1,1) -- (1,-1);
+        \end{tikzpicture}
+        </script>
+
 
 === ":fa-markdown: Markdown"
 
-`````
-````markdown
-??? example "Open the diagram"
+    ````markdown
+    ??? example "Open the diagram"
 
-    ```tikzjax
-    \begin{tikzpicture}
-        \draw[
-            very thick,
-            purple,
-            fill=purple!10
-        ]
-            (-1,-1) rectangle (1,1);
+        ```tikzjax
+        \begin{tikzpicture}
+            \draw[
+                very thick,
+                purple,
+                fill=purple!10
+            ]
+                (-1,-1) rectangle (1,1);
 
-        \draw[
-            very thick,
-            orange
-        ]
-            (-1,-1) -- (1,1);
+            \draw[
+                very thick,
+                orange
+            ]
+                (-1,-1) -- (1,1);
 
-        \draw[
-            very thick,
-            orange
-        ]
-            (-1,1) -- (1,-1);
-    \end{tikzpicture}
-    ```
-````
-`````
+            \draw[
+                very thick,
+                orange
+            ]
+                (-1,1) -- (1,-1);
+        \end{tikzpicture}
+        ```
+    ````
+
 
 ## MkDocs Content Tabs
 
@@ -298,69 +287,67 @@ TikZJax automatically rescans MkDocs Material content tabs when their content be
 
 === "Rendering"
 
-````
-=== "Question"
+    === "Question"
 
-    Draw a triangle with three differently colored vertices.
+        Draw a triangle with three differently colored vertices.
 
-=== "Solution"
+    === "Solution"
 
-    ```tikzjax
-    \begin{tikzpicture}
-        \coordinate (A) at (0,0);
-        \coordinate (B) at (4,0);
-        \coordinate (C) at (1.5,2.5);
+        <script type="text/tikz">
+        \begin{tikzpicture}
+            \coordinate (A) at (0,0);
+            \coordinate (B) at (4,0);
+            \coordinate (C) at (1.5,2.5);
 
-        \draw[
-            very thick,
-            fill=blue!8
-        ]
-            (A) -- (B) -- (C) -- cycle;
+            \draw[
+                very thick,
+                fill=blue!8
+            ]
+                (A) -- (B) -- (C) -- cycle;
 
-        \fill[red] (A) circle (3pt);
-        \fill[green!60!black] (B) circle (3pt);
-        \fill[blue] (C) circle (3pt);
+            \fill[red] (A) circle (3pt);
+            \fill[green!60!black] (B) circle (3pt);
+            \fill[blue] (C) circle (3pt);
 
-        \node[below left] at (A) {$A$};
-        \node[below right] at (B) {$B$};
-        \node[above] at (C) {$C$};
-    \end{tikzpicture}
-    ```
-````
+            \node[below left] at (A) {$A$};
+            \node[below right] at (B) {$B$};
+            \node[above] at (C) {$C$};
+        \end{tikzpicture}
+        </script>
+
 
 === ":fa-markdown: Markdown"
 
-`````
-````markdown
-=== "Question"
+    ````markdown
+    === "Question"
 
-    Draw a triangle with three differently colored vertices.
+        Draw a triangle with three differently colored vertices.
 
-=== "Solution"
+    === "Solution"
 
-    ```tikzjax
-    \begin{tikzpicture}
-        \coordinate (A) at (0,0);
-        \coordinate (B) at (4,0);
-        \coordinate (C) at (1.5,2.5);
+        ```tikzjax
+        \begin{tikzpicture}
+            \coordinate (A) at (0,0);
+            \coordinate (B) at (4,0);
+            \coordinate (C) at (1.5,2.5);
 
-        \draw[
-            very thick,
-            fill=blue!8
-        ]
-            (A) -- (B) -- (C) -- cycle;
+            \draw[
+                very thick,
+                fill=blue!8
+            ]
+                (A) -- (B) -- (C) -- cycle;
 
-        \fill[red] (A) circle (3pt);
-        \fill[green!60!black] (B) circle (3pt);
-        \fill[blue] (C) circle (3pt);
+            \fill[red] (A) circle (3pt);
+            \fill[green!60!black] (B) circle (3pt);
+            \fill[blue] (C) circle (3pt);
 
-        \node[below left] at (A) {$A$};
-        \node[below right] at (B) {$B$};
-        \node[above] at (C) {$C$};
-    \end{tikzpicture}
-    ```
-````
-`````
+            \node[below left] at (A) {$A$};
+            \node[below right] at (B) {$B$};
+            \node[above] at (C) {$C$};
+        \end{tikzpicture}
+        ```
+    ````
+
 
 ## Cartesian coordinate system
 
@@ -368,127 +355,125 @@ This larger example uses only standard TikZ functionality.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-width="420"
-  data-height="320"
->
-\begin{tikzpicture}[scale=0.7]
+    <script
+      type="text/tikz"
+      data-width="420"
+      data-height="320"
+    >
+    \begin{tikzpicture}[scale=0.7]
 
-    \draw[
-        step=1cm,
-        gray!25,
-        very thin
-    ]
-        (-5,-5) grid (5,5);
+        \draw[
+            step=1cm,
+            gray!25,
+            very thin
+        ]
+            (-5,-5) grid (5,5);
 
-    \draw[->, thick]
-        (-5,0) -- (5,0)
-        node[right] {$x$};
+        \draw[->, thick]
+            (-5,0) -- (5,0)
+            node[right] {$x$};
 
-    \draw[->, thick]
-        (0,-5) -- (0,5)
-        node[above] {$y$};
+        \draw[->, thick]
+            (0,-5) -- (0,5)
+            node[above] {$y$};
 
-    \foreach \x in {-4,-3,-2,-1,1,2,3,4}
-        \draw
-            (\x,0.08) --
-            (\x,-0.08)
-            node[below] {$\x$};
+        \foreach \x in {-4,-3,-2,-1,1,2,3,4}
+            \draw
+                (\x,0.08) --
+                (\x,-0.08)
+                node[below] {$\x$};
 
-    \foreach \y in {-4,-3,-2,-1,1,2,3,4}
-        \draw
-            (0.08,\y) --
-            (-0.08,\y)
-            node[left] {$\y$};
+        \foreach \y in {-4,-3,-2,-1,1,2,3,4}
+            \draw
+                (0.08,\y) --
+                (-0.08,\y)
+                node[left] {$\y$};
 
-    \draw[
-        domain=-0.5:4.5,
-        smooth,
-        variable=\x,
-        blue,
-        very thick
-    ]
-        plot ({\x},{2*\x-4});
+        \draw[
+            domain=-0.5:4.5,
+            smooth,
+            variable=\x,
+            blue,
+            very thick
+        ]
+            plot ({\x},{2*\x-4});
 
-    \fill[red] (2,0) circle (3pt);
-    \fill[red] (3,2) circle (3pt);
+        \fill[red] (2,0) circle (3pt);
+        \fill[red] (3,2) circle (3pt);
 
-    \node[
-        blue,
-        fill=white,
-        inner sep=2pt
-    ] at (3.5,3.4) {
-        $y=2x-4$
-    };
+        \node[
+            blue,
+            fill=white,
+            inner sep=2pt
+        ] at (3.5,3.4) {
+            $y=2x-4$
+        };
 
-\end{tikzpicture}
-</script>
-```
+    \end{tikzpicture}
+    </script>
+
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-width="420"
-  data-height="320"
->
-\begin{tikzpicture}[scale=0.7]
+    ```html
+    <script
+      type="text/tikz"
+      data-width="420"
+      data-height="320"
+    >
+    \begin{tikzpicture}[scale=0.7]
 
-    \draw[
-        step=1cm,
-        gray!25,
-        very thin
-    ]
-        (-5,-5) grid (5,5);
+        \draw[
+            step=1cm,
+            gray!25,
+            very thin
+        ]
+            (-5,-5) grid (5,5);
 
-    \draw[->, thick]
-        (-5,0) -- (5,0)
-        node[right] {$x$};
+        \draw[->, thick]
+            (-5,0) -- (5,0)
+            node[right] {$x$};
 
-    \draw[->, thick]
-        (0,-5) -- (0,5)
-        node[above] {$y$};
+        \draw[->, thick]
+            (0,-5) -- (0,5)
+            node[above] {$y$};
 
-    \foreach \x in {-4,-3,-2,-1,1,2,3,4}
-        \draw
-            (\x,0.08) --
-            (\x,-0.08)
-            node[below] {$\x$};
+        \foreach \x in {-4,-3,-2,-1,1,2,3,4}
+            \draw
+                (\x,0.08) --
+                (\x,-0.08)
+                node[below] {$\x$};
 
-    \foreach \y in {-4,-3,-2,-1,1,2,3,4}
-        \draw
-            (0.08,\y) --
-            (-0.08,\y)
-            node[left] {$\y$};
+        \foreach \y in {-4,-3,-2,-1,1,2,3,4}
+            \draw
+                (0.08,\y) --
+                (-0.08,\y)
+                node[left] {$\y$};
 
-    \draw[
-        domain=-0.5:4.5,
-        smooth,
-        variable=\x,
-        blue,
-        very thick
-    ]
-        plot ({\x},{2*\x-4});
+        \draw[
+            domain=-0.5:4.5,
+            smooth,
+            variable=\x,
+            blue,
+            very thick
+        ]
+            plot ({\x},{2*\x-4});
 
-    \fill[red] (2,0) circle (3pt);
-    \fill[red] (3,2) circle (3pt);
+        \fill[red] (2,0) circle (3pt);
+        \fill[red] (3,2) circle (3pt);
 
-    \node[
-        blue,
-        fill=white,
-        inner sep=2pt
-    ] at (3.5,3.4) {
-        $y=2x-4$
-    };
+        \node[
+            blue,
+            fill=white,
+            inner sep=2pt
+        ] at (3.5,3.4) {
+            $y=2x-4$
+        };
 
-\end{tikzpicture}
-</script>
-```
-````
+    \end{tikzpicture}
+    </script>
+    ```
+
 
 ## Local TikZ libraries
 
@@ -513,51 +498,49 @@ The `shapes.geometric` library provides additional node shapes.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tikz-libraries="shapes.geometric"
->
-\begin{tikzpicture}
+    <script
+      type="text/tikz"
+      data-tikz-libraries="shapes.geometric"
+    >
+    \begin{tikzpicture}
 
-    \node[
-        star,
-        star points=5,
-        star point ratio=2.4,
-        minimum size=2.2cm,
-        draw=orange!80!black,
-        fill=yellow!55,
-        very thick
-    ] {};
+        \node[
+            star,
+            star points=5,
+            star point ratio=2.4,
+            minimum size=2.2cm,
+            draw=orange!80!black,
+            fill=yellow!55,
+            very thick
+        ] {};
 
-\end{tikzpicture}
-</script>
-```
+    \end{tikzpicture}
+    </script>
+
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tikz-libraries="shapes.geometric"
->
-\begin{tikzpicture}
+    ```html
+    <script
+      type="text/tikz"
+      data-tikz-libraries="shapes.geometric"
+    >
+    \begin{tikzpicture}
 
-    \node[
-        star,
-        star points=5,
-        star point ratio=2.4,
-        minimum size=2.2cm,
-        draw=orange!80!black,
-        fill=yellow!55,
-        very thick
-    ] {};
+        \node[
+            star,
+            star points=5,
+            star point ratio=2.4,
+            minimum size=2.2cm,
+            draw=orange!80!black,
+            fill=yellow!55,
+            very thick
+        ] {};
 
-\end{tikzpicture}
-</script>
-```
-````
+    \end{tikzpicture}
+    </script>
+    ```
+
 
 ## `calc`
 
@@ -565,77 +548,75 @@ The `calc` library provides coordinate calculations.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tikz-libraries="calc"
->
-\begin{tikzpicture}
+    <script
+      type="text/tikz"
+      data-tikz-libraries="calc"
+    >
+    \begin{tikzpicture}
 
-    \coordinate (A) at (-2,0);
-    \coordinate (B) at (2,0);
+        \coordinate (A) at (-2,0);
+        \coordinate (B) at (2,0);
 
-    \draw[
-        blue,
-        very thick
-    ]
-        (A) -- (B);
+        \draw[
+            blue,
+            very thick
+        ]
+            (A) -- (B);
 
-    \fill[red]
-        ($(A)!0.5!(B)$)
-        circle (4pt);
+        \fill[red]
+            ($(A)!0.5!(B)$)
+            circle (4pt);
 
-    \node[below] at (A) {$A$};
-    \node[below] at (B) {$B$};
+        \node[below] at (A) {$A$};
+        \node[below] at (B) {$B$};
 
-    \node[
-        above,
-        red
-    ] at ($(A)!0.5!(B)$) {
-        midpoint
-    };
+        \node[
+            above,
+            red
+        ] at ($(A)!0.5!(B)$) {
+            midpoint
+        };
 
-\end{tikzpicture}
-</script>
-```
+    \end{tikzpicture}
+    </script>
+
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tikz-libraries="calc"
->
-\begin{tikzpicture}
+    ```html
+    <script
+      type="text/tikz"
+      data-tikz-libraries="calc"
+    >
+    \begin{tikzpicture}
 
-    \coordinate (A) at (-2,0);
-    \coordinate (B) at (2,0);
+        \coordinate (A) at (-2,0);
+        \coordinate (B) at (2,0);
 
-    \draw[
-        blue,
-        very thick
-    ]
-        (A) -- (B);
+        \draw[
+            blue,
+            very thick
+        ]
+            (A) -- (B);
 
-    \fill[red]
-        ($(A)!0.5!(B)$)
-        circle (4pt);
+        \fill[red]
+            ($(A)!0.5!(B)$)
+            circle (4pt);
 
-    \node[below] at (A) {$A$};
-    \node[below] at (B) {$B$};
+        \node[below] at (A) {$A$};
+        \node[below] at (B) {$B$};
 
-    \node[
-        above,
-        red
-    ] at ($(A)!0.5!(B)$) {
-        midpoint
-    };
+        \node[
+            above,
+            red
+        ] at ($(A)!0.5!(B)$) {
+            midpoint
+        };
 
-\end{tikzpicture}
-</script>
-```
-````
+    \end{tikzpicture}
+    </script>
+    ```
+
 
 ## `positioning`
 
@@ -643,113 +624,111 @@ The `positioning` library places nodes relative to other nodes.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tikz-libraries="positioning,arrows.meta"
->
-\begin{tikzpicture}[
-    box/.style={
-        draw=blue!70!black,
-        fill=blue!8,
-        rounded corners,
-        very thick,
-        minimum width=2.2cm,
-        minimum height=1cm
-    }
-]
-
-    \node[box] (A) {
-        Start
-    };
-
-    \node[
-        box,
-        right=1.8cm of A
-    ] (B) {
-        Process
-    };
-
-    \node[
-        box,
-        right=1.8cm of B
-    ] (C) {
-        Result
-    };
-
-    \draw[
-        -{Stealth[length=4mm]},
-        very thick,
-        orange!80!black
+    <script
+      type="text/tikz"
+      data-tikz-libraries="positioning,arrows.meta"
+    >
+    \begin{tikzpicture}[
+        box/.style={
+            draw=blue!70!black,
+            fill=blue!8,
+            rounded corners,
+            very thick,
+            minimum width=2.2cm,
+            minimum height=1cm
+        }
     ]
-        (A) -- (B);
 
-    \draw[
-        -{Stealth[length=4mm]},
-        very thick,
-        green!60!black
-    ]
-        (B) -- (C);
+        \node[box] (A) {
+            Start
+        };
 
-\end{tikzpicture}
-</script>
-```
+        \node[
+            box,
+            right=1.8cm of A
+        ] (B) {
+            Process
+        };
+
+        \node[
+            box,
+            right=1.8cm of B
+        ] (C) {
+            Result
+        };
+
+        \draw[
+            -{Stealth[length=4mm]},
+            very thick,
+            orange!80!black
+        ]
+            (A) -- (B);
+
+        \draw[
+            -{Stealth[length=4mm]},
+            very thick,
+            green!60!black
+        ]
+            (B) -- (C);
+
+    \end{tikzpicture}
+    </script>
+
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tikz-libraries="positioning,arrows.meta"
->
-\begin{tikzpicture}[
-    box/.style={
-        draw=blue!70!black,
-        fill=blue!8,
-        rounded corners,
-        very thick,
-        minimum width=2.2cm,
-        minimum height=1cm
-    }
-]
-
-    \node[box] (A) {
-        Start
-    };
-
-    \node[
-        box,
-        right=1.8cm of A
-    ] (B) {
-        Process
-    };
-
-    \node[
-        box,
-        right=1.8cm of B
-    ] (C) {
-        Result
-    };
-
-    \draw[
-        -{Stealth[length=4mm]},
-        very thick,
-        orange!80!black
+    ```html
+    <script
+      type="text/tikz"
+      data-tikz-libraries="positioning,arrows.meta"
+    >
+    \begin{tikzpicture}[
+        box/.style={
+            draw=blue!70!black,
+            fill=blue!8,
+            rounded corners,
+            very thick,
+            minimum width=2.2cm,
+            minimum height=1cm
+        }
     ]
-        (A) -- (B);
 
-    \draw[
-        -{Stealth[length=4mm]},
-        very thick,
-        green!60!black
-    ]
-        (B) -- (C);
+        \node[box] (A) {
+            Start
+        };
 
-\end{tikzpicture}
-</script>
-```
-````
+        \node[
+            box,
+            right=1.8cm of A
+        ] (B) {
+            Process
+        };
+
+        \node[
+            box,
+            right=1.8cm of B
+        ] (C) {
+            Result
+        };
+
+        \draw[
+            -{Stealth[length=4mm]},
+            very thick,
+            orange!80!black
+        ]
+            (A) -- (B);
+
+        \draw[
+            -{Stealth[length=4mm]},
+            very thick,
+            green!60!black
+        ]
+            (B) -- (C);
+
+    \end{tikzpicture}
+    </script>
+    ```
+
 
 ## `patterns`
 
@@ -757,75 +736,73 @@ The `patterns` library provides reusable fill patterns.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tikz-libraries="patterns"
->
-\begin{tikzpicture}
+    <script
+      type="text/tikz"
+      data-tikz-libraries="patterns"
+    >
+    \begin{tikzpicture}
 
-    \draw[
-        very thick,
-        blue,
-        pattern=north east lines
-    ]
-        (-2,0) rectangle (0,1.4);
+        \draw[
+            very thick,
+            blue,
+            pattern=north east lines
+        ]
+            (-2,0) rectangle (0,1.4);
 
-    \draw[
-        very thick,
-        red,
-        pattern=dots
-    ]
-        (0.6,0) rectangle (2.6,1.4);
+        \draw[
+            very thick,
+            red,
+            pattern=dots
+        ]
+            (0.6,0) rectangle (2.6,1.4);
 
-    \node at (-1,-0.45) {
-        lines
-    };
+        \node at (-1,-0.45) {
+            lines
+        };
 
-    \node at (1.6,-0.45) {
-        dots
-    };
+        \node at (1.6,-0.45) {
+            dots
+        };
 
-\end{tikzpicture}
-</script>
-```
+    \end{tikzpicture}
+    </script>
+
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tikz-libraries="patterns"
->
-\begin{tikzpicture}
+    ```html
+    <script
+      type="text/tikz"
+      data-tikz-libraries="patterns"
+    >
+    \begin{tikzpicture}
 
-    \draw[
-        very thick,
-        blue,
-        pattern=north east lines
-    ]
-        (-2,0) rectangle (0,1.4);
+        \draw[
+            very thick,
+            blue,
+            pattern=north east lines
+        ]
+            (-2,0) rectangle (0,1.4);
 
-    \draw[
-        very thick,
-        red,
-        pattern=dots
-    ]
-        (0.6,0) rectangle (2.6,1.4);
+        \draw[
+            very thick,
+            red,
+            pattern=dots
+        ]
+            (0.6,0) rectangle (2.6,1.4);
 
-    \node at (-1,-0.45) {
-        lines
-    };
+        \node at (-1,-0.45) {
+            lines
+        };
 
-    \node at (1.6,-0.45) {
-        dots
-    };
+        \node at (1.6,-0.45) {
+            dots
+        };
 
-\end{tikzpicture}
-</script>
-```
-````
+    \end{tikzpicture}
+    </script>
+    ```
+
 
 ## `arrows.meta`
 
@@ -833,59 +810,57 @@ The `arrows.meta` library provides modern and configurable arrow tips.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tikz-libraries="arrows.meta"
->
-\begin{tikzpicture}
+    <script
+      type="text/tikz"
+      data-tikz-libraries="arrows.meta"
+    >
+    \begin{tikzpicture}
 
-    \draw[
-        -{Stealth[length=5mm]},
-        blue,
-        ultra thick
-    ]
-        (-2,0) -- (2,0);
+        \draw[
+            -{Stealth[length=5mm]},
+            blue,
+            ultra thick
+        ]
+            (-2,0) -- (2,0);
 
-    \node[
-        above,
-        blue!70!black
-    ] at (0,0) {
-        Stealth arrow
-    };
+        \node[
+            above,
+            blue!70!black
+        ] at (0,0) {
+            Stealth arrow
+        };
 
-\end{tikzpicture}
-</script>
-```
+    \end{tikzpicture}
+    </script>
+
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tikz-libraries="arrows.meta"
->
-\begin{tikzpicture}
+    ```html
+    <script
+      type="text/tikz"
+      data-tikz-libraries="arrows.meta"
+    >
+    \begin{tikzpicture}
 
-    \draw[
-        -{Stealth[length=5mm]},
-        blue,
-        ultra thick
-    ]
-        (-2,0) -- (2,0);
+        \draw[
+            -{Stealth[length=5mm]},
+            blue,
+            ultra thick
+        ]
+            (-2,0) -- (2,0);
 
-    \node[
-        above,
-        blue!70!black
-    ] at (0,0) {
-        Stealth arrow
-    };
+        \node[
+            above,
+            blue!70!black
+        ] at (0,0) {
+            Stealth arrow
+        };
 
-\end{tikzpicture}
-</script>
-```
-````
+    \end{tikzpicture}
+    </script>
+    ```
+
 
 ## Combining several TikZ libraries
 
@@ -898,147 +873,145 @@ This diagram loads:
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tikz-libraries="arrows.meta,calc,positioning,decorations.pathreplacing"
->
-\begin{tikzpicture}[
-    box/.style={
-        draw,
-        rounded corners,
-        very thick,
-        inner sep=7pt,
-        fill=blue!8
-    }
-]
-
-    \node[box] (A) {
-        Input
-    };
-
-    \node[
-        box,
-        right=3cm of A,
-        fill=green!10
-    ] (B) {
-        Output
-    };
-
-    \draw[
-        -{Stealth[length=4mm]},
-        very thick,
-        purple
+    <script
+      type="text/tikz"
+      data-tikz-libraries="arrows.meta,calc,positioning,decorations.pathreplacing"
+    >
+    \begin{tikzpicture}[
+        box/.style={
+            draw,
+            rounded corners,
+            very thick,
+            inner sep=7pt,
+            fill=blue!8
+        }
     ]
-        (A) -- (B);
 
-    \draw[
-        decorate,
-        decoration={
-            brace,
-            amplitude=6pt
-        },
-        orange!80!black,
-        thick
-    ]
-        ($(A.south)+(0,-0.35)$) --
-        ($(B.south)+(0,-0.35)$)
-        node[
-            midway,
-            below=8pt
-        ] {
-            combined libraries
+        \node[box] (A) {
+            Input
         };
 
-    \fill[
-        red
-    ]
-        ($(A)!0.5!(B)$)
-        circle (3pt);
+        \node[
+            box,
+            right=3cm of A,
+            fill=green!10
+        ] (B) {
+            Output
+        };
 
-    \node[
-        above=3pt,
-        red
-    ] at ($(A)!0.5!(B)$) {
-        midpoint
-    };
+        \draw[
+            -{Stealth[length=4mm]},
+            very thick,
+            purple
+        ]
+            (A) -- (B);
 
-\end{tikzpicture}
-</script>
-```
+        \draw[
+            decorate,
+            decoration={
+                brace,
+                amplitude=6pt
+            },
+            orange!80!black,
+            thick
+        ]
+            ($(A.south)+(0,-0.35)$) --
+            ($(B.south)+(0,-0.35)$)
+            node[
+                midway,
+                below=8pt
+            ] {
+                combined libraries
+            };
+
+        \fill[
+            red
+        ]
+            ($(A)!0.5!(B)$)
+            circle (3pt);
+
+        \node[
+            above=3pt,
+            red
+        ] at ($(A)!0.5!(B)$) {
+            midpoint
+        };
+
+    \end{tikzpicture}
+    </script>
+
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tikz-libraries="arrows.meta,calc,positioning,decorations.pathreplacing"
->
-\begin{tikzpicture}[
-    box/.style={
-        draw,
-        rounded corners,
-        very thick,
-        inner sep=7pt,
-        fill=blue!8
-    }
-]
-
-    \node[box] (A) {
-        Input
-    };
-
-    \node[
-        box,
-        right=3cm of A,
-        fill=green!10
-    ] (B) {
-        Output
-    };
-
-    \draw[
-        -{Stealth[length=4mm]},
-        very thick,
-        purple
+    ```html
+    <script
+      type="text/tikz"
+      data-tikz-libraries="arrows.meta,calc,positioning,decorations.pathreplacing"
+    >
+    \begin{tikzpicture}[
+        box/.style={
+            draw,
+            rounded corners,
+            very thick,
+            inner sep=7pt,
+            fill=blue!8
+        }
     ]
-        (A) -- (B);
 
-    \draw[
-        decorate,
-        decoration={
-            brace,
-            amplitude=6pt
-        },
-        orange!80!black,
-        thick
-    ]
-        ($(A.south)+(0,-0.35)$) --
-        ($(B.south)+(0,-0.35)$)
-        node[
-            midway,
-            below=8pt
-        ] {
-            combined libraries
+        \node[box] (A) {
+            Input
         };
 
-    \fill[
-        red
-    ]
-        ($(A)!0.5!(B)$)
-        circle (3pt);
+        \node[
+            box,
+            right=3cm of A,
+            fill=green!10
+        ] (B) {
+            Output
+        };
 
-    \node[
-        above=3pt,
-        red
-    ] at ($(A)!0.5!(B)$) {
-        midpoint
-    };
+        \draw[
+            -{Stealth[length=4mm]},
+            very thick,
+            purple
+        ]
+            (A) -- (B);
 
-\end{tikzpicture}
-</script>
-```
-````
+        \draw[
+            decorate,
+            decoration={
+                brace,
+                amplitude=6pt
+            },
+            orange!80!black,
+            thick
+        ]
+            ($(A.south)+(0,-0.35)$) --
+            ($(B.south)+(0,-0.35)$)
+            node[
+                midway,
+                below=8pt
+            ] {
+                combined libraries
+            };
+
+        \fill[
+            red
+        ]
+            ($(A)!0.5!(B)$)
+            circle (3pt);
+
+        \node[
+            above=3pt,
+            red
+        ] at ($(A)!0.5!(B)$) {
+            midpoint
+        };
+
+    \end{tikzpicture}
+    </script>
+    ```
+
 
 ## Built-in TikZ electrical circuits
 
@@ -1048,75 +1021,72 @@ These are different from the external [`circuitikz`](circuitikz.md) package.
 
 !!! warning
 
-````
-Do not load these libraries globally when the external `circuitikz` package is also used:
+    Do not load these libraries globally when the external `circuitikz` package is also used:
 
-```text
-circuits
-circuits.ee
-circuits.ee.IEC
-```
+    ```text
+    circuits
+    circuits.ee
+    circuits.ee.IEC
+    ```
 
-The two systems may conflict.
+    The two systems may conflict.
 
-Load the built-in TikZ circuit libraries locally only for the relevant diagram.
-````
+    Load the built-in TikZ circuit libraries locally only for the relevant diagram.
+
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tikz-libraries="circuits,circuits.ee,circuits.ee.IEC"
->
-\begin{tikzpicture}[
-    circuit ee IEC,
-    every circuit symbol/.style={
-        draw,
+    <script
+      type="text/tikz"
+      data-tikz-libraries="circuits,circuits.ee,circuits.ee.IEC"
+    >
+    \begin{tikzpicture}[
+        circuit ee IEC,
+        every circuit symbol/.style={
+            draw,
+            thick
+        },
         thick
-    },
-    thick
-]
+    ]
 
-    \draw
-        (0,0)
-        to[battery={info=$9\,\mathrm{V}$}] (0,2)
-        to[resistor={info=$R$}] (3,2)
-        to[capacitor={info=$C$}] (3,0)
-        -- (0,0);
+        \draw
+            (0,0)
+            to[battery={info=$9\,\mathrm{V}$}] (0,2)
+            to[resistor={info=$R$}] (3,2)
+            to[capacitor={info=$C$}] (3,0)
+            -- (0,0);
 
-\end{tikzpicture}
-</script>
-```
+    \end{tikzpicture}
+    </script>
+
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tikz-libraries="circuits,circuits.ee,circuits.ee.IEC"
->
-\begin{tikzpicture}[
-    circuit ee IEC,
-    every circuit symbol/.style={
-        draw,
+    ```html
+    <script
+      type="text/tikz"
+      data-tikz-libraries="circuits,circuits.ee,circuits.ee.IEC"
+    >
+    \begin{tikzpicture}[
+        circuit ee IEC,
+        every circuit symbol/.style={
+            draw,
+            thick
+        },
         thick
-    },
-    thick
-]
+    ]
 
-    \draw
-        (0,0)
-        to[battery={info=$9\,\mathrm{V}$}] (0,2)
-        to[resistor={info=$R$}] (3,2)
-        to[capacitor={info=$C$}] (3,0)
-        -- (0,0);
+        \draw
+            (0,0)
+            to[battery={info=$9\,\mathrm{V}$}] (0,2)
+            to[resistor={info=$R$}] (3,2)
+            to[capacitor={info=$C$}] (3,0)
+            -- (0,0);
 
-\end{tikzpicture}
-</script>
-```
-````
+    \end{tikzpicture}
+    </script>
+    ```
+
 
 For the external package syntax, see the dedicated [circuitikz examples](circuitikz.md).
 
@@ -1124,67 +1094,67 @@ For the external package syntax, see the dedicated [circuitikz examples](circuit
 
 Use `data-add-to-preamble` when a command is required by one diagram only.
 
-The local preamble is appended to the global preamble for that diagram.
+The local `data-add-to-preamble` value replaces the configured custom `tex.addToPreamble` string for that diagram.
+
+TikZJax-generated preamble content remains available.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-add-to-preamble="\newcommand{\R}{\mathbb{R}}\newcommand{\vect}[1]{\overrightarrow{#1}}"
->
-\begin{tikzpicture}
+    <script
+      type="text/tikz"
+      data-add-to-preamble="\newcommand{\R}{\mathbb{R}}\newcommand{\vect}[1]{\overrightarrow{#1}}"
+    >
+    \begin{tikzpicture}
 
-    \node[
-        draw,
-        rounded corners,
-        fill=blue!8,
-        very thick,
-        inner sep=8pt
-    ] {
-        $f:\R\to\R$
-    };
+        \node[
+            draw,
+            rounded corners,
+            fill=blue!8,
+            very thick,
+            inner sep=8pt
+        ] {
+            $f:\R\to\R$
+        };
 
-    \node[
-        below=0.8cm
-    ] at (0,0) {
-        $\vect{AB}$
-    };
+        \node[
+            below=0.8cm
+        ] at (0,0) {
+            $\vect{AB}$
+        };
 
-\end{tikzpicture}
-</script>
-```
+    \end{tikzpicture}
+    </script>
+
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-add-to-preamble="\newcommand{\R}{\mathbb{R}}\newcommand{\vect}[1]{\overrightarrow{#1}}"
->
-\begin{tikzpicture}
+    ```html
+    <script
+      type="text/tikz"
+      data-add-to-preamble="\newcommand{\R}{\mathbb{R}}\newcommand{\vect}[1]{\overrightarrow{#1}}"
+    >
+    \begin{tikzpicture}
 
-    \node[
-        draw,
-        rounded corners,
-        fill=blue!8,
-        very thick,
-        inner sep=8pt
-    ] {
-        $f:\R\to\R$
-    };
+        \node[
+            draw,
+            rounded corners,
+            fill=blue!8,
+            very thick,
+            inner sep=8pt
+        ] {
+            $f:\R\to\R$
+        };
 
-    \node[
-        below=0.8cm
-    ] at (0,0) {
-        $\vect{AB}$
-    };
+        \node[
+            below=0.8cm
+        ] at (0,0) {
+            $\vect{AB}$
+        };
 
-\end{tikzpicture}
-</script>
-```
-````
+    \end{tikzpicture}
+    </script>
+    ```
+
 
 ## Local JSON configuration
 
@@ -1276,11 +1246,10 @@ Use `data-disable-cache="true"` while actively debugging one diagram:
 
 !!! note
 
-```
-This option disables the TikZJax IndexedDB SVG cache for the diagram.
+    This option disables the TikZJax IndexedDB SVG cache for the diagram.
 
-It does not disable the browser HTTP cache used for runtime files.
-```
+    It does not disable the browser HTTP cache used for runtime files.
+
 
 ## TeX console output
 
@@ -1419,29 +1388,27 @@ The following source is intentionally invalid and should display the configured 
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-disable-cache="true"
->
-\begin{tikzpicture}
-    \draw (0,0) -- (2,2);
-</script>
-```
+    <script
+      type="text/tikz"
+      data-disable-cache="true"
+    >
+    \begin{tikzpicture}
+        \draw (0,0) -- (2,2);
+    </script>
+
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-disable-cache="true"
->
-\begin{tikzpicture}
-    \draw (0,0) -- (2,2);
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-disable-cache="true"
+    >
+    \begin{tikzpicture}
+        \draw (0,0) -- (2,2);
+    </script>
+    ```
+
 
 ## Debugging
 
@@ -1506,3 +1473,4 @@ Possible solutions include:
 * [Configuration](../configuration.md)
 * [API Reference](../api-reference.md)
 * [circuitikz examples](circuitikz.md)
+

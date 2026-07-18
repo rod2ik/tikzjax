@@ -77,11 +77,9 @@ For debugging, use the non-minified files:
 
 !!! warning "Configure before loading TikZJax"
 
-```
-Define one complete initial `window.TikzJaxOptions` object before loading the TikZJax bundle.
+    Define one complete initial `window.TikzJaxOptions` object before loading the TikZJax bundle.
 
-Runtime partial updates should be applied only after TikZJax has installed its configuration API.
-```
+    Runtime partial updates should be applied only after TikZJax has installed its configuration API.
 
 ---
 
@@ -169,7 +167,7 @@ TikZJax configuration is organized into several groups.
 | `worker`               | Worker URL and startup mode                    |
 | `tex`                  | Packages, TikZ libraries, and custom preamble  |
 | `theme`                | Light and dark theme detection                 |
-| `tkzTab`               | Reusable `tkz-tab` style values                |
+| `tkzTab`               | Automatic `tkz-tab` defaults and helper macros |
 | Asset options          | Runtime and worker file locations              |
 
 The [API Reference](api-reference.md) documents every supported property.
@@ -211,11 +209,9 @@ A complex diagram can override these values locally:
 
 !!! note
 
-```
-Older configurations may place these values inside `tex`.
+    Older configurations may place these values inside `tex`.
 
-Root-level values are preferred and take precedence when both forms are present.
-```
+    Root-level values are preferred and take precedence when both forms are present.
 
 ---
 
@@ -325,11 +321,9 @@ This is equivalent to:
 
 !!! warning "Avoid loading every package globally"
 
-```
-A global package is included in the TeX preamble of every diagram.
+    A global package is included in the TeX preamble of every diagram.
 
-Specialized packages such as `chemfig`, `circuitikz`, `yquant`, and `pgf-spectra` should normally be loaded locally.
-```
+    Specialized packages such as `chemfig`, `circuitikz`, `yquant`, and `pgf-spectra` should normally be loaded locally.
 
 ---
 
@@ -529,7 +523,17 @@ For the precise interaction between global and local preamble values, see [Globa
 
 ## `tkz-tab` configuration
 
-Load `tkz-tab` globally only when it is used by most diagrams:
+The `tkzTab` object controls the default appearance and native package options used by `tkz-tab` tables.
+
+Package loading and table configuration are separate concerns:
+
+* load `tkz-tab` globally when most diagrams use it;
+* load it locally with `data-tex-packages="tkz-tab"` for occasional tables;
+* define shared table defaults once in `tikzjax.config.js`.
+
+The global `tkzTab` values are merged over TikZJax's built-in defaults. When `autoApply` is enabled, supported values are applied automatically even when the diagram source does not reference a `\tikzjaxTkzTab...` macro.
+
+### Global package and table defaults
 
 ```js
 window.TikzJaxOptions = {
@@ -540,21 +544,38 @@ window.TikzJaxOptions = {
     },
 
     tkzTab: {
+        autoApply: true,
+
         lineWidth: "1.2pt",
         font: "\\Large",
-        lgt: "10",
-        espcl: "3.2",
+        lgt: 10,
+        espcl: 3.2,
 
-        variableRowHeight: "1.2",
-        signRowHeight: "2.2",
-        variationRowHeight: "2.2",
-        imageRowHeight: "2.2",
-        antecedentRowHeight: "2.2"
+        init: {
+            deltacl: 0.5,
+            nocadre: false
+        },
+
+        setup: {
+            arrowlinewidth: "1.2pt",
+            doubledistance: "1pt"
+        },
+
+        colors: {
+            color: "black",
+            backgroundcolor: "white"
+        },
+
+        variableRowHeight: 1.2,
+        signRowHeight: 2.2,
+        variationRowHeight: 2.2,
+        imageRowHeight: 2.2,
+        antecedentRowHeight: 2.2
     }
 };
 ```
 
-For occasional tables, load the package locally:
+The package can still be loaded locally while using the same global table defaults:
 
 ```html
 <script
@@ -572,13 +593,215 @@ For occasional tables, load the package locally:
 </script>
 ```
 
-The `tkzTab` configuration generates reusable TeX macros such as:
+In this example, `lineWidth`, `font`, `lgt`, `espcl`, and the supported native options are applied even though the source does not mention them explicitly.
+
+### Automatically applied top-level options
+
+| Option                 | Native effect                                                                 |
+| ---------------------- | ----------------------------------------------------------------------------- |
+| `autoApply`            | Enables or disables automatic application of native `tkz-tab` defaults       |
+| `lineWidth`            | Sets the package line-width default and the native `lw` default               |
+| `font`                 | Appends the configured font to nodes in the current `tkz-tab` render          |
+| `lgt`                  | Sets the default first-column width                                            |
+| `firstColumnWidth`     | Overrides `lgt` as the native first-column width when it is defined           |
+| `espcl`                | Sets the default spacing between value columns                                |
+| `init`                 | Adds native default keys for `\tkzTabInit`                                    |
+| `setup`                | Passes native options to `\tkzTabSetup`                                       |
+| `colors`               | Passes native options to `\tkzTabColors`                                      |
+
+Entries in `tkzTab.init` override the corresponding automatically generated `lgt`, `espcl`, or `lw` value.
+
+For example:
+
+```js
+window.TikzJaxOptions = {
+    tkzTab: {
+        lineWidth: "1.2pt",
+        lgt: 4,
+        espcl: 2.5,
+
+        init: {
+            lw: "1.8pt",
+            lgt: 5,
+            deltacl: 0.8
+        }
+    }
+};
+```
+
+The effective native defaults are therefore:
+
+```text
+lw=1.8pt
+lgt=5
+espcl=2.5
+deltacl=0.8
+```
+
+### Native `init`, `setup`, and `colors` objects
+
+`tkzTab.init` accepts scalar options understood by `\tkzTabInit`, including values such as:
+
+```text
+help
+color
+nocadre
+lw
+textw
+colorC
+colorL
+colorT
+colorV
+lgt
+espcl
+deltacl
+```
+
+`tkzTab.setup` accepts scalar options understood by `\tkzTabSetup`, including values such as:
+
+```text
+crosslines
+doubledistance
+lw
+doublecolor
+color
+backgroundcolor
+patterncolor
+patternstyle
+tstyle
+tcolor
+tanstyle
+tanarrowstyle
+tancolor
+tanwidth
+fromstyle
+fromarrowstyle
+fromcolor
+fromwidth
+twidth
+hcolor
+hopacity
+arrowcolor
+arrowstyle
+arrowlinewidth
+```
+
+`tkzTab.colors` accepts the native color options:
+
+```text
+color
+backgroundcolor
+```
+
+Only scalar string, number, or boolean values are serialized into these native option lists.
+
+### Configuration priority
+
+For native table defaults, the effective priority is:
+
+```text
+native tkz-tab defaults
+< TikZJax built-in tkzTab defaults
+< initial tikzjax.config.js values
+< later partial global configuration
+< local data-tkz-tab values
+< explicit TeX options such as \tkzTabInit[lw=...]
+```
+
+An explicit option in the diagram source remains the highest-priority value.
+
+### Local `data-tkz-tab` override
+
+A single diagram can override the global table defaults:
+
+```html
+<script
+  type="text/tikz"
+  data-tex-packages="tkz-tab"
+  data-tkz-tab='{
+    "lineWidth": "1.8pt",
+    "font": "\\large",
+    "lgt": 5,
+    "espcl": 2.6,
+    "setup": {
+      "arrowlinewidth": "1.4pt"
+    }
+  }'
+>
+\begin{tikzpicture}
+    \tkzTabInit
+        {$x$/1,$f'(x)$/1,$f(x)$/2}
+        {$-\infty$,$0$,$+\infty$}
+
+    \tkzTabLine{,-,z,+,}
+    \tkzTabVar{+/$+\infty$,-/$0$,+/$+\infty$}
+\end{tikzpicture}
+</script>
+```
+
+This local object is merged with the global `tkzTab` object for this diagram only.
+
+### Row-height helpers
+
+The row-height properties remain reusable TeX macros:
+
+```text
+\tikzjaxTkzTabVariableRowHeight
+\tikzjaxTkzTabSignRowHeight
+\tikzjaxTkzTabVariationRowHeight
+\tikzjaxTkzTabImageRowHeight
+\tikzjaxTkzTabAntecedentRowHeight
+```
+
+They are not applied automatically because row heights are part of the required `label/height` list passed to `\tkzTabInit`. TikZJax cannot safely infer whether a custom row is a variable, sign, variation, image, or antecedent row.
+
+Example:
+
+```tex
+\tkzTabInit
+    {
+        $x$/\tikzjaxTkzTabVariableRowHeight,
+        $f'(x)$/\tikzjaxTkzTabSignRowHeight,
+        $f(x)$/\tikzjaxTkzTabVariationRowHeight
+    }
+    {$-\infty$,$0$,$+\infty$}
+```
+
+The other helper macros remain available for explicit use:
 
 ```text
 \tikzjaxTkzTabLineWidth
 \tikzjaxTkzTabFont
 \tikzjaxTkzTabLgt
+\tikzjaxTkzTabFirstColumnWidth
 \tikzjaxTkzTabEspcl
+```
+
+### Disable automatic application
+
+Set `autoApply` to `false` to keep the helper macros without modifying native `tkz-tab` defaults automatically:
+
+```js
+window.TikzJaxOptions = {
+    tkzTab: {
+        autoApply: false,
+        lineWidth: "1.8pt"
+    }
+};
+```
+
+### Inspect the active table configuration
+
+Run in the browser console:
+
+```js
+window.TikzJaxOptions?.tkzTab
+```
+
+To inspect one value:
+
+```js
+window.TikzJaxOptions?.tkzTab?.lineWidth
 ```
 
 See the [`tkz-tab` examples](examples/tkz-tab.md).
@@ -657,7 +880,7 @@ Common attributes include:
 | `data-tex-packages`           | Load local TeX packages            |
 | `data-tikz-libraries`         | Load local TikZ libraries          |
 | `data-add-to-preamble`        | Set the diagram-specific preamble  |
-| `data-tkz-tab`                | Set local `tkz-tab` style values   |
+| `data-tkz-tab`                | Override local `tkz-tab` defaults  |
 | `data-render-timeout`         | Override the render timeout        |
 | `data-max-retries`            | Override the retry count           |
 | `data-restart-worker-on-fail` | Override restart behavior          |
@@ -847,11 +1070,9 @@ For clarity, `window.TikzJaxConfigure()` is recommended for runtime changes.
 
 !!! warning
 
-```
-Partial configuration is additive.
+    Partial configuration is additive.
 
-It is suitable for extending arrays and objects or replacing scalar values, but it is not intended as a complete reset API.
-```
+    It is suitable for extending arrays and objects or replacing scalar values, but it is not intended as a complete reset API.
 
 ---
 
@@ -1117,6 +1338,12 @@ Inspect global TikZ libraries:
 
 ```js
 window.TikzJaxOptions?.tex?.tikzLibraries
+```
+
+Inspect the active `tkz-tab` configuration:
+
+```js
+window.TikzJaxOptions?.tkzTab
 ```
 
 Apply and inspect a runtime update:

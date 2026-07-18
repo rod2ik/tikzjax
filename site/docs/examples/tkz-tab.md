@@ -44,6 +44,7 @@ Local package declarations are merged with globally configured packages.
 They do not replace the global configuration.
 
 !!! tip
+
     Local loading is recommended because `tkz-tab` is added only to diagrams that actually need it.  
     This keeps unrelated TikZ diagrams faster and reduces unnecessary work in each TeX worker.
 
@@ -58,6 +59,7 @@ This example shows:
 * the variations of the function.
 
 === "Rendering"
+
     <script
     type="text/tikz"
     data-tex-packages="tkz-tab"
@@ -87,7 +89,9 @@ This example shows:
         }
     \end{tikzpicture}
     </script>
+
 === ":fa-html5: HTML"
+
     ```html
     <script
     type="text/tikz"
@@ -132,9 +136,10 @@ Its derivative is:
 
 $f'(x)=3x(x-2).$
 
-The critical values are (0) and (2).
+The critical values are $0$ and $2$.
 
 === "Rendering"
+
     <script
     type="text/tikz"
     data-tex-packages="tkz-tab"
@@ -178,6 +183,7 @@ The critical values are (0) and (2).
     </script>
 
 === ":fa-html5: HTML"
+
     ```html
     <script
     type="text/tikz"
@@ -233,6 +239,7 @@ This example displays only the sign of:
 $g(x)=(x+2)(x-1).$
 
 === "Rendering"
+
     <script
     type="text/tikz"
     data-tex-packages="tkz-tab"
@@ -282,6 +289,7 @@ $g(x)=(x+2)(x-1).$
     </script>
 
 === ":fa-html5: HTML"
+
     ```html
     <script
     type="text/tikz"
@@ -348,6 +356,7 @@ t  ordinary separator
 This example contains several critical points.
 
 === "Rendering"
+
     <script
     type="text/tikz"
     data-tex-packages="tkz-tab"
@@ -397,6 +406,7 @@ This example contains several critical points.
     </script>
 
 === ":fa-html5: HTML"
+
     ```html
     <script
     type="text/tikz"
@@ -451,7 +461,7 @@ The `R/` marker reserves a position in the variation row without displaying a va
 
 ---
 
-## Global loading
+## Global package loading
 
 You may load `tkz-tab` globally when it is required by most diagrams on the site:
 
@@ -480,7 +490,13 @@ After global loading, a block does not need `data-tex-packages`:
 </script>
 ```
 
+Package loading and table styling are separate concerns:
+
+* `tex.texPackages["tkz-tab"]` controls whether the package is loaded;
+* `tkzTab` controls the defaults applied to tables when the package is present.
+
 !!! warning "Performance"
+
     A globally configured package is added to the preamble of every diagram.
 
     Loading `tkz-tab` globally is convenient, but it makes even unrelated TikZ diagrams process:
@@ -497,10 +513,16 @@ After global loading, a block does not need `data-tex-packages`:
 
 A fenced `tikzjax` block cannot contain HTML `data-*` attributes.
 
-Therefore, this syntax works only when `tkz-tab` is enabled globally:
+Therefore, fenced syntax works only when `tkz-tab` is enabled globally.
+
+The **Rendering** tab below contains a live HTML source without Markdown fences. The **Markdown** tab shows the fenced syntax that authors can use when the package is globally loaded.
 
 === "Rendering"
-    ```tikzjax
+
+    <script
+    type="text/tikz"
+    data-tex-packages="tkz-tab"
+    >
     \begin{tikzpicture}
         \tkzTabInit[
             lgt=4,
@@ -525,9 +547,10 @@ Therefore, this syntax works only when `tkz-tab` is enabled globally:
             +/$+\infty$
         }
     \end{tikzpicture}
-    ```
+    </script>
 
 === ":fa-markdown: Markdown"
+
     ````markdown
     ```tikzjax
     \begin{tikzpicture}
@@ -558,6 +581,7 @@ Therefore, this syntax works only when `tkz-tab` is enabled globally:
     ````
 
 !!! important
+
     When `tkz-tab` is not globally configured, use:
 
     ```html
@@ -578,6 +602,7 @@ Therefore, this syntax works only when `tkz-tab` is enabled globally:
 The `<script>` syntax can be placed inside Material for MkDocs content tabs.
 
 === "Rendering"
+
     === "Question"
 
         Draw the variation table of:
@@ -621,6 +646,7 @@ The `<script>` syntax can be placed inside Material for MkDocs content tabs.
         </script>
 
 === ":fa-markdown: Markdown"
+
     ````markdown
     === "Question"
 
@@ -672,7 +698,9 @@ TikZJax automatically rescans content tabs when their contents become visible.
 ## MkDocs admonitions
 
 === "Rendering"
+
     !!! example "Variation table"
+
         <script
         type="text/tikz"
         data-tex-packages="tkz-tab"
@@ -704,6 +732,7 @@ TikZJax automatically rescans content tabs when their contents become visible.
         </script>
 
 === ":fa-markdown: Markdown"
+
     ````markdown
     !!! example "Variation table"
 
@@ -740,9 +769,11 @@ TikZJax automatically rescans content tabs when their contents become visible.
 
 ---
 
-## Reusable TikZJax style macros
+## Automatic global `tkz-tab` defaults
 
-TikZJax can generate reusable macros from the global `tkzTab` configuration.
+TikZJax now converts the global `tkzTab` configuration into native `tkz-tab` defaults.
+
+This means that the source of each table no longer needs to reference `\tikzjaxTkzTab...` macros for the common layout and style options.
 
 Example configuration:
 
@@ -755,18 +786,148 @@ window.TikzJaxOptions = {
     },
 
     tkzTab: {
-        lineWidth: "1.1pt",
+        lineWidth: "1.6pt",
         font: "\\large",
-        lgt: "4.5",
-        espcl: "2.6",
-        variableRowHeight: "1.3",
-        signRowHeight: "1.3",
-        variationRowHeight: "2.2"
+        lgt: 4.5,
+        espcl: 2.6
     }
 };
 ```
 
-TikZJax exposes these macros to the TeX document:
+With this configuration, the following source automatically receives the configured line width, font, first-column width, and column spacing:
+
+=== "Rendering"
+
+    <script
+    type="text/tikz"
+    data-tex-packages="tkz-tab"
+    >
+    \begin{tikzpicture}
+        \tkzTabInit
+            {
+                $x$/1.3,
+                $f'(x)=2x-4$/1.3,
+                $f(x)=x^2-4x+1$/2.2
+            }
+            {
+                $-\infty$,
+                $2$,
+                $+\infty$
+            }
+
+        \tkzTabLine{,-,z,+,}
+
+        \tkzTabVar{
+            +/$+\infty$,
+            -/$-3$,
+            +/$+\infty$
+        }
+    \end{tikzpicture}
+    </script>
+
+=== ":fa-html5: HTML"
+
+    ```html
+    <script
+    type="text/tikz"
+    data-tex-packages="tkz-tab"
+    >
+    \begin{tikzpicture}
+        \tkzTabInit
+            {
+                $x$/1.3,
+                $f'(x)=2x-4$/1.3,
+                $f(x)=x^2-4x+1$/2.2
+            }
+            {
+                $-\infty$,
+                $2$,
+                $+\infty$
+            }
+
+        \tkzTabLine{,-,z,+,}
+
+        \tkzTabVar{
+            +/$+\infty$,
+            -/$-3$,
+            +/$+\infty$
+        }
+    \end{tikzpicture}
+    </script>
+    ```
+
+The main automatic options are:
+
+| TikZJax option | Native effect |
+| --- | --- |
+| `tkzTab.lineWidth` | Default `tkz-tab` line width and default `lw` value |
+| `tkzTab.font` | Default font applied to table nodes |
+| `tkzTab.lgt` | Default first-column width |
+| `tkzTab.firstColumnWidth` | Explicit alias that takes priority over `lgt` |
+| `tkzTab.espcl` | Default spacing between columns |
+| `tkzTab.init` | Additional native defaults for `\tkzTabInit` |
+| `tkzTab.setup` | Options passed to `\tkzTabSetup` |
+| `tkzTab.colors` | Options passed to `\tkzTabColors` |
+| `tkzTab.autoApply` | Enables or disables native automatic application; default: `true` |
+
+For example:
+
+```js
+window.TikzJaxOptions = {
+    tkzTab: {
+        lineWidth: "1.4pt",
+
+        init: {
+            deltacl: 0.8
+        },
+
+        setup: {
+            arrowlinewidth: "1.2pt"
+        },
+
+        colors: {
+            color: "black",
+            backgroundcolor: "white"
+        }
+    }
+};
+```
+
+Within the same `tkzTab` object, values in `init` take priority over the equivalent shortcut values. For example, `init.lw` takes priority over `lineWidth` for the default `\tkzTabInit` option.
+
+The complete precedence order is:
+
+```text
+native tkz-tab defaults
+< built-in TikZJax defaults
+< tikzjax.config.js
+< local data-tkz-tab
+< explicit TeX options such as \tkzTabInit[lw=...]
+```
+
+Therefore, an explicit local TeX option still wins:
+
+```latex
+\tkzTabInit[
+    lgt=3,
+    espcl=2,
+    lw=0.6pt
+]
+```
+
+To keep the helper macros but disable automatic native application:
+
+```js
+window.TikzJaxOptions = {
+    tkzTab: {
+        autoApply: false
+    }
+};
+```
+
+### Reusable helper macros
+
+TikZJax still exposes the following macros:
 
 ```text
 \tikzjaxTkzTabLineWidth
@@ -781,22 +942,20 @@ TikZJax exposes these macros to the TeX document:
 \tikzjaxTkzTabAntecedentRowHeight
 ```
 
+The row-height options remain helper macros rather than automatic package defaults.
+
+Row heights are embedded in the mandatory first argument of `\tkzTabInit`, and TikZJax cannot reliably infer whether a custom row is a variable, sign, variation, image, or antecedent row.
+
 Example:
 
 === "Rendering"
+
     <script
     type="text/tikz"
     data-tex-packages="tkz-tab"
     >
-    \begin{tikzpicture}[
-        line width=\tikzjaxTkzTabLineWidth,
-        font=\tikzjaxTkzTabFont
-    ]
-        \tkzTabInit[
-            lgt=\tikzjaxTkzTabLgt,
-            espcl=\tikzjaxTkzTabEspcl,
-            lw=\tikzjaxTkzTabLineWidth
-        ]
+    \begin{tikzpicture}
+        \tkzTabInit
             {
                 $x$/\tikzjaxTkzTabVariableRowHeight,
                 Sign of $f'(x)=2x-4$/\tikzjaxTkzTabSignRowHeight,
@@ -819,20 +978,14 @@ Example:
     </script>
 
 === ":fa-html5: HTML"
+
     ```html
     <script
     type="text/tikz"
     data-tex-packages="tkz-tab"
     >
-    \begin{tikzpicture}[
-        line width=\tikzjaxTkzTabLineWidth,
-        font=\tikzjaxTkzTabFont
-    ]
-        \tkzTabInit[
-            lgt=\tikzjaxTkzTabLgt,
-            espcl=\tikzjaxTkzTabEspcl,
-            lw=\tikzjaxTkzTabLineWidth
-        ]
+    \begin{tikzpicture}
+        \tkzTabInit
             {
                 $x$/\tikzjaxTkzTabVariableRowHeight,
                 Sign of $f'(x)=2x-4$/\tikzjaxTkzTabSignRowHeight,
@@ -856,17 +1009,18 @@ Example:
     ```
 
 !!! note
-    These macros are generated from `window.TikzJaxOptions.tkzTab`.
 
-    They can still be used when the package itself is loaded locally.
+    The global `tkzTab` styling configuration is applied whenever the package is present, even when `tkz-tab` itself is loaded locally with `data-tex-packages`.
 
-    Only the package declaration and the styling configuration are separate concerns.
+    Package loading and styling configuration remain separate concerns.
 
 ---
 
 ## Local `tkzTab` configuration
 
 A single diagram can override or extend the global `tkzTab` settings with `data-tkz-tab`.
+
+The local values are also applied automatically, so the TikZ source does not need to reference the helper macros:
 
 ```html
 <script
@@ -875,19 +1029,12 @@ A single diagram can override or extend the global `tkzTab` settings with `data-
   data-tkz-tab='{
     "lineWidth": "1.4pt",
     "font": "\\Large",
-    "lgt": "5",
-    "espcl": "3"
+    "lgt": 5,
+    "espcl": 3
   }'
 >
-\begin{tikzpicture}[
-    line width=\tikzjaxTkzTabLineWidth,
-    font=\tikzjaxTkzTabFont
-]
-    \tkzTabInit[
-        lgt=\tikzjaxTkzTabLgt,
-        espcl=\tikzjaxTkzTabEspcl,
-        lw=\tikzjaxTkzTabLineWidth
-    ]
+\begin{tikzpicture}
+    \tkzTabInit
         {
             $x$/1.4,
             $f'(x)$/1.4,
@@ -906,6 +1053,27 @@ A single diagram can override or extend the global `tkzTab` settings with `data-
 ```
 
 The local settings are merged with the global TikZJax configuration for this diagram only.
+
+An explicit TeX value remains the final override:
+
+```html
+<script
+  type="text/tikz"
+  data-tex-packages="tkz-tab"
+  data-tkz-tab='{"lineWidth":"1.4pt"}'
+>
+\begin{tikzpicture}
+    \tkzTabInit[lw=0.5pt]
+        {$x$/1,$f'(x)$/1,$f(x)$/2}
+        {$-\infty$,$0$,$+\infty$}
+
+    \tkzTabLine{,-,z,+,}
+    \tkzTabVar{+/$+\infty$,-/$0$,+/$+\infty$}
+\end{tikzpicture}
+</script>
+```
+
+In this last example, `lw=0.5pt` takes priority over the local `data-tkz-tab` value.
 
 ---
 
@@ -960,6 +1128,7 @@ Each worker maintains its own in-memory cache of downloaded and decompressed TeX
 The first `tkz-tab` diagram handled by a worker may therefore take longer than later `tkz-tab` diagrams handled by that same worker.
 
 !!! tip
+
     Avoid globally loading many unrelated packages together with `tkz-tab`.
 
     A smaller preamble generally gives faster and more predictable rendering.
@@ -1140,3 +1309,4 @@ while debugging, or clear the TikZJax database manually.
 * [Configuration](../configuration.md)
 * [API Reference](../api-reference.md)
 * [`tkz-tab` on CTAN](https://ctan.org/pkg/tkz-tab)
+

@@ -4,7 +4,7 @@ This page lists common TikZJax problems, their likely causes, and the recommende
 
 When investigating a diagram, start with this local debugging configuration:
 
-```html id="n1h83d"
+```html
 <script
   type="text/tikz"
   data-disable-cache="true"
@@ -29,7 +29,7 @@ Remove the debugging attributes after the problem is solved.
 
 ---
 
-# Quick diagnostic checklist
+## Quick diagnostic checklist
 
 Before investigating a package-specific problem, verify:
 
@@ -51,11 +51,11 @@ Before investigating a package-specific problem, verify:
 
 ---
 
-# Recommended loading order
+## Recommended loading order
 
 The configuration file is optional, but when present it must be loaded before TikZJax.
 
-```html id="l7mfb7"
+```html
 <script src="tikzjax.config.js"></script>
 
 <link
@@ -68,7 +68,7 @@ The configuration file is optional, but when present it must be loaded before Ti
 
 For debugging, use the non-minified assets:
 
-```html id="iqm8gd"
+```html
 <script src="tikzjax.config.js"></script>
 
 <link
@@ -81,9 +81,9 @@ For debugging, use the non-minified assets:
 
 ---
 
-# Nothing is displayed
+## Nothing is displayed
 
-## Symptoms
+### Symptoms
 
 * the original source disappears;
 * no loader is shown;
@@ -91,11 +91,11 @@ For debugging, use the non-minified assets:
 * no fallback image appears;
 * TikZJax seems inactive.
 
-## Checks
+### Checks
 
 Open the browser developer tools.
 
-### Console
+#### Console
 
 Look for:
 
@@ -106,11 +106,11 @@ Look for:
 * a failed worker constructor;
 * an IndexedDB error.
 
-### Network
+#### Network
 
 Verify that these resources return successful responses:
 
-```text id="pcfe3t"
+```text
 tikzjax.min.js
 fonts.min.css
 run-tex.js
@@ -120,17 +120,17 @@ core.dump.gz
 
 Also verify that requests under:
 
-```text id="zc6qmu"
+```text
 tex_files/
 ```
 
 are not blocked.
 
-### Source format
+#### Source format
 
 Confirm that the source is one of the recognized forms:
 
-```html id="uzsiqd"
+```html
 <script type="text/tikz">
 \begin{tikzpicture}
     \draw (0,0) circle (1);
@@ -140,7 +140,7 @@ Confirm that the source is one of the recognized forms:
 
 or a recognized fenced block:
 
-````markdown id="aq65v7"
+````markdown
 ```tikzjax
 \begin{tikzpicture}
     \draw (0,0) circle (1);
@@ -150,7 +150,7 @@ or a recognized fenced block:
 
 ---
 
-# The loading indicator never disappears
+## The loading indicator never disappears
 
 Possible causes include:
 
@@ -163,7 +163,7 @@ Possible causes include:
 
 Use a finite timeout:
 
-```js id="8fv9qh"
+```js
 window.TikzJaxOptions = {
     renderTimeout: 30000
 };
@@ -171,7 +171,7 @@ window.TikzJaxOptions = {
 
 Test the affected block with:
 
-```html id="amc4vr"
+```html
 <script
   type="text/tikz"
   data-disable-cache="true"
@@ -186,7 +186,7 @@ Check the Network panel for requests that remain pending.
 
 ---
 
-# The fallback error image is displayed
+## The fallback error image is displayed
 
 This means that TikZJax detected the source but could not produce a valid SVG after the permitted attempts.
 
@@ -205,7 +205,7 @@ Common causes include:
 
 Enable TeX console output:
 
-```html id="1unv4l"
+```html
 <script
   type="text/tikz"
   data-disable-cache="true"
@@ -223,31 +223,31 @@ An unclosed environment may cause TeX to wait for more input until the render ti
 
 ---
 
-# Configuration appears to be ignored
+## Configuration appears to be ignored
 
-## Initial configuration loaded too late
+### Initial configuration loaded too late
 
 Incorrect:
 
-```html id="038vss"
+```html
 <script src="tikzjax.min.js"></script>
 <script src="tikzjax.config.js"></script>
 ```
 
 Correct:
 
-```html id="w2949s"
+```html
 <script src="tikzjax.config.js"></script>
 <script src="tikzjax.min.js"></script>
 ```
 
-## Several assignments before TikZJax loads
+### Several assignments before TikZJax loads
 
 Before TikZJax installs its configuration API, normal JavaScript assignment rules apply.
 
 This replaces the first object:
 
-```js id="qtav9d"
+```js
 window.TikzJaxOptions = {
     renderTimeout: 30000
 };
@@ -259,7 +259,7 @@ window.TikzJaxOptions = {
 
 Use one complete initial object:
 
-```js id="0ivf5u"
+```js
 window.TikzJaxOptions = {
     renderTimeout: 30000,
     brokenImageSrc: "/images/error.svg"
@@ -268,17 +268,17 @@ window.TikzJaxOptions = {
 
 After TikZJax has loaded, use:
 
-```js id="hj87mh"
+```js
 window.TikzJaxConfigure({
     brokenImageSrc: "/images/error.svg"
 });
 ```
 
-## Local value overrides global value
+### Local value overrides global value
 
 A local attribute has higher priority:
 
-```html id="lgf5pu"
+```html
 <script
   type="text/tikz"
   data-render-timeout="45000"
@@ -293,35 +293,35 @@ See [Global and Local Configuration](configuration-scopes.md).
 
 ---
 
-# Inspecting the active configuration
+## Inspecting the active configuration
 
 Global configuration:
 
-```js id="excyfo"
+```js
 window.TikzJaxOptions
 ```
 
 Worker-pool configuration:
 
-```js id="56habr"
+```js
 window.TikzJaxOptions?.workerPool
 ```
 
 Global TeX packages:
 
-```js id="fnjhqi"
+```js
 window.TikzJaxOptions?.tex?.texPackages
 ```
 
 Global TikZ libraries:
 
-```js id="96t5y2"
+```js
 window.TikzJaxOptions?.tex?.tikzLibraries
 ```
 
 Apply and inspect a partial update:
 
-```js id="z0ozhc"
+```js
 const options = window.TikzJaxConfigure({
     renderTimeout: 45000
 });
@@ -333,11 +333,11 @@ Local effective configuration is created internally for each diagram and does no
 
 ---
 
-# Invalid local JSON
+## Invalid local JSON
 
 Attributes such as:
 
-```text id="uduc59"
+```text
 data-tikzjax-options
 data-options
 data-tex
@@ -349,7 +349,7 @@ may contain JSON.
 
 Incorrect:
 
-```html id="2nbmv4"
+```html
 data-tikzjax-options='{
   renderTimeout: 30000,
 }'
@@ -362,7 +362,7 @@ Problems:
 
 Correct:
 
-```html id="2l0fc0"
+```html
 data-tikzjax-options='{
   "renderTimeout": 30000
 }'
@@ -372,11 +372,11 @@ Use single quotes around the HTML attribute and double quotes inside the JSON.
 
 ---
 
-# Dedicated attributes override local JSON
+## Dedicated attributes override local JSON
 
 This source defines the timeout twice:
 
-```html id="fyc9ee"
+```html
 <script
   type="text/tikz"
   data-tikzjax-options='{
@@ -390,7 +390,7 @@ This source defines the timeout twice:
 
 The dedicated attribute wins:
 
-```text id="w8h8zg"
+```text
 45000 milliseconds
 ```
 
@@ -398,23 +398,23 @@ Avoid defining the same option in two places unless the override is intentional.
 
 ---
 
-# A TikZ library is missing
+## A TikZ library is missing
 
 Symptoms may include:
 
-```text id="khyjd3"
+```text
 I do not know the key ...
 ```
 
 or:
 
-```text id="ba4b4c"
+```text
 Undefined control sequence
 ```
 
 Load a library locally:
 
-```html id="anwv3v"
+```html
 <script
   type="text/tikz"
   data-tikz-libraries="decorations.pathreplacing"
@@ -434,7 +434,7 @@ Load a library locally:
 
 Or globally when nearly every diagram needs it:
 
-```js id="y6r0iv"
+```js
 window.TikzJaxOptions = {
     tex: {
         tikzLibraries: [
@@ -446,11 +446,11 @@ window.TikzJaxOptions = {
 
 ---
 
-# A LaTeX package is missing
+## A LaTeX package is missing
 
 Load one package locally:
 
-```html id="wa3tky"
+```html
 <script
   type="text/tikz"
   data-tex-packages="physics"
@@ -463,7 +463,7 @@ Load one package locally:
 
 For several packages or package options, use JSON:
 
-```html id="6j7wgt"
+```html
 <script
   type="text/tikz"
   data-tex-packages='{
@@ -477,7 +477,7 @@ For several packages or package options, use JSON:
 
 Global package configuration:
 
-```js id="fyfcbj"
+```js
 window.TikzJaxOptions = {
     tex: {
         texPackages: {
@@ -492,57 +492,57 @@ Use an empty string when a package has no options.
 
 ---
 
-# Package or TikZ library?
+## Package or TikZ library?
 
 A LaTeX package is normally loaded with:
 
-```latex id="xbqjt6"
+```latex
 \usepackage{package-name}
 ```
 
 Declare it with:
 
-```html id="479c8v"
+```html
 data-tex-packages="package-name"
 ```
 
 A TikZ library is normally loaded with:
 
-```latex id="7e5c0j"
+```latex
 \usetikzlibrary{library-name}
 ```
 
 Declare it with:
 
-```html id="wh7y6y"
+```html
 data-tikz-libraries="library-name"
 ```
 
 For example, `braids` is a TikZ library:
 
-```html id="hhlz7z"
+```html
 data-tikz-libraries="braids"
 ```
 
 It is not:
 
-```html id="uukpnn"
+```html
 data-tex-packages="braids"
 ```
 
 ---
 
-# A runtime package file returns `404`
+## A runtime package file returns `404`
 
 The browser Console or Network panel may show:
 
-```text id="mx9w1m"
+```text
 GET .../tex_files/chemfig.sty.gz 404
 ```
 
 or another missing file ending in:
 
-```text id="brph70"
+```text
 .sty.gz
 .tex.gz
 .def.gz
@@ -565,11 +565,11 @@ Use the exact failed URL from the Network panel. Do not guess the missing filena
 
 ---
 
-# A custom command is undefined
+## A custom command is undefined
 
 Global macro:
 
-```js id="g35tfb"
+```js
 window.TikzJaxOptions = {
     tex: {
         addToPreamble: String.raw`
@@ -581,7 +581,7 @@ window.TikzJaxOptions = {
 
 Local macro:
 
-```html id="0d132e"
+```html
 <script
   type="text/tikz"
   data-add-to-preamble="\newcommand{\localR}{\mathbb{R}}"
@@ -592,7 +592,7 @@ Local macro:
 </script>
 ```
 
-## Local preamble replacement
+### Local preamble replacement
 
 `data-add-to-preamble` is a scalar override.
 
@@ -600,13 +600,13 @@ A local value replaces the global custom `tex.addToPreamble` value for that diag
 
 Suppose the global preamble defines:
 
-```latex id="dl6rym"
+```latex
 \newcommand{\R}{\mathbb{R}}
 ```
 
 This local source:
 
-```html id="m17r7d"
+```html
 <script
   type="text/tikz"
   data-add-to-preamble="\newcommand{\N}{\mathbb{N}}"
@@ -619,7 +619,7 @@ does not automatically retain the global `\R` definition.
 
 Include all required definitions in the local value:
 
-```html id="o53yum"
+```html
 <script
   type="text/tikz"
   data-add-to-preamble="\newcommand{\R}{\mathbb{R}}\newcommand{\N}{\mathbb{N}}"
@@ -630,13 +630,137 @@ Include all required definitions in the local value:
 
 ---
 
-# A fenced block works as HTML but not as Markdown
+## `tkz-tab` configuration appears to be ignored
+
+First verify that the LaTeX package is loaded. The `tkzTab` configuration does not load `tkz-tab` by itself.
+
+Global loading:
+
+```js
+window.TikzJaxOptions = {
+    tex: {
+        texPackages: {
+            "tkz-tab": ""
+        }
+    }
+};
+```
+
+Local loading:
+
+```html
+<script
+  type="text/tikz"
+  data-tex-packages="tkz-tab"
+>
+...
+</script>
+```
+
+### Check automatic application
+
+Automatic native defaults require:
+
+```js
+window.TikzJaxOptions = {
+    tkzTab: {
+        autoApply: true
+    }
+};
+```
+
+When `autoApply` is enabled, supported values such as `lineWidth`, `font`, `lgt`, `firstColumnWidth`, `espcl`, `init`, `setup`, and `colors` are applied without requiring the source to reference the public helper macros.
+
+Inspect the active global object:
+
+```js
+window.TikzJaxOptions?.tkzTab
+```
+
+For a local override, verify that `data-tkz-tab` contains valid JSON:
+
+```html
+<script
+  type="text/tikz"
+  data-tex-packages="tkz-tab"
+  data-tkz-tab='{
+    "autoApply": true,
+    "lineWidth": "1.4pt",
+    "firstColumnWidth": 5,
+    "espcl": 3,
+    "init": {
+      "deltacl": 0.8
+    }
+  }'
+>
+...
+</script>
+```
+
+### Check option priority
+
+Explicit TeX options have higher priority than configured defaults.
+
+For example:
+
+```latex
+\tkzTabInit[
+    lw=0.8pt,
+    lgt=4
+]
+```
+
+overrides the configured native `lw` and `lgt` defaults for that table.
+
+Within the merged `tkzTab` object, values in `init` override the corresponding values automatically derived from `lineWidth`, `lgt`, `firstColumnWidth`, or `espcl`.
+
+### Check row heights
+
+Row-height values are not applied automatically. They remain explicit helper macros because TikZJax cannot infer the semantic type of each required `label/height` row:
+
+```text
+\tikzjaxTkzTabVariableRowHeight
+\tikzjaxTkzTabSignRowHeight
+\tikzjaxTkzTabVariationRowHeight
+\tikzjaxTkzTabImageRowHeight
+\tikzjaxTkzTabAntecedentRowHeight
+```
+
+### Force a fresh render
+
+A cached SVG can hide a changed `tkzTab` configuration.
+
+Use:
+
+```html
+<script
+  type="text/tikz"
+  data-tex-packages="tkz-tab"
+  data-disable-cache="true"
+  data-show-console="true"
+>
+...
+</script>
+```
+
+or clear IndexedDB:
+
+```js
+indexedDB.deleteDatabase("TikzJax");
+location.reload();
+```
+
+See the [`tkz-tab` examples](examples/tkz-tab.md) and the [API Reference](api-reference.md).
+
+---
+
+## A fenced block works as HTML but not as Markdown
 
 Fenced `tikzjax` blocks cannot carry local HTML attributes.
 
 This fenced block:
 
-````markdown id="pmfv6u"
+````markdown
 ```tikzjax
 \chemfig{H_3C-CH_2-OH}
 ```
@@ -646,7 +770,7 @@ works only when `chemfig` is loaded globally.
 
 For local loading, use an HTML block:
 
-```html id="f8xgxv"
+```html
 <script
   type="text/tikz"
   data-tex-packages="chemfig"
@@ -659,11 +783,11 @@ Use fenced blocks only when all required dependencies are already present in the
 
 ---
 
-# MkDocs fenced blocks are not detected
+## MkDocs fenced blocks are not detected
 
 Configure `pymdownx.superfences`:
 
-```yaml id="47xwpf"
+```yaml
 markdown_extensions:
   - pymdownx.superfences:
       custom_fences:
@@ -674,7 +798,7 @@ markdown_extensions:
 
 Use:
 
-````markdown id="hapwvn"
+````markdown
 ```tikzjax
 \begin{tikzpicture}
     \draw (0,0) circle (1);
@@ -684,7 +808,7 @@ Use:
 
 The generated `<pre>` element should contain one of these classes:
 
-```text id="f1powx"
+```text
 language-tikzjax
 tikzjax
 language-tikz
@@ -695,13 +819,13 @@ Inspect the generated HTML in DevTools when unsure.
 
 ---
 
-# Blocks inside tabs or admonitions are not rendered
+## Blocks inside tabs or admonitions are not rendered
 
 Check Markdown indentation carefully.
 
 Admonition:
 
-````markdown id="fc4nx5"
+````markdown
 !!! success "Example"
 
     ```tikzjax
@@ -713,7 +837,7 @@ Admonition:
 
 Content tab:
 
-````markdown id="qv9nmp"
+````markdown
 === "Solution"
 
     ```tikzjax
@@ -735,7 +859,7 @@ Dynamic sources use the same central queue and worker pool as initial sources.
 
 ---
 
-# Dynamically inserted content is not rendered
+## Dynamically inserted content is not rendered
 
 TikZJax detects newly inserted sources through a central DOM observer.
 
@@ -750,7 +874,7 @@ Verify that the inserted element:
 
 Example:
 
-```js id="94og7l"
+```js
 const source = document.createElement("script");
 
 source.type = "text/tikz";
@@ -767,19 +891,19 @@ No manual render call should be required for normal document insertion.
 
 ---
 
-# A diagram does not change after editing
+## A diagram does not change after editing
 
 TikZJax may be inserting a cached SVG.
 
 Temporarily use:
 
-```html id="lq50u0"
+```html
 data-disable-cache="true"
 ```
 
 Complete example:
 
-```html id="3rn9sr"
+```html
 <script
   type="text/tikz"
   data-disable-cache="true"
@@ -792,7 +916,7 @@ Complete example:
 
 Or clear the complete cache:
 
-```js id="8vxhhg"
+```js
 indexedDB.deleteDatabase("TikzJax");
 location.reload();
 ```
@@ -801,13 +925,13 @@ Also check the Network panel to confirm that the browser loaded the expected ver
 
 ---
 
-# A cached diagram hides a current runtime failure
+## A cached diagram hides a current runtime failure
 
 A previously stored SVG can continue to appear even if a package file is now missing.
 
 Force a fresh render:
 
-```html id="xwrnbv"
+```html
 <script
   type="text/tikz"
   data-disable-cache="true"
@@ -827,7 +951,7 @@ This is important when testing:
 
 ---
 
-# A repeated diagram renders more than once
+## A repeated diagram renders more than once
 
 Pending-job grouping and persistent cache reuse require the exact same rendering identity.
 
@@ -845,11 +969,11 @@ Check for differences in:
 
 These sources are different:
 
-```latex id="sjskc8"
+```latex
 \draw (0,0) circle (1);
 ```
 
-```latex id="p610sn"
+```latex
 \draw
     (0,0)
     circle (1);
@@ -859,13 +983,13 @@ Even when their visual output is identical.
 
 ---
 
-# Rendering is slow
+## Rendering is slow
 
-## Check global dependencies
+### Check global dependencies
 
 Avoid this unless every diagram needs the packages:
 
-```js id="mq6i00"
+```js
 window.TikzJaxOptions = {
     tex: {
         texPackages: {
@@ -880,7 +1004,7 @@ window.TikzJaxOptions = {
 
 Prefer local loading:
 
-```html id="k5ed0r"
+```html
 <script
   type="text/tikz"
   data-tex-packages="chemfig"
@@ -889,27 +1013,27 @@ Prefer local loading:
 </script>
 ```
 
-## Check cache bypass
+### Check cache bypass
 
 Search for diagrams that still contain:
 
-```html id="b8lt9j"
+```html
 data-disable-cache="true"
 ```
 
-## Check worker restarts
+### Check worker restarts
 
 Repeated worker failures destroy worker-local package caches and runtime state.
 
 Look for repeated initialization or restart messages.
 
-## Check worker count
+### Check worker count
 
 Too many workers can increase memory pressure and CPU contention.
 
 Recommended baseline:
 
-```js id="ie4lca"
+```js
 window.TikzJaxOptions = {
     workerPool: {
         enabled: true,
@@ -920,9 +1044,9 @@ window.TikzJaxOptions = {
 };
 ```
 
-## Measure a fresh render
+### Measure a fresh render
 
-```html id="wdhnab"
+```html
 <script
   type="text/tikz"
   data-disable-cache="true"
@@ -936,7 +1060,7 @@ See [Cache and Performance](cache-performance.md).
 
 ---
 
-# The first package-heavy diagram is slow
+## The first package-heavy diagram is slow
 
 The assigned worker may need to:
 
@@ -954,7 +1078,7 @@ This is expected behavior.
 
 ---
 
-# The same package is prepared by several workers
+## The same package is prepared by several workers
 
 Workers do not directly share their decompressed TeX files or virtual filesystems.
 
@@ -966,7 +1090,7 @@ This is not a package-loading loop unless the same worker repeatedly requests th
 
 ---
 
-# Increasing `maxWorkers` made rendering slower
+## Increasing `maxWorkers` made rendering slower
 
 Possible causes:
 
@@ -980,7 +1104,7 @@ Possible causes:
 
 Return to a modest configuration:
 
-```js id="7brnu6"
+```js
 window.TikzJaxOptions = {
     workerPool: {
         enabled: true,
@@ -995,11 +1119,11 @@ Then compare with a one-worker setup.
 
 ---
 
-# Testing with one worker
+## Testing with one worker
 
 Use:
 
-```js id="z5q11z"
+```js
 window.TikzJaxOptions = {
     workerPool: {
         enabled: true,
@@ -1022,7 +1146,7 @@ For normal production use, restore the adaptive pool.
 
 ---
 
-# Only some diagrams render
+## Only some diagrams render
 
 Possible causes:
 
@@ -1036,7 +1160,7 @@ Possible causes:
 
 Test the failing diagram with:
 
-```html id="kzqdj5"
+```html
 <script
   type="text/tikz"
   data-disable-cache="true"
@@ -1051,13 +1175,13 @@ Then test the page with one worker.
 
 ---
 
-# Diagrams finish in an unexpected order
+## Diagrams finish in an unexpected order
 
 Parallel rendering does not guarantee document-order completion.
 
 For example:
 
-```text id="xvoa1f"
+```text
 source order:
 A, B, C
 
@@ -1069,7 +1193,7 @@ Each SVG is still inserted in the correct document position.
 
 Use the completion event rather than relying on source order:
 
-```js id="bsk2xz"
+```js
 document.addEventListener(
     "tikzjax-load-finished",
     function (event) {
@@ -1083,11 +1207,11 @@ document.addEventListener(
 
 ---
 
-# A completion listener does not run
+## A completion listener does not run
 
 Listen on `document`, because the event bubbles from the generated SVG:
 
-```js id="66tpe1"
+```js
 document.addEventListener(
     "tikzjax-load-finished",
     function (event) {
@@ -1106,7 +1230,7 @@ Do not assume events arrive in document order.
 
 ---
 
-# A visible diagram renders after a distant diagram
+## A visible diagram renders after a distant diagram
 
 Viewport priority applies to pending work.
 
@@ -1124,7 +1248,7 @@ Remove explicit priority overrides unless they are required.
 
 ---
 
-# Worker initialization fails
+## Worker initialization fails
 
 Possible symptoms include:
 
@@ -1136,7 +1260,7 @@ Possible symptoms include:
 
 Check:
 
-```text id="u9jruh"
+```text
 run-tex.js
 tex.wasm.gz
 core.dump.gz
@@ -1155,7 +1279,7 @@ Also check:
 
 Recommended initialization retry:
 
-```js id="jw5l8s"
+```js
 window.TikzJaxOptions = {
     workerPool: {
         initializationRetries: 1
@@ -1167,7 +1291,7 @@ Initialization retries are separate from diagram-render retries.
 
 ---
 
-# A single worker repeatedly fails
+## A single worker repeatedly fails
 
 A worker can become unusable after:
 
@@ -1178,7 +1302,7 @@ A worker can become unusable after:
 
 Keep restart enabled:
 
-```js id="52x21v"
+```js
 window.TikzJaxOptions = {
     restartWorkerOnFail: true
 };
@@ -1192,11 +1316,11 @@ Frequent restarts indicate an underlying problem and should not be treated as no
 
 ---
 
-# A timeout occurs
+## A timeout occurs
 
 Global timeout:
 
-```js id="msfs1t"
+```js
 window.TikzJaxOptions = {
     renderTimeout: 30000
 };
@@ -1204,7 +1328,7 @@ window.TikzJaxOptions = {
 
 Local timeout:
 
-```html id="k1rk1f"
+```html
 <script
   type="text/tikz"
   data-render-timeout="45000"
@@ -1228,7 +1352,7 @@ Before increasing it, check:
 
 ---
 
-# A retry does not fix the diagram
+## A retry does not fix the diagram
 
 Retries are intended for transient worker or runtime failures.
 
@@ -1242,7 +1366,7 @@ They do not fix:
 
 With:
 
-```js id="8xrfyi"
+```js
 window.TikzJaxOptions = {
     maxRetries: 1
 };
@@ -1254,11 +1378,11 @@ Do not use a large retry value to hide deterministic failures.
 
 ---
 
-# Worker files are not loaded
+## Worker files are not loaded
 
 Required runtime files include:
 
-```text id="gufogx"
+```text
 run-tex.js
 tex.wasm.gz
 core.dump.gz
@@ -1270,7 +1394,7 @@ When using jsDelivr or unpkg, TikZJax normally resolves them relative to the loa
 
 Explicit jsDelivr configuration:
 
-```js id="fj5zt2"
+```js
 window.TikzJaxOptions = {
     assetBaseUrl:
         "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist"
@@ -1279,7 +1403,7 @@ window.TikzJaxOptions = {
 
 Same-origin configuration:
 
-```js id="h3byjh"
+```js
 window.TikzJaxOptions = {
     assetBaseUrl: "/vendor/tikzjax",
     workerMode: "direct"
@@ -1288,7 +1412,7 @@ window.TikzJaxOptions = {
 
 Expected local files:
 
-```text id="8pzqyy"
+```text
 /vendor/tikzjax/tikzjax.min.js
 /vendor/tikzjax/run-tex.js
 /vendor/tikzjax/fonts.min.css
@@ -1300,11 +1424,11 @@ Expected local files:
 
 ---
 
-# Worker mode problems
+## Worker mode problems
 
-## Automatic mode
+### Automatic mode
 
-```js id="e2z4kl"
+```js
 window.TikzJaxOptions = {
     workerMode: "auto"
 };
@@ -1315,9 +1439,9 @@ TikZJax uses:
 * direct worker startup for same-origin URLs;
 * Blob worker startup for cross-origin URLs.
 
-## Direct mode
+### Direct mode
 
-```js id="9887bo"
+```js
 window.TikzJaxOptions = {
     assetBaseUrl: "/vendor/tikzjax",
     workerMode: "direct"
@@ -1326,9 +1450,9 @@ window.TikzJaxOptions = {
 
 Use this for same-origin hosting and CSP policies that do not allow Blob workers.
 
-## Blob mode
+### Blob mode
 
-```js id="kfxy0p"
+```js
 window.TikzJaxOptions = {
     workerMode: "blob"
 };
@@ -1340,21 +1464,21 @@ Root `workerMode` and `workerUrl` take precedence over nested `worker.mode` and 
 
 ---
 
-# CSP blocks TikZJax
+## CSP blocks TikZJax
 
 Browser errors may mention:
 
-```text id="tpj4a2"
+```text
 Refused to create a worker
 Refused to connect
 Refused to compile or instantiate WebAssembly
 ```
 
-## CDN with Blob workers
+### CDN with Blob workers
 
 A typical policy includes:
 
-```http id="187f8h"
+```http
 script-src 'self' https://cdn.jsdelivr.net https://unpkg.com 'wasm-unsafe-eval';
 style-src 'self' https://cdn.jsdelivr.net https://unpkg.com 'unsafe-inline';
 worker-src 'self' blob:;
@@ -1363,9 +1487,9 @@ img-src 'self' https://cdn.jsdelivr.net https://unpkg.com data: blob:;
 font-src 'self' https://cdn.jsdelivr.net https://unpkg.com;
 ```
 
-## Same-origin direct workers
+### Same-origin direct workers
 
-```http id="c8hz3d"
+```http
 script-src 'self' 'wasm-unsafe-eval';
 style-src 'self' 'unsafe-inline';
 worker-src 'self';
@@ -1378,7 +1502,7 @@ Adapt these examples to the complete policy of the site.
 
 ---
 
-# CORS blocks a CDN resource
+## CORS blocks a CDN resource
 
 Check the failed request in the Network panel.
 
@@ -1392,7 +1516,7 @@ Common causes include:
 
 For cross-origin CDN usage, keep:
 
-```js id="2u9wlp"
+```js
 window.TikzJaxOptions = {
     workerMode: "auto"
 };
@@ -1402,13 +1526,13 @@ For strict same-origin hosting, copy all TikZJax runtime files locally and use d
 
 ---
 
-# A response returns HTML instead of a runtime file
+## A response returns HTML instead of a runtime file
 
 A missing asset may be rewritten by the server to an application HTML page.
 
 For example, a request for:
 
-```text id="8a0j57"
+```text
 /vendor/tikzjax/tex.wasm.gz
 ```
 
@@ -1428,7 +1552,7 @@ Runtime asset paths must bypass HTML fallback rewrites.
 
 ---
 
-# WebAssembly initialization fails
+## WebAssembly initialization fails
 
 Check:
 
@@ -1443,7 +1567,7 @@ Test in a clean browser profile when cached network data may be stale.
 
 ---
 
-# Dark mode looks incorrect
+## Dark mode looks incorrect
 
 TikZJax adapts common default black, white, and text colors.
 
@@ -1451,7 +1575,7 @@ Explicitly selected colors are generally preserved.
 
 Check the theme configuration:
 
-```js id="2525na"
+```js
 window.TikzJaxOptions = {
     theme: {
         selector: "body",
@@ -1474,11 +1598,11 @@ See [Themes](themes.md).
 
 ---
 
-# Explicit colors change unexpectedly
+## Explicit colors change unexpectedly
 
 Use explicit TikZ colors for elements that must not follow automatic text-color adaptation:
 
-```latex id="82f7bg"
+```latex
 \draw[red,very thick] (0,0) -- (2,0);
 \node[text=blue] at (1,0.5) {Label};
 ```
@@ -1489,11 +1613,11 @@ Inspect the generated SVG to determine whether the affected value is a fill, str
 
 ---
 
-# The fallback image path is wrong
+## The fallback image path is wrong
 
 Global fallback:
 
-```js id="yry166"
+```js
 window.TikzJaxOptions = {
     brokenImageSrc: "/assets/images/tikz-error.svg"
 };
@@ -1501,7 +1625,7 @@ window.TikzJaxOptions = {
 
 Local fallback:
 
-```html id="b3n7v7"
+```html
 <script
   type="text/tikz"
   data-broken-image-src="/assets/images/local-error.svg"
@@ -1522,11 +1646,11 @@ Inspect the final image request in the Network panel.
 
 ---
 
-# The local fallback image is ignored
+## The local fallback image is ignored
 
 The attribute must be directly on the source element:
 
-```html id="nbcl9n"
+```html
 <script
   type="text/tikz"
   data-broken-image-src="/assets/images/local-error.svg"
@@ -1539,7 +1663,7 @@ The attribute must be directly on the source element:
 
 This does not apply the local value:
 
-```html id="7hilmd"
+```html
 <div data-broken-image-src="/assets/images/local-error.svg">
     <script type="text/tikz">
     ...
@@ -1553,7 +1677,7 @@ A successfully rendered diagram never displays it.
 
 ---
 
-# The default fallback appears instead of the configured image
+## The default fallback appears instead of the configured image
 
 Verify:
 
@@ -1565,23 +1689,23 @@ Verify:
 
 Inspect:
 
-```js id="z7od7c"
+```js
 window.TikzJaxOptions?.brokenImageSrc
 ```
 
 ---
 
-# TeX console output does not appear
+## TeX console output does not appear
 
 Use:
 
-```html id="a623lp"
+```html
 data-show-console="true"
 ```
 
 Example:
 
-```html id="nydu3q"
+```html
 <script
   type="text/tikz"
   data-disable-cache="true"
@@ -1595,7 +1719,7 @@ A cached SVG does not run TeX again, so no new TeX output is produced.
 
 Do not rely on:
 
-```html id="r2bzro"
+```html
 data-show-console="false"
 ```
 
@@ -1603,17 +1727,17 @@ to disable console output. Omit the attribute when it is not needed.
 
 ---
 
-# Timing output does not appear
+## Timing output does not appear
 
 Use:
 
-```html id="7kz5z9"
+```html
 data-debug-timings="true"
 ```
 
 and force a fresh render:
 
-```html id="zkywzh"
+```html
 <script
   type="text/tikz"
   data-disable-cache="true"
@@ -1627,11 +1751,11 @@ A persistent SVG cache hit bypasses worker compilation and therefore does not pr
 
 ---
 
-# A loader is too small
+## A loader is too small
 
 Set placeholder dimensions:
 
-```html id="ztv3o6"
+```html
 <script
   type="text/tikz"
   data-width="620"
@@ -1647,11 +1771,11 @@ They do not resize the final SVG.
 
 ---
 
-# Generated SVG is clipped
+## Generated SVG is clipped
 
 Wrap the source in:
 
-```html id="8kp1jt"
+```html
 <div class="tikzjax-container">
     <script type="text/tikz">
     ...
@@ -1661,7 +1785,7 @@ Wrap the source in:
 
 For a full-size responsive container:
 
-```html id="a5r2s0"
+```html
 <div class="tikzjax-scaled-container">
     <script type="text/tikz">
     ...
@@ -1671,17 +1795,17 @@ For a full-size responsive container:
 
 Also check parent elements for CSS such as:
 
-```css id="uowf21"
+```css
 overflow: hidden;
 ```
 
 ---
 
-# MathJax processes TikZJax output
+## MathJax processes TikZJax output
 
 TikZJax generated wrappers include:
 
-```text id="6q9thh"
+```text
 mathjax_ignore
 ```
 
@@ -1695,7 +1819,7 @@ If MathJax still processes generated SVG text:
 
 ---
 
-# Different results appear after client-side navigation
+## Different results appear after client-side navigation
 
 Possible causes include:
 
@@ -1712,13 +1836,13 @@ Load TikZJax once in the site template rather than once per page.
 
 ---
 
-# Runtime files come from different releases
+## Runtime files come from different releases
 
 Mixed versions can produce subtle failures.
 
 For example:
 
-```text id="3rwf52"
+```text
 tikzjax.min.js from release A
 run-tex.js from release B
 tex.wasm.gz from release A
@@ -1738,7 +1862,7 @@ Pin one exact package version and use it for every runtime URL.
 
 ---
 
-# CDN changes are not visible
+## CDN changes are not visible
 
 CDN and browser caches may still contain a previous immutable version.
 
@@ -1754,11 +1878,11 @@ Do not overwrite an already published immutable version and expect every cache t
 
 ---
 
-# Diagnostic configurations
+## Diagnostic configurations
 
-## Standard diagnostic mode
+### Standard diagnostic mode
 
-```js id="xe61ya"
+```js
 window.TikzJaxOptions = {
     renderTimeout: 45000,
     maxRetries: 0,
@@ -1776,7 +1900,7 @@ window.TikzJaxOptions = {
 
 Use local diagnostics on the affected block:
 
-```html id="g3aa0r"
+```html
 <script
   type="text/tikz"
   data-disable-cache="true"
@@ -1787,9 +1911,9 @@ Use local diagnostics on the affected block:
 </script>
 ```
 
-## Restore recommended production mode
+### Restore recommended production mode
 
-```js id="3f3g9v"
+```js
 window.TikzJaxOptions = {
     renderTimeout: 30000,
     maxRetries: 1,
@@ -1807,11 +1931,11 @@ window.TikzJaxOptions = {
 
 ---
 
-# Recommended debugging workflow
+## Recommended debugging workflow
 
-## Step 1: Test basic TikZ
+### Step 1: Test basic TikZ
 
-```html id="v0uufv"
+```html
 <script
   type="text/tikz"
   data-disable-cache="true"
@@ -1825,9 +1949,9 @@ window.TikzJaxOptions = {
 
 If this fails, the problem is probably runtime-wide.
 
-## Step 2: Add the required dependency
+### Step 2: Add the required dependency
 
-```html id="f2x59x"
+```html
 <script
   type="text/tikz"
   data-tex-packages="physics"
@@ -1840,7 +1964,7 @@ If this fails, the problem is probably runtime-wide.
 </script>
 ```
 
-## Step 3: Add options incrementally
+### Step 3: Add options incrementally
 
 Start with the smallest valid example and add:
 
@@ -1852,20 +1976,20 @@ Start with the smallest valid example and add:
 
 one at a time.
 
-## Step 4: Inspect failed network requests
+### Step 4: Inspect failed network requests
 
 Focus on:
 
-```text id="if55u9"
+```text
 run-tex.js
 tex.wasm.gz
 core.dump.gz
 tex_files/*.gz
 ```
 
-## Step 5: Test one worker
+### Step 5: Test one worker
 
-```js id="6s50y0"
+```js
 window.TikzJaxOptions = {
     workerPool: {
         enabled: true,
@@ -1874,20 +1998,20 @@ window.TikzJaxOptions = {
 };
 ```
 
-## Step 6: Clear IndexedDB
+### Step 6: Clear IndexedDB
 
-```js id="vgjrkh"
+```js
 indexedDB.deleteDatabase("TikzJax");
 location.reload();
 ```
 
-## Step 7: Restore production settings
+### Step 7: Restore production settings
 
 Remove debugging attributes and restore the normal worker-pool size.
 
 ---
 
-# Information to collect for a bug report
+## Information to collect for a bug report
 
 Include:
 
@@ -1907,7 +2031,7 @@ Include:
 
 Minimal source template:
 
-```html id="zaxyqm"
+```html
 <script
   type="text/tikz"
   data-disable-cache="true"
@@ -1923,7 +2047,7 @@ Remove unrelated site code before reporting the problem.
 
 ---
 
-# Related documentation
+## Related documentation
 
 * [Configuration](configuration.md)
 * [Global and Local Configuration](configuration-scopes.md)

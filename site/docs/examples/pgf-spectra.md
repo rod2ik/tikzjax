@@ -64,17 +64,15 @@ They do not replace the global configuration.
 
 !!! tip "Why local loading is recommended"
 
-```
-`pgf-spectra` loads spectral data that ordinary TikZ diagrams do not need.
+    `pgf-spectra` loads spectral data that ordinary TikZ diagrams do not need.
 
-Loading it locally:
+    Loading it locally:
 
-- keeps unrelated diagrams lighter;
-- avoids processing spectral data in every TeX document;
-- reduces unnecessary work in each worker;
-- limits package interactions;
-- makes the requirements of each spectrum explicit.
-```
+    - keeps unrelated diagrams lighter;
+    - avoids processing spectral data in every TeX document;
+    - reduces unnecessary work in each worker;
+    - limits package interactions;
+    - makes the requirements of each spectrum explicit.
 
 ---
 
@@ -111,37 +109,33 @@ Calling `\pgfspectra` without an element produces a continuous visible spectrum.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="520"
-  data-height="130"
->
-\pgfspectra[
-  width=10cm,
-  height=1.3cm
-]
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="520"
+      data-height="130"
+    >
+    \pgfspectra[
+      width=10cm,
+      height=1.3cm
+    ]
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="520"
-  data-height="130"
->
-\pgfspectra[
-  width=10cm,
-  height=1.3cm
-]
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="520"
+      data-height="130"
+    >
+    \pgfspectra[
+      width=10cm,
+      height=1.3cm
+    ]
+    </script>
+    ```
 
 No additional `pgf-spectra` library is required.
 
@@ -153,43 +147,39 @@ An element symbol selects its spectral lines.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="560"
-  data-height="180"
->
-\pgfspectra[
-  element=H,
-  width=10cm,
-  height=1.5cm,
-  axis,
-  label
-]
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="560"
+      data-height="180"
+    >
+    \pgfspectra[
+      element=H,
+      width=10cm,
+      height=1.5cm,
+      axis,
+      label
+    ]
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="560"
-  data-height="180"
->
-\pgfspectra[
-  element=H,
-  width=10cm,
-  height=1.5cm,
-  axis,
-  label
-]
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="560"
+      data-height="180"
+    >
+    \pgfspectra[
+      element=H,
+      width=10cm,
+      height=1.5cm,
+      axis,
+      label
+    ]
+    </script>
+    ```
 
 The default emission spectrum uses colored spectral lines on a dark background.
 
@@ -199,45 +189,41 @@ The default emission spectrum uses colored spectral lines on a dark background.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="600"
-  data-height="190"
->
-\pgfspectra[
-  element=He,
-  width=11cm,
-  height=1.6cm,
-  axis,
-  axis step=40,
-  label
-]
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="600"
+      data-height="190"
+    >
+    \pgfspectra[
+      element=He,
+      width=11cm,
+      height=1.6cm,
+      axis,
+      axis step=40,
+      label
+    ]
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="600"
-  data-height="190"
->
-\pgfspectra[
-  element=He,
-  width=11cm,
-  height=1.6cm,
-  axis,
-  axis step=40,
-  label
-]
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="600"
+      data-height="190"
+    >
+    \pgfspectra[
+      element=He,
+      width=11cm,
+      height=1.6cm,
+      axis,
+      axis step=40,
+      label
+    ]
+    </script>
+    ```
 
 The `axis step` option controls the distance between the major wavelength labels.
 
@@ -261,61 +247,55 @@ place the visible-spectrum colors behind the emission lines.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="620"
-  data-height="200"
->
-\pgfspectra[
-  element=He,
-  back=visible100,
-  width=11cm,
-  height=1.6cm,
-  axis,
-  axis step=40,
-  label
-]
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="620"
+      data-height="200"
+    >
+    \pgfspectra[
+      element=He,
+      back=visible100,
+      width=11cm,
+      height=1.6cm,
+      axis,
+      axis step=40,
+      label
+    ]
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="620"
-  data-height="200"
->
-\pgfspectra[
-  element=He,
-  back=visible100,
-  width=11cm,
-  height=1.6cm,
-  axis,
-  axis step=40,
-  label
-]
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="620"
+      data-height="200"
+    >
+    \pgfspectra[
+      element=He,
+      back=visible100,
+      width=11cm,
+      height=1.6cm,
+      axis,
+      axis step=40,
+      label
+    ]
+    </script>
+    ```
 
 !!! note "No additional rainbow library is required"
 
-````
-`back=visible100` uses the built-in visible-spectrum shading of the main `pgf-spectra` package.
+    `back=visible100` uses the built-in visible-spectrum shading of the main `pgf-spectra` package.
 
-It does not require:
+    It does not require:
 
-```latex
-\usepgfspectralibrary{rainbow}
-```
+    ```latex
+    \usepgfspectralibrary{rainbow}
+    ```
 
-The separate `rainbow` library provides the different `\pgfspectrarainbow` command.
-````
+    The separate `rainbow` library provides the different `\pgfspectrarainbow` command.
 
 ---
 
@@ -325,47 +305,43 @@ Use the `absorption` option to draw dark spectral lines over a continuous backgr
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="620"
-  data-height="200"
->
-\pgfspectra[
-  element=H,
-  absorption,
-  width=11cm,
-  height=1.6cm,
-  axis,
-  axis step=40,
-  label
-]
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="620"
+      data-height="200"
+    >
+    \pgfspectra[
+      element=H,
+      absorption,
+      width=11cm,
+      height=1.6cm,
+      axis,
+      axis step=40,
+      label
+    ]
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="620"
-  data-height="200"
->
-\pgfspectra[
-  element=H,
-  absorption,
-  width=11cm,
-  height=1.6cm,
-  axis,
-  axis step=40,
-  label
-]
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="620"
+      data-height="200"
+    >
+    \pgfspectra[
+      element=H,
+      absorption,
+      width=11cm,
+      height=1.6cm,
+      axis,
+      axis step=40,
+      label
+    ]
+    </script>
+    ```
 
 No additional library is required for absorption spectra.
 
@@ -377,49 +353,45 @@ Several element symbols can be supplied in a list:
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="650"
-  data-height="210"
-  data-render-timeout="30000"
->
-\pgfspectra[
-  element={H,He},
-  absorption,
-  width=11.5cm,
-  height=1.6cm,
-  axis,
-  axis step=40,
-  label
-]
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="650"
+      data-height="210"
+      data-render-timeout="30000"
+    >
+    \pgfspectra[
+      element={H,He},
+      absorption,
+      width=11.5cm,
+      height=1.6cm,
+      axis,
+      axis step=40,
+      label
+    ]
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="650"
-  data-height="210"
-  data-render-timeout="30000"
->
-\pgfspectra[
-  element={H,He},
-  absorption,
-  width=11.5cm,
-  height=1.6cm,
-  axis,
-  axis step=40,
-  label
-]
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="650"
+      data-height="210"
+      data-render-timeout="30000"
+    >
+    \pgfspectra[
+      element={H,He},
+      absorption,
+      width=11.5cm,
+      height=1.6cm,
+      axis,
+      axis step=40,
+      label
+    ]
+    </script>
+    ```
 
 A spectrum containing several elements can require more processing than a single-element spectrum.
 
@@ -438,49 +410,45 @@ Values are expressed in nanometres.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="620"
-  data-height="200"
->
-\pgfspectra[
-  element=H,
-  begin=400,
-  end=700,
-  width=11cm,
-  height=1.6cm,
-  axis,
-  axis step=50,
-  label
-]
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="620"
+      data-height="200"
+    >
+    \pgfspectra[
+      element=H,
+      begin=400,
+      end=700,
+      width=11cm,
+      height=1.6cm,
+      axis,
+      axis step=50,
+      label
+    ]
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="620"
-  data-height="200"
->
-\pgfspectra[
-  element=H,
-  begin=400,
-  end=700,
-  width=11cm,
-  height=1.6cm,
-  axis,
-  axis step=50,
-  label
-]
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="620"
+      data-height="200"
+    >
+    \pgfspectra[
+      element=H,
+      begin=400,
+      end=700,
+      width=11cm,
+      height=1.6cm,
+      axis,
+      axis step=50,
+      label
+    ]
+    </script>
+    ```
 
 The package supports spectral data beyond the visible region, from ultraviolet to infrared, when the required data is present in the runtime.
 
@@ -492,49 +460,45 @@ The `begin` wavelength may be greater than the `end` wavelength.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="620"
-  data-height="200"
->
-\pgfspectra[
-  element=He,
-  begin=700,
-  end=400,
-  width=11cm,
-  height=1.6cm,
-  axis,
-  axis step=50,
-  label
-]
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="620"
+      data-height="200"
+    >
+    \pgfspectra[
+      element=He,
+      begin=700,
+      end=400,
+      width=11cm,
+      height=1.6cm,
+      axis,
+      axis step=50,
+      label
+    ]
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="620"
-  data-height="200"
->
-\pgfspectra[
-  element=He,
-  begin=700,
-  end=400,
-  width=11cm,
-  height=1.6cm,
-  axis,
-  axis step=50,
-  label
-]
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="620"
+      data-height="200"
+    >
+    \pgfspectra[
+      element=He,
+      begin=700,
+      end=400,
+      width=11cm,
+      height=1.6cm,
+      axis,
+      axis step=50,
+      label
+    ]
+    </script>
+    ```
 
 This reverses the horizontal wavelength direction.
 
@@ -546,43 +510,39 @@ The `lines` option can draw explicitly selected wavelengths.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="620"
-  data-height="190"
->
-\pgfspectra[
-  lines={410,434,486,656},
-  width=11cm,
-  height=1.5cm,
-  axis,
-  axis step=40
-]
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="620"
+      data-height="190"
+    >
+    \pgfspectra[
+      lines={410,434,486,656},
+      width=11cm,
+      height=1.5cm,
+      axis,
+      axis step=40
+    ]
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="620"
-  data-height="190"
->
-\pgfspectra[
-  lines={410,434,486,656},
-  width=11cm,
-  height=1.5cm,
-  axis,
-  axis step=40
-]
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="620"
+      data-height="190"
+    >
+    \pgfspectra[
+      lines={410,434,486,656},
+      width=11cm,
+      height=1.5cm,
+      axis,
+      axis step=40
+    ]
+    </script>
+    ```
 
 In `pgf-spectra` 3.x, the `lines` list can also contain a continuous range:
 
@@ -598,11 +558,9 @@ lines={380 to 500,555,633}
 
 !!! warning "Version compatibility"
 
-```
-The `start to end` range syntax for `lines` was introduced in `pgf-spectra` 3.0.
+    The `start to end` range syntax for `lines` was introduced in `pgf-spectra` 3.0.
 
-If the console reports an unknown syntax or key, verify the version included in the deployed TikZJax runtime.
-```
+    If the console reports an unknown syntax or key, verify the version included in the deployed TikZJax runtime.
 
 ---
 
@@ -614,47 +572,43 @@ Example with ionized helium:
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="620"
-  data-height="200"
->
-\pgfspectra[
-  element=He,
-  charge=1,
-  width=11cm,
-  height=1.6cm,
-  axis,
-  axis step=40,
-  label
-]
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="620"
+      data-height="200"
+    >
+    \pgfspectra[
+      element=He,
+      charge=1,
+      width=11cm,
+      height=1.6cm,
+      axis,
+      axis step=40,
+      label
+    ]
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="620"
-  data-height="200"
->
-\pgfspectra[
-  element=He,
-  charge=1,
-  width=11cm,
-  height=1.6cm,
-  axis,
-  axis step=40,
-  label
-]
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="620"
+      data-height="200"
+    >
+    \pgfspectra[
+      element=He,
+      charge=1,
+      width=11cm,
+      height=1.6cm,
+      axis,
+      axis step=40,
+      label
+    ]
+    </script>
+    ```
 
 Use:
 
@@ -674,51 +628,47 @@ Use `relative intensity` when the line height or intensity should reflect the av
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="620"
-  data-height="200"
-  data-render-timeout="30000"
->
-\pgfspectra[
-  element=He,
-  relative intensity,
-  relative intensity threshold=.25,
-  width=11cm,
-  height=1.6cm,
-  axis,
-  axis step=40,
-  label
-]
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="620"
+      data-height="200"
+      data-render-timeout="30000"
+    >
+    \pgfspectra[
+      element=He,
+      relative intensity,
+      relative intensity threshold=.25,
+      width=11cm,
+      height=1.6cm,
+      axis,
+      axis step=40,
+      label
+    ]
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="620"
-  data-height="200"
-  data-render-timeout="30000"
->
-\pgfspectra[
-  element=He,
-  relative intensity,
-  relative intensity threshold=.25,
-  width=11cm,
-  height=1.6cm,
-  axis,
-  axis step=40,
-  label
-]
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="620"
+      data-height="200"
+      data-render-timeout="30000"
+    >
+    \pgfspectra[
+      element=He,
+      relative intensity,
+      relative intensity threshold=.25,
+      width=11cm,
+      height=1.6cm,
+      axis,
+      axis step=40,
+      label
+    ]
+    </script>
+    ```
 
 The threshold prevents weak lines from becoming completely invisible.
 
@@ -730,47 +680,43 @@ Use `Imin` to remove lines below a minimum intensity.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="620"
-  data-height="200"
->
-\pgfspectra[
-  element=He,
-  Imin=.05,
-  width=11cm,
-  height=1.6cm,
-  axis,
-  axis step=40,
-  label
-]
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="620"
+      data-height="200"
+    >
+    \pgfspectra[
+      element=He,
+      Imin=.05,
+      width=11cm,
+      height=1.6cm,
+      axis,
+      axis step=40,
+      label
+    ]
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="620"
-  data-height="200"
->
-\pgfspectra[
-  element=He,
-  Imin=.05,
-  width=11cm,
-  height=1.6cm,
-  axis,
-  axis step=40,
-  label
-]
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="620"
+      data-height="200"
+    >
+    \pgfspectra[
+      element=He,
+      Imin=.05,
+      width=11cm,
+      height=1.6cm,
+      axis,
+      axis step=40,
+      label
+    ]
+    </script>
+    ```
 
 Higher values display fewer spectral lines.
 
@@ -789,51 +735,47 @@ adjust the visual appearance of the spectrum.
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="640"
-  data-height="210"
->
-\pgfspectra[
-  element=He,
-  back=visible50,
-  brightness=.7,
-  gamma=.8,
-  width=11cm,
-  height=1.6cm,
-  axis,
-  axis step=40,
-  label
-]
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="640"
+      data-height="210"
+    >
+    \pgfspectra[
+      element=He,
+      back=visible50,
+      brightness=.7,
+      gamma=.8,
+      width=11cm,
+      height=1.6cm,
+      axis,
+      axis step=40,
+      label
+    ]
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="640"
-  data-height="210"
->
-\pgfspectra[
-  element=He,
-  back=visible50,
-  brightness=.7,
-  gamma=.8,
-  width=11cm,
-  height=1.6cm,
-  axis,
-  axis step=40,
-  label
-]
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="640"
+      data-height="210"
+    >
+    \pgfspectra[
+      element=He,
+      back=visible50,
+      brightness=.7,
+      gamma=.8,
+      width=11cm,
+      height=1.6cm,
+      axis,
+      axis step=40,
+      label
+    ]
+    </script>
+    ```
 
 Use these options carefully. Extreme values may make weak spectral lines difficult to see.
 
@@ -857,51 +799,47 @@ Example:
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="650"
-  data-height="220"
->
-\pgfspectra[
-  element=H,
-  width=11cm,
-  height=1.6cm,
-  axis,
-  axis step=40,
-  axis ticks=4,
-  axis color=gray,
-  axis font color=blue!60!black,
-  label
-]
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="650"
+      data-height="220"
+    >
+    \pgfspectra[
+      element=H,
+      width=11cm,
+      height=1.6cm,
+      axis,
+      axis step=40,
+      axis ticks=4,
+      axis color=gray,
+      axis font color=blue!60!black,
+      label
+    ]
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="650"
-  data-height="220"
->
-\pgfspectra[
-  element=H,
-  width=11cm,
-  height=1.6cm,
-  axis,
-  axis step=40,
-  axis ticks=4,
-  axis color=gray,
-  axis font color=blue!60!black,
-  label
-]
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="650"
+      data-height="220"
+    >
+    \pgfspectra[
+      element=H,
+      width=11cm,
+      height=1.6cm,
+      axis,
+      axis step=40,
+      axis ticks=4,
+      axis color=gray,
+      axis font color=blue!60!black,
+      label
+    ]
+    </script>
+    ```
 
 ---
 
@@ -919,65 +857,59 @@ Example:
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="660"
-  data-height="240"
->
-\pgfspectra[
-  element=H,
-  width=11cm,
-  height=1.6cm,
-  axis,
-  axis step=40,
-  axis label,
-  axis label text={wavelength in nanometres},
-  label
-]
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="660"
+      data-height="240"
+    >
+    \pgfspectra[
+      element=H,
+      width=11cm,
+      height=1.6cm,
+      axis,
+      axis step=40,
+      axis label,
+      axis label text={wavelength in nanometres},
+      label
+    ]
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="660"
-  data-height="240"
->
-\pgfspectra[
-  element=H,
-  width=11cm,
-  height=1.6cm,
-  axis,
-  axis step=40,
-  axis label,
-  axis label text={wavelength in nanometres},
-  label
-]
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="660"
+      data-height="240"
+    >
+    \pgfspectra[
+      element=H,
+      width=11cm,
+      height=1.6cm,
+      axis,
+      axis step=40,
+      axis label,
+      axis label text={wavelength in nanometres},
+      label
+    ]
+    </script>
+    ```
 
 !!! warning "Requires pgf-spectra 3.x"
 
-````
-`axis label`, `axis label text`, and `axis label position` were introduced in version 3.0.
+    `axis label`, `axis label text`, and `axis label position` were introduced in version 3.0.
 
-If the browser console reports:
+    If the browser console reports:
 
-```text
-I do not know the key '/pgfspectra/axis label text'
-```
+    ```text
+    I do not know the key '/pgfspectra/axis label text'
+    ```
 
-the deployed runtime probably contains an older package version.
+    the deployed runtime probably contains an older package version.
 
-Remove the option or update the runtime files.
-````
+    Remove the option or update the runtime files.
 
 ---
 
@@ -999,49 +931,45 @@ Example:
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="650"
-  data-height="220"
->
-\pgfspectra[
-  element=He,
-  width=11cm,
-  height=1.6cm,
-  axis,
-  axis step=40,
-  label,
-  label position=north west,
-  label after text={ emission spectrum}
-]
-</script>
-```
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="650"
+      data-height="220"
+    >
+    \pgfspectra[
+      element=He,
+      width=11cm,
+      height=1.6cm,
+      axis,
+      axis step=40,
+      label,
+      label position=north west,
+      label after text={ emission spectrum}
+    ]
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="650"
-  data-height="220"
->
-\pgfspectra[
-  element=He,
-  width=11cm,
-  height=1.6cm,
-  axis,
-  axis step=40,
-  label,
-  label position=north west,
-  label after text={ emission spectrum}
-]
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="650"
+      data-height="220"
+    >
+    \pgfspectra[
+      element=He,
+      width=11cm,
+      height=1.6cm,
+      axis,
+      axis step=40,
+      label,
+      label position=north west,
+      label after text={ emission spectrum}
+    ]
+    </script>
+    ```
 
 ---
 
@@ -1051,57 +979,53 @@ Use `\pgfspectraStyle` to configure options shared by several spectra in the sam
 
 === "Rendering"
 
-```
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="680"
-  data-height="380"
-  data-render-timeout="30000"
->
-\pgfspectraStyle[
-  width=11cm,
-  height=1.3cm,
-  axis,
-  axis step=40,
-  label
-]
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="680"
+      data-height="380"
+      data-render-timeout="30000"
+    >
+    \pgfspectraStyle[
+      width=11cm,
+      height=1.3cm,
+      axis,
+      axis step=40,
+      label
+    ]
 
-\pgfspectra[element=H]
+    \pgfspectra[element=H]
 
-\par\bigskip
+    \par\bigskip
 
-\pgfspectra[element=He]
-</script>
-```
+    \pgfspectra[element=He]
+    </script>
 
 === ":fa-html5: HTML"
 
-````
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
-  data-width="680"
-  data-height="380"
-  data-render-timeout="30000"
->
-\pgfspectraStyle[
-  width=11cm,
-  height=1.3cm,
-  axis,
-  axis step=40,
-  label
-]
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+      data-width="680"
+      data-height="380"
+      data-render-timeout="30000"
+    >
+    \pgfspectraStyle[
+      width=11cm,
+      height=1.3cm,
+      axis,
+      axis step=40,
+      label
+    ]
 
-\pgfspectra[element=H]
+    \pgfspectra[element=H]
 
-\par\bigskip
+    \par\bigskip
 
-\pgfspectra[element=He]
-</script>
-```
-````
+    \pgfspectra[element=He]
+    </script>
+    ```
 
 Reset the style with:
 
@@ -1181,19 +1105,17 @@ Several libraries can be loaded together:
 
 !!! important "Runtime availability"
 
-````
-An optional library works in TikZJax only when its library file and all its dependencies are present in the deployed `dist/tex_files/` directory.
+    An optional library works in TikZJax only when its library file and all its dependencies are present in the deployed `dist/tex_files/` directory.
 
-Loading:
+    Loading:
 
-```html
-data-tex-packages="pgf-spectra"
-```
+    ```html
+    data-tex-packages="pgf-spectra"
+    ```
 
-loads the main package, but an optional library can still fail if its separate runtime file was not included in the generated package catalogue.
+    loads the main package, but an optional library can still fail if its separate runtime file was not included in the generated package catalogue.
 
-Test optional libraries with console output enabled before publishing them as rendered documentation examples.
-````
+    Test optional libraries with console output enabled before publishing them as rendered documentation examples.
 
 ---
 
@@ -1233,18 +1155,16 @@ Complete TikZJax source:
 
 !!! warning
 
-````
-Keep this as a source example until the generated TikZJax runtime has been checked for the corresponding rainbow-library file.
+    Keep this as a source example until the generated TikZJax runtime has been checked for the corresponding rainbow-library file.
 
-For a rainbow-colored spectrum that uses only the main package, prefer:
+    For a rainbow-colored spectrum that uses only the main package, prefer:
 
-```latex
-\pgfspectra[
-  element=H,
-  back=visible100
-]
-```
-````
+    ```latex
+    \pgfspectra[
+      element=H,
+      back=visible100
+    ]
+    ```
 
 ---
 
@@ -1279,11 +1199,9 @@ Only load packages required by the current block.
 
 !!! warning
 
-```
-A larger package list creates a larger TeX preamble.
+    A larger package list creates a larger TeX preamble.
 
-It can increase rendering time, memory usage, and the possibility of package conflicts.
-```
+    It can increase rendering time, memory usage, and the possibility of package conflicts.
 
 ---
 
@@ -1309,19 +1227,17 @@ data-tex-packages="pgf-spectra"
 
 !!! warning "Performance"
 
-````
-Global loading inserts:
+    Global loading inserts:
 
-```latex
-\usepackage{pgf-spectra}
-```
+    ```latex
+    \usepackage{pgf-spectra}
+    ```
 
-into every TikZJax document.
+    into every TikZJax document.
 
-This means that ordinary TikZ diagrams also initialize the package and its spectral data.
+    This means that ordinary TikZ diagrams also initialize the package and its spectral data.
 
-Prefer local loading unless spectra are used throughout the site.
-````
+    Prefer local loading unless spectra are used throughout the site.
 
 ---
 
@@ -1333,48 +1249,42 @@ Therefore, fenced blocks using `pgf-spectra` work only when the package is loade
 
 === "Rendering"
 
-````
-```tikzjax
-\pgfspectra[
-  element=H,
-  width=10cm,
-  height=1.5cm,
-  axis,
-  label
-]
-```
-````
+    <script type="text/tikz">
+    \pgfspectra[
+      element=H,
+      width=10cm,
+      height=1.5cm,
+      axis,
+      label
+    ]
+    </script>
 
 === ":fa-markdown: Markdown"
 
-`````
-````markdown
-```tikzjax
-\pgfspectra[
-  element=H,
-  width=10cm,
-  height=1.5cm,
-  axis,
-  label
-]
-```
-````
-`````
+    ````markdown
+    ```tikzjax
+    \pgfspectra[
+      element=H,
+      width=10cm,
+      height=1.5cm,
+      axis,
+      label
+    ]
+    ```
+    ````
 
 !!! important
 
-````
-For portable local loading, prefer:
+    For portable local loading, prefer:
 
-```html
-<script
-  type="text/tikz"
-  data-tex-packages="pgf-spectra"
->
-...
-</script>
-```
-````
+    ```html
+    <script
+      type="text/tikz"
+      data-tex-packages="pgf-spectra"
+    >
+    ...
+    </script>
+    ```
 
 ---
 
@@ -1382,57 +1292,53 @@ For portable local loading, prefer:
 
 === "Rendering"
 
-```
-=== "Question"
+    === "Question"
 
-    Draw the visible hydrogen emission spectrum.
+        Draw the visible hydrogen emission spectrum.
 
-=== "Solution"
+    === "Solution"
 
-    <script
-      type="text/tikz"
-      data-tex-packages="pgf-spectra"
-      data-width="600"
-      data-height="190"
-    >
-    \pgfspectra[
-      element=H,
-      width=11cm,
-      height=1.6cm,
-      axis,
-      axis step=40,
-      label
-    ]
-    </script>
-```
+        <script
+          type="text/tikz"
+          data-tex-packages="pgf-spectra"
+          data-width="600"
+          data-height="190"
+        >
+        \pgfspectra[
+          element=H,
+          width=11cm,
+          height=1.6cm,
+          axis,
+          axis step=40,
+          label
+        ]
+        </script>
 
 === ":fa-markdown: Markdown"
 
-`````
-````markdown
-=== "Question"
+    ````markdown
+    === "Question"
 
-    Draw the visible hydrogen emission spectrum.
+        Draw the visible hydrogen emission spectrum.
 
-=== "Solution"
+    === "Solution"
 
-    <script
-      type="text/tikz"
-      data-tex-packages="pgf-spectra"
-      data-width="600"
-      data-height="190"
-    >
-    \pgfspectra[
-      element=H,
-      width=11cm,
-      height=1.6cm,
-      axis,
-      axis step=40,
-      label
-    ]
-    </script>
-````
-`````
+        <script
+          type="text/tikz"
+          data-tex-packages="pgf-spectra"
+          data-width="600"
+          data-height="190"
+        >
+        \pgfspectra[
+          element=H,
+          width=11cm,
+          height=1.6cm,
+          axis,
+          axis step=40,
+          label
+        ]
+        </script>
+    ````
 
 TikZJax automatically rescans MkDocs Material content tabs when they become visible.
 
@@ -1442,51 +1348,47 @@ TikZJax automatically rescans MkDocs Material content tabs when they become visi
 
 === "Rendering"
 
-```
-!!! example "Hydrogen absorption spectrum"
+    !!! example "Hydrogen absorption spectrum"
 
-    <script
-      type="text/tikz"
-      data-tex-packages="pgf-spectra"
-      data-width="600"
-      data-height="190"
-    >
-    \pgfspectra[
-      element=H,
-      absorption,
-      width=11cm,
-      height=1.6cm,
-      axis,
-      axis step=40,
-      label
-    ]
-    </script>
-```
+        <script
+          type="text/tikz"
+          data-tex-packages="pgf-spectra"
+          data-width="600"
+          data-height="190"
+        >
+        \pgfspectra[
+          element=H,
+          absorption,
+          width=11cm,
+          height=1.6cm,
+          axis,
+          axis step=40,
+          label
+        ]
+        </script>
 
 === ":fa-markdown: Markdown"
 
-`````
-````markdown
-!!! example "Hydrogen absorption spectrum"
+    ````markdown
+    !!! example "Hydrogen absorption spectrum"
 
-    <script
-      type="text/tikz"
-      data-tex-packages="pgf-spectra"
-      data-width="600"
-      data-height="190"
-    >
-    \pgfspectra[
-      element=H,
-      absorption,
-      width=11cm,
-      height=1.6cm,
-      axis,
-      axis step=40,
-      label
-    ]
-    </script>
-````
-`````
+        <script
+          type="text/tikz"
+          data-tex-packages="pgf-spectra"
+          data-width="600"
+          data-height="190"
+        >
+        \pgfspectra[
+          element=H,
+          absorption,
+          width=11cm,
+          height=1.6cm,
+          axis,
+          axis step=40,
+          label
+        ]
+        </script>
+    ````
 
 ---
 
@@ -1603,19 +1505,15 @@ The first `pgf-spectra` diagram handled by a worker may therefore take longer th
 
 !!! note
 
-```
-Spectral data cached by one worker is not automatically shared with the other workers.
+    Spectral data cached by one worker is not automatically shared with the other workers.
 
-This is an intentional consequence of worker isolation.
-```
+    This is an intentional consequence of worker isolation.
 
 !!! tip
 
-```
-Local package loading remains fully compatible with parallel rendering.
+    Local package loading remains fully compatible with parallel rendering.
 
-The package declaration and spectrum options travel with the individual diagram when it is assigned to a worker.
-```
+    The package declaration and spectrum options travel with the individual diagram when it is assigned to a worker.
 
 ---
 
