@@ -1,240 +1,488 @@
-# `tikzjax.config.js` Configuration
+# Configuration
 
-This page explains how to configure TikZJax globally, partially, and locally.
+TikZJax can be configured globally for the complete page and locally for individual diagrams.
 
-The recommended setup is:
+A typical setup consists of:
 
-1. define global options in `tikzjax.config.js`;
-2. load the TikZJax stylesheet;
-3. load `tikzjax.min.js`.
+1. a global `tikzjax.config.js` file;
+2. the TikZJax font stylesheet;
+3. the TikZJax JavaScript bundle;
+4. local `data-*` attributes for specialized diagrams.
 
 The configuration file must be loaded before `tikzjax.min.js` or `tikzjax.js`.
 
-Recommended CDN loading with minified files:
+For the exact configuration precedence and merge rules, see [Global and Local Configuration](configuration-scopes.md).
 
-```html
-<script src="tikzjax.config.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
-<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
-```
+---
 
-Equivalent unpkg loading:
+## Recommended configuration
 
-```html
-<script src="tikzjax.config.js"></script>
-<link rel="stylesheet" href="https://unpkg.com/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
-<script src="https://unpkg.com/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
-```
-
-## Configuration priority
-
-TikZJax merges options in this order:
-
-```text
-default TikZJax options
-< global configuration
-< later partial global configuration
-< local diagram configuration
-```
-
-This means that a local option can override one diagram without erasing the global configuration.
-
-It also means that a later partial global configuration can update one option without replacing the whole previous configuration.
-
-Example:
+The following configuration is a good default for documentation sites:
 
 ```js
 window.TikzJaxOptions = {
+    renderTimeout: 30000,
+    maxRetries: 1,
+    restartWorkerOnFail: true,
+
+    workerPool: {
+        enabled: true,
+        maxWorkers: 3,
+        reserveCpuCores: 1,
+        useDeviceMemory: true,
+        initializationRetries: 1
+    }
+};
+```
+
+It provides:
+
+* a finite render timeout;
+* one retry after a failed render;
+* worker replacement after a fatal failure;
+* parallel rendering with a bounded worker pool;
+* CPU and memory safeguards for smaller devices.
+
+Specialized TeX packages and TikZ libraries should normally be loaded locally on the diagrams that require them.
+
+---
+
+## Recommended loading order
+
+Load the configuration first, followed by the stylesheet and JavaScript bundle:
+
+```html
+<script src="tikzjax.config.js"></script>
+
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css"
+>
+
+<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
+```
+
+For debugging, use the non-minified files:
+
+```html
+<script src="tikzjax.config.js"></script>
+
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.css"
+>
+
+<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.js"></script>
+```
+
+!!! warning "Configure before loading TikZJax"
+
+```
+Define one complete initial `window.TikzJaxOptions` object before loading the TikZJax bundle.
+
+Runtime partial updates should be applied only after TikZJax has installed its configuration API.
+```
+
+---
+
+## Minimal configuration
+
+TikZJax already provides default values.
+
+A configuration file can contain only the options that need to change:
+
+```js
+window.TikzJaxOptions = {
+    renderTimeout: 30000
+};
+```
+
+For a page containing only standard TikZ diagrams, an explicit TeX package list is not required.
+
+---
+
+## Complete recommended file
+
+A practical `tikzjax.config.js` can start with:
+
+```js
+window.TikzJaxOptions = {
+    renderTimeout: 30000,
+    maxRetries: 1,
+    restartWorkerOnFail: true,
+
+    workerPool: {
+        enabled: true,
+        maxWorkers: 3,
+        reserveCpuCores: 1,
+        useDeviceMemory: true,
+        initializationRetries: 1
+    },
+
+    tex: {
+        texPackages: {},
+        tikzLibraries: []
+    }
+};
+```
+
+Add globally shared dependencies only when they are genuinely required by most diagrams.
+
+For example:
+
+```js
+window.TikzJaxOptions = {
+    renderTimeout: 30000,
+    maxRetries: 1,
+    restartWorkerOnFail: true,
+
+    workerPool: {
+        enabled: true,
+        maxWorkers: 3,
+        reserveCpuCores: 1,
+        useDeviceMemory: true,
+        initializationRetries: 1
+    },
+
     tex: {
         texPackages: {
-            amsmath: "",
             amsfonts: ""
         },
+
         tikzLibraries: [
             "arrows.meta"
         ]
     }
 };
-
-window.TikzJaxOptions = {
-    brokenImageSrc: "/images/custom-tikz-error.svg"
-};
 ```
 
-The second assignment only changes `brokenImageSrc`.
+---
 
-It does not erase `tex.texPackages` or `tex.tikzLibraries`.
+## Main option groups
 
-!!! warning "Important loading note"
+TikZJax configuration is organized into several groups.
 
-    TikZJax can merge later assignments only after its configuration API has been installed.
+| Group                  | Purpose                                        |
+| ---------------------- | ---------------------------------------------- |
+| Root rendering options | Timeout, retries, fallback image               |
+| `workerPool`           | Parallel worker-pool sizing and initialization |
+| `worker`               | Worker URL and startup mode                    |
+| `tex`                  | Packages, TikZ libraries, and custom preamble  |
+| `theme`                | Light and dark theme detection                 |
+| `tkzTab`               | Reusable `tkz-tab` style values                |
+| Asset options          | Runtime and worker file locations              |
 
-    The recommended pattern is therefore:
+The [API Reference](api-reference.md) documents every supported property.
 
-    ```html
-    <script src="tikzjax.config.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
-    ```
+---
 
-    Use one complete `tikzjax.config.js` before loading TikZJax.
+## Rendering safety
 
-    Later partial assignments such as `window.TikzJaxOptions = { brokenImageSrc: "..." }` should be used after TikZJax has loaded.
-
-## Merge behavior
-
-TikZJax uses a deep merge strategy.
-
-| Option type | Behavior |
-| --- | --- |
-| Plain objects | Merged recursively |
-| Arrays | Merged without duplicate entries |
-| Strings, numbers, booleans | Later value replaces earlier value |
-| Local `data-*` options | Merged with global options for the current diagram only |
-
-For example, this global configuration:
+Use the root-level options:
 
 ```js
 window.TikzJaxOptions = {
-    tex: {
-        tikzLibraries: [
-            "arrows.meta",
-            "calc"
-        ]
-    }
+    renderTimeout: 30000,
+    maxRetries: 1,
+    restartWorkerOnFail: true
 };
 ```
 
-can be extended locally:
+| Option                | Purpose                                                         |
+| --------------------- | --------------------------------------------------------------- |
+| `renderTimeout`       | Maximum time allowed for one rendering attempt, in milliseconds |
+| `maxRetries`          | Number of retry attempts after the initial failure              |
+| `restartWorkerOnFail` | Replace a worker whose runtime may no longer be usable          |
+
+A complex diagram can override these values locally:
 
 ```html
-<script type="text/tikz" data-tikz-libraries="decorations.pathreplacing">
+<script
+  type="text/tikz"
+  data-render-timeout="45000"
+  data-max-retries="1"
+  data-restart-worker-on-fail="true"
+>
 \begin{tikzpicture}
-    \draw[-{Stealth[length=4mm]}] (0,0) -- (4,0);
-    \draw[decorate, decoration={brace, amplitude=6pt}] (0,-0.5) -- (4,-0.5);
+    \draw (0,0) circle (1);
 \end{tikzpicture}
 </script>
 ```
 
-The final diagram gets:
+!!! note
 
-```text
-arrows.meta
-calc
-decorations.pathreplacing
+```
+Older configurations may place these values inside `tex`.
+
+Root-level values are preferred and take precedence when both forms are present.
 ```
 
-## 1. Minimal configuration
+---
 
-Use this if you only need standard TikZ figures and a few common TikZ libraries.
+## Worker-pool configuration
+
+TikZJax can render independent diagrams concurrently:
 
 ```js
 window.TikzJaxOptions = {
-    tex: {
-        tikzLibraries: [
-            "arrows.meta"
-        ]
+    workerPool: {
+        enabled: true,
+        maxWorkers: 3,
+        reserveCpuCores: 1,
+        useDeviceMemory: true,
+        initializationRetries: 1
     }
 };
 ```
 
-## 2. Recommended MkDocs configuration
+| Option                  | Purpose                                                 |
+| ----------------------- | ------------------------------------------------------- |
+| `enabled`               | Enable the parallel worker pool                         |
+| `maxWorkers`            | Hard upper limit for rendering workers                  |
+| `reserveCpuCores`       | Attempt to leave logical CPU cores available            |
+| `useDeviceMemory`       | Consider the browser's memory hint when sizing the pool |
+| `initializationRetries` | Retry failed worker initialization                      |
 
-Use this as a good default for a MkDocs site with Material theme.
+The effective worker count can be lower than `maxWorkers`.
+
+TikZJax initializes workers lazily after detecting diagrams that require rendering.
+
+See [Parallel Rendering and the Worker Pool](parallel-rendering.md).
+
+---
+
+## One-worker debugging configuration
+
+To keep the worker-pool scheduler but allow only one active worker:
 
 ```js
 window.TikzJaxOptions = {
-    renderTimeout: 10000,
-    maxRetries: 0,
-    restartWorkerOnFail: true,
+    workerPool: {
+        enabled: true,
+        maxWorkers: 1,
+        reserveCpuCores: 0,
+        useDeviceMemory: false
+    }
+};
+```
 
-    brokenImageSrc: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image.svg",
+This is useful when investigating behavior that might depend on parallel rendering.
 
+To disable the pool entirely:
+
+```js
+window.TikzJaxOptions = {
+    workerPool: {
+        enabled: false
+    }
+};
+```
+
+For normal documentation sites, the pool should usually remain enabled.
+
+---
+
+## TeX packages
+
+Global packages are declared in `tex.texPackages`:
+
+```js
+window.TikzJaxOptions = {
     tex: {
         texPackages: {
-            amsmath: "",
             amsfonts: "",
-            amssymb: "",
-            "tkz-tab": ""
-        },
+            amssymb: ""
+        }
+    }
+};
+```
+
+The object maps package names to package options:
+
+```text
+package name -> option string
+```
+
+An empty string means that the package has no options.
+
+Example with options:
+
+```js
+window.TikzJaxOptions = {
+    tex: {
+        texPackages: {
+            xcolor: "dvipsnames"
+        }
+    }
+};
+```
+
+This is equivalent to:
+
+```latex
+\usepackage[dvipsnames]{xcolor}
+```
+
+!!! warning "Avoid loading every package globally"
+
+```
+A global package is included in the TeX preamble of every diagram.
+
+Specialized packages such as `chemfig`, `circuitikz`, `yquant`, and `pgf-spectra` should normally be loaded locally.
+```
+
+---
+
+## Local TeX packages
+
+Load one package locally with:
+
+```html
+<script
+  type="text/tikz"
+  data-tex-packages="physics"
+>
+\begin{tikzpicture}
+    \node {$\vb{F}=m\vb{a}$};
+\end{tikzpicture}
+</script>
+```
+
+Use JSON when several packages or package options are required:
+
+```html
+<script
+  type="text/tikz"
+  data-tex-packages='{
+    "physics": "",
+    "xcolor": "dvipsnames"
+  }'
+>
+\begin{tikzpicture}
+    \node[text=NavyBlue] {$\vb{F}=m\vb{a}$};
+\end{tikzpicture}
+</script>
+```
+
+The local packages are merged with globally configured packages for this diagram only.
+
+They do not modify `window.TikzJaxOptions`.
+
+---
+
+## TikZ libraries
+
+Global TikZ libraries are declared as an array:
+
+```js
+window.TikzJaxOptions = {
+    tex: {
         tikzLibraries: [
             "arrows.meta",
             "calc",
             "positioning"
         ]
-    },
-
-    tkzTab: {
-        lineWidth: "1.2pt",
-        font: "\\Large",
-
-        lgt: 10,
-        espcl: 3.2,
-
-        variableRowHeight: 1.2,
-        signRowHeight: 2.2,
-        variationRowHeight: 2.2,
-
-        imageRowHeight: 2.2,
-        antecedentRowHeight: 2.2
     }
 };
 ```
 
-This configuration provides:
+This is equivalent to:
 
-- common AMS packages;
-- useful TikZ libraries;
-- `tkz-tab` support;
-- a rendering timeout;
-- a custom broken-image fallback;
-- global styling for `tkz-tab` tables.
+```latex
+\usetikzlibrary{
+    arrows.meta,
+    calc,
+    positioning
+}
+```
 
-## 3. `tkz-tab` focused configuration
+Load a library locally when only one diagram requires it:
 
-Use this if your documentation mostly contains variation tables or sign tables.
+```html
+<script
+  type="text/tikz"
+  data-tikz-libraries="calc,positioning"
+>
+\begin{tikzpicture}
+    \coordinate (A) at (0,0);
+    \coordinate (B) at (4,0);
+
+    \fill
+        ($(A)!0.5!(B)$)
+        circle (3pt);
+\end{tikzpicture}
+</script>
+```
+
+Local and global library lists are combined and deduplicated.
+
+---
+
+## Packages versus TikZ libraries
+
+Use `data-tex-packages` for dependencies normally loaded with:
+
+```latex
+\usepackage{...}
+```
+
+Examples:
+
+```text
+tkz-tab
+physics
+circuitikz
+chemfig
+yquant
+tikz-feynhand
+pgf-spectra
+kinematikz
+```
+
+Use `data-tikz-libraries` for dependencies normally loaded with:
+
+```latex
+\usetikzlibrary{...}
+```
+
+Examples:
+
+```text
+arrows.meta
+calc
+positioning
+patterns
+shapes.geometric
+braids
+decorations.pathreplacing
+```
+
+For example, `braids` is a TikZ library:
+
+```html
+<script
+  type="text/tikz"
+  data-tikz-libraries="braids"
+>
+\begin{tikzpicture}
+    % Braid source
+\end{tikzpicture}
+</script>
+```
+
+It is not a `data-tex-packages` value.
+
+---
+
+## Custom LaTeX preamble
+
+Use `String.raw` for a global custom preamble:
 
 ```js
 window.TikzJaxOptions = {
     tex: {
         texPackages: {
-            amsmath: "",
-            "tkz-tab": ""
-        }
-    },
-
-    tkzTab: {
-        lineWidth: "1.2pt",
-        font: "\\Large",
-
-        lgt: 10,
-        espcl: 3.2,
-
-        variableRowHeight: 1.5,
-        signRowHeight: 2.5,
-        variationRowHeight: 2.5
-    }
-};
-```
-
-!!! note
-
-    Some TikZJax builds may include extra runtime support for `tkz-tab`.
-
-    Keeping `"tkz-tab": ""` in your configuration is still useful because it makes your setup explicit and easier to understand.
-
-## 4. Configuration with custom LaTeX commands
-
-Use `String.raw` for LaTeX preambles. It avoids escaping every backslash.
-
-```js
-window.TikzJaxOptions = {
-    tex: {
-        texPackages: {
-            amsmath: "",
-            amsfonts: "",
-            amssymb: ""
+            amsfonts: ""
         },
 
         addToPreamble: String.raw`
@@ -246,19 +494,100 @@ window.TikzJaxOptions = {
 };
 ```
 
-You can then use the commands in any TikZJax block.
+The commands can then be used in diagrams:
 
 ```html
 <script type="text/tikz">
 \begin{tikzpicture}
-    \node[draw, rounded corners, inner sep=6pt] {$f:\R\to\R$};
+    \node[
+        draw,
+        rounded corners,
+        inner sep=7pt
+    ] {
+        $f:\R\to\R$
+    };
 \end{tikzpicture}
 </script>
 ```
 
-## 5. Configuration for a non-MkDocs dark theme
+Use `data-add-to-preamble` for a diagram-specific preamble:
 
-Use this when your site stores the current theme on an attribute or a class.
+```html
+<script
+  type="text/tikz"
+  data-add-to-preamble="\newcommand{\localR}{\mathbb{R}}"
+>
+\begin{tikzpicture}
+    \node {$f:\localR\to\localR$};
+\end{tikzpicture}
+</script>
+```
+
+For the precise interaction between global and local preamble values, see [Global and Local Configuration](configuration-scopes.md).
+
+---
+
+## `tkz-tab` configuration
+
+Load `tkz-tab` globally only when it is used by most diagrams:
+
+```js
+window.TikzJaxOptions = {
+    tex: {
+        texPackages: {
+            "tkz-tab": ""
+        }
+    },
+
+    tkzTab: {
+        lineWidth: "1.2pt",
+        font: "\\Large",
+        lgt: "10",
+        espcl: "3.2",
+
+        variableRowHeight: "1.2",
+        signRowHeight: "2.2",
+        variationRowHeight: "2.2",
+        imageRowHeight: "2.2",
+        antecedentRowHeight: "2.2"
+    }
+};
+```
+
+For occasional tables, load the package locally:
+
+```html
+<script
+  type="text/tikz"
+  data-tex-packages="tkz-tab"
+>
+\begin{tikzpicture}
+    \tkzTabInit
+        {$x$/1,$f'(x)$/1,$f(x)$/2}
+        {$-\infty$,$0$,$+\infty$}
+
+    \tkzTabLine{,-,z,+,}
+    \tkzTabVar{+/$+\infty$,-/$0$,+/$+\infty$}
+\end{tikzpicture}
+</script>
+```
+
+The `tkzTab` configuration generates reusable TeX macros such as:
+
+```text
+\tikzjaxTkzTabLineWidth
+\tikzjaxTkzTabFont
+\tikzjaxTkzTabLgt
+\tikzjaxTkzTabEspcl
+```
+
+See the [`tkz-tab` examples](examples/tkz-tab.md).
+
+---
+
+## Theme configuration
+
+TikZJax can follow a site theme stored in an HTML attribute:
 
 ```js
 window.TikzJaxOptions = {
@@ -273,7 +602,7 @@ window.TikzJaxOptions = {
 };
 ```
 
-For a class-based theme, use `darkClass` and `lightClass`.
+For a class-based theme:
 
 ```js
 window.TikzJaxOptions = {
@@ -286,183 +615,13 @@ window.TikzJaxOptions = {
 };
 ```
 
-## 6. Partial global configuration
+See [Themes](themes.md) for theme detection, SVG adaptation, and MkDocs Material integration.
 
-A partial global configuration is useful when you want to change only one option after TikZJax has loaded.
+---
 
-Example:
+## Broken-image fallback
 
-```js
-window.TikzJaxOptions = {
-    brokenImageSrc: "/images/custom-tikz-error.svg"
-};
-```
-
-This updates only the fallback image.
-
-It does not erase previous options such as:
-
-```text
-tex.texPackages
-tex.tikzLibraries
-tkzTab
-renderTimeout
-workerMode
-```
-
-You can also use `window.TikzJaxConfigure()` after TikZJax has loaded.
-
-```js
-window.TikzJaxConfigure({
-    brokenImageSrc: "/images/custom-tikz-error.svg"
-});
-```
-
-This is equivalent to assigning a partial object to `window.TikzJaxOptions`.
-
-## 7. Local diagram options
-
-Global configuration defines defaults.
-
-A single diagram can still add or override options locally with `data-*` attributes.
-
-Local options affect only the current diagram.
-
-They do not mutate `window.TikzJaxOptions`.
-
-### Local TikZ libraries
-
-```html
-<script
-  type="text/tikz"
-  data-tikz-libraries="decorations.pathreplacing"
->
-\begin{tikzpicture}
-    \draw[decorate, decoration={brace, amplitude=6pt}] (0,0) -- (4,0);
-\end{tikzpicture}
-</script>
-```
-
-The local library is added to the global libraries.
-
-It does not erase them.
-
-### Local TeX packages
-
-```html
-<script
-  type="text/tikz"
-  data-tex-packages='{"xcolor": ""}'
->
-\begin{tikzpicture}
-    \node at (0,0) {\textcolor{blue}{$\mathbb{R}$}};
-\end{tikzpicture}
-</script>
-```
-
-The local package is added to the global TeX packages.
-
-It does not erase them.
-
-### Local preamble
-
-```html
-<script
-  type="text/tikz"
-  data-add-to-preamble="\newcommand{\localname}{Local macro}"
->
-\begin{tikzpicture}
-    \node at (0,0) {\localname};
-\end{tikzpicture}
-</script>
-```
-
-The local preamble is appended to the global preamble for this diagram only.
-
-### Local fallback image
-
-```html
-<script
-  type="text/tikz"
-  data-broken-image-src="/images/local-tikz-error.svg"
->
-\begin{tikzpicture}
-    \ThisCommandDoesNotExist
-\end{tikzpicture}
-</script>
-```
-
-If this diagram fails to render, it uses `/images/local-tikz-error.svg`.
-
-Other diagrams still use the global fallback image.
-
-### Local timeout
-
-```html
-<script
-  type="text/tikz"
-  data-render-timeout="30000"
->
-\begin{tikzpicture}
-    \draw (0,0) -- (10,0);
-\end{tikzpicture}
-</script>
-```
-
-This diagram gets a 30-second timeout.
-
-Other diagrams keep the global timeout.
-
-### Local cache disabling
-
-```html
-<script
-  type="text/tikz"
-  data-disable-cache="true"
->
-\begin{tikzpicture}
-    \draw (0,0) circle (1);
-\end{tikzpicture}
-</script>
-```
-
-Use this while debugging a diagram.
-
-## 8. Supported local `data-*` options
-
-The following local options can be used on a TikZJax block.
-
-| Attribute | Option |
-| --- | --- |
-| `data-tex-packages` | Adds local TeX packages |
-| `data-tikz-libraries` | Adds local TikZ libraries |
-| `data-add-to-preamble` | Adds local LaTeX preamble |
-| `data-broken-image-src` | Overrides fallback image for one diagram |
-| `data-render-timeout` | Overrides render timeout for one diagram |
-| `data-max-retries` | Overrides retry count for one diagram |
-| `data-restart-worker-on-fail` | Overrides worker restart behavior |
-| `data-disable-cache` | Disables cache for one diagram |
-| `data-width` | Sets loader width |
-| `data-height` | Sets loader height |
-| `data-options` | JSON object with local options |
-| `data-tikzjax-options` | JSON object with local options |
-
-Example with `data-tikzjax-options`:
-
-```html
-<script
-  type="text/tikz"
-  data-tikzjax-options='{"renderTimeout":30000,"tex":{"tikzLibraries":["decorations.pathreplacing"]}}'
->
-\begin{tikzpicture}
-    \draw[decorate, decoration={brace, amplitude=6pt}] (0,0) -- (4,0);
-\end{tikzpicture}
-</script>
-```
-
-## 9. Broken image fallback
-
-Use `brokenImageSrc` to configure the global fallback image.
+Set the global fallback image with:
 
 ```js
 window.TikzJaxOptions = {
@@ -470,9 +629,7 @@ window.TikzJaxOptions = {
 };
 ```
 
-This image is shown when a diagram fails to render.
-
-You can also set a fallback image for a single diagram.
+A single diagram can override it:
 
 ```html
 <script
@@ -485,75 +642,242 @@ You can also set a fallback image for a single diagram.
 </script>
 ```
 
-Priority:
+See [Fallback and Error Images](fallback-error-images.md).
 
-```text
-default broken image
-< global brokenImageSrc
-< partial global brokenImageSrc
-< local data-broken-image-src
-```
+---
 
-## 10. Render safety options
+## Local diagram options
 
-TikZJax supports render timeout and retry options.
+A `<script type="text/tikz">` element can provide local options through `data-*` attributes.
 
-```js
-window.TikzJaxOptions = {
-    renderTimeout: 15000,
-    maxRetries: 1,
-    restartWorkerOnFail: true
-};
-```
+Common attributes include:
 
-| Option | Meaning |
-| --- | --- |
-| `renderTimeout` | Maximum render time in milliseconds |
-| `maxRetries` | Number of retry attempts after a failed render |
-| `restartWorkerOnFail` | Whether to restart the worker after a render failure |
+| Attribute                     | Purpose                            |
+| ----------------------------- | ---------------------------------- |
+| `data-tex-packages`           | Load local TeX packages            |
+| `data-tikz-libraries`         | Load local TikZ libraries          |
+| `data-add-to-preamble`        | Set the diagram-specific preamble  |
+| `data-tkz-tab`                | Set local `tkz-tab` style values   |
+| `data-render-timeout`         | Override the render timeout        |
+| `data-max-retries`            | Override the retry count           |
+| `data-restart-worker-on-fail` | Override restart behavior          |
+| `data-broken-image-src`       | Override the fallback image        |
+| `data-disable-cache`          | Bypass the persistent SVG cache    |
+| `data-width`                  | Reserve loader width               |
+| `data-height`                 | Reserve loader height              |
+| `data-debug-timings`          | Enable detailed timing output      |
+| `data-show-timings`           | Enable timing display or logging   |
+| `data-show-console`           | Show TeX worker console output     |
+| `data-tikzjax-options`        | Provide a local JSON configuration |
 
-You can also configure them under `tex`:
-
-```js
-window.TikzJaxOptions = {
-    tex: {
-        renderTimeout: 15000,
-        maxRetries: 1,
-        restartWorkerOnFail: true
-    }
-};
-```
-
-Root-level values take precedence over nested `tex` values.
-
-Local values take precedence over global values for one diagram.
+Example:
 
 ```html
 <script
   type="text/tikz"
-  data-render-timeout="30000"
-  data-max-retries="2"
-  data-restart-worker-on-fail="true"
+  data-tex-packages="physics"
+  data-tikz-libraries="arrows.meta,positioning"
+  data-render-timeout="45000"
+  data-width="420"
+  data-height="180"
 >
 \begin{tikzpicture}
-    \draw (0,0) -- (5,0);
+    \node[
+        draw,
+        rounded corners
+    ] (force) {
+        $\vb{F}$
+    };
+
+    \node[
+        draw,
+        rounded corners,
+        right=1.5cm of force
+    ] {
+        $m\vb{a}$
+    };
 \end{tikzpicture}
 </script>
 ```
 
-## 11. jsDelivr configuration
+For all supported local options and their parsing priority, see [Global and Local Configuration](configuration-scopes.md).
 
-When using jsDelivr, no special `assetBaseUrl` configuration is required in most cases.
+---
+
+## Local JSON configuration
+
+Use `data-tikzjax-options` when several related local settings are required:
+
+```html
+<script
+  type="text/tikz"
+  data-tikzjax-options='{
+    "renderTimeout": 45000,
+    "maxRetries": 1,
+    "tex": {
+      "tikzLibraries": [
+        "calc",
+        "positioning"
+      ],
+      "texPackages": {
+        "physics": ""
+      }
+    }
+  }'
+>
+\begin{tikzpicture}
+    % Diagram source
+\end{tikzpicture}
+</script>
+```
+
+The value must be valid JSON:
+
+* property names require double quotes;
+* string values require double quotes;
+* trailing commas are not allowed;
+* backslashes inside JSON strings must be escaped.
+
+Dedicated local attributes override corresponding values from the general local JSON object.
+
+Avoid defining the same option in both places unless the override is intentional.
+
+---
+
+## Fenced `tikzjax` blocks
+
+A fenced block contains only TeX source:
+
+````markdown
+```tikzjax
+\begin{tikzpicture}
+    \draw (0,0) circle (1);
+\end{tikzpicture}
+```
+````
+
+It cannot carry local HTML `data-*` attributes.
+
+A package or library required by a fenced block must therefore be loaded globally.
+
+For example:
+
+```js
+window.TikzJaxOptions = {
+    tex: {
+        texPackages: {
+            physics: ""
+        },
+
+        tikzLibraries: [
+            "arrows.meta"
+        ]
+    }
+};
+```
+
+The fenced block can then use those dependencies:
+
+````markdown
+```tikzjax
+\begin{tikzpicture}
+    \draw[-{Stealth}]
+        (0,0) -- (3,0)
+        node[midway, above] {$\vb{F}$};
+\end{tikzpicture}
+```
+````
+
+Use `<script type="text/tikz">` when a diagram needs specialized local dependencies.
+
+---
+
+## Configuration priority
+
+TikZJax builds the effective configuration in this order:
+
+```text
+TikZJax defaults
+< initial global configuration
+< later partial global configuration
+< local diagram configuration
+```
+
+Local values apply only to the current diagram.
+
+They do not mutate the global configuration.
+
+Nested objects are merged recursively, arrays are combined and deduplicated, and scalar values are replaced by later values.
+
+The full merge behavior is documented in [Global and Local Configuration](configuration-scopes.md).
+
+---
+
+## Runtime partial updates
+
+After TikZJax has loaded, use `window.TikzJaxConfigure()` to update part of the global configuration:
+
+```js
+window.TikzJaxConfigure({
+    brokenImageSrc: "/images/custom-tikz-error.svg"
+});
+```
+
+This updates the fallback image without erasing unrelated settings.
+
+The function returns the resulting global configuration:
+
+```js
+const options = window.TikzJaxConfigure({
+    renderTimeout: 45000
+});
+
+console.log(options);
+```
+
+A later assignment to `window.TikzJaxOptions` can also be merged after the configuration API has been installed:
+
+```js
+window.TikzJaxOptions = {
+    renderTimeout: 45000
+};
+```
+
+For clarity, `window.TikzJaxConfigure()` is recommended for runtime changes.
+
+!!! warning
+
+```
+Partial configuration is additive.
+
+It is suitable for extending arrays and objects or replacing scalar values, but it is not intended as a complete reset API.
+```
+
+---
+
+## jsDelivr
+
+The standard jsDelivr setup is:
 
 ```html
 <script src="tikzjax.config.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
+
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css"
+>
+
 <script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
 ```
 
-TikZJax automatically resolves runtime files from the same `dist/` directory as `tikzjax.min.js`:
+In most cases, `assetBaseUrl` does not need to be configured manually.
+
+TikZJax resolves runtime assets relative to the JavaScript bundle's `dist/` directory.
+
+The distribution includes files such as:
 
 ```text
+tikzjax.min.js
 run-tex.js
 tex.wasm.gz
 core.dump.gz
@@ -561,61 +885,67 @@ tex_files/
 assets/broken-image.svg
 ```
 
-Equivalent explicit configuration:
+An equivalent explicit configuration is:
 
-```html
-<script>
+```js
 window.TikzJaxOptions = {
-    assetBaseUrl: "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist",
+    assetBaseUrl:
+        "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist",
+
     workerMode: "auto"
 };
-</script>
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
-<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
 ```
 
-## 12. unpkg configuration
+---
 
-When using unpkg, the setup is similar.
+## unpkg
+
+The equivalent unpkg setup is:
 
 ```html
 <script src="tikzjax.config.js"></script>
-<link rel="stylesheet" href="https://unpkg.com/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
+
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css"
+>
+
 <script src="https://unpkg.com/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
 ```
 
-Equivalent explicit configuration:
+Explicit configuration:
 
-```html
-<script>
+```js
 window.TikzJaxOptions = {
-    assetBaseUrl: "https://unpkg.com/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist",
+    assetBaseUrl:
+        "https://unpkg.com/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist",
+
     workerMode: "auto"
 };
-</script>
-
-<link rel="stylesheet" href="https://unpkg.com/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
-<script src="https://unpkg.com/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
 ```
 
-## 13. Same-origin configuration
+---
 
-Use this setup when all TikZJax files are served from your own domain.
+## Same-origin hosting
 
-```html
-<script>
+Use same-origin hosting when all runtime files are served from your own domain:
+
+```js
 window.TikzJaxOptions = {
     assetBaseUrl: "/vendor/tikzjax",
     workerMode: "direct"
 };
-</script>
+```
 
+Load the files with:
+
+```html
+<script src="/assets/javascripts/tikzjax.config.js"></script>
 <link rel="stylesheet" href="/vendor/tikzjax/fonts.min.css">
 <script src="/vendor/tikzjax/tikzjax.min.js"></script>
 ```
 
-Your server should expose:
+The server should expose:
 
 ```text
 /vendor/tikzjax/tikzjax.min.js
@@ -627,11 +957,13 @@ Your server should expose:
 /vendor/tikzjax/assets/broken-image.svg
 ```
 
-Use `workerMode: "direct"` for strict same-origin deployments.
+All files should come from the same TikZJax release.
 
-## 14. Custom worker URL
+---
 
-Use `workerUrl` when the worker file is not located directly inside `assetBaseUrl`.
+## Custom worker URL
+
+Set `workerUrl` when the worker script is not located directly inside `assetBaseUrl`:
 
 ```js
 window.TikzJaxOptions = {
@@ -641,11 +973,12 @@ window.TikzJaxOptions = {
 };
 ```
 
-You can also use the nested form:
+The nested form is also supported:
 
 ```js
 window.TikzJaxOptions = {
     assetBaseUrl: "/vendor/tikzjax",
+
     worker: {
         url: "/vendor/tikzjax/workers/run-tex.js",
         mode: "direct"
@@ -653,36 +986,44 @@ window.TikzJaxOptions = {
 };
 ```
 
-Root-level `workerMode` and `workerUrl` take precedence over nested `worker.mode` and `worker.url`.
+Root-level `workerUrl` and `workerMode` take precedence over nested `worker.url` and `worker.mode`.
 
-## 15. Worker mode selection
+---
 
-TikZJax supports three worker modes.
+## Worker modes
+
+TikZJax supports three worker startup modes:
+
+| Mode       | Behavior                                                  |
+| ---------- | --------------------------------------------------------- |
+| `"auto"`   | Select direct or Blob startup according to the worker URL |
+| `"blob"`   | Fetch the worker script and start it through a Blob URL   |
+| `"direct"` | Start the worker directly with `new Worker(workerUrl)`    |
+
+Example:
 
 ```js
 window.TikzJaxOptions = {
     workerMode: "auto"
 };
 ```
-
-| Mode | Behavior |
-| --- | --- |
-| `"auto"` | Same-origin workers use direct mode. Cross-origin workers use Blob mode. |
-| `"blob"` | Always fetches the worker script and starts it as a Blob Worker. |
-| `"direct"` | Always starts the worker with `new Worker(workerUrl)`. Best for same-origin hosting. |
 
 Recommended choices:
 
-| Situation | Recommended mode |
-| --- | --- |
-| jsDelivr or unpkg on a normal page | `"auto"` |
-| CDN script with CSP allowing `blob:` workers | `"auto"` or `"blob"` |
-| Fully local same-origin deployment | `"direct"` |
-| Strict CSP without `blob:` workers | `"direct"` with same-origin files |
+| Deployment                                    | Mode                 |
+| --------------------------------------------- | -------------------- |
+| jsDelivr or unpkg                             | `"auto"`             |
+| Cross-origin worker with Blob workers allowed | `"auto"` or `"blob"` |
+| Same-origin self-hosting                      | `"direct"`           |
+| Strict CSP without `blob:` workers            | `"direct"`           |
 
-## 16. CSP-oriented configuration
+---
 
-For jsDelivr or unpkg with Blob Worker support:
+## Content Security Policy
+
+### CDN with Blob workers
+
+Example configuration:
 
 ```js
 window.TikzJaxOptions = {
@@ -690,7 +1031,7 @@ window.TikzJaxOptions = {
 };
 ```
 
-Typical CSP directives:
+Typical directives:
 
 ```http
 script-src 'self' https://cdn.jsdelivr.net https://unpkg.com 'wasm-unsafe-eval';
@@ -701,7 +1042,9 @@ img-src 'self' https://cdn.jsdelivr.net https://unpkg.com data: blob:;
 font-src 'self' https://cdn.jsdelivr.net https://unpkg.com;
 ```
 
-For local same-origin files without Blob Workers:
+### Same-origin without Blob workers
+
+Example configuration:
 
 ```js
 window.TikzJaxOptions = {
@@ -710,7 +1053,7 @@ window.TikzJaxOptions = {
 };
 ```
 
-Typical CSP directives:
+Typical directives:
 
 ```http
 script-src 'self' 'wasm-unsafe-eval';
@@ -721,32 +1064,151 @@ img-src 'self' data:;
 font-src 'self';
 ```
 
-## 17. Recommended loading order
+CSP requirements depend on the complete site and should be adapted to the application's existing policy.
 
-Use the configuration file first, then the stylesheet, then the TikZJax script.
+---
 
-```html
-<script src="tikzjax.config.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
-<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
-```
+## MkDocs Material
 
-For debugging, you can use the non-minified files:
-
-```html
-<script src="tikzjax.config.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.css">
-<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.js"></script>
-```
-
-In MkDocs, keep the same order in your `overrides/main.html`.
+In MkDocs Material, preserve the same loading order in `overrides/main.html`:
 
 ```html
 {% block libs %}
     {{ super() }}
 
     <script src="{{ 'assets/javascripts/tikzjax.config.js' | url }}"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css"
+    >
+
     <script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
 {% endblock %}
 ```
+
+The configuration file remains local to the MkDocs site, while the runtime can be loaded from npm through jsDelivr.
+
+See [MkDocs Installation](installation/mkdocs.md).
+
+---
+
+## Inspecting configuration
+
+Inspect the active global configuration:
+
+```js
+window.TikzJaxOptions
+```
+
+Inspect the worker pool:
+
+```js
+window.TikzJaxOptions?.workerPool
+```
+
+Inspect global packages:
+
+```js
+window.TikzJaxOptions?.tex?.texPackages
+```
+
+Inspect global TikZ libraries:
+
+```js
+window.TikzJaxOptions?.tex?.tikzLibraries
+```
+
+Apply and inspect a runtime update:
+
+```js
+const options = window.TikzJaxConfigure({
+    renderTimeout: 45000
+});
+
+console.log(options);
+```
+
+Local effective configurations are created independently for each diagram and do not mutate these global values.
+
+---
+
+## Common configuration mistakes
+
+### Loading the configuration after TikZJax
+
+Incorrect:
+
+```html
+<script src="tikzjax.min.js"></script>
+<script src="tikzjax.config.js"></script>
+```
+
+Correct:
+
+```html
+<script src="tikzjax.config.js"></script>
+<script src="tikzjax.min.js"></script>
+```
+
+### Loading every optional package globally
+
+This makes every diagram process a larger TeX preamble.
+
+Load specialized packages locally.
+
+### Confusing packages and TikZ libraries
+
+Use:
+
+```html
+data-tex-packages="chemfig"
+```
+
+for a package, and:
+
+```html
+data-tikz-libraries="positioning"
+```
+
+for a TikZ library.
+
+### Expecting fenced blocks to support local configuration
+
+Fenced blocks cannot carry HTML attributes.
+
+Use a `<script type="text/tikz">` block for local dependencies.
+
+### Using invalid JSON
+
+Incorrect:
+
+```html
+data-tikzjax-options='{renderTimeout:30000,}'
+```
+
+Correct:
+
+```html
+data-tikzjax-options='{"renderTimeout":30000}'
+```
+
+### Combining files from different releases
+
+The JavaScript bundle, worker script, WebAssembly runtime, core dump, and `tex_files` directory must come from the same TikZJax version.
+
+---
+
+## Related documentation
+
+* [Global and Local Configuration](configuration-scopes.md)
+* [Parallel Rendering and the Worker Pool](parallel-rendering.md)
+* [HTML Installation](installation/html.md)
+* [MkDocs Installation](installation/mkdocs.md)
+* [Themes](themes.md)
+* [Fallback and Error Images](fallback-error-images.md)
+* [Cache and Performance](cache-performance.md)
+* [API Reference](api-reference.md)
+* [Runtime Architecture](architecture.md)
+* [Troubleshooting](troubleshooting.md)
+* [Examples](examples/index.md)

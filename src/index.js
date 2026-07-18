@@ -98,10 +98,51 @@ const mergeTikzJaxOptions = (base = {}, extra = {}) => {
     return result;
 };
 
+const DEFAULT_TKZ_TAB_OPTIONS = {
+    // When true, values are converted into native tkz-tab
+    // defaults. Explicit TeX options still have priority.
+    autoApply: true,
+
+    lineWidth: '1.2pt',
+    font: '\\Large',
+
+    lgt: 10,
+    espcl: 3.2,
+
+    // Additional native defaults accepted by \tkzTabInit,
+    // \tkzTabSetup and \tkzTabColors.
+    init: {},
+    setup: {},
+    colors: {},
+
+    // These remain reusable semantic helpers. Row heights are
+    // part of the mandatory \tkzTabInit row list, not native
+    // package defaults, so they cannot be inferred safely.
+    variableRowHeight: 1.2,
+    signRowHeight: 2.2,
+    variationRowHeight: 2.2,
+
+    imageRowHeight: 2.2,
+    antecedentRowHeight: 2.2
+};
+
+const DEFAULT_TIKZJAX_OPTIONS = {
+    tkzTab: DEFAULT_TKZ_TAB_OPTIONS
+};
+
 const getOptionsStore = () => {
-    if (!isPlainObject(window[TIKZJAX_OPTIONS_STORE_KEY])) {
-        window[TIKZJAX_OPTIONS_STORE_KEY] = {};
-    }
+    const currentOptions =
+        isPlainObject(
+            window[TIKZJAX_OPTIONS_STORE_KEY]
+        )
+            ? window[TIKZJAX_OPTIONS_STORE_KEY]
+            : {};
+
+    window[TIKZJAX_OPTIONS_STORE_KEY] =
+        mergeTikzJaxOptions(
+            DEFAULT_TIKZJAX_OPTIONS,
+            currentOptions
+        );
 
     return window[TIKZJAX_OPTIONS_STORE_KEY];
 };
@@ -318,7 +359,7 @@ const normalizeTikzLibraries = (value) => {
 };
 
 // =================================================
-// TKZ-TAB GLOBAL MACROS
+// TKZ-TAB GLOBAL MACROS AND NATIVE DEFAULTS
 // =================================================
 const createTexMacro = (macroName, value) => {
     if (
@@ -332,17 +373,112 @@ const createTexMacro = (macroName, value) => {
     return `\\def\\${macroName}{${String(value)}}\n`;
 };
 
-const getTkzTabPreamble = (options = getOptions()) => {
+const isTexScalarOptionValue = (value) => {
+    return (
+        typeof value === 'string' ||
+        typeof value === 'number' ||
+        typeof value === 'boolean'
+    );
+};
+
+const serializeTexKeyValueOptions = (
+    options = {}
+) => {
+    if (!isPlainObject(options)) {
+        return '';
+    }
+
+    return Object
+        .entries(options)
+        .filter(([key, value]) => {
+            return (
+                /^[A-Za-z][A-Za-z0-9@_-]*$/.test(key) &&
+                isTexScalarOptionValue(value)
+            );
+        })
+        .map(([key, value]) => {
+            return `${key}={${String(value)}}`;
+        })
+        .join(',');
+};
+
+const getTkzTabNativeInitOptions = (
+    tkzTab = {}
+) => {
+    const automaticOptions = {};
+
+    const firstColumnWidth =
+        tkzTab.firstColumnWidth ??
+        tkzTab.lgt;
+
+    if (
+        firstColumnWidth !== undefined &&
+        firstColumnWidth !== null &&
+        firstColumnWidth !== false
+    ) {
+        automaticOptions.lgt =
+            firstColumnWidth;
+    }
+
+    if (
+        tkzTab.espcl !== undefined &&
+        tkzTab.espcl !== null &&
+        tkzTab.espcl !== false
+    ) {
+        automaticOptions.espcl =
+            tkzTab.espcl;
+    }
+
+    if (
+        tkzTab.lineWidth !== undefined &&
+        tkzTab.lineWidth !== null &&
+        tkzTab.lineWidth !== false
+    ) {
+        automaticOptions.lw =
+            tkzTab.lineWidth;
+    }
+
+    return mergeTikzJaxOptions(
+        automaticOptions,
+        isPlainObject(tkzTab.init)
+            ? tkzTab.init
+            : {}
+    );
+};
+
+const appendGuardedTexCommand = (
+    preamble,
+    guardName,
+    command
+) => {
+    if (!command) {
+        return preamble;
+    }
+
+    return (
+        preamble +
+        `\\ifdefined\\${guardName}\n` +
+        `  ${command}\n` +
+        '\\fi\n'
+    );
+};
+
+const getTkzTabPreamble = (
+    options = getOptions()
+) => {
     const tkzTab = options.tkzTab || {};
 
-    if (!tkzTab || typeof tkzTab !== 'object') {
+    if (!isPlainObject(tkzTab)) {
         return '';
     }
 
     let preamble = '';
 
-    preamble += '% TikZJax tkz-tab global options\n';
+    preamble +=
+        '% TikZJax tkz-tab global options\n';
 
+    // Public helper macros remain available for source code that
+    // explicitly references them.
     preamble += createTexMacro(
         'tikzjaxTkzTabLineWidth',
         tkzTab.lineWidth
@@ -360,7 +496,8 @@ const getTkzTabPreamble = (options = getOptions()) => {
 
     preamble += createTexMacro(
         'tikzjaxTkzTabFirstColumnWidth',
-        tkzTab.firstColumnWidth ?? tkzTab.lgt
+        tkzTab.firstColumnWidth ??
+        tkzTab.lgt
     );
 
     preamble += createTexMacro(
@@ -392,6 +529,91 @@ const getTkzTabPreamble = (options = getOptions()) => {
         'tikzjaxTkzTabAntecedentRowHeight',
         tkzTab.antecedentRowHeight
     );
+
+    if (
+        parseBooleanOption(
+            tkzTab.autoApply,
+            true
+        ) === false
+    ) {
+        return preamble;
+    }
+
+    // tkz-tab is loaded before addToPreamble is inserted by the
+    // worker. Every command below is guarded so ordinary TikZ
+    // renders remain unaffected when tkz-tab is not loaded.
+    if (
+        tkzTab.lineWidth !== undefined &&
+        tkzTab.lineWidth !== null &&
+        tkzTab.lineWidth !== false
+    ) {
+        preamble = appendGuardedTexCommand(
+            preamble,
+            'tkzTabDefaultLineWidth',
+            '\\def\\tkzTabDefaultLineWidth{' +
+                String(tkzTab.lineWidth) +
+                '}'
+        );
+    }
+
+    const colorOptions =
+        serializeTexKeyValueOptions(
+            tkzTab.colors
+        );
+
+    if (colorOptions) {
+        preamble = appendGuardedTexCommand(
+            preamble,
+            'tkzTabColors',
+            `\\tkzTabColors[${colorOptions}]`
+        );
+    }
+
+    const initOptions =
+        serializeTexKeyValueOptions(
+            getTkzTabNativeInitOptions(
+                tkzTab
+            )
+        );
+
+    if (initOptions) {
+        preamble = appendGuardedTexCommand(
+            preamble,
+            'tkzTabInit',
+            `\\presetkeys[TAB]{tbs}{${initOptions}}{}`
+        );
+    }
+
+    // Calling tkzTabSetup after redefining the package defaults
+    // refreshes its native TikZ styles. Values in tkzTab.setup
+    // override those refreshed defaults for the current render.
+    const setupOptions =
+        serializeTexKeyValueOptions(
+            tkzTab.setup
+        );
+
+    preamble = appendGuardedTexCommand(
+        preamble,
+        'tkzTabSetup',
+        `\\tkzTabSetup[${setupOptions}]`
+    );
+
+    // Each TikZJax source is compiled in its own TeX document.
+    // Applying every-node font here therefore affects only this
+    // render, and only when the tkz-tab package is present.
+    if (
+        tkzTab.font !== undefined &&
+        tkzTab.font !== null &&
+        tkzTab.font !== false
+    ) {
+        preamble = appendGuardedTexCommand(
+            preamble,
+            'tkzTabInit',
+            '\\tikzset{every node/.append style={font=' +
+                String(tkzTab.font) +
+                '}}'
+        );
+    }
 
     return preamble;
 };
@@ -1499,7 +1721,6 @@ const getThemeFromElement = (element) => {
             element.getAttribute(
                 'data-bs-theme'
             );
-
         if (value === 'dark') {
             return 'dark';
         }
@@ -1860,10 +2081,353 @@ const isTikzPre = (node) => {
     );
 };
 
+// =================================================
+// MKDOCS BROKEN MULTILINE TIKZ SCRIPT REPAIR
+// =================================================
+
+// Python-Markdown can break this syntax inside an admonition
+// or a content tab:
+//
+//     <script
+//     type="text/tikz"
+//     data-tex-packages="tkz-tab"
+//     >
+//
+// The isolated `>` can be interpreted as a blockquote marker.
+// This repair is intentionally restricted to malformed TikZJax
+// source blocks inside known MkDocs containers.
+
+const BROKEN_MKDOCS_TIKZ_SELECTOR = [
+    '.admonition > p:not(.admonition-title)',
+    '.tabbed-content > p',
+    '.tabbed-block > p'
+].join(', ');
+
+const parseBrokenMkDocsTikzOpening = (
+    paragraph
+) => {
+    if (
+        !paragraph ||
+        paragraph.tagName !== 'P'
+    ) {
+        return null;
+    }
+
+    const openingText =
+        String(paragraph.textContent || '')
+            .replace(/\r\n?/g, '\n')
+            .trim();
+
+    if (
+        !/^<script(?:\s|$)/i.test(openingText) ||
+        openingText.includes('>') ||
+        /<\/script/i.test(openingText)
+    ) {
+        return null;
+    }
+
+    const template =
+        document.createElement('template');
+
+    // Script elements parsed inside a template are inert.
+    template.innerHTML =
+        `${openingText}></script>`;
+
+    const parsedScript =
+        template.content.firstElementChild;
+
+    if (
+        !parsedScript ||
+        parsedScript.tagName !== 'SCRIPT' ||
+        String(
+            parsedScript.getAttribute('type') || ''
+        )
+            .trim()
+            .toLowerCase() !== 'text/tikz'
+    ) {
+        return null;
+    }
+
+    // Keep the recovery deliberately narrow. TikZJax source
+    // elements need only `type` and `data-*` attributes here.
+    const hasUnexpectedAttribute =
+        Array.from(parsedScript.attributes)
+            .some((attribute) => {
+                return (
+                    attribute.name !== 'type' &&
+                    !attribute.name.startsWith('data-')
+                );
+            });
+
+    if (hasUnexpectedAttribute) {
+        return null;
+    }
+
+    return parsedScript;
+};
+
+const getBrokenMkDocsNodeText = (
+    node
+) => {
+    if (!node) {
+        return '';
+    }
+
+    if (node.tagName === 'PRE') {
+        return (
+            node.querySelector('code')
+                ?.textContent ||
+            node.textContent ||
+            ''
+        );
+    }
+
+    if (node.tagName === 'BLOCKQUOTE') {
+        return Array
+            .from(node.children)
+            .map((child) =>
+                getBrokenMkDocsNodeText(child)
+            )
+            .join('\n\n');
+    }
+
+    return node.textContent || '';
+};
+
+const isLikelyBrokenMkDocsTikzContinuationNode = (
+    node
+) => {
+    if (
+        !node ||
+        !['P', 'PRE', 'BLOCKQUOTE'].includes(
+            node.tagName
+        )
+    ) {
+        return false;
+    }
+
+    const text = String(
+        getBrokenMkDocsNodeText(node) || ''
+    )
+        .replace(/\r\n?/g, '\n')
+        .trim();
+
+    if (!text) {
+        return false;
+    }
+
+    // If a parser preserved </script> as text,
+    // this is definitely still part of the broken source.
+    if (/<\/script\s*>/i.test(text)) {
+        return true;
+    }
+
+    // Very common TeX/TikZ continuations.
+    if (
+        /^\\/.test(text) ||
+        /^[{}[\]$%]/.test(text)
+    ) {
+        return true;
+    }
+
+    // Fallback: if the paragraph still contains TeX commands,
+    // it is probably part of the same broken TikZ source.
+    if (/\\[A-Za-z@]+/.test(text)) {
+        return true;
+    }
+
+    return false;
+};
+
+const extractBrokenMkDocsTikzBody = (
+    openingParagraph
+) => {
+    const consumedNodes = [];
+    const sourceParts = [];
+
+    const firstBodyNode =
+        openingParagraph.nextElementSibling;
+
+    // The exact Markdown failure starts by turning the isolated
+    // `>` into a blockquote. We keep this requirement so that
+    // ordinary HTML examples are not converted accidentally.
+    if (
+        !firstBodyNode ||
+        firstBodyNode.tagName !== 'BLOCKQUOTE'
+    ) {
+        return null;
+    }
+
+    let currentNode = firstBodyNode;
+    let consumedAtLeastOneNode = false;
+
+    // Prevent accidental runaway scans.
+    const maximumConsumedNodes = 64;
+
+    while (
+        currentNode &&
+        consumedNodes.length < maximumConsumedNodes
+    ) {
+        // First node must be the initial blockquote.
+        // Following nodes may be P / PRE / BLOCKQUOTE
+        // if they still look like TeX/TikZ continuation.
+        if (!consumedAtLeastOneNode) {
+            if (currentNode.tagName !== 'BLOCKQUOTE') {
+                return null;
+            }
+        } else if (
+            !isLikelyBrokenMkDocsTikzContinuationNode(
+                currentNode
+            )
+        ) {
+            break;
+        }
+
+        if (
+            !['P', 'PRE', 'BLOCKQUOTE'].includes(
+                currentNode.tagName
+            )
+        ) {
+            break;
+        }
+
+        const nodeText = getBrokenMkDocsNodeText(
+            currentNode
+        );
+
+        const closingMatch =
+            /<\/script\s*>/i.exec(nodeText);
+
+        if (closingMatch) {
+            const trailingText = nodeText.slice(
+                closingMatch.index +
+                    closingMatch[0].length
+            );
+
+            // Do not consume unrelated content after </script>.
+            if (trailingText.trim()) {
+                return null;
+            }
+
+            sourceParts.push(
+                nodeText.slice(0, closingMatch.index)
+            );
+
+            consumedNodes.push(currentNode);
+
+            return {
+                consumedNodes,
+                sourceText: sourceParts
+                    .join('\n\n')
+                    .trim()
+            };
+        }
+
+        sourceParts.push(nodeText);
+        consumedNodes.push(currentNode);
+        consumedAtLeastOneNode = true;
+
+        currentNode = currentNode.nextElementSibling;
+    }
+
+    if (!sourceParts.length) {
+        return null;
+    }
+
+    return {
+        consumedNodes,
+        sourceText: sourceParts
+            .join('\n\n')
+            .trim()
+    };
+};
+
+const repairBrokenMkDocsTikzScripts = (
+    root = document
+) => {
+    const candidates = [];
+
+    if (
+        root instanceof Element &&
+        root.matches(
+            BROKEN_MKDOCS_TIKZ_SELECTOR
+        )
+    ) {
+        candidates.push(root);
+    }
+
+    root
+        .querySelectorAll?.(
+            BROKEN_MKDOCS_TIKZ_SELECTOR
+        )
+        ?.forEach((candidate) => {
+            candidates.push(candidate);
+        });
+
+    const repairedSources = [];
+
+    [...new Set(candidates)]
+        .forEach((paragraph) => {
+            if (!paragraph.isConnected) {
+                return;
+            }
+
+            const parsedOpening =
+                parseBrokenMkDocsTikzOpening(
+                    paragraph
+                );
+
+            if (!parsedOpening) {
+                return;
+            }
+
+            const extracted =
+                extractBrokenMkDocsTikzBody(
+                    paragraph
+                );
+
+            if (
+                !extracted ||
+                !extracted.sourceText
+            ) {
+                return;
+            }
+
+            const script =
+                document.createElement('script');
+
+            Array
+                .from(parsedOpening.attributes)
+                .forEach((attribute) => {
+                    script.setAttribute(
+                        attribute.name,
+                        attribute.value
+                    );
+                });
+
+            script.textContent =
+                extracted.sourceText;
+
+            paragraph.replaceWith(script);
+
+            extracted.consumedNodes
+                .forEach((node) => {
+                    node.remove();
+                });
+
+            repairedSources.push(script);
+        });
+
+    return repairedSources;
+};
+
 const getTikzSources = (
     root = document
 ) => {
-    const sources = [];
+    const sources =
+        repairBrokenMkDocsTikzScripts(
+            root
+        );
 
     if (
         root instanceof Element &&
@@ -3398,6 +3962,15 @@ const initialize = async () => {
                     ) {
                         continue;
                     }
+
+                    const repairRoot =
+                        node.parentElement || node;
+
+                    repairBrokenMkDocsTikzScripts(
+                        repairRoot
+                    ).forEach((source) => {
+                        targets.push(source);
+                    });
 
                     if (
                         node.matches?.(

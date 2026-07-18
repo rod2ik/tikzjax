@@ -40,12 +40,23 @@ nav:
   - Usage:
       - Basic Examples: basic-examples.md
       - Advanced Examples: advanced-examples.md
+      - Overview: examples/index.md
+      - TikZ: examples/tikz.md
+      - Tkz-tab: examples/tkz-tab.md
       - Physics: examples/physics.md
+      - Circuitikz: examples/circuitikz.md
+      - Chemfig: examples/chemfig.md
+      - Yquant: examples/yquant.md
+      - Tikz-feynhand: examples/tikz-feynhand.md
+      - Pgf-spectra: examples/pgf-spectra.md
+      - Kinematikz: examples/kinematikz.md
   - Configuration:
       - Overview: configuration.md
+      - Scopes: configuration-scopes.md
       - Light/Dark themes: themes.md
       - Fallback Error Images: fallback-error-images.md
   - Advanced:
+      - Parallel Rendering: parallel-rendering.md
       - Cache and Performance: cache-performance.md
       - API Reference: api-reference.md
       - Architecture: architecture.md

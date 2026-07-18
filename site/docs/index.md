@@ -1,224 +1,653 @@
 # rod2ik/TikZJax
 
-## Introduction
+[![GitHub repository](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-181717?logo=github\&logoColor=white)](https://github.com/rod2ik/tikzjax)
+[![npm package](https://img.shields.io/badge/npm-%40rod2ik%2Ftikzjax-CB3837?logo=npm\&logoColor=white)](https://www.npmjs.com/package/@rod2ik/tikzjax)
+[![License: GPL v3+](https://img.shields.io/badge/License-GPLv3%2B-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-[![Repo](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-181717?logo=github&logoColor=white)](https://github.com/rod2ik/tikzjax) is a [![License: GPL v3+](https://img.shields.io/badge/License-GPLv3%2B-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) opensource project, that natively renders **TikZ/LaTeX** AND **tkz-tab/LaTeX** for **maths variation tables** and **maths sign tables** , directly inside an HTML page AND/OR inside usual documentation websites, notably **MkDocs** with **Material theme**.
+TikZJax renders **TikZ and supported LaTeX packages directly in the browser**.
 
-| ⚠️ Documentation Link & Testing Site ⚠️ |
-|---|
-| Please refer to this **MkDocs Documentation & Demo Site** for more thorough documentation and more info: [https://rod2ik.github.io/tikzjax](https://rod2ik.github.io/tikzjax) |
-| A MINIMAL MKDOCS TIKZJAX TESTING REPOSITORY : [https://github.com/rod2ik/minimal-mkdocs-tikzjax](https://github.com/rod2ik/minimal-mkdocs-tikzjax) <br/> Clone It. Test it locally. |
+It can be used inside:
 
-Example 1: (Click on the Light/Dark Button to swap themes)
+* standalone HTML pages;
+* MkDocs documentation;
+* Material for MkDocs sites;
+* static websites;
+* other browser-based documentation systems.
 
-<script type="text/tikz">
-\begin{tikzpicture}[line width=1.2pt, font=\Large]
-    \tkzTabInit[lgt=6, espcl=3, lw=1.2pt]
-        {$x$/1.5 , $f'(x)=3(x+1)(x-2)$/1.5 , $f(x)=x^3-3x^2-6x+1$/2.5}
-        {$-\infty$, $-1$, $2$, $+\infty$}
-    \tkzTabLine{,+,z,-,z,+,}
-    \tkzTabVar{-/$-\infty$, +/$3$, -/$-15$, +/$+\infty$}
-\end{tikzpicture}
-</script>
+TikZJax runs TeX through WebAssembly inside Web Workers. It does not require a server-side LaTeX installation or a remote rendering service.
 
-Example 2: (Click on the Light/Dark Button to swap themes)
+---
 
-<script type="text/tikz">
-\begin{tikzpicture}[line width=1.2pt, font=\Large]
-    \tkzTabInit[lgt=6, espcl=2.5, lw=1.2pt]
-        {$x$/1.5 , $f'(x)=\dfrac{(x-1)(x-3)}{(x-2)^2}$/1.8 , $f(x)=x+1+\dfrac{1}{x-2}$/3}
-        {$-\infty$, $1$, $2$, $3$, $+\infty$}
-    \tkzTabLine{,+,z,-,d,-,z,+,}
-    \tkzTabVar{-/$-\infty$, +/$1$, -D+/$-\infty$ / $+\infty$, -/$5$, +/$+\infty$}
-\end{tikzpicture}
-</script>
+## Documentation and test projects
 
-[![Repo](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-181717?logo=github&logoColor=white)](https://github.com/rod2ik/tikzjax) is originally a fork from the great works 👏👏👏 of :
+| Resource                                  | Link                                                                              |
+| ----------------------------------------- | --------------------------------------------------------------------------------- |
+| Documentation and live demonstration site | [rod2ik.github.io/tikzjax](https://rod2ik.github.io/tikzjax)                      |
+| Minimal MkDocs test repository            | [rod2ik/minimal-mkdocs-tikzjax](https://github.com/rod2ik/minimal-mkdocs-tikzjax) |
+| Source repository                         | [rod2ik/tikzjax](https://github.com/rod2ik/tikzjax)                               |
+| npm package                               | [@rod2ik/tikzjax](https://www.npmjs.com/package/@rod2ik/tikzjax)                  |
 
-* [kisone/tikzjax](https://github.com/kisonecat/tikzjax) by [Jim Fowler](https://github.com/kisonecat)
-* [drgrice1/tikzjax](https://github.com/drgrice1/tikzjax) by [Glenn Rice](https://github.com/drgrice1) 
+The minimal MkDocs repository can be cloned and run locally to test the integration in an isolated project.
 
-Please note, that:
+---
 
-* Both latter projects are based on their own **web2js** and **dvi2html** projects.  
-* [![Repo](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-181717?logo=github&logoColor=white)](https://github.com/rod2ik/tikzjax) is based on its own custom forks [rod2ik/web2js](https://github.com/rod2ik/web2js) and [rod2ik/dvi2html](https://github.com/rod2ik/dvi2html).
+# Project lineage
 
-Also note, that [![Repo](https://img.shields.io/badge/GitHub-rod2ik%2Ftikzjax-181717?logo=github&logoColor=white)](https://github.com/rod2ik/tikzjax) has, since then, been massively :
+`rod2ik/TikZJax` is based on the historical work of:
 
-* **refactored as an ESM project**
-* **extended**, to render both <bad @dodgerblue>OLD</bad>**TikZ Figures** <bad @red>AND</bad> <bad @chartreuse>NEW</bad> `tkz-tab` macros, **LaTeX** style, for **math variations tables** / **math sign tables** :
-    * <bad @chartreuse>NEW</bad> a **global configuration file** `tikzjax.config.js` through `window.TikzJaxOptions`;  
-    * inside a **custom HTML Bloc**, using a `<script type="text/tikz">` tag syntax:
-        * <bad @dodgerblue>OLD</bad> automatic rendering of **TikZ** Figures (THE historical functionnality of [kisone/tikzjax](https://github.com/kisonecat/tikzjax))
-        * <bad @chartreuse>NEW</bad> ❗📢❗⚠️ automatic rendering of `tkz-tab` macros, **LaTeX** style, for **maths variations tables** / **math sign tables** ⚠️❗📢❗
-        * <bad @chartreuse>NEW</bad> Light/Dark Themes via the ***global customisation file***, or direct configuration. 
-        * the `<script>` syntax is also natively compatible inside an **Mkdocs Markdown** Page:
-            * <bad @chartreuse>NEW</bad> natively $100\%$ compatible with **Material Light/Dark Themes**
-            * <bad @chartreuse>NEW</bad> natively $100\%$ compatible with **Material Admonitions** (collapsible, or not)
-            * <bad @chartreuse>NEW</bad> natively $100\%$ compatible with **Material Content Tabs** (inside Admonitions, or not)
-    * inside **MkDocs**, with **Material** (or without it..), using a **`tikzjax` code bloc** syntax, **natively**:
-        * <bad @chartreuse>NEW</bad> automatic rendering of **TikZ** Figures  
-        (you could already this, but only via the `<script>` syntax, with kisone/tikzjax)
-        * <bad @chartreuse>NEW</bad> ❗📢❗⚠️ automatic rendering of `tkz-tab` macros for **maths variations tables** / **math sign tables** ⚠️❗📢❗
-        * <bad @chartreuse>NEW</bad> Compatibility with **Material Light/Dark Themes** (possibly customizable via the ***global customisation file***)
-        * <bad @chartreuse>NEW</bad> compatibility with **Material Admonitions**: collapsable or not
-        * <bad @chartreuse>NEW</bad> compatibility with **Material Content Tabs** 
-    * **Other Documentation Sites**:
-        * Possibly all functionnalities of MkDocs, if your documentation tools uses python-markdown.
+* [kisonecat/tikzjax](https://github.com/kisonecat/tikzjax), created by [Jim Fowler](https://github.com/kisonecat);
+* [drgrice1/tikzjax](https://github.com/drgrice1/tikzjax), created by [Glenn Rice](https://github.com/drgrice1).
 
-All the latter syntaxes also offer:
+Those projects are themselves based on browser ports of TeX and DVI conversion tools.
 
-* <bad @chartreuse>NEW</bad> a **global configuration file** `tikzjax.config.js` through `window.TikzJaxOptions`
-* <bad @dodgerblue>OLD</bad> <bad @darkorange>EXTENDED TO TKZ-TAB</bad> **per-table local overrides** through `data-*` attributes
-* <bad @chartreuse>NEW</bad> native and customizable **Light/Dark themes** support for **Custom HTML blocs**, <bad @red>AND</bad> **Material for MkDocs**
-* <bad @dodgerblue>OLD</bad> <bad @darkorange>EXTENDED TO TKZ-TAB</bad> **browser-side cache** through IndexedD
-* <bad @dodgerblue>OLD</bad> <bad @darkorange>EXTENDED TO TKZ-TAB</bad> **Spinner animation**
-* <bad @dodgerblue>OLD</bad> <bad @darkorange>EXTENDED TO TKZ-TAB</bad> timeout, worker restart, retry handling
-* <bad @chartreuse>NEW</bad> A customizable **fallback error image**
+This project uses its own related forks:
 
-## Tikz Figures Basic Examples
+* [rod2ik/web2js](https://github.com/rod2ik/web2js);
+* [rod2ik/dvi2html](https://github.com/rod2ik/dvi2html).
 
-!!! info
-    There are two syntaxes for drawing **TikZ Figures** and/or tkz-tab **math variations tables** / **math sign tables**.
+The original projects provided the foundation for rendering TikZ in a browser. This fork preserves that capability while adding a larger configuration, package, documentation, performance, and integration layer.
 
-    * In HTML Pages, you can use **`<script>` tag**s syntax for both **TikZ Figures** and/or **maths variations tables / maths sign tables**
-    * In MkDocs Markdown Pages, you can use `tikzjax` **code blocks** syntax for both **TikZ Figures** and/or **maths variations tables / maths sign tables**
+---
 
-### 1. TikZ Figures Example with `<script>` tag
+# Feature labels
 
-In HTML Pages, to draw TikZ Figures, you can basically use this syntax, which was the original TikZ syntax developed by [kisone/tikzjax](https://github.com/kisonecat/tikzjax).
+The following labels are used throughout this page:
 
-This code :
+* **🧱 ORIGINAL** — inherited from the historical TikZJax projects;
+* **🛠 EXTENDED** — an inherited feature substantially expanded in this fork;
+* **🆕 NEW** — functionality added by `rod2ik/TikZJax`.
+
+---
+
+# What is different in `rod2ik/TikZJax`?
+
+## Core rendering
+
+* **🧱 ORIGINAL** Browser-side TikZ rendering through TeX compiled to WebAssembly.
+* **🧱 ORIGINAL** Support for `<script type="text/tikz">` source blocks.
+* **🧱 ORIGINAL** DVI conversion to browser-compatible SVG and HTML.
+* **🛠 EXTENDED** The original TikZ rendering pipeline has been refactored into a modern ESM-based project.
+* **🛠 EXTENDED** Runtime TeX assets and optional dependencies are organized for dynamic browser loading.
+
+## LaTeX and diagram support
+
+* **🆕 NEW** Native support for `tkz-tab` variation tables and sign tables.
+* **🆕 NEW** Support for optional LaTeX packages loaded at runtime.
+* **🆕 NEW** Support for package-specific examples including:
+
+  * `physics`;
+  * `circuitikz`;
+  * `chemfig`;
+  * `yquant`;
+  * `tikz-feynhand`;
+  * `pgf-spectra`;
+  * `kinematikz`.
+* **🆕 NEW** Support for additional TikZ libraries such as `braids`.
+* **🆕 NEW** Per-diagram TeX package declarations with `data-tex-packages`.
+* **🆕 NEW** Per-diagram TikZ library declarations with `data-tikz-libraries`.
+* **🆕 NEW** Per-diagram custom LaTeX preambles with `data-add-to-preamble`.
+* **🆕 NEW** Global and local configuration for generated `tkz-tab` macros.
+
+## Configuration
+
+* **🆕 NEW** Global configuration through `window.TikzJaxOptions`.
+* **🆕 NEW** Runtime partial updates through `window.TikzJaxConfigure()`.
+* **🆕 NEW** Recursive configuration merging for plain objects.
+* **🆕 NEW** Array merging with duplicate removal.
+* **🆕 NEW** Separate global and local configuration scopes.
+* **🛠 EXTENDED** Per-diagram `data-*` options now cover packages, libraries, preambles, timeouts, retries, caching, diagnostics, loader dimensions, and fallback images.
+* **🆕 NEW** Complex local configuration through `data-tikzjax-options`.
+* **🆕 NEW** Local nested TeX configuration through `data-tex`.
+
+## MkDocs and documentation integration
+
+* **🆕 NEW** Native recognition of fenced `tikzjax` Markdown blocks.
+* **🆕 NEW** Compatibility with Material for MkDocs light and dark palettes.
+* **🆕 NEW** Compatibility with Material admonitions.
+* **🆕 NEW** Compatibility with collapsible details and admonitions.
+* **🆕 NEW** Compatibility with Material content tabs.
+* **🆕 NEW** Detection of diagrams added through client-side navigation.
+* **🆕 NEW** Centralized DOM observation for dynamically inserted content.
+* **🆕 NEW** Delayed rescanning and reprioritization when hidden content becomes visible.
+* **🆕 NEW** Generated wrappers include `mathjax_ignore` to reduce conflicts with MathJax rescans.
+
+## Themes
+
+* **🆕 NEW** Automatic light and dark theme adaptation for generated SVGs.
+* **🆕 NEW** Detection of common theme attributes such as:
+
+  * `data-theme`;
+  * `data-bs-theme`;
+  * `data-color-scheme`;
+  * `data-md-color-scheme`.
+* **🆕 NEW** Support for class-based theme detection.
+* **🆕 NEW** Optional fallback to `prefers-color-scheme`.
+* **🆕 NEW** Dynamic updates of existing SVGs when the site theme changes.
+* **🆕 NEW** Cached SVGs are adapted to the current theme after insertion without recompiling TeX.
+
+## Rendering performance
+
+* **🆕 NEW** Adaptive bounded Web Worker pool.
+* **🆕 NEW** Parallel rendering of independent diagrams.
+* **🆕 NEW** Configurable maximum worker count.
+* **🆕 NEW** CPU-aware worker-pool sizing.
+* **🆕 NEW** Optional device-memory-aware worker-pool sizing.
+* **🆕 NEW** Lazy worker initialization only when uncached work exists.
+* **🆕 NEW** One active TeX job per worker.
+* **🆕 NEW** Global rendering queue shared by all diagrams.
+* **🆕 NEW** Viewport-based render priority.
+* **🆕 NEW** Reprioritization when diagrams become visible.
+* **🆕 NEW** Dependency-cache affinity as a worker-selection tie-breaker.
+* **🆕 NEW** Pending-job deduplication for identical diagrams.
+* **🆕 NEW** Partial worker-pool recovery when one worker fails.
+
+## Caching
+
+* **🛠 EXTENDED** Persistent browser-side SVG caching through IndexedDB.
+* **🆕 NEW** Cache identities include the exact source and effective worker dataset.
+* **🆕 NEW** Pending identical diagrams can share one active compilation.
+* **🆕 NEW** Each worker retains its initialized WebAssembly runtime.
+* **🆕 NEW** Each worker maintains its own decompressed TeX dependency cache.
+* **🆕 NEW** Cache bypass can be enabled for an individual diagram with `data-disable-cache`.
+
+## Reliability and diagnostics
+
+* **🛠 EXTENDED** Finite rendering timeouts.
+* **🛠 EXTENDED** Configurable retry handling.
+* **🛠 EXTENDED** Worker restart after failure.
+* **🆕 NEW** Worker initialization retries.
+* **🆕 NEW** Failed workers can be replaced without stopping healthy workers.
+* **🆕 NEW** Per-diagram TeX console output with `data-show-console`.
+* **🆕 NEW** Per-diagram timing diagnostics with `data-debug-timings`.
+* **🆕 NEW** Custom global fallback error images.
+* **🆕 NEW** Custom per-diagram fallback images.
+* **🆕 NEW** Several fallback image designs are included in the package.
+* **🆕 NEW** A `tikzjax-load-finished` event is dispatched for each inserted SVG.
+
+---
+
+# Feature comparison
+
+| Feature                            | Historical TikZJax | `rod2ik/TikZJax` |
+| ---------------------------------- | -----------------: | ---------------: |
+| Browser-side TikZ rendering        |    **🧱 ORIGINAL** |              Yes |
+| `<script type="text/tikz">` blocks |    **🧱 ORIGINAL** |              Yes |
+| `tkz-tab` support                  |                  — |       **🆕 NEW** |
+| Optional runtime LaTeX packages    |                  — |       **🆕 NEW** |
+| Fenced MkDocs `tikzjax` blocks     |                  — |       **🆕 NEW** |
+| Global configuration API           |                  — |       **🆕 NEW** |
+| Per-diagram package configuration  |                  — |       **🆕 NEW** |
+| Per-diagram TikZ libraries         |                  — |       **🆕 NEW** |
+| Light and dark theme adaptation    |                  — |       **🆕 NEW** |
+| Dynamic Material theme updates     |                  — |       **🆕 NEW** |
+| Material tabs and admonitions      |                  — |       **🆕 NEW** |
+| Adaptive worker pool               |                  — |       **🆕 NEW** |
+| Parallel TeX rendering             |                  — |       **🆕 NEW** |
+| Viewport-priority scheduling       |                  — |       **🆕 NEW** |
+| Pending-job deduplication          |                  — |       **🆕 NEW** |
+| IndexedDB SVG cache                |    **🧱 ORIGINAL** |  **🛠 EXTENDED** |
+| Timeout and restart handling       |    **🧱 ORIGINAL** |  **🛠 EXTENDED** |
+| Custom fallback images             |                  — |       **🆕 NEW** |
+| TeX console diagnostics            |                  — |       **🆕 NEW** |
+| Worker timing diagnostics          |                  — |       **🆕 NEW** |
+
+---
+
+# Quick installation
+
+## jsDelivr
+
+```html
+<script src="/assets/javascripts/tikzjax.config.js"></script>
+
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css"
+>
+
+<script
+  src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"
+  defer
+></script>
+```
+
+## unpkg
+
+```html
+<script src="/assets/javascripts/tikzjax.config.js"></script>
+
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css"
+>
+
+<script
+  src="https://unpkg.com/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"
+  defer
+></script>
+```
+
+## npm
+
+```bash
+npm install @rod2ik/tikzjax
+```
+
+## Yarn
+
+```bash
+yarn add @rod2ik/tikzjax
+```
+
+See:
+
+* [Installation overview](installation/index.md);
+* [Standalone HTML installation](installation/html.md);
+* [MkDocs installation](installation/mkdocs.md).
+
+---
+
+# Recommended configuration
+
+```js
+window.TikzJaxOptions = {
+    renderTimeout: 30000,
+    maxRetries: 1,
+    restartWorkerOnFail: true,
+
+    workerPool: {
+        enabled: true,
+        maxWorkers: 3,
+        reserveCpuCores: 1,
+        useDeviceMemory: true,
+        initializationRetries: 1
+    }
+};
+```
+
+This enables:
+
+* **🆕 NEW** bounded parallel rendering;
+* **🆕 NEW** adaptive worker-pool sizing;
+* **🆕 NEW** worker initialization retries;
+* **🛠 EXTENDED** rendering retries;
+* **🛠 EXTENDED** failed-worker replacement;
+* **🛠 EXTENDED** finite rendering timeouts.
+
+See [Configuration](configuration.md).
+
+---
+
+# Basic TikZ example
+
+## HTML syntax
+
+**🧱 ORIGINAL**, retained and extended:
 
 ```html
 <script type="text/tikz">
 \begin{tikzpicture}
-    \draw (0,0) circle (1in);
+    \draw[->,very thick]
+        (0,0) -- (4,0)
+        node[right] {$x$};
+
+    \draw[->,very thick]
+        (0,0) -- (0,3)
+        node[above] {$y$};
+
+    \draw[very thick]
+        (0,0) -- (3,2);
 \end{tikzpicture}
 </script>
 ```
 
-renders as
+On the documentation site, TikZJax replaces this source with a generated SVG.
 
-<script type="text/tikz">
-\begin{tikzpicture}
-    \draw (0,0) circle (1in);
-\end{tikzpicture}
-</script>
+---
 
-### 2. TikZ Figures Example with `tikzjax` code block
+## MkDocs fenced syntax
 
-In MkDocs Markdown Pages, to draw TikZ Figures, you can also use the syntax with `tikzjax` code blocks:
+**🆕 NEW** in `rod2ik/TikZJax`:
 
-This code :
-
-````html
+````markdown
 ```tikzjax
 \begin{tikzpicture}
-    \draw (0,0) circle (1in);
+    \draw[->,very thick]
+        (0,0) -- (4,0)
+        node[right] {$x$};
+
+    \draw[->,very thick]
+        (0,0) -- (0,3)
+        node[above] {$y$};
+
+    \draw[very thick]
+        (0,0) -- (3,2);
 \end{tikzpicture}
 ```
 ````
 
-renders as:
+Fenced blocks use globally configured packages and TikZ libraries.
 
-<script type="text/tikz">
+Use an HTML source block when local `data-*` configuration is required.
+
+---
+
+# `tkz-tab` example
+
+Native `tkz-tab` rendering is **🆕 NEW** in `rod2ik/TikZJax`.
+
+```html
+<script
+  type="text/tikz"
+  data-tex-packages="tkz-tab"
+  data-width="760"
+  data-height="260"
+>
+\begin{tikzpicture}[
+    line width=1.2pt,
+    font=\Large
+]
+    \tkzTabInit[
+        lgt=6,
+        espcl=3,
+        lw=1.2pt
+    ]
+        {
+            $x$/1.5,
+            $f'(x)=3(x+1)(x-2)$/1.5,
+            $f(x)=x^3-3x^2-6x+1$/2.5
+        }
+        {
+            $-\infty$,
+            $-1$,
+            $2$,
+            $+\infty$
+        }
+
+    \tkzTabLine{
+        ,+,
+        z,
+        -,
+        z,
+        +,
+    }
+
+    \tkzTabVar{
+        -/$-\infty$,
+        +/$3$,
+        -/$-15$,
+        +/$+\infty$
+    }
+\end{tikzpicture}
+</script>
+```
+
+The package is loaded locally with:
+
+```html
+data-tex-packages="tkz-tab"
+```
+
+See the [`tkz-tab` examples](examples/tkz-tab.md).
+
+---
+
+# Optional package example
+
+Per-diagram package loading is **🆕 NEW**.
+
+```html
+<script
+  type="text/tikz"
+  data-tex-packages="physics"
+>
 \begin{tikzpicture}
-    \draw (0,0) circle (1in);
-\end{tikzpicture}
-</script>
-
-### 3. `tkz-tab` Basic Example with `<script>` tag
-
-In HTML Pages, to draw **tkz-tab** **math variation tables** / **math sign tables**, you can basically use this syntax :
-
-This code :
-
-```latex
-<script type="text/tikz">
-\begin{tikzpicture}[line width=1.2pt, font=\Large]
-    \tkzTabInit[lgt=5, espcl=3, lw=1.2pt]
-        {$x$/1.5 , $f'(x)=3x(x-2)$/1.5 , $f(x)=x^3-3x^2+2$/2.5}
-        {$-\infty$, $0$, $2$, $+\infty$}
-    \tkzTabLine{,+,z,-,z,+,}
-    \tkzTabVar{-/ $-\infty$, +/ $2$, -/ $-2$, +/ $+\infty$}
+    \node[
+        draw,
+        rounded corners,
+        inner sep=8pt
+    ] {
+        $\vb{F}=m\vb{a}$
+    };
 \end{tikzpicture}
 </script>
 ```
 
-renders as:
+Several packages or package options can be declared with compact JSON:
 
-<script type="text/tikz">
-\begin{tikzpicture}[line width=1.2pt, font=\Large]
-    \tkzTabInit[lgt=5, espcl=3, lw=1.2pt]
-        {$x$/1.5 , $f'(x)=3x(x-2)$/1.5 , $f(x)=x^3-3x^2+2$/2.5}
-        {$-\infty$, $0$, $2$, $+\infty$}
-    \tkzTabLine{,+,z,-,z,+,}
-    \tkzTabVar{-/ $-\infty$, +/ $2$, -/ $-2$, +/ $+\infty$}
-\end{tikzpicture}
-</script>
-
-### 4. `tkz-tab` Basic Example with `tikzjax` code block
-
-In MkDocs Markdown Pages, to draw **tkz-tab** **math variation tables** / **math sign tables**, you can basically use this syntax :
-
-This code :
-
-````latex
-```tikzjax
-\begin{tikzpicture}[line width=1.2pt, font=\Large]
-    \tkzTabInit[lgt=5, espcl=3, lw=1.2pt]
-        {$x$/1.5 , $f'(x)=3x(x-2)$/1.5 , $f(x)=x^3-3x^2+2$/2.5}
-        {$-\infty$, $0$, $2$, $+\infty$}
-    \tkzTabLine{,+,z,-,z,+,}
-    \tkzTabVar{-/ $-\infty$, +/ $2$, -/ $-2$, +/ $+\infty$}
-\end{tikzpicture}
-```
-````
-
-renders as:
-
-<script type="text/tikz">
-\begin{tikzpicture}[line width=1.2pt, font=\Large]
-    \tkzTabInit[lgt=5, espcl=3, lw=1.2pt]
-        {$x$/1.5 , $f'(x)=3x(x-2)$/1.5 , $f(x)=x^3-3x^2+2$/2.5}
-        {$-\infty$, $0$, $2$, $+\infty$}
-    \tkzTabLine{,+,z,-,z,+,}
-    \tkzTabVar{-/ $-\infty$, +/ $2$, -/ $-2$, +/ $+\infty$}
-\end{tikzpicture}
-</script>
-
-### 5. More Advanced Examples
-
-For more advanced exemples, please see the [Advanced Examples Page](./advanced-examples.md).
-
-## Intentionally invalid Tikz Code
-
-The following block is **intentionally wrong** (it has an **intentional syntax error**) to let you check the configured error image is displayed properly.
-
-````latex
-```tikzjax
+```html
+<script
+  type="text/tikz"
+  data-tex-packages='{"physics":"","xcolor":"dvipsnames"}'
+>
 \begin{tikzpicture}
-    \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
+    \node[text=NavyBlue] {
+        $\vb{F}=m\vb{a}$
+    };
+\end{tikzpicture}
+</script>
 ```
-````
 
-renders as:
+See [Global and Local Configuration](configuration-scopes.md).
 
-```tikzjax
+---
+
+# TikZ library example
+
+Per-diagram TikZ libraries are **🆕 NEW**.
+
+```html
+<script
+  type="text/tikz"
+  data-tikz-libraries="arrows.meta,positioning"
+>
 \begin{tikzpicture}
-    \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
+    \node (A) {
+        Start
+    };
+
+    \node[
+        right=2cm of A
+    ] (B) {
+        End
+    };
+
+    \draw[-{Stealth}]
+        (A) -- (B);
+\end{tikzpicture}
+</script>
 ```
 
-## Where to go next
+TikZ libraries and LaTeX packages use separate configuration fields.
 
-- [Installation](installation/index.md): load TikZJax on a Standalone HTML page, or in MkDocs.
-- [Basic Examples](basic-examples.md): for Basic Examples.
-- [Advanced Examples](advanced-examples.md): for Advanced Examples.
-- [Configuration Overview](configuration.md): understand all global options.
-- [Themes](themes.md): light/dark rendering and Material for MkDocs.
-- [Fallback Error Images](fallback-error-images.md): understand how to customize Fallback Error Images for broken codes.
-- [Cache and Performance](cache-performance.md): understand cache and performance issues.
-- [API Reference](api-reference.md): An exhaustive API-Reference.
-- [Architecture](architecture.md): Some Information about the Architecture of the Project. For Devs.
-- [Troubleshooting](troubleshooting.md): common issues and fixes.
+For example, `braids` is a TikZ library:
+
+```html
+data-tikz-libraries="braids"
+```
+
+---
+
+# Light and dark themes
+
+Theme adaptation is **🆕 NEW**.
+
+A Material for MkDocs configuration can use:
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        selector: "body",
+        attribute: "data-md-color-scheme",
+        darkValue: "slate",
+        lightValue: "default",
+        fallbackTheme: "light",
+        followSystemTheme: true
+    }
+};
+```
+
+TikZJax can update already-rendered and cached SVGs after a theme change without recompiling TeX.
+
+See [Light and Dark Themes](themes.md).
+
+---
+
+# Parallel rendering
+
+The adaptive Web Worker pool is **🆕 NEW**.
+
+```text
+global render queue
+    |
+    +-- worker 1 --> diagram A
+    +-- worker 2 --> diagram B
+    +-- worker 3 --> diagram C
+```
+
+The pool:
+
+* renders independent diagrams concurrently;
+* limits the maximum number of workers;
+* reserves CPU capacity for the browser;
+* can account for device memory;
+* initializes workers lazily;
+* replaces failed workers;
+* prioritizes visible diagrams;
+* avoids compiling identical pending jobs several times.
+
+See [Parallel Rendering and the Worker Pool](parallel-rendering.md).
+
+---
+
+# Cache and performance
+
+Browser-side SVG caching is an **🛠 EXTENDED** historical capability.
+
+The current implementation also provides:
+
+* **🆕 NEW** rendering identities based on exact source and effective options;
+* **🆕 NEW** pending-job deduplication;
+* **🆕 NEW** worker-local TeX dependency caches;
+* **🆕 NEW** worker runtime reuse;
+* **🆕 NEW** viewport-priority scheduling;
+* **🆕 NEW** local cache bypass.
+
+Disable the persistent SVG cache for one debugging block with:
+
+```html
+data-disable-cache="true"
+```
+
+See [Cache and Performance](cache-performance.md).
+
+---
+
+# Error handling
+
+Timeout, retry, and worker-restart behavior are **🛠 EXTENDED**.
+
+Custom fallback images are **🆕 NEW**.
+
+```js
+window.TikzJaxOptions = {
+    renderTimeout: 30000,
+    maxRetries: 1,
+    restartWorkerOnFail: true,
+
+    brokenImageSrc:
+        "https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/assets/broken-image.svg"
+};
+```
+
+A local fallback can be configured with:
+
+```html
+data-broken-image-src="/assets/images/local-error.svg"
+```
+
+See [Fallback and Error Images](fallback-error-images.md).
+
+---
+
+# Intentionally invalid example
+
+The following source is intentionally invalid so that the fallback path can be tested.
+
+Using a complete document with an undefined command produces a more predictable failure than omitting an environment terminator.
+
+```html
+<script
+  type="text/tikz"
+  data-disable-cache="true"
+  data-show-console="true"
+>
+\begin{tikzpicture}
+    \ThisCommandDoesNotExist
+\end{tikzpicture}
+</script>
+```
+
+The configured fallback image should appear after all permitted attempts fail.
+
+---
+
+# Documentation
+
+## Getting started
+
+* [Installation overview](installation/index.md)
+* [Standalone HTML installation](installation/html.md)
+* [MkDocs installation](installation/mkdocs.md)
+* [Configuration](configuration.md)
+* [Global and Local Configuration](configuration-scopes.md)
+
+## Rendering and performance
+
+* [Parallel Rendering and the Worker Pool](parallel-rendering.md)
+* [Cache and Performance](cache-performance.md)
+* [Runtime Architecture](architecture.md)
+
+## Appearance and errors
+
+* [Light and Dark Themes](themes.md)
+* [Fallback and Error Images](fallback-error-images.md)
+* [Troubleshooting](troubleshooting.md)
+
+## Reference and examples
+
+* [API Reference](api-reference.md)
+* [Examples](examples/index.md)
+* [TikZ examples](examples/tikz.md)
+* [`tkz-tab` examples](examples/tkz-tab.md)
+* [`physics` examples](examples/physics.md)
+* [`circuitikz` examples](examples/circuitikz.md)
+* [`chemfig` examples](examples/chemfig.md)
+* [`yquant` examples](examples/yquant.md)
+* [`tikz-feynhand` examples](examples/tikz-feynhand.md)
+* [`pgf-spectra` examples](examples/pgf-spectra.md)
+* [`kinematikz` examples](examples/kinematikz.md)
+
+---
+
+# Credits
+
+TikZJax exists because of the foundational work of the original TikZJax, Web2JS, and DVI-to-HTML projects and their contributors.
+
+`rod2ik/TikZJax` preserves the original browser-side TikZ rendering concept while adding **🆕 NEW** functionality for:
+
+* `tkz-tab`;
+* optional package loading;
+* global and local configuration;
+* MkDocs fenced blocks;
+* light and dark themes;
+* adaptive parallel rendering;
+* dynamic content;
+* expanded caching;
+* diagnostics;
+* fallback images.
+
+Please also visit and credit the upstream projects:
+
+* [kisonecat/tikzjax](https://github.com/kisonecat/tikzjax);
+* [drgrice1/tikzjax](https://github.com/drgrice1/tikzjax).
