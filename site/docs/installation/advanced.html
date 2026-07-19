@@ -223,53 +223,85 @@
 
         <h2>7. physics</h2>
 
-        <script type="text/tikz" data-tex-packages="physics" data-tikz-libraries="arrows.meta,decorations.pathmorphing">
-        \begin{tikzpicture}[
-            >=Stealth,
-            thick,
-            mass/.style={
-                draw=blue!70!black,
-                fill=blue!10,
-                rounded corners,
-                minimum width=1.3cm,
-                minimum height=1cm
-            }
+        <script type="text/tikz" data-tex-packages="physics"
+            data-tikz-libraries="arrows.meta,positioning,decorations.pathmorphing" data-show-console="true"
+            data-disable-cache="true" data-width="520" data-height="280">
+    \begin{tikzpicture}[
+        >=Stealth,
+        thick,
+        mass/.style={
+            draw=blue!70!black,
+            fill=blue!10,
+            rounded corners,
+            minimum width=1.4cm,
+            minimum height=1cm
+        }
+    ]
+
+        \draw[
+            very thick
         ]
-            \draw[very thick]
-                (-3,-0.8) -- (-3,0.8);
+            (-3,-0.8) -- (-3,0.8);
 
+        \foreach \y in {-0.7,-0.4,...,0.8}
             \draw[
-                decorate,
-                decoration={
-                    coil,
-                    aspect=0.45,
-                    segment length=5pt,
-                    amplitude=5pt
-                },
-                blue!70!black,
-                very thick
+                gray
             ]
-                (-3,0) -- (0,0);
+                (-3.25,\y-0.2) -- (-3,\y);
 
-            \node[mass] (m) at (0.8,0) {
-                $m$
+        \draw[
+            decorate,
+            decoration={
+                coil,
+                aspect=0.45,
+                segment length=5pt,
+                amplitude=5pt
+            },
+            blue!70!black,
+            very thick
+        ]
+            (-3,0) -- (0,0);
+
+        \node[
+            mass
+        ] (m) at (0.8,0) {
+            $m$
+        };
+
+        \draw[
+            -{Stealth[length=4mm]},
+            red!75!black,
+            very thick
+        ]
+            (m.west) -- ++(-1.4,0)
+            node[
+                midway,
+                above
+            ] {
+                $\vb{F}=-k\vb{x}$
             };
 
-            \draw[
-                -{Stealth[length=4mm]},
-                red!75!black,
-                very thick
-            ]
-                (m.west) -- ++(-1.4,0)
-                node[midway, above] {
-                    $\vb{F}$
-                };
+        \draw[
+            ->,
+            gray!70!black
+        ]
+            (-3,-1.2) -- (3,-1.2)
+            node[right] {$x$};
 
-            \draw[->, gray!70!black]
-                (-3,-1.2) -- (3,-1.2)
-                node[right] {$x$};
-        \end{tikzpicture}
-        </script>
+        \node[
+            draw,
+            rounded corners,
+            fill=yellow!12,
+            below=1.6cm of m,
+            align=center,
+            inner sep=7pt
+        ] {
+            $\displaystyle m\dv[2]{x}{t}+kx=0$\\[4pt]
+            $\displaystyle x(t)=A\cos\qty(\omega t+\varphi)$
+        };
+
+    \end{tikzpicture}
+    </script>
 
         <h2>8. circuitikz</h2>
 
