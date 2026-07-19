@@ -13,7 +13,7 @@ window.TikzJaxOptions = {
     },
 
     tkzTab: {
-        lineWidth: "2pt"
+        lineWidth: "1.2pt"
     }
 };
 
