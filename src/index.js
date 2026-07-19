@@ -1170,19 +1170,145 @@ const getEffectiveBackgroundColor = (
     element,
     fallbackTheme = 'light'
 ) => {
+    const readBackgroundColor = (node) => {
+        if (!(node instanceof Element)) {
+            return '';
+        }
+
+        const backgroundColor =
+            window
+                .getComputedStyle(node)
+                .backgroundColor;
+
+        if (
+            !backgroundColor ||
+            isTransparentValue(
+                backgroundColor
+            )
+        ) {
+            return '';
+        }
+
+        return backgroundColor;
+    };
+
+    const readFinalBackgroundColor = (
+        target
+    ) => {
+        if (
+            !(target instanceof Element) ||
+            !target.parentElement
+        ) {
+            return '';
+        }
+
+        /*
+         * La cible réelle peut être en cours de transition.
+         *
+         * Une copie nouvellement insérée ne possède aucun
+         * ancien état calculé : avec transition:none, son
+         * background correspond immédiatement à la couleur
+         * finale du nouveau thème.
+         */
+        const probe =
+            target.cloneNode(false);
+
+        probe.setAttribute(
+            'aria-hidden',
+            'true'
+        );
+
+        probe.style.setProperty(
+            'position',
+            'fixed',
+            'important'
+        );
+
+        probe.style.setProperty(
+            'left',
+            '-100000px',
+            'important'
+        );
+
+        probe.style.setProperty(
+            'top',
+            '-100000px',
+            'important'
+        );
+
+        probe.style.setProperty(
+            'visibility',
+            'hidden',
+            'important'
+        );
+
+        probe.style.setProperty(
+            'pointer-events',
+            'none',
+            'important'
+        );
+
+        probe.style.setProperty(
+            'transition',
+            'none',
+            'important'
+        );
+
+        probe.style.setProperty(
+            'animation',
+            'none',
+            'important'
+        );
+
+        target.parentElement.appendChild(
+            probe
+        );
+
+        const backgroundColor =
+            readBackgroundColor(probe);
+
+        probe.remove();
+
+        return backgroundColor;
+    };
+
+    /*
+     * Cas des pages standalone configurées avec :
+     *
+     * theme: {
+     *     selector: ".app"
+     * }
+     *
+     * On récupère directement la couleur finale de la
+     * cible configurée, sans attendre sa transition.
+     */
+    const configuredTarget =
+        element instanceof Element
+            ? getConfiguredThemeTarget(
+                element
+            )
+            : null;
+
+    const configuredBackground =
+        readFinalBackgroundColor(
+            configuredTarget
+        );
+
+    if (configuredBackground) {
+        return configuredBackground;
+    }
+
+    /*
+     * Comportement historique conservé pour MkDocs et
+     * les pages sans cible de thème configurée.
+     */
     let node = element;
 
     while (node) {
-        const computed =
-            window.getComputedStyle(node);
-
         const backgroundColor =
-            computed.backgroundColor;
+            readBackgroundColor(node);
 
-        if (
-            backgroundColor &&
-            !isTransparentValue(backgroundColor)
-        ) {
+        if (backgroundColor) {
             return backgroundColor;
         }
 
@@ -2796,28 +2922,46 @@ const getBrokenMkDocsNodeText = (
 const isLikelyBrokenMkDocsTikzContinuationNode = (
     node
 ) => {
-    /*
-     * Après reconnaissance d'une ouverture TikZJax valide,
-     * le contenu peut utiliser une syntaxe propre à n'importe
-     * quel package.
-     *
-     * Il ne faut donc pas exiger que chaque bloc commence par
-     * une commande TeX avec un antislash.
-     *
-     * Exemples valides :
-     *
-     *     h q[0];
-     *     cnot q[1] | q[0];
-     *     measure q;
-     */
-    return Boolean(
-        node &&
-        [
-            'P',
-            'PRE',
-            'BLOCKQUOTE'
-        ].includes(node.tagName)
-    );
+    if (
+        !node ||
+        !['P', 'PRE', 'BLOCKQUOTE'].includes(
+            node.tagName
+        )
+    ) {
+        return false;
+    }
+
+    const text = String(
+        getBrokenMkDocsNodeText(node) || ''
+    )
+        .replace(/\r\n?/g, '\n')
+        .trim();
+
+    if (!text) {
+        return false;
+    }
+
+    // If a parser preserved </script> as text,
+    // this is definitely still part of the broken source.
+    if (/<\/script\s*>/i.test(text)) {
+        return true;
+    }
+
+    // Very common TeX/TikZ continuations.
+    if (
+        /^\\/.test(text) ||
+        /^[{}[\]$%]/.test(text)
+    ) {
+        return true;
+    }
+
+    // Fallback: if the paragraph still contains TeX commands,
+    // it is probably part of the same broken TikZ source.
+    if (/\\[A-Za-z@]+/.test(text)) {
+        return true;
+    }
+
+    return false;
 };
 
 const extractBrokenMkDocsTikzBody = (
@@ -2826,181 +2970,101 @@ const extractBrokenMkDocsTikzBody = (
     const consumedNodes = [];
     const sourceParts = [];
 
-    const container =
-        openingParagraph?.parentElement;
-
     const firstBodyNode =
-        openingParagraph?.nextElementSibling;
+        openingParagraph.nextElementSibling;
 
-    /*
-     * Python-Markdown transforme le `>` isolé de la
-     * balise d'ouverture en BLOCKQUOTE.
-     *
-     * Cette condition limite la réparation au cas précis
-     * rencontré dans les admonitions et les Content Tabs.
-     */
+    // The exact Markdown failure starts by turning the isolated
+    // `>` into a blockquote. We keep this requirement so that
+    // ordinary HTML examples are not converted accidentally.
     if (
-        !container ||
         !firstBodyNode ||
-        firstBodyNode.parentElement !==
-            container ||
-        firstBodyNode.tagName !==
-            'BLOCKQUOTE'
+        firstBodyNode.tagName !== 'BLOCKQUOTE'
     ) {
         return null;
     }
 
-    const buildResult = () => {
-        const sourceText =
-            sourceParts
-                .join('\n\n')
-                .trim();
-
-        /*
-         * Une source TikZJax doit au minimum contenir
-         * une commande TeX.
-         */
-        if (
-            !sourceText ||
-            !/\\[A-Za-z@]+/.test(
-                sourceText
-            )
-        ) {
-            return null;
-        }
-
-        return {
-            consumedNodes,
-            sourceText
-        };
-    };
-
-    const hasSwallowedClosingTag = (
-        node,
-        nodeText
-    ) => {
-        /*
-         * Markdown produit initialement :
-         *
-         *     dernière ligne TeX
-         *     </script>
-         *
-         * Comme l'ouverture <script ...> a été échappée,
-         * le parseur HTML du navigateur supprime le
-         * </script> orphelin.
-         *
-         * En revanche, le saut de ligne qui le précédait
-         * reste présent dans textContent.
-         *
-         * Un PRE se termine naturellement par un saut de
-         * ligne : il ne doit donc jamais servir de marqueur
-         * de fin.
-         */
-        return (
-            node?.tagName !== 'PRE' &&
-            /(?:\r\n?|\n)[\t ]*$/.test(
-                nodeText
-            )
-        );
-    };
-
     let currentNode = firstBodyNode;
+    let consumedAtLeastOneNode = false;
 
-    /*
-     * Protection contre une recherche accidentellement
-     * trop longue.
-     */
-    const maximumConsumedNodes = 256;
+    // Prevent accidental runaway scans.
+    const maximumConsumedNodes = 64;
 
     while (
         currentNode &&
-        currentNode.parentElement ===
-            container &&
-        consumedNodes.length <
-            maximumConsumedNodes
+        consumedNodes.length < maximumConsumedNodes
     ) {
-        if (
+        // First node must be the initial blockquote.
+        // Following nodes may be P / PRE / BLOCKQUOTE
+        // if they still look like TeX/TikZ continuation.
+        if (!consumedAtLeastOneNode) {
+            if (currentNode.tagName !== 'BLOCKQUOTE') {
+                return null;
+            }
+        } else if (
             !isLikelyBrokenMkDocsTikzContinuationNode(
                 currentNode
             )
         ) {
-            return null;
+            break;
         }
 
-        const nodeText = String(
-            getBrokenMkDocsNodeText(
-                currentNode
-            ) || ''
-        )
-            .replace(/\r\n?/g, '\n');
+        if (
+            !['P', 'PRE', 'BLOCKQUOTE'].includes(
+                currentNode.tagName
+            )
+        ) {
+            break;
+        }
 
-        /*
-         * Cas où </script> aurait malgré tout été conservé,
-         * par exemple après une insertion dynamique.
-         */
+        const nodeText = getBrokenMkDocsNodeText(
+            currentNode
+        );
+
         const closingMatch =
-            /<\/script\s*>/i.exec(
-                nodeText
-            );
+            /<\/script\s*>/i.exec(nodeText);
 
         if (closingMatch) {
-            const trailingText =
-                nodeText.slice(
-                    closingMatch.index +
+            const trailingText = nodeText.slice(
+                closingMatch.index +
                     closingMatch[0].length
-                );
+            );
 
-            /*
-             * Ne jamais absorber du contenu situé après
-             * la fermeture réelle.
-             */
+            // Do not consume unrelated content after </script>.
             if (trailingText.trim()) {
                 return null;
             }
 
             sourceParts.push(
-                nodeText.slice(
-                    0,
-                    closingMatch.index
-                )
+                nodeText.slice(0, closingMatch.index)
             );
 
-            consumedNodes.push(
-                currentNode
-            );
+            consumedNodes.push(currentNode);
 
-            return buildResult();
+            return {
+                consumedNodes,
+                sourceText: sourceParts
+                    .join('\n\n')
+                    .trim()
+            };
         }
 
         sourceParts.push(nodeText);
+        consumedNodes.push(currentNode);
+        consumedAtLeastOneNode = true;
 
-        consumedNodes.push(
-            currentNode
-        );
-
-        /*
-         * Cas normal avec Python-Markdown :
-         * </script> a disparu du DOM, mais son saut de
-         * ligne précédent permet d'identifier le dernier
-         * paragraphe du script.
-         */
-        if (
-            hasSwallowedClosingTag(
-                currentNode,
-                nodeText
-            )
-        ) {
-            return buildResult();
-        }
-
-        currentNode =
-            currentNode.nextElementSibling;
+        currentNode = currentNode.nextElementSibling;
     }
 
-    /*
-     * Sans terminaison fiable, aucune modification du DOM.
-     */
-    return null;
+    if (!sourceParts.length) {
+        return null;
+    }
+
+    return {
+        consumedNodes,
+        sourceText: sourceParts
+            .join('\n\n')
+            .trim()
+    };
 };
 
 const repairBrokenMkDocsTikzScripts = (

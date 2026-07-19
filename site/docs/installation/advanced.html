@@ -7,7 +7,8 @@
 
     <title>Test TikZJax on a custom HTML Page with Light/Dark Themes</title>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css"> -->
+    <link rel="stylesheet" href="https://rod2ik.github.io/cdn/tikzjax/fonts.min.css">
 
     <script>
         window.TikzJaxOptions = {
@@ -36,7 +37,8 @@
         };
     </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script> -->
+    <script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.min.js"></script>
 
     <style>
         body {
@@ -60,6 +62,24 @@
             background: #1b1e2b;
             color: #ffffff;
         }
+
+        /*
+         * tkz-tab uses this variable for the masking stroke drawn
+         * between the two vertical bars of a forbidden value.
+         *
+         * TikZJax also writes the variable inline on each wrapper.
+         * The !important rules below ensure that the standalone
+         * theme class remains the source of truth when the button
+         * switches between light and dark modes.
+         */
+
+        /* .app.light .tikzjax-wrapper {
+            --tikzjax-background-color: #ffffff !important;
+        }
+
+        .app.dark .tikzjax-wrapper {
+            --tikzjax-background-color: #1b1e2b !important;
+        } */
 
         button {
             margin-bottom: 1rem;
