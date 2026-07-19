@@ -94,6 +94,39 @@ This example creates:
 * a controlled-NOT gate;
 * a measurement on both qubits.
 
+<script
+    type="text/tikz"
+    data-tex-packages="yquant"
+>
+\begin{tikzpicture}
+\begin{yquant}
+    qubit q[2];
+
+    h q[0];
+    cnot q[1] | q[0];
+
+    measure q;
+\end{yquant}
+\end{tikzpicture}
+</script>
+
+!!! warning
+    <script
+      type="text/tikz"
+      data-tex-packages="yquant"
+    >
+    \begin{tikzpicture}
+    \begin{yquant}
+        qubit q[2];
+
+        h q[0];
+        cnot q[1] | q[0];
+
+        measure q;
+    \end{yquant}
+    \end{tikzpicture}
+    </script>
+
 === "Rendering"
 
     <script

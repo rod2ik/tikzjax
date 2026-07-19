@@ -8,7 +8,11 @@
 [![Packages](https://img.shields.io/badge/optional%20packages-8-success?style=flat-square&logo=latex&logoColor=white)](#supported-optional-packages)
 [![Browser TeX](https://img.shields.io/badge/TeX-WebAssembly-success?style=flat-square)](architecture.md)
 
-TikZJax renders **TikZ and supported LaTeX packages directly in the browser**.
+**TikZJax** renders **TikZ and supported TikZ-based LaTeX packages directly in the browser**.  
+It focuses on singular TikZ-based LaTeX packages, that do NOT already exist on:
+
+* **MathJax**, 
+* neither on other main web drawing libraries, e.g. **Graphviz**, or **Mermaid**, etc..
 
 It can be used inside:
 
@@ -36,9 +40,63 @@ The minimal MkDocs repository can be cloned and run locally to test the integrat
 
 ---
 
+## Examples
+
+### Pure TikZ
+
+![](https://raw.githubusercontent.com/rod2ik/tikzjax/main/assets/tikz-light.png)
+![](https://raw.githubusercontent.com/rod2ik/tikzjax/main/assets/tikz-dark.png)
+
+### tkz-tab
+
+![](https://raw.githubusercontent.com/rod2ik/tikzjax/main/assets/tkz-tab-light.png)
+![](https://raw.githubusercontent.com/rod2ik/tikzjax/main/assets/tkz-tab-dark.png)
+
+### Physics
+
+![](https://raw.githubusercontent.com/rod2ik/tikzjax/main/assets/physics-light.png)
+![](https://raw.githubusercontent.com/rod2ik/tikzjax/main/assets/physics-dark.png)
+
+### Circuitikz
+
+![](https://raw.githubusercontent.com/rod2ik/tikzjax/main/assets/circuitikz-light.png)
+![](https://raw.githubusercontent.com/rod2ik/tikzjax/main/assets/circuitikz-dark.png)
+
+### Kinematikz
+
+![](https://raw.githubusercontent.com/rod2ik/tikzjax/main/assets/kinematikz-light.png)
+![](https://raw.githubusercontent.com/rod2ik/tikzjax/main/assets/kinematikz-dark.png)
+
+### Chemfig
+
+![](https://raw.githubusercontent.com/rod2ik/tikzjax/main/assets/chemfig-light.png)
+![](https://raw.githubusercontent.com/rod2ik/tikzjax/main/assets/chemfig-dark.png)
+
+### Yquant
+
+![](https://raw.githubusercontent.com/rod2ik/tikzjax/main/assets/yquant-light.png)
+![](https://raw.githubusercontent.com/rod2ik/tikzjax/main/assets/yquant-dark.png)
+
+### Tikz-feynhand
+
+![](https://raw.githubusercontent.com/rod2ik/tikzjax/main/assets/tikz-feynhand-light.png)
+![](https://raw.githubusercontent.com/rod2ik/tikzjax/main/assets/tikz-feynhand-dark.png)
+
+### Braids
+
+![](https://raw.githubusercontent.com/rod2ik/tikzjax/main/assets/braids-light.png)
+![](https://raw.githubusercontent.com/rod2ik/tikzjax/main/assets/braids-dark.png)
+
+### Pgf-spectra
+
+![](https://raw.githubusercontent.com/rod2ik/tikzjax/main/assets/pgf-spectra-light.png)
+![](https://raw.githubusercontent.com/rod2ik/tikzjax/main/assets/pgf-spectra-dark.png)
+
+---
+
 ## Project lineage
 
-`rod2ik/TikZJax` is based on the historical work of:
+`rod2ik/TikZJax` is based on the historical great works 👏👏👏 of:
 
 * [kisonecat/tikzjax](https://github.com/kisonecat/tikzjax), created by [Jim Fowler](https://github.com/kisonecat);
 * [drgrice1/tikzjax](https://github.com/drgrice1/tikzjax), created by [Glenn Rice](https://github.com/drgrice1).

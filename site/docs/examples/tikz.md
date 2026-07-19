@@ -364,8 +364,8 @@ This larger example uses only standard TikZ functionality.
 
         \draw[
             step=1cm,
-            gray!25,
-            very thin
+            gray!95,
+            thin
         ]
             (-5,-5) grid (5,5);
 
@@ -425,8 +425,8 @@ This larger example uses only standard TikZ functionality.
 
         \draw[
             step=1cm,
-            gray!25,
-            very thin
+            gray!95,
+            thin
         ]
             (-5,-5) grid (5,5);
 

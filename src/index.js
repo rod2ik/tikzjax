@@ -2796,46 +2796,28 @@ const getBrokenMkDocsNodeText = (
 const isLikelyBrokenMkDocsTikzContinuationNode = (
     node
 ) => {
-    if (
-        !node ||
-        !['P', 'PRE', 'BLOCKQUOTE'].includes(
-            node.tagName
-        )
-    ) {
-        return false;
-    }
-
-    const text = String(
-        getBrokenMkDocsNodeText(node) || ''
-    )
-        .replace(/\r\n?/g, '\n')
-        .trim();
-
-    if (!text) {
-        return false;
-    }
-
-    // If a parser preserved </script> as text,
-    // this is definitely still part of the broken source.
-    if (/<\/script\s*>/i.test(text)) {
-        return true;
-    }
-
-    // Very common TeX/TikZ continuations.
-    if (
-        /^\\/.test(text) ||
-        /^[{}[\]$%]/.test(text)
-    ) {
-        return true;
-    }
-
-    // Fallback: if the paragraph still contains TeX commands,
-    // it is probably part of the same broken TikZ source.
-    if (/\\[A-Za-z@]+/.test(text)) {
-        return true;
-    }
-
-    return false;
+    /*
+     * Après reconnaissance d'une ouverture TikZJax valide,
+     * le contenu peut utiliser une syntaxe propre à n'importe
+     * quel package.
+     *
+     * Il ne faut donc pas exiger que chaque bloc commence par
+     * une commande TeX avec un antislash.
+     *
+     * Exemples valides :
+     *
+     *     h q[0];
+     *     cnot q[1] | q[0];
+     *     measure q;
+     */
+    return Boolean(
+        node &&
+        [
+            'P',
+            'PRE',
+            'BLOCKQUOTE'
+        ].includes(node.tagName)
+    );
 };
 
 const extractBrokenMkDocsTikzBody = (
@@ -2844,101 +2826,181 @@ const extractBrokenMkDocsTikzBody = (
     const consumedNodes = [];
     const sourceParts = [];
 
-    const firstBodyNode =
-        openingParagraph.nextElementSibling;
+    const container =
+        openingParagraph?.parentElement;
 
-    // The exact Markdown failure starts by turning the isolated
-    // `>` into a blockquote. We keep this requirement so that
-    // ordinary HTML examples are not converted accidentally.
+    const firstBodyNode =
+        openingParagraph?.nextElementSibling;
+
+    /*
+     * Python-Markdown transforme le `>` isolé de la
+     * balise d'ouverture en BLOCKQUOTE.
+     *
+     * Cette condition limite la réparation au cas précis
+     * rencontré dans les admonitions et les Content Tabs.
+     */
     if (
+        !container ||
         !firstBodyNode ||
-        firstBodyNode.tagName !== 'BLOCKQUOTE'
+        firstBodyNode.parentElement !==
+            container ||
+        firstBodyNode.tagName !==
+            'BLOCKQUOTE'
     ) {
         return null;
     }
 
-    let currentNode = firstBodyNode;
-    let consumedAtLeastOneNode = false;
+    const buildResult = () => {
+        const sourceText =
+            sourceParts
+                .join('\n\n')
+                .trim();
 
-    // Prevent accidental runaway scans.
-    const maximumConsumedNodes = 64;
+        /*
+         * Une source TikZJax doit au minimum contenir
+         * une commande TeX.
+         */
+        if (
+            !sourceText ||
+            !/\\[A-Za-z@]+/.test(
+                sourceText
+            )
+        ) {
+            return null;
+        }
+
+        return {
+            consumedNodes,
+            sourceText
+        };
+    };
+
+    const hasSwallowedClosingTag = (
+        node,
+        nodeText
+    ) => {
+        /*
+         * Markdown produit initialement :
+         *
+         *     dernière ligne TeX
+         *     </script>
+         *
+         * Comme l'ouverture <script ...> a été échappée,
+         * le parseur HTML du navigateur supprime le
+         * </script> orphelin.
+         *
+         * En revanche, le saut de ligne qui le précédait
+         * reste présent dans textContent.
+         *
+         * Un PRE se termine naturellement par un saut de
+         * ligne : il ne doit donc jamais servir de marqueur
+         * de fin.
+         */
+        return (
+            node?.tagName !== 'PRE' &&
+            /(?:\r\n?|\n)[\t ]*$/.test(
+                nodeText
+            )
+        );
+    };
+
+    let currentNode = firstBodyNode;
+
+    /*
+     * Protection contre une recherche accidentellement
+     * trop longue.
+     */
+    const maximumConsumedNodes = 256;
 
     while (
         currentNode &&
-        consumedNodes.length < maximumConsumedNodes
+        currentNode.parentElement ===
+            container &&
+        consumedNodes.length <
+            maximumConsumedNodes
     ) {
-        // First node must be the initial blockquote.
-        // Following nodes may be P / PRE / BLOCKQUOTE
-        // if they still look like TeX/TikZ continuation.
-        if (!consumedAtLeastOneNode) {
-            if (currentNode.tagName !== 'BLOCKQUOTE') {
-                return null;
-            }
-        } else if (
+        if (
             !isLikelyBrokenMkDocsTikzContinuationNode(
                 currentNode
             )
         ) {
-            break;
+            return null;
         }
 
-        if (
-            !['P', 'PRE', 'BLOCKQUOTE'].includes(
-                currentNode.tagName
-            )
-        ) {
-            break;
-        }
+        const nodeText = String(
+            getBrokenMkDocsNodeText(
+                currentNode
+            ) || ''
+        )
+            .replace(/\r\n?/g, '\n');
 
-        const nodeText = getBrokenMkDocsNodeText(
-            currentNode
-        );
-
+        /*
+         * Cas où </script> aurait malgré tout été conservé,
+         * par exemple après une insertion dynamique.
+         */
         const closingMatch =
-            /<\/script\s*>/i.exec(nodeText);
-
-        if (closingMatch) {
-            const trailingText = nodeText.slice(
-                closingMatch.index +
-                    closingMatch[0].length
+            /<\/script\s*>/i.exec(
+                nodeText
             );
 
-            // Do not consume unrelated content after </script>.
+        if (closingMatch) {
+            const trailingText =
+                nodeText.slice(
+                    closingMatch.index +
+                    closingMatch[0].length
+                );
+
+            /*
+             * Ne jamais absorber du contenu situé après
+             * la fermeture réelle.
+             */
             if (trailingText.trim()) {
                 return null;
             }
 
             sourceParts.push(
-                nodeText.slice(0, closingMatch.index)
+                nodeText.slice(
+                    0,
+                    closingMatch.index
+                )
             );
 
-            consumedNodes.push(currentNode);
+            consumedNodes.push(
+                currentNode
+            );
 
-            return {
-                consumedNodes,
-                sourceText: sourceParts
-                    .join('\n\n')
-                    .trim()
-            };
+            return buildResult();
         }
 
         sourceParts.push(nodeText);
-        consumedNodes.push(currentNode);
-        consumedAtLeastOneNode = true;
 
-        currentNode = currentNode.nextElementSibling;
+        consumedNodes.push(
+            currentNode
+        );
+
+        /*
+         * Cas normal avec Python-Markdown :
+         * </script> a disparu du DOM, mais son saut de
+         * ligne précédent permet d'identifier le dernier
+         * paragraphe du script.
+         */
+        if (
+            hasSwallowedClosingTag(
+                currentNode,
+                nodeText
+            )
+        ) {
+            return buildResult();
+        }
+
+        currentNode =
+            currentNode.nextElementSibling;
     }
 
-    if (!sourceParts.length) {
-        return null;
-    }
-
-    return {
-        consumedNodes,
-        sourceText: sourceParts
-            .join('\n\n')
-            .trim()
-    };
+    /*
+     * Sans terminaison fiable, aucune modification du DOM.
+     */
+    return null;
 };
 
 const repairBrokenMkDocsTikzScripts = (
