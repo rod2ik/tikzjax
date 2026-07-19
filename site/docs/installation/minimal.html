@@ -42,14 +42,14 @@
 
   <h2>tkz-tab</h2>
 
-  <script type="text/tikz" data-tex-packages="tkz-tab">
+  <script type="text/tikz" data-tex-packages="tkz-tab, amsmath">
   \begin{tikzpicture}
-    \tkzTabInit
-      {$x$/1,$f'(x)$/1,$f(x)$/2}
-      {$-\infty$,$0$,$+\infty$}
-
-    \tkzTabLine{,+,z,-,}
-    \tkzTabVar{-/$-\infty$,+/$2$,-/$-\infty$}
+    \tkzTabInit[lgt=4]
+      {$x$/1.5,$f'(x)$/1,$f(x)=\tan(x)$/2}
+      {$0$,$\dfrac{\pi}{2}$,$\pi$}
+      
+    \tkzTabLine{,+,d,+,}
+    \tkzTabVar{-/$0$,+D-/$+\infty$/$-\infty$,+/$0$}
   \end{tikzpicture}
   </script>
 
@@ -57,7 +57,7 @@
 
   <script type="text/tikz" data-tex-packages="physics"
     data-tikz-libraries="arrows.meta,positioning,decorations.pathmorphing" data-show-console="true"
-    data-disable-cache="true" data-width="520" data-height="280">
+    data-width="520" data-height="280">
     \begin{tikzpicture}[
         >=Stealth,
         thick,

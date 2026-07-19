@@ -140,20 +140,16 @@
             2. <em>tkz-tab</em> with local package configuration
         </h2>
 
-        <script type="text/tikz" data-tex-packages='{"tkz-tab": "", "amsmath": ""}'>
-        \begin{tikzpicture}[line width=1.2pt, font=\Large]
-            \tkzTabInit[lgt=10, espcl=3.2, lw=1.2pt]
-                {$x$/1.5, Sign of $f'(x)=\dfrac{3x-1}{2\sqrt{x}}$/2.5, Variations of $f(x)=\sqrt{x}(x-1)$/2.5}
-                {$0$, $\displaystyle \frac{1}{3}$, $+\infty$}
-
-            \tkzTabLine{,-,z,+,}
-            \tkzTabVar{
-                +/$0$,
-                -/$-\displaystyle\frac{2\sqrt{3}}{9}$,
-                +/$+\infty$
-            }
-        \end{tikzpicture}
-        </script>
+        <script type="text/tikz" data-tex-packages="tkz-tab, amsmath">
+  \begin{tikzpicture}
+    \tkzTabInit[lgt=4]
+      {$x$/1.5,$f'(x)$/1,$f(x)=\tan(x)$/2}
+      {$0$,$\dfrac{\pi}{2}$,$\pi$}
+      
+    \tkzTabLine{,+,d,+,}
+    \tkzTabVar{-/$0$,+D-/$+\infty$/$-\infty$,+/$0$}
+  \end{tikzpicture}
+  </script>
 
         <h2>3. Additional TikZ libraries</h2>
 

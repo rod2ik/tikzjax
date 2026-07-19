@@ -62,31 +62,15 @@ This example shows:
 
     <script
     type="text/tikz"
-    data-tex-packages="tkz-tab"
+    data-tex-packages="tkz-tab, amsmath"
     >
     \begin{tikzpicture}
-        \tkzTabInit[
-            lgt=3,
-            espcl=2.2
-        ]
-            {
-                $x$/1,
-                $f'(x)$/1,
-                $f(x)$/2
-            }
-            {
-                $0$,
-                $\dfrac{2}{3}$,
-                $+\infty$
-            }
-
-        \tkzTabLine{,+,z,-,}
-
-        \tkzTabVar{
-            -/$0$,
-            +/$1$,
-            -/$0$
-        }
+        \tkzTabInit[lgt=4]
+        {$x$/1.5,$f'(x)$/1,$f(x)=\tan(x)$/2}
+        {$0$,$\dfrac{\pi}{2}$,$\pi$}
+        
+        \tkzTabLine{,+,d,+,}
+        \tkzTabVar{-/$0$,+D-/$+\infty$/$-\infty$,+/$0$}
     \end{tikzpicture}
     </script>
 
@@ -95,31 +79,15 @@ This example shows:
     ```html
     <script
     type="text/tikz"
-    data-tex-packages="tkz-tab"
+    data-tex-packages="tkz-tab, amsmath"
     >
     \begin{tikzpicture}
-        \tkzTabInit[
-            lgt=3,
-            espcl=2.2
-        ]
-            {
-                $x$/1,
-                $f'(x)$/1,
-                $f(x)$/2
-            }
-            {
-                $0$,
-                $\dfrac{2}{3}$,
-                $+\infty$
-            }
-
-        \tkzTabLine{,+,z,-,}
-
-        \tkzTabVar{
-            -/$0$,
-            +/$1$,
-            -/$0$
-        }
+        \tkzTabInit[lgt=4]
+        {$x$/1.5,$f'(x)$/1,$f(x)=\tan(x)$/2}
+        {$0$,$\dfrac{\pi}{2}$,$\pi$}
+        
+        \tkzTabLine{,+,d,+,}
+        \tkzTabVar{-/$0$,+D-/$+\infty$/$-\infty$,+/$0$}
     \end{tikzpicture}
     </script>
     ```
