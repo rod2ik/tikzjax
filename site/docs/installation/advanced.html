@@ -3,7 +3,9 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Test TikZJax on a custom HTML Pages with Light/Dark Themes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Test TikZJax on a custom HTML Page with Light/Dark Themes</title>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
 
@@ -35,7 +37,6 @@
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
-
 
     <style>
         body {
@@ -112,73 +113,306 @@
     <pre id="page-html-output" hidden></pre>
 
     <div class="app light" id="demo-zone" data-theme="light">
-        <h1>TikZ & tkz-tab Advanced Standalone HTML Page, WITH Light/Dark Themes</h1>
-        <h2>THIS PAGE IS TOTALLY OUT OF MkDocs : IT IS A TOTALLY CUSTOM STANDALONE HTML PAGE.</h2>
+        <h1>TikZJax Advanced Standalone HTML Page with Light/Dark Themes</h1>
 
-        <p>Copy Paste this page's code to a local index.html file. And test it locally.</p>
+        <h2>This page is totally outside MkDocs: it is a custom standalone HTML page.</h2>
+
+        <p>Copy and paste this page's code into a local <code>index.html</code> file, then serve it with a local web
+            server.</p>
 
         <h2>
-            1. Historical TikZ/LaTeX Syntax with &lt;script type="text/tikz" &gt;//..TikZ/LaTeX code Here.. &lt;/script&gt;
+            1. Historical TikZ/LaTeX syntax with
+            &lt;script type="text/tikz"&gt;...&lt;/script&gt;
         </h2>
 
         <script type="text/tikz">
             \begin{tikzpicture}
-            \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
-            \draw[->, thick] (0,0) -- (0,3) node[above] {$y$};
-            \draw[thick] (0,0) -- (3,2);
-            \node at (1.5,1.7) {$f(x)=\dfrac{3x-1}{2\sqrt{x}}$};
+                \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
+                \draw[->, thick] (0,0) -- (0,3) node[above] {$y$};
+                \draw[thick] (0,0) -- (3,2);
+                \node at (1.5,1.7) {
+                    $f(x)=\dfrac{3x-1}{2\sqrt{x}}$
+                };
             \end{tikzpicture}
         </script>
 
         <h2>
-            2. [NEW] <em>tkz-tab</em> Script Syntax, with &lt;script type="text/tikz" &gt;//..tkz-tab/LaTeX code Here..
-            &lt;/script&gt;
+            2. <em>tkz-tab</em> with local package configuration
         </h2>
 
         <script type="text/tikz" data-tex-packages='{"tkz-tab": "", "amsmath": ""}'>
         \begin{tikzpicture}[line width=1.2pt, font=\Large]
             \tkzTabInit[lgt=10, espcl=3.2, lw=1.2pt]
-                {$x$/1.5 , Sign of $f'(x)=\dfrac{3 x - 1}{2 \sqrt{x}}$/2.5 , Variations of $f(x)=\sqrt{x} \left(x - 1\right)$/2.5}
+                {$x$/1.5, Sign of $f'(x)=\dfrac{3x-1}{2\sqrt{x}}$/2.5, Variations of $f(x)=\sqrt{x}(x-1)$/2.5}
                 {$0$, $\displaystyle \frac{1}{3}$, $+\infty$}
+
             \tkzTabLine{,-,z,+,}
-            \tkzTabVar{+/ $0$, -/ $- \displaystyle \frac{2 \sqrt{3}}{9}$, +/ $+\infty$}
+            \tkzTabVar{
+                +/$0$,
+                -/$-\displaystyle\frac{2\sqrt{3}}{9}$,
+                +/$+\infty$
+            }
         \end{tikzpicture}
-    </script>
+        </script>
 
-        <h2>3. Additional TikZ Libraries</h2>
+        <h2>3. Additional TikZ libraries</h2>
 
-        <p class="test-label">SAFER :</p>
+        <p class="test-label">Safer: explicit coordinates</p>
 
         <script type="text/tikz" data-tikz-libraries="arrows.meta,positioning" data-show-console="true">
-\begin{tikzpicture}[line width=1.2pt]
-    \node[circle, draw] (A) at (0,0) {$A$};
-    \node[circle, draw] (B) at (3,0) {$B$};
-    \draw[-{Stealth[length=4mm]}, thick] (A) -- (B)
-        node[midway, above] {$\dfrac{1}{2}$};
-\end{tikzpicture}
-    </script>
+        \begin{tikzpicture}[line width=1.2pt]
+            \node[circle, draw] (A) at (0,0) {$A$};
+            \node[circle, draw] (B) at (3,0) {$B$};
 
-        <p class="test-label">LESS SAFE :</p>
+            \draw[-{Stealth[length=4mm]}, thick]
+                (A) -- (B)
+                node[midway, above] {$\dfrac{1}{2}$};
+        \end{tikzpicture}
+        </script>
+
+        <p class="test-label">Less safe: relative positioning</p>
 
         <script type="text/tikz" data-tikz-libraries="arrows.meta,calc,positioning">
-\begin{tikzpicture}[line width=1.2pt]
-    \node[circle, draw] (A) at (0,0) {$A$};
-    \node[circle, draw, right=3cm of A] (B) {$B$};
-    \draw[-{Stealth[length=4mm]}, thick] (A) -- (B)
-        node[midway, above] {$\dfrac{1}{2}$};
-\end{tikzpicture}
-    </script>
+        \begin{tikzpicture}[line width=1.2pt]
+            \node[circle, draw] (A) at (0,0) {$A$};
+            \node[circle, draw, right=3cm of A] (B) {$B$};
 
-        <h2 class="test-label warning">
-            4. Intentionally broken TikZJax code, so as to show a customizable fallback error image.
-        </h2>
-        <p>Should show a custom "Broken Image" after 5 seconds.</p>
+            \draw[-{Stealth[length=4mm]}, thick]
+                (A) -- (B)
+                node[midway, above] {$\dfrac{1}{2}$};
+        \end{tikzpicture}
+        </script>
+
+        <h2>4. Basic TikZ</h2>
 
         <script type="text/tikz">
-    \begin{tikzpicture}[line width=1.2pt]
-        \draw[->, thick] (0,0) -- (4,0) node[right] {$x$};
+        \begin{tikzpicture}
+            \draw[thick, blue] (0,0) circle (1);
+            \draw[red, ->] (-1.5,0) -- (1.5,0);
+        \end{tikzpicture}
+        </script>
+
+        <h2>5. TikZ library: shapes.geometric</h2>
+
+        <script type="text/tikz" data-tikz-libraries="shapes.geometric">
+        \begin{tikzpicture}
+            \node[
+                star,
+                star points=5,
+                star point ratio=2.5,
+                minimum size=1.5in,
+                draw=orange,
+                thick,
+                fill=yellow!50
+            ] {};
+        \end{tikzpicture}
+        </script>
+
+        <h2>6. Minimal tkz-tab example</h2>
+
+        <script type="text/tikz" data-tex-packages="tkz-tab">
+        \begin{tikzpicture}
+            \tkzTabInit
+                {$x$/1,$f'(x)$/1,$f(x)$/2}
+                {$-\infty$,$0$,$+\infty$}
+
+            \tkzTabLine{,+,z,-,}
+            \tkzTabVar{-/$-\infty$,+/$2$,-/$-\infty$}
+        \end{tikzpicture}
+        </script>
+
+        <h2>7. physics</h2>
+
+        <script type="text/tikz" data-tex-packages="physics" data-tikz-libraries="arrows.meta,decorations.pathmorphing">
+        \begin{tikzpicture}[
+            >=Stealth,
+            thick,
+            mass/.style={
+                draw=blue!70!black,
+                fill=blue!10,
+                rounded corners,
+                minimum width=1.3cm,
+                minimum height=1cm
+            }
+        ]
+            \draw[very thick]
+                (-3,-0.8) -- (-3,0.8);
+
+            \draw[
+                decorate,
+                decoration={
+                    coil,
+                    aspect=0.45,
+                    segment length=5pt,
+                    amplitude=5pt
+                },
+                blue!70!black,
+                very thick
+            ]
+                (-3,0) -- (0,0);
+
+            \node[mass] (m) at (0.8,0) {
+                $m$
+            };
+
+            \draw[
+                -{Stealth[length=4mm]},
+                red!75!black,
+                very thick
+            ]
+                (m.west) -- ++(-1.4,0)
+                node[midway, above] {
+                    $\vb{F}$
+                };
+
+            \draw[->, gray!70!black]
+                (-3,-1.2) -- (3,-1.2)
+                node[right] {$x$};
+        \end{tikzpicture}
+        </script>
+
+        <h2>8. circuitikz</h2>
+
+        <script type="text/tikz" data-tex-packages="circuitikz">
+        \begin{circuitikz}
+            \draw
+                (0,0)
+                to[battery1, l=$V$] (0,2)
+                to[R, l=$R$] (3,2)
+                -- (3,0)
+                -- (0,0);
+        \end{circuitikz}
+        </script>
+
+        <h2>9. chemfig</h2>
+
+        <script type="text/tikz" data-tex-packages="chemfig">
+        \setchemfig{
+            atom sep=2.4em,
+            bond style={line width=0.8pt},
+            double bond sep=2pt
+        }
+
+        \chemfig{
+            HO-C(=O)-
+            *6(
+                -=-
+                (-O-C(=O)-CH_3)
+                =-=
+            )
+        }
+        </script>
+
+        <h2>10. yquant</h2>
+
+        <script type="text/tikz" data-tex-packages="yquant">
+        \begin{tikzpicture}
+        \begin{yquant}
+            qubit q[2];
+
+            h q[0];
+            cnot q[1] | q[0];
+
+            measure q;
+        \end{yquant}
+        \end{tikzpicture}
+        </script>
+
+        <h2>11. tikz-feynhand</h2>
+
+        <script type="text/tikz" data-tex-packages="tikz-feynhand">
+        \begin{tikzpicture}
+        \begin{feynhand}
+            \vertex (a) at (-1.5,-1);
+            \vertex (b) at (1.5,-1);
+            \vertex (c) at (0,1.5);
+            \vertex[dot] (o) at (0,0) {};
+
+            \propag[fermion] (a) to (o);
+            \propag[anti fermion] (b) to (o);
+            \propag[photon] (o) to (c);
+        \end{feynhand}
+        \end{tikzpicture}
+        </script>
+
+        <h2>12. pgf-spectra</h2>
+
+        <script type="text/tikz" data-tex-packages="pgf-spectra" data-width="600" data-height="190">
+    \pgfspectra[
+      element=He,
+      width=11cm,
+      height=1.6cm,
+      axis,
+      axis step=40,
+      label
+    ]
     </script>
 
+        <h2>13. kinematikz</h2>
+
+        <script type="text/tikz" data-tex-packages="kinematikz" data-width="620" data-height="320">
+        \begin{tikzpicture}
+
+            \pic (base) {
+                frame pivot triangle
+            };
+
+            \pic (linkA) at (base-center) {
+                link bar generic={
+                    20:34pt/1/1/1/0
+                }
+            };
+
+            \pic (linkB) at (linkA-end) {
+                link bar generic={
+                    35:28pt/1/0/1/0
+                }
+            };
+
+            \pic (linkC) at (linkB-end) {
+                link bar generic={
+                    -20:24pt/1/0/1/0
+                }
+            };
+
+        \end{tikzpicture}
+        </script>
+
+        <h2>14. braids TikZ library</h2>
+
+        <script type="text/tikz" data-tikz-libraries="braids">
+        \begin{tikzpicture}
+            \pic[
+                braid/.cd,
+                every strand/.style={very thick},
+                strand 1/.style={red},
+                strand 2/.style={green!60!black},
+                strand 3/.style={blue}
+            ] {
+                braid={
+                    s_1
+                    s_2^{-1}
+                    s_1
+                }
+            };
+        \end{tikzpicture}
+        </script>
+
+        <h2 class="test-label warning">
+            15. Intentionally broken TikZJax code
+        </h2>
+
+        <p>
+            This example should show the customizable fallback error image
+            after five seconds.
+        </p>
+
+        <script type="text/tikz">
+            \begin{tikzpicture}[line width=1.2pt]
+                \draw[->, thick]
+                    (0,0) -- (4,0)
+                    node[right] {$x$};
+        </script>
     </div>
 
     <script>
@@ -190,13 +424,30 @@
         const storageKey = "tikzjax-demo-theme";
 
         const applyTheme = (theme) => {
-            const normalizedTheme = theme === "dark" ? "dark" : "light";
+            const normalizedTheme =
+                theme === "dark"
+                    ? "dark"
+                    : "light";
 
-            app.classList.toggle("dark", normalizedTheme === "dark");
-            app.classList.toggle("light", normalizedTheme === "light");
+            app.classList.toggle(
+                "dark",
+                normalizedTheme === "dark"
+            );
 
-            app.setAttribute("data-theme", normalizedTheme);
-            document.body.setAttribute("data-theme", normalizedTheme);
+            app.classList.toggle(
+                "light",
+                normalizedTheme === "light"
+            );
+
+            app.setAttribute(
+                "data-theme",
+                normalizedTheme
+            );
+
+            document.body.setAttribute(
+                "data-theme",
+                normalizedTheme
+            );
 
             button.textContent =
                 normalizedTheme === "dark"
@@ -204,81 +455,123 @@
                     : "Swap to Dark Theme";
         };
 
-        const savedTheme = localStorage.getItem(storageKey);
+        const savedTheme =
+            localStorage.getItem(storageKey);
 
-        if (savedTheme === "dark" || savedTheme === "light") {
+        if (
+            savedTheme === "dark" ||
+            savedTheme === "light"
+        ) {
             applyTheme(savedTheme);
         } else {
             applyTheme("light");
         }
 
         button.addEventListener("click", () => {
-            const nextTheme = app.classList.contains("dark") ? "light" : "dark";
+            const nextTheme =
+                app.classList.contains("dark")
+                    ? "light"
+                    : "dark";
 
             applyTheme(nextTheme);
-            localStorage.setItem(storageKey, nextTheme);
+
+            localStorage.setItem(
+                storageKey,
+                nextTheme
+            );
         });
 
-        button2.addEventListener("click", async () => {
-            if (!output.hidden) {
-                output.hidden = true;
-                copyButton.hidden = true;
-                button2.textContent = "Show this page's HTML code (or just CTRL+U)";
-                copyButton.textContent = "Copy HTML code";
-                return;
-            }
+        button2.addEventListener(
+            "click",
+            async () => {
+                if (!output.hidden) {
+                    output.hidden = true;
+                    copyButton.hidden = true;
 
-            button2.textContent = "Loading HTML source...";
+                    button2.textContent =
+                        "Show this page's HTML code (or just CTRL+U)";
 
-            try {
-                const response = await fetch(window.location.href, {
-                    cache: "no-store"
-                });
+                    copyButton.textContent =
+                        "Copy HTML code";
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error: ${response.status}`);
+                    return;
                 }
 
-                const sourceHtml = await response.text();
+                button2.textContent =
+                    "Loading HTML source...";
 
-                output.textContent = sourceHtml;
-                output.hidden = false;
-                copyButton.hidden = false;
+                try {
+                    const response = await fetch(
+                        window.location.href,
+                        {
+                            cache: "no-store"
+                        }
+                    );
 
-                button2.textContent = "Hide this page's HTML code";
-                copyButton.textContent = "Copy HTML code";
-            } catch (error) {
-                output.textContent =
-                    "Could not load the original HTML source.\n\n" +
-                    "This works when the page is served by MkDocs, GitHub Pages, or a local web server.\n" +
-                    "It may fail if you open the file directly with file://.\n\n" +
-                    error;
+                    if (!response.ok) {
+                        throw new Error(
+                            `HTTP error: ${response.status}`
+                        );
+                    }
 
-                output.hidden = false;
-                copyButton.hidden = true;
-                button2.textContent = "Hide this message";
+                    const sourceHtml =
+                        await response.text();
+
+                    output.textContent =
+                        sourceHtml;
+
+                    output.hidden = false;
+                    copyButton.hidden = false;
+
+                    button2.textContent =
+                        "Hide this page's HTML code";
+
+                    copyButton.textContent =
+                        "Copy HTML code";
+                } catch (error) {
+                    output.textContent =
+                        "Could not load the original HTML source.\n\n" +
+                        "This works when the page is served by MkDocs, GitHub Pages, or a local web server.\n" +
+                        "It may fail if you open the file directly with file://.\n\n" +
+                        error;
+
+                    output.hidden = false;
+                    copyButton.hidden = true;
+
+                    button2.textContent =
+                        "Hide this message";
+                }
             }
-        });
+        );
 
-        copyButton.addEventListener("click", async () => {
-            try {
-                await navigator.clipboard.writeText(output.textContent);
+        copyButton.addEventListener(
+            "click",
+            async () => {
+                try {
+                    await navigator.clipboard.writeText(
+                        output.textContent
+                    );
 
-                copyButton.textContent = "Copied!";
+                    copyButton.textContent =
+                        "Copied!";
 
-                setTimeout(() => {
-                    copyButton.textContent = "Copy HTML code";
-                }, 1500);
-            } catch (error) {
-                copyButton.textContent = "Copy failed";
+                    setTimeout(() => {
+                        copyButton.textContent =
+                            "Copy HTML code";
+                    }, 1500);
+                } catch (error) {
+                    copyButton.textContent =
+                        "Copy failed";
 
-                setTimeout(() => {
-                    copyButton.textContent = "Copy HTML code";
-                }, 1500);
+                    setTimeout(() => {
+                        copyButton.textContent =
+                            "Copy HTML code";
+                    }, 1500);
 
-                console.error(error);
+                    console.error(error);
+                }
             }
-        });
+        );
     </script>
 
 </body>
