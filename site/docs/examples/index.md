@@ -2,11 +2,19 @@
 
 TikZJax can render standard TikZ diagrams and several optional LaTeX or TikZ packages directly in the browser.
 
-The examples are organized into separate pages so that each package can document its own syntax, requirements, limitations, and recommended configuration.
+The examples are organized into separate pages so that each package can document its own syntax, requirements, limitations, and recommended configuration. A complete standalone HTML example is also available for testing theme detection, target styling, and several supported packages outside MkDocs.
 
 ## Available example pages
 
 <div class="grid cards" markdown>
+
+* :material-language-html5:{ .lg .middle } **Standalone HTML**
+
+  ---
+
+  Complete HTML page with light and dark themes, `theme.selector`, optional target styling, package loading, cache debugging, and multiple TikZ-based examples.
+
+  [:octicons-arrow-right-24: Open the standalone HTML example](advanced.html)
 
 * :material-vector-circle:{ .lg .middle } **TikZ**
 
@@ -410,6 +418,7 @@ Use an appropriate render timeout and inspect the console if a spectrum produces
 * [Installation](../installation/index.md)
 * [Configuration](../configuration.md)
 * [Global and Local Configuration](../configuration-scopes.md)
+* [Themes](../themes.md)
 * [Cache and Performance](../cache-performance.md)
 * [Troubleshooting](../troubleshooting.md)
 * [API Reference](../api-reference.md)

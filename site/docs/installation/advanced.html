@@ -7,9 +7,12 @@
 
     <title>Test TikZJax on a custom HTML Page with Light/Dark Themes</title>
 
+    <!-- PRODUCTION CDN -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css">
+    
+    <!-- DEV CDN : DO NOT USE PLEASE -->
     <!-- <link rel="stylesheet" href="https://rod2ik.github.io/cdn/tikzjax/fonts.min.css"> -->
-
+    
     <script>
         window.TikzJaxOptions = {
             renderTimeout: 5000,
@@ -17,8 +20,17 @@
 
             theme: {
                 selector: ".app",
+                applyTargetStyles: true,
+
+                lightBackgroundColor: "#ffffff",
+                lightTextColor: "#000000",
+
+                darkBackgroundColor: "#1b1e2b",
+                darkTextColor: "#ffffff",
+
                 darkClass: "dark",
                 lightClass: "light",
+
                 attribute: "data-theme",
                 darkValue: "dark",
                 lightValue: "light"
@@ -35,9 +47,12 @@
                 ]
             }
         };
-    </script>
+        </script>
 
+    <!-- PRODUCTION CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
+
+    <!-- DEV CDN : DO NOT USE PLEASE -->
     <!-- <script src="https://rod2ik.github.io/cdn/tikzjax/tikzjax.min.js"></script> -->
 
     <style>
@@ -51,16 +66,6 @@
             border-radius: 1rem;
             border: 1px solid #888;
             transition: background 0.2s, color 0.2s;
-        }
-
-        .app.light {
-            background: #ffffff;
-            color: #000000;
-        }
-
-        .app.dark {
-            background: #1b1e2b;
-            color: #ffffff;
         }
 
         button {
@@ -116,8 +121,10 @@
 
     <div class="app light" id="demo-zone" data-theme="light">
         <h1>TikZJax Advanced Standalone HTML Page with Light/Dark Themes</h1>
-
+        
         <h2>This page is totally outside MkDocs: it is a custom standalone HTML page.</h2>
+        <h2>(Ctrl + U to have the HTML Standalone code)</h1>
+        <h2>(Ctrl + Maj + Del to clear the cache on Firefox)</h1>
 
         <p>Copy and paste this page's code into a local <code>index.html</code> file, then serve it with a local web
             server.</p>

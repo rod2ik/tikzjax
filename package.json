@@ -1,6 +1,6 @@
 {
     "name": "@rod2ik/tikzjax",
-    "version": "1.1.22",
+    "version": "1.2.0",
     "description": "TikZ & TikZ-based LaTeX Libraries and Packages loader for the Web, in Standalone HTML pages and MkDocs Material, with Light/Dark Themes",
     "keywords": [
         "tikzjax",

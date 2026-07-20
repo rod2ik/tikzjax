@@ -126,7 +126,23 @@ const DEFAULT_TKZ_TAB_OPTIONS = {
     antecedentRowHeight: 2.2
 };
 
+const DEFAULT_THEME_OPTIONS = {
+    /*
+     * Target styles are opt-in so existing integrations,
+     * especially MkDocs Material, keep full control of
+     * their page-level colors.
+     */
+    applyTargetStyles: false,
+
+    lightBackgroundColor: '#ffffff',
+    lightTextColor: '#000000',
+
+    darkBackgroundColor: '#1b1e2b',
+    darkTextColor: '#ffffff'
+};
+
 const DEFAULT_TIKZJAX_OPTIONS = {
+    theme: DEFAULT_THEME_OPTIONS,
     tkzTab: DEFAULT_TKZ_TAB_OPTIONS
 };
 
@@ -233,6 +249,56 @@ const getThemeOptions = () => {
     const options = getOptions();
 
     return options.theme || {};
+};
+
+const normalizeThemeColorOption = (
+    value,
+    fallback
+) => {
+    const normalized =
+        String(value ?? '').trim();
+
+    return normalized || fallback;
+};
+
+const getThemePalette = (
+    theme = 'light'
+) => {
+    const themeOptions =
+        getThemeOptions();
+
+    const isDark =
+        theme === 'dark';
+
+    return {
+        backgroundColor:
+            normalizeThemeColorOption(
+                isDark
+                    ? themeOptions
+                        .darkBackgroundColor
+                    : themeOptions
+                        .lightBackgroundColor,
+                isDark
+                    ? DEFAULT_THEME_OPTIONS
+                        .darkBackgroundColor
+                    : DEFAULT_THEME_OPTIONS
+                        .lightBackgroundColor
+            ),
+
+        textColor:
+            normalizeThemeColorOption(
+                isDark
+                    ? themeOptions
+                        .darkTextColor
+                    : themeOptions
+                        .lightTextColor,
+                isDark
+                    ? DEFAULT_THEME_OPTIONS
+                        .darkTextColor
+                    : DEFAULT_THEME_OPTIONS
+                        .lightTextColor
+            )
+    };
 };
 
 const parseNumberOption = (
@@ -1315,9 +1381,9 @@ const getEffectiveBackgroundColor = (
         node = node.parentElement;
     }
 
-    return fallbackTheme === 'dark'
-        ? '#000000'
-        : '#ffffff';
+    return getThemePalette(
+        fallbackTheme
+    ).backgroundColor;
 };
 
 const isTextNode = (node) => {
@@ -1986,6 +2052,149 @@ const getFallbackTheme = () => {
     return 'light';
 };
 
+const getThemeForConfiguredTarget = (
+    target
+) => {
+    const directTheme =
+        getThemeFromElement(target);
+
+    if (directTheme) {
+        return directTheme;
+    }
+
+    const themeOptions =
+        getThemeOptions();
+
+    const darkClass =
+        themeOptions.darkClass ||
+        'dark';
+
+    const lightClass =
+        themeOptions.lightClass ||
+        'light';
+
+    const attribute =
+        themeOptions.attribute ||
+        'data-theme';
+
+    let localThemeElement;
+
+    try {
+        localThemeElement =
+            target?.parentElement?.closest(
+                `.${darkClass}, ` +
+                `.${lightClass}, ` +
+                `[${attribute}], ` +
+                '[data-bs-theme], ' +
+                '[data-color-scheme]'
+            );
+    } catch {
+        localThemeElement =
+            target?.parentElement?.closest(
+                '.dark, .light, ' +
+                '[data-theme], ' +
+                '[data-bs-theme], ' +
+                '[data-color-scheme]'
+            );
+    }
+
+    const localTheme =
+        getThemeFromElement(
+            localThemeElement
+        );
+
+    if (localTheme) {
+        return localTheme;
+    }
+
+    const bodyTheme =
+        document.body?.getAttribute(
+            'data-md-color-scheme'
+        );
+
+    if (bodyTheme === 'slate') {
+        return 'dark';
+    }
+
+    if (bodyTheme) {
+        return 'light';
+    }
+
+    const bodyClassTheme =
+        getThemeFromElement(
+            document.body
+        );
+
+    if (bodyClassTheme) {
+        return bodyClassTheme;
+    }
+
+    const htmlClassTheme =
+        getThemeFromElement(
+            document.documentElement
+        );
+
+    if (htmlClassTheme) {
+        return htmlClassTheme;
+    }
+
+    return getFallbackTheme();
+};
+
+const applyConfiguredThemeTargetStyles = () => {
+    const themeOptions =
+        getThemeOptions();
+
+    if (
+        !parseBooleanOption(
+            themeOptions.applyTargetStyles,
+            false
+        )
+    ) {
+        return;
+    }
+
+    getConfiguredThemeTargets()
+        .forEach((target) => {
+            const theme =
+                getThemeForConfiguredTarget(
+                    target
+                );
+
+            const palette =
+                getThemePalette(theme);
+
+            target.style.setProperty(
+                '--tikzjax-theme-background-color',
+                palette.backgroundColor
+            );
+
+            target.style.setProperty(
+                '--tikzjax-theme-text-color',
+                palette.textColor
+            );
+
+            /*
+             * This variable is also inherited by TikZJax
+             * wrappers and is used by tkz-tab masking strokes.
+             */
+            target.style.setProperty(
+                '--tikzjax-background-color',
+                palette.backgroundColor
+            );
+
+            target.style.setProperty(
+                'background-color',
+                palette.backgroundColor
+            );
+
+            target.style.setProperty(
+                'color',
+                palette.textColor
+            );
+        });
+};
+
 const getThemeForWrapper = (wrapper) => {
     const configuredTarget =
         getConfiguredThemeTarget(wrapper);
@@ -2079,6 +2288,13 @@ const getThemeForWrapper = (wrapper) => {
 const applyThemeToTikz = (
     root = document
 ) => {
+    /*
+     * Standalone target styling is explicitly opt-in.
+     * With the default options this is a no-op, preserving
+     * the existing MkDocs Material behavior.
+     */
+    applyConfiguredThemeTargetStyles();
+
     const clamp = (
         value,
         minimum,
@@ -2597,8 +2813,8 @@ const applyThemeToTikz = (
             const theme =
                 getThemeForWrapper(wrapper);
 
-            const isDark =
-                theme === 'dark';
+            const palette =
+                getThemePalette(theme);
 
             const backgroundColor =
                 getEffectiveBackgroundColor(
@@ -2607,9 +2823,7 @@ const applyThemeToTikz = (
                 );
 
             wrapper.style.color =
-                isDark
-                    ? '#ffffff'
-                    : '#000000';
+                palette.textColor;
 
             wrapper.style.setProperty(
                 '--tikzjax-background-color',

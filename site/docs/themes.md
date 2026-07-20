@@ -6,6 +6,8 @@ The main goal is to keep standard mathematical drawings readable when the page b
 
 For example, a diagram using TikZ's default black strokes and text can follow the site's foreground color instead of remaining black in dark mode.
 
+For standalone HTML pages, TikZJax can also apply a configured light or dark background and text color directly to one or more selected page containers. This target styling is optional and disabled by default.
+
 For the complete option reference, see the [API Reference](api-reference.md).
 
 ---
@@ -22,7 +24,8 @@ Typical transformations include:
 * black strokes changed to `currentColor`;
 * text-like elements changed to `currentColor`;
 * selected white backgrounds made transparent;
-* a light or dark foreground color applied to the generated wrapper.
+* a light or dark foreground color applied to the generated wrapper;
+* optional background and text colors applied to configured standalone targets.
 
 Conceptually:
 
@@ -38,8 +41,9 @@ SVG insertion
     v
 theme detection
     |
-    v
-foreground and background adaptation
+    +--> optional configured-target styling
+    |
+    +--> wrapper and SVG adaptation
 ```
 
 Theme adaptation happens after TeX rendering.
@@ -94,7 +98,8 @@ It does not attempt to:
 * change every explicit TikZ color;
 * guarantee contrast for arbitrary custom colors;
 * convert a light-themed illustration into a complete dark-themed variant;
-* modify externally embedded raster images.
+* modify externally embedded raster images;
+* restyle arbitrary buttons, code blocks, borders, warnings, or other page components outside the configured target.
 
 Explicit colors are normally preserved.
 
@@ -156,17 +161,216 @@ It is not configured separately for each diagram.
 
 ### Theme-option summary
 
-| Option                    | Purpose                                        |
-| ------------------------- | ---------------------------------------------- |
-| `theme.selector`          | Element or elements containing the theme state |
-| `theme.attribute`         | Attribute holding the current theme            |
-| `theme.darkValue`         | Attribute value representing dark mode         |
-| `theme.lightValue`        | Attribute value representing light mode        |
-| `theme.darkClass`         | CSS class representing dark mode               |
-| `theme.lightClass`        | CSS class representing light mode              |
-| `theme.fallbackTheme`     | Theme used when no DOM state is detected       |
-| `theme.defaultTheme`      | Legacy-compatible default-theme alias          |
-| `theme.followSystemTheme` | Use `prefers-color-scheme` as a fallback       |
+| Option                               | Default        | Purpose |
+| ------------------------------------ | -------------- | ------- |
+| `theme.selector`                     | none           | CSS selector identifying one or more elements containing the theme state |
+| `theme.attribute`                    | `"data-theme"` | Attribute holding the current theme |
+| `theme.darkValue`                    | `"dark"`       | Attribute value representing dark mode |
+| `theme.lightValue`                   | `"light"`      | Attribute value representing light mode |
+| `theme.darkClass`                    | `"dark"`       | CSS class representing dark mode |
+| `theme.lightClass`                   | `"light"`      | CSS class representing light mode |
+| `theme.fallbackTheme`                | `"light"`      | Theme used when no DOM state is detected |
+| `theme.defaultTheme`                 | none           | Legacy-compatible default-theme alias |
+| `theme.followSystemTheme`            | `false`        | Use `prefers-color-scheme` as a fallback |
+| `theme.applyTargetStyles`            | `false`        | Apply the resolved palette to elements matching `theme.selector` |
+| `theme.lightBackgroundColor`         | `"#ffffff"`    | Background color used by the light palette |
+| `theme.lightTextColor`               | `"#000000"`    | Text and default TikZ foreground color used by the light palette |
+| `theme.darkBackgroundColor`          | `"#1b1e2b"`    | Background color used by the dark palette |
+| `theme.darkTextColor`                | `"#ffffff"`    | Text and default TikZ foreground color used by the dark palette |
+
+---
+
+## CSS selector semantics
+
+`theme.selector` is interpreted as a normal CSS selector and is passed to `document.querySelectorAll()`.
+
+It can therefore be a simple class:
+
+```js
+selector: ".app"
+```
+
+or a more specific selector:
+
+```js
+selector: "div.tikzjax"
+```
+
+More complex valid selectors are also accepted:
+
+```js
+selector: "main > section.diagram-zone"
+```
+
+Every matching element is considered a configured theme target.
+
+A wrapper uses the matching target that contains it. This allows several independent themed regions on the same page.
+
+An invalid selector does not stop TikZJax. It produces a warning in the browser Console and no configured target is returned.
+
+---
+
+## Standalone HTML target styling
+
+### Opt-in behavior
+
+Target styling is deliberately disabled by default:
+
+```js
+theme: {
+    applyTargetStyles: false
+}
+```
+
+With the default value, `theme.selector` is used for theme detection only. TikZJax does not impose a background or text color on the selected page element.
+
+Enable automatic target styling explicitly for a standalone HTML page:
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        selector: ".app",
+        applyTargetStyles: true,
+
+        lightBackgroundColor: "#ffffff",
+        lightTextColor: "#000000",
+
+        darkBackgroundColor: "#1b1e2b",
+        darkTextColor: "#ffffff",
+
+        darkClass: "dark",
+        lightClass: "light",
+
+        attribute: "data-theme",
+        darkValue: "dark",
+        lightValue: "light"
+    }
+};
+```
+
+The four color options may be omitted when the built-in values are suitable.
+
+---
+
+### Complete standalone loading order
+
+Define `window.TikzJaxOptions` before loading `tikzjax.min.js`.
+
+```html
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/fonts.min.css"
+>
+
+<script>
+window.TikzJaxOptions = {
+    theme: {
+        selector: ".app",
+        applyTargetStyles: true,
+
+        lightBackgroundColor: "#ffffff",
+        lightTextColor: "#000000",
+
+        darkBackgroundColor: "#1b1e2b",
+        darkTextColor: "#ffffff",
+
+        darkClass: "dark",
+        lightClass: "light",
+
+        attribute: "data-theme",
+        darkValue: "dark",
+        lightValue: "light"
+    }
+};
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@rod2ik/tikzjax@__TIKZJAX_VERSION__/dist/tikzjax.min.js"></script>
+```
+
+The selected target then needs only layout-specific CSS:
+
+```css
+.app {
+    padding: 2rem;
+    border: 1px solid #888;
+    border-radius: 1rem;
+    transition:
+        background-color 0.2s,
+        color 0.2s;
+}
+```
+
+Separate `.app.light` and `.app.dark` background and text rules are not required when `applyTargetStyles` is enabled.
+
+---
+
+### Styles applied to each target
+
+For the active palette, TikZJax writes these inline properties on every element matching `theme.selector`:
+
+```css
+background-color: <resolved background color>;
+color: <resolved text color>;
+```
+
+It also publishes these CSS custom properties:
+
+```css
+--tikzjax-theme-background-color
+--tikzjax-theme-text-color
+--tikzjax-background-color
+```
+
+`--tikzjax-background-color` is also used internally by generated SVG content, including masking strokes in packages such as `tkz-tab`.
+
+The custom properties are inherited by descendants and can be reused by page-specific CSS:
+
+```css
+.custom-panel {
+    color:
+        var(
+            --tikzjax-theme-text-color
+        );
+
+    border-color:
+        var(
+            --tikzjax-theme-text-color
+        );
+}
+```
+
+TikZJax does not automatically add or recolor borders. A border changes automatically only when the page CSS uses `currentColor` or one of the published variables.
+
+Because the target styles are normal inline declarations without `!important`, an author rule using `!important` can override them.
+
+---
+
+### Styling scope
+
+Only elements matching `theme.selector` receive target styles.
+
+For example:
+
+```html
+<pre id="page-html-output"></pre>
+
+<div class="app" data-theme="dark">
+    <!-- TikZJax diagrams -->
+</div>
+```
+
+with:
+
+```js
+theme: {
+    selector: ".app",
+    applyTargetStyles: true
+}
+```
+
+does not style `#page-html-output`, because that element is outside `.app`.
+
+Keep component-specific styling in the page's own CSS, or move a component inside the selected target when it should inherit the target palette.
 
 ---
 
@@ -191,6 +395,7 @@ A typical explicit configuration is:
 window.TikzJaxOptions = {
     theme: {
         selector: "body",
+        applyTargetStyles: false,
         attribute: "data-md-color-scheme",
         darkValue: "slate",
         lightValue: "default",
@@ -227,6 +432,37 @@ theme:
 ```
 
 TikZJax can normally recognize common Material conventions automatically.
+
+`applyTargetStyles` is `false` by default. Therefore, adding the new palette options does not make TikZJax restyle the Material page, and Material remains responsible for its own page background, text, navigation, code blocks, tables, cards, and admonitions.
+
+The palette colors still provide TikZJax's own wrapper foreground colors and fallback background colors. Customizing them can therefore change diagram foreground behavior without applying page-level styles.
+
+To style a region inside a Material site deliberately, use a dedicated container instead of the complete Material page:
+
+```html
+<div class="custom-tikz-zone">
+    <script type="text/tikz">
+    \begin{tikzpicture}
+        \draw (0,0) circle (1);
+    \end{tikzpicture}
+    </script>
+</div>
+```
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        selector: ".custom-tikz-zone",
+        applyTargetStyles: true,
+
+        lightBackgroundColor: "#ffffff",
+        lightTextColor: "#000000",
+
+        darkBackgroundColor: "#1b1e2b",
+        darkTextColor: "#ffffff"
+    }
+};
+```
 
 Explicit configuration is useful when:
 
@@ -484,6 +720,8 @@ window.TikzJaxOptions = {
 
 The explicit DOM theme remains the preferred signal when it is available.
 
+For a live application theme toggle, update a class or attribute that TikZJax observes. `followSystemTheme` supplies a fallback; it does not replace an application's own DOM theme state.
+
 ---
 
 ## Dynamic theme changes
@@ -491,6 +729,8 @@ The explicit DOM theme remains the preferred signal when it is available.
 TikZJax observes relevant page-level theme changes.
 
 When the detected theme changes, already inserted SVG diagrams are updated without another TeX compilation.
+
+When `applyTargetStyles` is enabled, the matching target colors and published CSS variables are updated during the same theme application.
 
 ```text
 theme switch
@@ -501,8 +741,9 @@ attribute or class changes
     v
 TikZJax detects the new theme
     |
-    v
-existing SVGs are adapted
+    +--> update configured target styles
+    |
+    +--> adapt existing SVGs
 ```
 
 This supports theme switches performed without a full page reload.
@@ -512,8 +753,9 @@ Typical examples include:
 * Material for MkDocs palette toggles;
 * custom JavaScript theme controls;
 * class changes on `html` or `body`;
-* attribute changes such as `data-theme`;
-* operating-system theme changes when system following is enabled.
+* attribute changes such as `data-theme`.
+
+`followSystemTheme` is used as a fallback whenever TikZJax resolves the active theme. An operating-system preference change by itself is not a substitute for changing the configured DOM class or attribute when a page provides its own theme switcher.
 
 ---
 
@@ -527,9 +769,11 @@ TikZJax can observe:
 * the configured theme attribute;
 * relevant class changes.
 
-The configured selector should identify the element that actually stores the site's active theme.
+The configured selector should identify the element or elements that actually store the relevant theme state.
 
-Avoid selecting a decorative child element whose state does not represent the complete page.
+The selector may match several independent targets. Each target can carry its own configured class or attribute, and wrappers contained by that target use its detected theme.
+
+When `applyTargetStyles` is enabled, avoid a selector that is broader than intended because every matching element receives inline background and text colors.
 
 ---
 
@@ -719,12 +963,39 @@ Adapt the selectors and values to the site's actual theme state.
 
 ## Recommended configurations
 
+### Standalone HTML page with automatic target colors
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        selector: ".app",
+        applyTargetStyles: true,
+
+        lightBackgroundColor: "#ffffff",
+        lightTextColor: "#000000",
+
+        darkBackgroundColor: "#1b1e2b",
+        darkTextColor: "#ffffff",
+
+        darkClass: "dark",
+        lightClass: "light",
+
+        attribute: "data-theme",
+        darkValue: "dark",
+        lightValue: "light"
+    }
+};
+```
+
+---
+
 ### Material for MkDocs
 
 ```js
 window.TikzJaxOptions = {
     theme: {
         selector: "body",
+        applyTargetStyles: false,
         attribute: "data-md-color-scheme",
         darkValue: "slate",
         lightValue: "default",
@@ -733,6 +1004,8 @@ window.TikzJaxOptions = {
     }
 };
 ```
+
+`applyTargetStyles: false` is optional because it is the built-in default. It is shown here to make the Material compatibility behavior explicit.
 
 ---
 
@@ -865,6 +1138,65 @@ Verify that:
 * the attribute name is exact;
 * the dark and light values are exact;
 * the configuration loads before TikZJax.
+
+---
+
+### The configured standalone target does not change color
+
+Verify that target styling is enabled:
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        selector: ".app",
+        applyTargetStyles: true
+    }
+};
+```
+
+Then verify that:
+
+* `theme.selector` matches the intended element;
+* the matching element carries the configured class or attribute;
+* the options are defined before `tikzjax.min.js` loads;
+* no author declaration using `!important` overrides `background-color` or `color`.
+
+In the browser Console:
+
+```js
+document.querySelectorAll(
+    window.TikzJaxOptions.theme.selector
+);
+```
+
+Inspect the resolved target variables:
+
+```js
+getComputedStyle(
+    document.querySelector(".app")
+).getPropertyValue(
+    "--tikzjax-theme-background-color"
+);
+```
+
+---
+
+### Target styling affects too much of the page
+
+`applyTargetStyles` applies background and text colors to every element matched by `theme.selector`.
+
+Use a narrower selector:
+
+```js
+theme: {
+    selector: ".custom-tikz-zone",
+    applyTargetStyles: true
+}
+```
+
+Do not target `body`, `html`, or a complete framework content root unless TikZJax is intentionally expected to style that whole area.
+
+For MkDocs Material, keep `applyTargetStyles: false` or target a dedicated custom container.
 
 ---
 

@@ -9,7 +9,7 @@
 [![Browser TeX](https://img.shields.io/badge/TeX-WebAssembly-success?style=flat-square)](architecture.md)
 
 **TikZJax** renders **TikZ and supported TikZ-based LaTeX packages directly in the browser**.  
-It focuses on singular TikZ-based LaTeX packages, that do NOT already exist on:
+It focuses on singular TikZ-based LaTeX packages, that do NOT already exist on: 
 
 * **MathJax**, 
 * neither on other main web drawing libraries, e.g. **Graphviz**, or **Mermaid**, etc..
@@ -229,6 +229,9 @@ See the [complete examples catalogue](examples/index.md).
     * `data-md-color-scheme`.
 
 * [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Support for class-based theme detection.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Any valid CSS selector can identify one or more configured theme targets.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Optional standalone target styling with configurable light and dark background and text colors.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Target styling is disabled by default so existing integrations, including MkDocs Material, keep control of page-level colors.
 * [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Optional fallback to `prefers-color-scheme`.
 * [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Dynamic updates of existing SVGs when the site theme changes.
 * [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Cached SVGs are adapted to the current theme after insertion without recompiling TeX.
@@ -287,6 +290,7 @@ See the [complete examples catalogue](examples/index.md).
 | Per-diagram package configuration  |                  — |       [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) |
 | Per-diagram TikZ libraries         |                  — |       [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) |
 | Light and dark theme adaptation    |                  — |       [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) |
+| Configurable standalone palettes   |                  — |       [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) |
 | Dynamic Material theme updates     |                  — |       [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) |
 | Material tabs and admonitions      |                  — |       [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) |
 | Adaptive worker pool               |                  — |       [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) |
@@ -583,12 +587,17 @@ data-tikz-libraries="braids"
 
 Theme adaptation is [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax).
 
-A Material for MkDocs configuration can use:
+TikZJax can update already-rendered and cached SVGs after a theme change without recompiling TeX.
+
+### Material for MkDocs
+
+A Material configuration can use:
 
 ```js
 window.TikzJaxOptions = {
     theme: {
         selector: "body",
+        applyTargetStyles: false,
         attribute: "data-md-color-scheme",
         darkValue: "slate",
         lightValue: "default",
@@ -598,9 +607,37 @@ window.TikzJaxOptions = {
 };
 ```
 
-TikZJax can update already-rendered and cached SVGs after a theme change without recompiling TeX.
+`applyTargetStyles` defaults to `false`. Material therefore remains responsible for the page background, text, navigation, cards, code blocks, tables, and admonitions.
 
-See [Light and Dark Themes](themes.md).
+### Standalone HTML
+
+A custom standalone page can ask TikZJax to style one or more selected targets:
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        selector: ".app",
+        applyTargetStyles: true,
+
+        lightBackgroundColor: "#ffffff",
+        lightTextColor: "#000000",
+
+        darkBackgroundColor: "#1b1e2b",
+        darkTextColor: "#ffffff",
+
+        darkClass: "dark",
+        lightClass: "light",
+
+        attribute: "data-theme",
+        darkValue: "dark",
+        lightValue: "light"
+    }
+};
+```
+
+`theme.selector` accepts any valid CSS selector. Every matching target receives the resolved background and text colors only when `applyTargetStyles` is enabled.
+
+See [Light and Dark Themes](themes.md) and the [standalone advanced example](examples/advanced.html).
 
 ---
 
@@ -729,6 +766,7 @@ The configured fallback image should appear after all permitted attempts fail.
 
 * [API Reference](api-reference.md)
 * [Examples](examples/index.md)
+* [Standalone advanced HTML example](examples/advanced.html)
 * [TikZ examples](examples/tikz.md)
 * [`tkz-tab` examples](examples/tkz-tab.md)
 * [`physics` examples](examples/physics.md)

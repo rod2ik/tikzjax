@@ -53,7 +53,7 @@ render identity generation
              SVG insertion
                     |
                     v
-        theme adaptation and event
+   target palette resolution, theme adaptation, and event
 ```
 
 The main browser thread coordinates discovery, caching, scheduling, DOM updates, and theme handling.
@@ -77,7 +77,7 @@ The main TikZJax bundle runs in the page and manages:
 * worker-pool lifecycle;
 * DOM observation;
 * generated SVG insertion;
-* theme adaptation;
+* theme detection, palette resolution, optional target styling, and SVG adaptation;
 * error fallbacks;
 * completion events.
 
@@ -318,6 +318,8 @@ debugTimings
 ```
 
 A diagram cannot create an independent local worker pool. Pool sizing and worker initialization are global runtime concerns.
+
+Theme detection, configured targets, palette resolution, target styling, and theme observation are also global runtime concerns. A local diagram configuration does not create a separate page-level theme environment.
 
 ---
 
@@ -1203,10 +1205,12 @@ The main thread:
 3. stores the result in IndexedDB when caching is enabled;
 4. inserts the SVG into every grouped target;
 5. applies wrapper and helper classes;
-6. applies the active theme;
-7. dispatches the completion event;
-8. marks the worker idle;
-9. schedules the next queued job.
+6. resolves the active theme and configured target palette;
+7. optionally styles configured page targets;
+8. adapts the wrapper and generated SVG;
+9. dispatches the completion event;
+10. marks the worker idle;
+11. schedules the next queued job.
 
 ---
 
@@ -1252,13 +1256,40 @@ the SVG also receives full-width and full-height behavior.
 
 ## Theme architecture
 
+Theme handling runs on the main browser thread after SVG insertion. It does not require another TeX compilation and does not run inside the rendering workers.
+
+### Configured target discovery
+
+When `theme.selector` is defined, TikZJax evaluates it with:
+
+```js
+document.querySelectorAll(
+    theme.selector
+)
+```
+
+The selector can therefore identify:
+
+* one page-level application container;
+* several independent theme regions;
+* a custom diagram zone;
+* a nested element selected with a compound CSS selector.
+
+Every matching element becomes a configured theme target.
+
+For one rendered wrapper, TikZJax associates the matching target that is either the wrapper itself or contains it.
+
+An invalid selector produces a browser-console warning and yields no configured targets. It does not stop source discovery, rendering, caching, or worker scheduling.
+
+---
+
 ### Theme detection
 
-After SVG insertion, TikZJax determines the applicable theme.
+After SVG insertion, TikZJax determines the applicable light or dark theme.
 
 Theme detection can use:
 
-* a configured selector;
+* the configured target;
 * a configured attribute;
 * configured dark and light classes;
 * nearby theme attributes;
@@ -1266,7 +1297,124 @@ Theme detection can use:
 * fallback settings;
 * system theme preference when enabled.
 
+Detection and target styling are separate responsibilities.
+
+A configured selector can participate in detection even when:
+
+```js
+theme.applyTargetStyles === false
+```
+
 See [Themes](themes.md).
+
+---
+
+### Palette resolution
+
+After resolving the light or dark state, TikZJax selects the corresponding palette.
+
+```text
+light theme
+    |
+    +-- lightBackgroundColor
+    |
+    +-- lightTextColor
+```
+
+```text
+dark theme
+    |
+    +-- darkBackgroundColor
+    |
+    +-- darkTextColor
+```
+
+Built-in fallback values are:
+
+```text
+light background: #ffffff
+light text:       #000000
+
+dark background:  #1b1e2b
+dark text:        #ffffff
+```
+
+The resolved text color becomes the default foreground color used by the TikZJax wrapper and adaptive SVG content.
+
+The resolved background color is used as a fallback when TikZJax cannot obtain a usable computed background from the configured target or its ancestors.
+
+---
+
+### Optional target styling
+
+Target styling is controlled by:
+
+```js
+theme.applyTargetStyles
+```
+
+Its default value is:
+
+```text
+false
+```
+
+When disabled, TikZJax does not impose page-level background or text colors on the configured targets.
+
+This preserves the styling authority of existing frameworks, including MkDocs Material.
+
+When enabled, TikZJax applies the resolved palette to every element matched by `theme.selector`:
+
+```css
+background-color: <resolved background>;
+color: <resolved text color>;
+```
+
+It also publishes:
+
+```css
+--tikzjax-theme-background-color
+--tikzjax-theme-text-color
+--tikzjax-background-color
+```
+
+These values are target-scoped and inherited by descendants.
+
+TikZJax does not automatically create or recolor arbitrary component borders.
+
+---
+
+### Separation between page styling and SVG adaptation
+
+The target and the generated diagram are handled at different levels:
+
+```text
+configured page target
+    |
+    +-- optional background and text styling
+    |
+    +-- published CSS custom properties
+            |
+            v
+      TikZJax wrapper
+            |
+            +-- resolved foreground color
+            |
+            +-- effective background variable
+                    |
+                    v
+              generated SVG
+                    |
+                    +-- adaptive black foreground values
+                    |
+                    +-- selected white-background handling
+```
+
+With `applyTargetStyles: false`, only the wrapper and SVG adaptation occur.
+
+With `applyTargetStyles: true`, target styling occurs in addition to wrapper and SVG adaptation.
+
+Elements outside `theme.selector` remain controlled by the page's own CSS.
 
 ---
 
@@ -1283,25 +1431,37 @@ Typical adaptations include:
 
 Explicitly chosen TikZ colors are generally preserved.
 
+The literal black and white values used to recognize ordinary generated SVG content remain detection markers. Configurable palette colors do not redefine which source colors are classified as default black or white.
+
 Theme adaptation happens after SVG generation and can be reapplied when the site's theme changes.
 
 ---
 
 ### Theme observation
 
-TikZJax observes relevant theme changes and schedules updates to already rendered SVG elements.
+TikZJax observes relevant theme changes and schedules updates to:
+
+* configured targets when target styling is enabled;
+* already rendered wrappers;
+* already rendered SVG elements.
 
 Theme updates do not require recompiling the TeX source.
 
 ```text
-theme attribute changes
+theme attribute or class changes
     |
     v
 detect new theme
     |
     v
-adapt existing SVG
+resolve new palette
+    |
+    +-- optionally restyle configured targets
+    |
+    +-- update wrappers and existing SVGs
 ```
+
+A cached SVG follows the same main-thread theme path after insertion as a freshly rendered SVG.
 
 ---
 
@@ -1562,9 +1722,11 @@ The following sequence summarizes a fresh uncached render:
 16. Worker sends the result to the main thread
 17. Main thread stores the SVG in IndexedDB
 18. Main thread inserts the SVG into grouped targets
-19. Main thread applies theme handling
-20. Main thread dispatches tikzjax-load-finished
-21. Worker returns to the idle pool
+19. Main thread resolves the active theme and target palette
+20. Main thread optionally styles configured page targets
+21. Main thread adapts wrappers and SVG output
+22. Main thread dispatches tikzjax-load-finished
+23. Worker returns to the idle pool
 ```
 
 A cached render skips steps 6 through 16.

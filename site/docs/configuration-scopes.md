@@ -24,8 +24,8 @@ For a complete list of available options, see the [API Reference](api-reference.
 | Scope                        | Applies to                                  | Recommended use                               |
 | ---------------------------- | ------------------------------------------- | --------------------------------------------- |
 | TikZJax defaults             | Every page                                  | Internal fallback values                      |
-| Initial global configuration | Every diagram on the page                   | Site-wide defaults                            |
-| Partial global configuration | Future and unprocessed diagrams on the page | Runtime-wide adjustments                      |
+| Initial global configuration | Page runtime and every diagram              | Site-wide defaults                            |
+| Partial global configuration | Page runtime and subsequent processing       | Runtime-wide adjustments                      |
 | Local diagram configuration  | One diagram only                            | Specialized packages, libraries, or overrides |
 
 A typical site uses:
@@ -334,6 +334,61 @@ The resulting global timeout is:
 ```text
 45000 milliseconds
 ```
+
+---
+
+## Theme configuration is global
+
+Theme detection, theme palettes, and optional target styling belong to the page-level global configuration.
+
+Relevant options include:
+
+```text
+theme.selector
+theme.attribute
+theme.darkValue
+theme.lightValue
+theme.darkClass
+theme.lightClass
+theme.fallbackTheme
+theme.followSystemTheme
+theme.applyTargetStyles
+theme.lightBackgroundColor
+theme.lightTextColor
+theme.darkBackgroundColor
+theme.darkTextColor
+```
+
+Example:
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        selector: ".app",
+        applyTargetStyles: true,
+
+        lightBackgroundColor: "#ffffff",
+        lightTextColor: "#000000",
+
+        darkBackgroundColor: "#1b1e2b",
+        darkTextColor: "#ffffff",
+
+        attribute: "data-theme",
+        darkValue: "dark",
+        lightValue: "light"
+    }
+};
+```
+
+`theme.selector` is a CSS selector evaluated against the page DOM.
+
+When `theme.applyTargetStyles` is enabled, TikZJax can apply the resolved background and text colors to every selected target. This behavior concerns page elements and is therefore not a per-diagram setting.
+
+Do not place theme configuration inside a diagram's `data-tikzjax-options` value.
+
+Local diagram configuration is used to build the effective rendering options for that diagram. It does not replace the page-level theme detector, theme observer, configured targets, or global target palette.
+
+For detailed theme behavior, see [Themes](themes.md).
 
 ---
 
@@ -753,6 +808,8 @@ Use `data-tikzjax-options` when a diagram needs several related options:
 
 The attribute value must be valid JSON.
 
+Theme options are not supported as local diagram overrides. Configure `theme` globally through `window.TikzJaxOptions` or `window.TikzJaxConfigure()`.
+
 JSON requires:
 
 * double quotes around property names;
@@ -988,7 +1045,7 @@ The fenced block can then use them:
 | -------------------------------------- | -------------------- |
 | Common timeout for the site            | Global               |
 | Worker-pool configuration              | Global               |
-| Site-wide theme behavior               | Global               |
+| Theme detection, palettes, and target styling | Global          |
 | Default fallback image                 | Global               |
 | Package used by nearly every diagram   | Global, with caution |
 | Package used by one example            | Local                |
@@ -1268,6 +1325,12 @@ Local:
 
 ## Common mistakes
 
+### Defining theme options in local diagram JSON
+
+Theme detection and target styling are page-level concerns.
+
+Configure `theme` globally instead of placing it in `data-tikzjax-options`.
+
 ### Loading every optional package globally
 
 This increases the preamble of every diagram.
@@ -1336,6 +1399,12 @@ Inspect the worker-pool configuration:
 
 ```js
 window.TikzJaxOptions?.workerPool
+```
+
+Inspect the global theme configuration:
+
+```js
+window.TikzJaxOptions?.theme
 ```
 
 Apply and inspect a partial update:
