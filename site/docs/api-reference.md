@@ -229,7 +229,44 @@ window.TikzJaxOptions = {
         lightTextColor: "#000000",
 
         darkBackgroundColor: "#1b1e2b",
-        darkTextColor: "#ffffff"
+        darkTextColor: "#ffffff",
+
+        adaptiveColors: {
+            enabled: true,
+            strength: 1,
+
+            minimumPerceptualLightness: 0.60,
+            maximumPerceptualLightness: 0.82,
+
+            saturationBoost: 0.18,
+            minimumSaturation: 0.52,
+            maximumSaturation: 0.90,
+            chromaticThreshold: 0.08,
+
+            hueShift: {
+                red: 0,
+                green: 0,
+                blue: -40
+            },
+            hueShiftRange: 60,
+            hueShiftStrength: 1,
+
+            contrast: {
+                enabled: true,
+                minimumRatio: 4.5,
+                strength: 1,
+                minimumBackgroundLightness: 0.04,
+                containmentTolerance: 1
+            }
+        },
+
+        adaptiveFills: {
+            enabled: true,
+            lightnessThreshold: 0.82,
+            darkLightness: 0.23,
+            minimumSaturation: 0.18,
+            maximumSaturation: 0.46
+        }
     },
 
     tex: {
@@ -291,7 +328,7 @@ window.TikzJaxOptions = {
 | `height`              | `number`                       |                        `75` | Default loader height in TeX points                     |
 | `debugTimings`        | `boolean`                      |                     `false` | Log worker timing stages                                |
 | `showTimings`         | `boolean`                      |                     `false` | Alias enabling worker timing logs                       |
-| `theme`               | `object`                       |         automatic detection | Theme detection, palette, and optional target styling              |
+| `theme`               | `object`                       |         automatic detection | Theme detection, palettes, SVG color adaptation, contrast correction, and optional target styling |
 | `tex`                 | `object`                       |                        `{}` | Packages, libraries, preamble, and legacy safety values |
 | `tkzTab`              | `object`                       |     built-in style defaults | Automatic native `tkz-tab` defaults and helper macros   |
 
@@ -987,12 +1024,14 @@ Either option is sufficient.
 
 ## Theme options
 
-TikZJax theme handling has two related responsibilities:
+TikZJax theme handling has four related responsibilities:
 
-1. detect the active light or dark theme;
-2. adapt TikZJax wrappers and generated SVG output.
+1. detect the active Light or Dark theme;
+2. apply the resolved foreground and background information to TikZJax wrappers;
+3. adapt generated SVG paints for readability, including explicit chromatic colors in Dark mode;
+4. optionally apply a configured palette directly to selected page elements.
 
-It can also apply a configured background and text palette to selected page elements, but that behavior is explicitly opt-in through `theme.applyTargetStyles`.
+The fourth behavior is explicitly opt-in through `theme.applyTargetStyles`.
 
 TikZJax can detect a theme from:
 
@@ -1007,28 +1046,43 @@ TikZJax can detect a theme from:
 
 Theme configuration is global. It is not a per-diagram configuration group.
 
+Light mode restores the stored original chromatic SVG colors. Pure black and pure white continue to use TikZJax's separate foreground/background normalization rules.
+
 See [Themes](themes.md) for practical examples and detailed behavior.
 
 ---
 
 ### Theme-option summary
 
+#### Detection, palette, and target options
+
 | Option                               | Type                  | Default        | Description |
 | ------------------------------------ | --------------------- | -------------- | ----------- |
 | `theme.selector`                     | `string`              | none           | CSS selector identifying configured theme targets |
 | `theme.attribute`                    | `string`              | `"data-theme"` | Attribute containing the current theme value |
-| `theme.darkValue`                    | `string`              | `"dark"`       | Attribute value representing dark mode |
-| `theme.lightValue`                   | `string`              | `"light"`      | Attribute value representing light mode |
-| `theme.darkClass`                    | `string`              | `"dark"`       | CSS class representing dark mode |
-| `theme.lightClass`                   | `string`              | `"light"`      | CSS class representing light mode |
+| `theme.darkValue`                    | `string`              | `"dark"`       | Attribute value representing Dark mode |
+| `theme.lightValue`                   | `string`              | `"light"`      | Attribute value representing Light mode |
+| `theme.darkClass`                    | `string`              | `"dark"`       | CSS class representing Dark mode |
+| `theme.lightClass`                   | `string`              | `"light"`      | CSS class representing Light mode |
 | `theme.fallbackTheme`                | `"light"` or `"dark"` | `"light"`      | Theme used when no usable DOM state is detected |
 | `theme.defaultTheme`                 | `"light"` or `"dark"` | `"light"`      | Compatibility alias used when `fallbackTheme` is absent |
 | `theme.followSystemTheme`            | `boolean`             | `false`        | Use `prefers-color-scheme` as a fallback |
 | `theme.applyTargetStyles`            | `boolean`             | `false`        | Apply the resolved palette to every selected target |
-| `theme.lightBackgroundColor`         | `string`              | `"#ffffff"`    | Background color of the light palette |
-| `theme.lightTextColor`               | `string`              | `"#000000"`    | Text and default TikZ foreground color of the light palette |
-| `theme.darkBackgroundColor`          | `string`              | `"#1b1e2b"`    | Background color of the dark palette |
-| `theme.darkTextColor`                | `string`              | `"#ffffff"`    | Text and default TikZ foreground color of the dark palette |
+| `theme.lightBackgroundColor`         | `string`              | `"#ffffff"`    | Background color of the Light palette |
+| `theme.lightTextColor`               | `string`              | `"#000000"`    | Text and default TikZ foreground color of the Light palette |
+| `theme.darkBackgroundColor`          | `string`              | `"#1b1e2b"`    | Background color of the Dark palette |
+| `theme.darkTextColor`                | `string`              | `"#ffffff"`    | Text and default TikZ foreground color of the Dark palette |
+
+#### Adaptive-color groups
+
+| Option                       | Type                  | Default        | Description |
+| ---------------------------- | --------------------- | -------------- | ----------- |
+| `theme.adaptiveColors`       | `boolean` or `object` | enabled object | Dark-mode adaptation of explicit chromatic `fill`, `stroke`, and `color` paints |
+| `theme.adaptiveFills`        | `object`              | enabled object | Separate Dark-mode conversion of very light non-text fills |
+
+`adaptiveColors` is enabled by default, including its nested foreground/background contrast stage.
+
+`adaptiveFills` is also enabled by default. It is a separate stage and is not disabled by `adaptiveColors: false`.
 
 ---
 
@@ -1242,6 +1296,7 @@ When disabled:
 
 * the selector can still participate in theme detection;
 * TikZJax wrappers and SVGs still adapt to the detected theme;
+* adaptive explicit colors and contrast correction still run;
 * TikZJax does not impose background or text styles on the selected page elements.
 
 The default is `false` to preserve existing integrations, including normal MkDocs Material styling.
@@ -1262,11 +1317,11 @@ window.TikzJaxOptions = {
 };
 ```
 
-This is the light-palette background color.
+This is the Light-palette background color.
 
 It is applied to selected targets when `applyTargetStyles` is enabled.
 
-It is also used as the light fallback for TikZJax background-dependent SVG handling when no effective computed background can be found.
+It is also used as the Light fallback for TikZJax background-dependent SVG handling when no effective computed background can be found.
 
 An empty string falls back to the built-in value.
 
@@ -1286,9 +1341,9 @@ window.TikzJaxOptions = {
 };
 ```
 
-This is the light-palette text and default TikZ foreground color.
+This is the Light-palette text and default TikZ foreground color.
 
-TikZJax applies it to wrappers resolved as light, even when target styling is disabled.
+TikZJax applies it to wrappers resolved as Light, even when target styling is disabled.
 
 An empty string falls back to the built-in value.
 
@@ -1308,11 +1363,11 @@ window.TikzJaxOptions = {
 };
 ```
 
-This is the dark-palette background color.
+This is the Dark-palette background color.
 
 It is applied to selected targets when `applyTargetStyles` is enabled.
 
-It is also used as the dark fallback for TikZJax background-dependent SVG handling when no effective computed background can be found.
+It is also used as the Dark fallback for TikZJax background-dependent SVG handling when no effective computed background can be found.
 
 An empty string falls back to the built-in value.
 
@@ -1332,24 +1387,690 @@ window.TikzJaxOptions = {
 };
 ```
 
-This is the dark-palette text and default TikZ foreground color.
+This is the Dark-palette text and default TikZ foreground color.
 
-TikZJax applies it to wrappers resolved as dark, even when target styling is disabled.
+TikZJax applies it to wrappers resolved as Dark, even when target styling is disabled.
 
 An empty string falls back to the built-in value.
 
 ---
 
+## Adaptive explicit colors
+
+### `theme.adaptiveColors`
+
+| Accepted type | Effective default |
+| ------------- | ----------------- |
+| `boolean`     | `true`            |
+| plain object  | built-in object   |
+
+`theme.adaptiveColors` controls Dark-mode adaptation of explicit chromatic SVG paints.
+
+The following forms are equivalent to the built-in enabled behavior:
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        adaptiveColors: true
+    }
+};
+```
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        adaptiveColors: {
+            enabled: true
+        }
+    }
+};
+```
+
+Disable both explicit-color adaptation and its nested contrast stage with:
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        adaptiveColors: false
+    }
+};
+```
+
+The equivalent object form is:
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        adaptiveColors: {
+            enabled: false
+        }
+    }
+};
+```
+
+When the value is an object and `enabled` is omitted, the effective value is `true`.
+
+The stage processes explicit parseable SVG `fill`, `stroke`, and `color` values. It excludes:
+
+* pure black;
+* pure white;
+* `currentColor`;
+* `none`;
+* transparent paint;
+* CSS variables;
+* gradients, patterns, and other `url(...)` paint servers.
+
+The supported generated color syntaxes include short and long hexadecimal colors, optional hexadecimal alpha, and numeric `rgb(...)` or `rgba(...)` values.
+
+Alpha is preserved.
+
+Light mode restores the stored original chromatic paint values instead of adapting an already transformed color again.
+
+!!! note
+
+    Disabling `adaptiveColors` does not disable `adaptiveFills`.
+
+    To preserve very light non-text fills exactly, also set `theme.adaptiveFills.enabled` to `false`.
+
+---
+
+### `theme.adaptiveColors.enabled`
+
+| Type      | Default |
+| --------- | ------: |
+| `boolean` |  `true` |
+
+This property is read only when `adaptiveColors` is an object.
+
+When `false`:
+
+* explicit chromatic colors are restored to their original values;
+* the nested contrast stage does not run;
+* the separate `adaptiveFills` stage may still run.
+
+---
+
+### `theme.adaptiveColors.strength`
+
+| Type     | Default | Accepted range |
+| -------- | ------: | -------------: |
+| `number` |     `1` |       `0` to `1` |
+
+Controls the blend between the original chromatic color and the fully adapted color.
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        adaptiveColors: {
+            strength: 0.75
+        }
+    }
+};
+```
+
+Meaning:
+
+```text
+0   keep the original chromatic color
+0.5 apply half of the calculated adaptation
+1   apply the complete calculated adaptation
+```
+
+The value affects perceptual lightness, saturation, and the configured hue-family shifts.
+
+It does not control `adaptiveColors.contrast.strength`.
+
+Out-of-range values are clamped.
+
+---
+
+### Perceptual-lightness options
+
+TikZJax does not calculate a literal RGB negative.
+
+A literal negative would change blue to yellow, red to cyan, and green to magenta.
+
+Instead, TikZJax reflects perceptual lightness around the middle of the range, keeps colors from becoming darker than their originals, then applies configured lower and upper bounds.
+
+#### `theme.adaptiveColors.minimumPerceptualLightness`
+
+| Type     | Default | Accepted range |
+| -------- | ------: | -------------: |
+| `number` |  `0.60` |       `0.5` to `1` |
+
+Minimum target perceptual lightness for adapted dark or medium colors.
+
+Increase it when adapted colors remain too dark:
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        adaptiveColors: {
+            minimumPerceptualLightness: 0.68
+        }
+    }
+};
+```
+
+#### `theme.adaptiveColors.maximumPerceptualLightness`
+
+| Type     | Default | Accepted range |
+| -------- | ------: | -------------: |
+| `number` |  `0.82` | configured minimum to `1` |
+
+Upper bound used when the transformation makes a color lighter than its original value.
+
+Reduce it when very dark source colors become too pale or pastel.
+
+The maximum is clamped so that it cannot be lower than `minimumPerceptualLightness`.
+
+---
+
+### Saturation options
+
+Saturation adjustment is applied only when the original saturation is at least `chromaticThreshold`.
+
+#### `theme.adaptiveColors.saturationBoost`
+
+| Type     | Default | Accepted range |
+| -------- | ------: | -------------: |
+| `number` |  `0.18` |         `0` to `1` |
+
+Controls how strongly the original saturation moves towards full saturation before the minimum and maximum bounds are applied.
+
+A larger value produces more vivid adapted colors.
+
+#### `theme.adaptiveColors.minimumSaturation`
+
+| Type     | Default | Accepted range |
+| -------- | ------: | -------------: |
+| `number` |  `0.52` |         `0` to `1` |
+
+Minimum saturation used for adapted chromatic colors.
+
+#### `theme.adaptiveColors.maximumSaturation`
+
+| Type     | Default | Accepted range |
+| -------- | ------: | -------------: |
+| `number` |  `0.90` | configured minimum to `1` |
+
+Maximum saturation used for adapted chromatic colors.
+
+The maximum is clamped so that it cannot be lower than `minimumSaturation`.
+
+#### `theme.adaptiveColors.chromaticThreshold`
+
+| Type     | Default | Accepted range |
+| -------- | ------: | -------------: |
+| `number` |  `0.08` |       `0` to `0.5` |
+
+Colors below this HSL saturation threshold are treated as approximately neutral.
+
+For those colors:
+
+* hue-family shifts are not applied;
+* saturation is not boosted;
+* perceptual-lightness adaptation can still apply.
+
+Example with stronger vividness:
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        adaptiveColors: {
+            saturationBoost: 0.28,
+            minimumSaturation: 0.60,
+            maximumSaturation: 0.96
+        }
+    }
+};
+```
+
+---
+
+### Hue-family options
+
+TikZJax calculates smooth influence zones around three HSL hue-family centers:
+
+| Family | Center |
+| ------ | -----: |
+| red    |   `0°` |
+| green  | `120°` |
+| blue   | `240°` |
+
+A source color can receive a partial shift when it lies near one of those centers.
+
+#### `theme.adaptiveColors.hueShift`
+
+| Type         | Default |
+| ------------ | ------- |
+| plain object | `{ red: 0, green: 0, blue: -40 }` |
+
+The nested values are rotations in degrees:
+
+| Property                               | Default | Description |
+| -------------------------------------- | ------: | ----------- |
+| `theme.adaptiveColors.hueShift.red`    |    `0°` | Rotation around the red family |
+| `theme.adaptiveColors.hueShift.green`  |    `0°` | Rotation around the green family |
+| `theme.adaptiveColors.hueShift.blue`   |  `-40°` | Rotation around the blue family |
+
+The default negative blue shift moves strong blue colors towards cyan and sky blue, avoiding a violet-looking result after lightening.
+
+Use a less cyan blue:
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        adaptiveColors: {
+            hueShift: {
+                blue: -25
+            }
+        }
+    }
+};
+```
+
+Use a stronger sky-blue shift:
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        adaptiveColors: {
+            hueShift: {
+                blue: -50
+            }
+        }
+    }
+};
+```
+
+Any finite degree value is accepted. The resulting hue is normalized to the circular `0°` to `360°` range.
+
+The following flat compatibility aliases are also recognized:
+
+```text
+redHueShift
+greenHueShift
+blueHueShift
+```
+
+Prefer the nested `hueShift` object for new configurations.
+
+#### `theme.adaptiveColors.hueShiftRange`
+
+| Type     | Default | Accepted range |
+| -------- | ------: | -------------: |
+| `number` |    `60` |       `1` to `180` degrees |
+
+Defines the angular influence radius around each red, green, or blue family center.
+
+At the exact family center, influence is complete.
+
+Influence decreases linearly to zero at the configured range boundary.
+
+#### `theme.adaptiveColors.hueShiftStrength`
+
+| Type     | Default | Accepted range |
+| -------- | ------: | -------------: |
+| `number` |     `1` |       `0` to `1` |
+
+Global multiplier for all configured hue-family shifts.
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        adaptiveColors: {
+            hueShiftStrength: 0.65
+        }
+    }
+};
+```
+
+This value is also multiplied by `adaptiveColors.strength`.
+
+---
+
+### Complete `adaptiveColors` defaults
+
+The following block reproduces the built-in values:
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        adaptiveColors: {
+            enabled: true,
+            strength: 1,
+
+            minimumPerceptualLightness: 0.60,
+            maximumPerceptualLightness: 0.82,
+
+            saturationBoost: 0.18,
+            minimumSaturation: 0.52,
+            maximumSaturation: 0.90,
+            chromaticThreshold: 0.08,
+
+            hueShift: {
+                red: 0,
+                green: 0,
+                blue: -40
+            },
+            hueShiftRange: 60,
+            hueShiftStrength: 1,
+
+            contrast: {
+                enabled: true,
+                minimumRatio: 4.5,
+                strength: 1,
+                minimumBackgroundLightness: 0.04,
+                containmentTolerance: 1
+            }
+        }
+    }
+};
+```
+
+---
+
+## Automatic foreground/background contrast
+
+### `theme.adaptiveColors.contrast`
+
+| Type         | Effective default |
+| ------------ | ----------------- |
+| plain object | enabled object    |
+
+This nested stage runs only when:
+
+```text
+active theme = dark
+adaptiveColors is enabled
+contrast.enabled is enabled
+```
+
+No additional option is required for the expanded foreground detection.
+
+The stage evaluates three common SVG arrangements:
+
+1. an SVG `<text>` element painted over a previously painted filled shape;
+2. a bright neutral `stroke` belonging to the same element as its background `fill`;
+3. a small bright-neutral vector shape painted over a larger previously painted filled shape.
+
+Candidate background elements are common SVG shapes with a visible, parseable fill:
+
+```text
+path
+rect
+circle
+ellipse
+polygon
+polyline
+```
+
+For text and separate vector details, TikZJax searches shapes painted earlier, tests the foreground center against their screen-space bounding boxes, and chooses the smallest valid containing candidate.
+
+For a same-element `fill`/`stroke` pair, no geometric containment search is required. This covers shapes such as a gray filled bar with a white or light-gray outline.
+
+The current bright-neutral vector heuristic requires:
+
+```text
+relative luminance >= 0.65
+HSL saturation    <= 0.25
+```
+
+This heuristic applies only to outline and vector-detail detection. Ordinary SVG `<text>` may use any parseable foreground color.
+
+Chromatic vector accents, such as a red target point, are deliberately excluded from the bright-neutral heuristic so that they do not unnecessarily darken a much larger background.
+
+The calculation uses:
+
+* the resolved foreground fill or stroke;
+* the resolved background fill;
+* fill opacity;
+* stroke opacity where relevant;
+* element opacity;
+* the effective page background;
+* relative luminance.
+
+When the visible contrast is below the requested ratio, TikZJax lowers the background shape's HSL lightness while preserving its hue, saturation, and alpha.
+
+The foreground text, stroke, or vector detail is not changed by this stage.
+
+A corrected background receives:
+
+```html
+data-tikzjax-contrast-adjusted="true"
+```
+
+The original fill attribute and inline fill style are stored in internal `data-tikzjax-contrast-*` attributes. A previous correction is restored before the next theme application, so switching themes or changing options does not repeatedly darken an already modified fill.
+
+---
+
+### `theme.adaptiveColors.contrast.enabled`
+
+| Type      | Default |
+| --------- | ------: |
+| `boolean` |  `true` |
+
+Disable only the contrast stage:
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        adaptiveColors: {
+            contrast: {
+                enabled: false
+            }
+        }
+    }
+};
+```
+
+This does not disable the main explicit-color transformation.
+
+---
+
+### `theme.adaptiveColors.contrast.minimumRatio`
+
+| Type     | Default | Accepted range |
+| -------- | ------: | -------------: |
+| `number` |   `4.5` |        `1` to `21` |
+
+Minimum requested relative-luminance contrast ratio.
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        adaptiveColors: {
+            contrast: {
+                minimumRatio: 5.5
+            }
+        }
+    }
+};
+```
+
+The value is a target, not an unconditional guarantee. Complex geometry, unsupported paint servers, transparency, or the configured minimum background lightness can prevent a particular drawing from reaching it.
+
+---
+
+### `theme.adaptiveColors.contrast.strength`
+
+| Type     | Default | Accepted range |
+| -------- | ------: | -------------: |
+| `number` |     `1` |       `0` to `1` |
+
+Blends between the current shape lightness and the calculated darker lightness.
+
+```text
+0   keep the current shape fill
+1   apply the complete calculated darkening
+```
+
+This property is independent of `adaptiveColors.strength`.
+
+Setting only `adaptiveColors.strength: 0` does not disable contrast correction.
+
+---
+
+### `theme.adaptiveColors.contrast.minimumBackgroundLightness`
+
+| Type     | Default | Accepted range |
+| -------- | ------: | -------------: |
+| `number` |  `0.04` |       `0` to `0.5` |
+
+Lowest HSL lightness that the contrast stage may request while darkening a background shape.
+
+When the requested ratio cannot be reached even at this value, TikZJax uses this minimum lightness.
+
+---
+
+### `theme.adaptiveColors.contrast.containmentTolerance`
+
+| Type     | Default | Accepted range |
+| -------- | ------: | -------------: |
+| `number` |     `1` |        `0` to `20` |
+
+Screen-space tolerance, in CSS pixels, added around a candidate background shape when testing whether it contains the center of a separate text or vector foreground bounding box.
+
+Increase it slightly when transformed SVG geometry causes an intended background shape to miss the foreground center by a very small amount.
+
+This option does not affect the direct `fill`/`stroke` comparison performed on one SVG element.
+
+The association remains intentionally conservative and may not identify:
+
+* gradients, patterns, or other `url(...)` paint servers;
+* complex masks, clipping paths, or filters;
+* unusual paint ordering;
+* several equally plausible overlapping backgrounds;
+* vector foregrounds that are chromatic rather than bright and approximately neutral;
+* foregrounds whose visual relationship cannot be inferred from screen-space containment.
+
+---
+
+## Very-light fill adaptation
+
+### `theme.adaptiveFills`
+
+| Type         | Effective default |
+| ------------ | ----------------- |
+| plain object | enabled object    |
+
+`adaptiveFills` is a separate stage for very light non-text fills.
+
+It predates `adaptiveColors` and has a different purpose:
+
+* `adaptiveFills` converts very light fills into darker Dark-mode fills;
+* `adaptiveColors` converts ordinary dark or medium explicit colors into vivid lighter variants;
+* the contrast stage can darken a detected filled background further when foreground text, a bright outline, or a light-neutral vector detail does not have sufficient contrast.
+
+The stage excludes text nodes and rectangular mathematical rules associated with text.
+
+A fill changed by `adaptiveFills` is not then lightened again by the `fill` part of `adaptiveColors`.
+
+Disable it with:
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        adaptiveFills: {
+            enabled: false
+        }
+    }
+};
+```
+
+`adaptiveFills: false` is not a supported shorthand. Use the object form above.
+
+Light mode restores the stored original fill.
+
+---
+
+### `theme.adaptiveFills.enabled`
+
+| Type      | Default |
+| --------- | ------: |
+| `boolean` |  `true` |
+
+Enables the conversion of very light non-text fills in Dark mode.
+
+---
+
+### `theme.adaptiveFills.lightnessThreshold`
+
+| Type     | Default | Accepted range |
+| -------- | ------: | -------------: |
+| `number` |  `0.82` |       `0.5` to `1` |
+
+Minimum HSL lightness at which a non-text fill is considered very light.
+
+Fills below the threshold remain unchanged by this stage.
+
+---
+
+### `theme.adaptiveFills.darkLightness`
+
+| Type     | Default | Accepted range |
+| -------- | ------: | -------------: |
+| `number` |  `0.23` |     `0.1` to `0.45` |
+
+Base HSL lightness used for converted very light fills.
+
+TikZJax can add a small saturation-dependent amount of up to `0.025` before applying the same `0.1` to `0.45` bound.
+
+---
+
+### `theme.adaptiveFills.minimumSaturation`
+
+| Type     | Default | Accepted range |
+| -------- | ------: | -------------: |
+| `number` |  `0.18` |       `0` to `0.7` |
+
+Minimum saturation for converted chromatic fills.
+
+Approximately neutral fills remain neutral.
+
+---
+
+### `theme.adaptiveFills.maximumSaturation`
+
+| Type     | Default | Accepted range |
+| -------- | ------: | -------------: |
+| `number` |  `0.46` | configured minimum to `0.9` |
+
+Maximum saturation for converted chromatic fills.
+
+The conversion first halves the source saturation, then applies the configured minimum and maximum bounds.
+
+---
+
+### Theme adaptation order
+
+For each generated SVG and each theme application, TikZJax performs the relevant stages in this order:
+
+```text
+one-time black/white normalization
+restore any previous contrast correction
+adapt very light non-text fills
+adapt explicit chromatic fill/stroke/color values
+correct detected foreground/background contrast
+```
+
+The color stages are recomputed from stored original SVG values.
+
+This prevents repeated Light/Dark switches from accumulating transformations.
+
+---
+
 ### Theme palette resolution
 
-For a light target or wrapper, TikZJax resolves:
+For a Light target or wrapper, TikZJax resolves:
 
 ```text
 backgroundColor = theme.lightBackgroundColor
 textColor       = theme.lightTextColor
 ```
 
-For a dark target or wrapper:
+For a Dark target or wrapper:
 
 ```text
 backgroundColor = theme.darkBackgroundColor
@@ -1361,6 +2082,8 @@ Blank or missing color values use the corresponding built-in defaults.
 The wrapper receives the resolved text color through its inline `color` property.
 
 The wrapper's `--tikzjax-background-color` value is based on the effective computed background of its configured target or ancestor. If no usable computed background exists, TikZJax uses the resolved palette background.
+
+The effective background is also used by the automatic contrast calculation.
 
 ---
 
@@ -1457,7 +2180,9 @@ window.TikzJaxOptions = {
 
 `applyTargetStyles: false` is optional because it is the default.
 
-With this configuration, Material remains responsible for page backgrounds, foregrounds, navigation, code blocks, tables, cards, and admonitions. TikZJax only detects the active scheme and adapts its own wrappers and SVG output.
+With this configuration, Material remains responsible for page backgrounds, foregrounds, navigation, code blocks, tables, cards, and admonitions.
+
+TikZJax detects the active scheme and adapts only its own wrappers and SVG output, including `adaptiveColors`, `adaptiveFills`, and automatic contrast correction.
 
 To style a region deliberately inside Material, use a dedicated custom selector rather than restyling the complete Material page.
 
@@ -2514,9 +3239,9 @@ workerPool
 theme
 ```
 
-Although a JSON local attribute can syntactically contain arbitrary keys, asset initialization, worker-pool sizing, theme observation, configured theme targets, and target styling are controlled by the global runtime.
+Although a JSON local attribute can syntactically contain arbitrary keys, asset initialization, worker-pool sizing, theme observation, configured theme targets, SVG color adaptation, contrast correction, and target styling are controlled by the global runtime.
 
-Do not attempt to configure a separate worker pool or a separate page-level theme for one diagram.
+Do not attempt to configure a separate worker pool, page-level theme, or per-diagram `adaptiveColors` palette for one diagram.
 
 ---
 
@@ -2920,6 +3645,26 @@ window.TikzJaxOptions?.tex?.tikzLibraries
 ```js
 window.TikzJaxOptions?.theme
 ```
+
+Inspect adaptive explicit colors:
+
+```js
+window.TikzJaxOptions?.theme?.adaptiveColors
+```
+
+Inspect the contrast stage:
+
+```js
+window.TikzJaxOptions?.theme?.adaptiveColors?.contrast
+```
+
+Inspect configured very-light fill options:
+
+```js
+window.TikzJaxOptions?.theme?.adaptiveFills
+```
+
+`adaptiveFills` may be `undefined` when no object was configured explicitly, even though the stage still uses its built-in fallback values.
 
 ### Inspect `tkzTab` defaults
 

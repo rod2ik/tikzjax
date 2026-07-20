@@ -339,7 +339,7 @@ The resulting global timeout is:
 
 ## Theme configuration is global
 
-Theme detection, theme palettes, and optional target styling belong to the page-level global configuration.
+Theme detection, theme palettes, optional target styling, and generated-SVG color and contrast adaptation belong to the page-level global configuration.
 
 Relevant options include:
 
@@ -357,6 +357,9 @@ theme.lightBackgroundColor
 theme.lightTextColor
 theme.darkBackgroundColor
 theme.darkTextColor
+theme.adaptiveColors
+theme.adaptiveColors.contrast
+theme.adaptiveFills
 ```
 
 Example:
@@ -384,9 +387,17 @@ window.TikzJaxOptions = {
 
 When `theme.applyTargetStyles` is enabled, TikZJax can apply the resolved background and text colors to every selected target. This behavior concerns page elements and is therefore not a per-diagram setting.
 
+The same global scope applies to:
+
+* explicit-color adaptation through `theme.adaptiveColors`;
+* foreground/background contrast correction through `theme.adaptiveColors.contrast`;
+* very-light fill adaptation through `theme.adaptiveFills`.
+
+The expanded contrast detector can evaluate text over fills, a bright neutral outline on the same filled element, and a small light-neutral vector detail over a larger filled shape. This broader behavior does not introduce a new configuration scope or any new option.
+
 Do not place theme configuration inside a diagram's `data-tikzjax-options` value.
 
-Local diagram configuration is used to build the effective rendering options for that diagram. It does not replace the page-level theme detector, theme observer, configured targets, or global target palette.
+Local diagram configuration is used to build the effective rendering options for that diagram. It does not replace the page-level theme detector, theme observer, configured targets, global target palette, or global SVG color and contrast stages.
 
 For detailed theme behavior, see [Themes](themes.md).
 
@@ -1045,7 +1056,7 @@ The fenced block can then use them:
 | -------------------------------------- | -------------------- |
 | Common timeout for the site            | Global               |
 | Worker-pool configuration              | Global               |
-| Theme detection, palettes, and target styling | Global          |
+| Theme detection, palettes, target styling, SVG colors, and contrast | Global |
 | Default fallback image                 | Global               |
 | Package used by nearly every diagram   | Global, with caution |
 | Package used by one example            | Local                |
@@ -1327,9 +1338,9 @@ Local:
 
 ### Defining theme options in local diagram JSON
 
-Theme detection and target styling are page-level concerns.
+Theme detection, target styling, adaptive SVG colors, foreground/background contrast correction, and very-light fill adaptation are page-level concerns.
 
-Configure `theme` globally instead of placing it in `data-tikzjax-options`.
+Configure `theme` globally instead of placing `theme`, `adaptiveColors`, `adaptiveColors.contrast`, or `adaptiveFills` in `data-tikzjax-options`.
 
 ### Loading every optional package globally
 

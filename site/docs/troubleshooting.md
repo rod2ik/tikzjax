@@ -47,7 +47,9 @@ Before investigating a package-specific problem, verify:
 12. The required package or TikZ library is declared in the correct category.
 13. The diagram is complete and syntactically valid.
 14. A fenced block is not relying on undeclared local dependencies.
-15. The issue still occurs with one worker.
+15. The active Light or Dark theme is detected correctly.
+16. Adaptive-color and contrast options have not been disabled unintentionally.
+17. The issue still occurs with one worker.
 
 ---
 
@@ -318,6 +320,32 @@ Global TikZ libraries:
 ```js
 window.TikzJaxOptions?.tex?.tikzLibraries
 ```
+
+Theme configuration:
+
+```js
+window.TikzJaxOptions?.theme
+```
+
+Adaptive colors:
+
+```js
+window.TikzJaxOptions?.theme?.adaptiveColors
+```
+
+Contrast configuration:
+
+```js
+window.TikzJaxOptions?.theme?.adaptiveColors?.contrast
+```
+
+Explicitly configured very-light fill options:
+
+```js
+window.TikzJaxOptions?.theme?.adaptiveFills
+```
+
+`adaptiveFills` may be `undefined` here when no override was supplied, even though the runtime still uses its built-in fallback values.
 
 Apply and inspect a partial update:
 
@@ -1569,9 +1597,14 @@ Test in a clean browser profile when cached network data may be stale.
 
 ## Dark mode looks incorrect
 
-TikZJax adapts common default black, white, and text colors.
+TikZJax applies several independent Dark-mode stages:
 
-Explicitly selected colors are generally preserved.
+* ordinary black and white output follows the active page foreground and background conventions;
+* very light non-text fills may be converted by `theme.adaptiveFills`;
+* explicit chromatic `fill`, `stroke`, and text colors are adapted by `theme.adaptiveColors`, which is enabled by default;
+* a detected filled background may be darkened when foreground/background contrast is below the configured minimum ratio.
+
+Light mode restores the stored original chromatic SVG values after the normal black/white processing.
 
 Check the theme configuration:
 
@@ -1592,7 +1625,19 @@ Also check:
 * the selector matches the element containing the theme state;
 * the attribute changes when the site theme changes;
 * dark and light values match the actual HTML;
-* custom SVG or CSS rules are not overriding TikZJax styles.
+* custom SVG or CSS rules are not overriding TikZJax styles;
+* `theme.adaptiveColors` was not disabled;
+* the generated SVG uses ordinary parseable colors rather than gradients, patterns, CSS variables, or unsupported paint servers.
+
+Inspect the active options:
+
+```js
+window.TikzJaxOptions?.theme
+```
+
+```js
+window.TikzJaxOptions?.theme?.adaptiveColors
+```
 
 See [Themes](themes.md).
 
@@ -1600,16 +1645,193 @@ See [Themes](themes.md).
 
 ## Explicit colors change unexpectedly
 
-Use explicit TikZ colors for elements that must not follow automatic text-color adaptation:
+Explicit chromatic colors are adapted automatically in Dark mode by default.
 
-```latex
-\draw[red,very thick] (0,0) -- (2,0);
-\node[text=blue] at (1,0.5) {Label};
+For example, a dark blue may become a brighter sky-blue-family color, while the exact generated blue is restored in Light mode.
+
+To disable both explicit-color adaptation and its nested contrast stage:
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        adaptiveColors: false
+    }
+};
 ```
 
-Avoid relying on implicit black when the element must remain black in both themes.
+To keep explicit chromatic colors unchanged while retaining foreground/background contrast correction:
 
-Inspect the generated SVG to determine whether the affected value is a fill, stroke, text color, or CSS rule.
+```js
+window.TikzJaxOptions = {
+    theme: {
+        adaptiveColors: {
+            strength: 0,
+
+            contrast: {
+                enabled: true
+            }
+        }
+    }
+};
+```
+
+`adaptiveColors.strength` and `adaptiveColors.contrast.strength` are independent.
+
+Pure black and pure white use the separate black/white normalization stage rather than `adaptiveColors`.
+
+Inspect the generated SVG to determine whether the affected value is a `fill`, `stroke`, text color, CSS value, gradient, or pattern.
+
+---
+
+## Foreground/background contrast is not corrected
+
+The contrast stage is enabled by default inside `theme.adaptiveColors`.
+
+It supports three common Dark-mode arrangements:
+
+* SVG `<text>` painted over a filled shape;
+* a bright neutral `stroke` on the same element as its background `fill`;
+* a small bright-neutral vector detail painted over a larger filled shape.
+
+Confirm the active configuration:
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        adaptiveColors: {
+            enabled: true,
+
+            contrast: {
+                enabled: true,
+                minimumRatio: 4.5,
+                strength: 1,
+                minimumBackgroundLightness: 0.04,
+                containmentTolerance: 1
+            }
+        }
+    }
+};
+```
+
+No additional configuration parameter is required for outline or vector-detail detection.
+
+Inspect the generated SVG. A background changed by the contrast stage receives:
+
+```html
+data-tikzjax-contrast-adjusted="true"
+```
+
+If the marker is absent, verify:
+
+* the active theme is actually Dark;
+* the foreground and background use parseable SVG colors;
+* the background is a common filled shape such as `path`, `rect`, `circle`, `ellipse`, `polygon`, or `polyline`;
+* a separate foreground is painted after the intended background;
+* a separate text or vector detail is geometrically associated with the intended background;
+* the foreground is not hidden inside a gradient, pattern, filter, clipping path, or complex mask;
+* a vector foreground is bright and approximately neutral.
+
+Chromatic vector accents, such as a red target point, deliberately do not trigger the bright-neutral outline or vector-detail heuristic.
+
+For a same-element `fill`/`stroke` pair, `containmentTolerance` has no effect because no geometric association is required.
+
+For small geometric mismatches involving separate text or vector details, try:
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        adaptiveColors: {
+            contrast: {
+                containmentTolerance: 2
+            }
+        }
+    }
+};
+```
+
+If the marker is present but the background remains too light, increase `minimumRatio`, keep `contrast.strength` near `1`, or lower `minimumBackgroundLightness`.
+
+---
+
+## A contrast-corrected background is too dark
+
+Reduce the requested ratio:
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        adaptiveColors: {
+            contrast: {
+                minimumRatio: 3.5
+            }
+        }
+    }
+};
+```
+
+Or apply only part of the calculated darkening:
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        adaptiveColors: {
+            contrast: {
+                strength: 0.7
+            }
+        }
+    }
+};
+```
+
+To disable only foreground/background contrast correction while keeping explicit-color adaptation:
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        adaptiveColors: {
+            contrast: {
+                enabled: false
+            }
+        }
+    }
+};
+```
+
+---
+
+## A white or very light fill remains too bright
+
+Very light non-text fills use the separate `theme.adaptiveFills` stage.
+
+Confirm it is enabled:
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        adaptiveFills: {
+            enabled: true,
+            lightnessThreshold: 0.82,
+            darkLightness: 0.23
+        }
+    }
+};
+```
+
+The stage may not modify gradients, patterns, CSS variables, transparent paints, or unsupported color representations.
+
+Lower `lightnessThreshold` when a fill is visually light but remains below the default threshold:
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        adaptiveFills: {
+            lightnessThreshold: 0.75
+        }
+    }
+};
+```
+
+`adaptiveFills` is independent of `adaptiveColors`. Disabling `adaptiveColors` does not disable very-light fill adaptation.
 
 ---
 
@@ -2025,6 +2247,9 @@ Include:
 * Console errors;
 * failed Network requests;
 * whether cache was disabled;
+* the active Light or Dark theme value;
+* the effective `theme.adaptiveColors` and contrast configuration;
+* whether the affected SVG contains `data-tikzjax-contrast-adjusted="true"`;
 * whether the issue occurs with one worker;
 * whether the issue occurs on a clean browser profile;
 * whether the basic circle example works.

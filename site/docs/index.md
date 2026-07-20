@@ -4,6 +4,7 @@
 [![npm package](https://img.shields.io/badge/npm-%40rod2ik%2Ftikzjax-CB3837?logo=npm\&logoColor=white)](https://www.npmjs.com/package/@rod2ik/tikzjax)
 [![License: GPL v3+](https://img.shields.io/badge/License-GPLv3%2B-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Material themes](https://img.shields.io/badge/Material-Light%20%2F%20Dark-success?style=flat-square&logo=materialformkdocs&logoColor=white)](themes.md)
+[![Adaptive colors](https://img.shields.io/badge/Dark%20mode-adaptive%20colors-success?style=flat-square)](themes.md#adaptive-explicit-colors-in-dark-mode)
 [![Web Workers](https://img.shields.io/badge/rendering-adaptive%20worker%20pool-success?style=flat-square)](parallel-rendering.md)
 [![Packages](https://img.shields.io/badge/optional%20packages-8-success?style=flat-square&logo=latex&logoColor=white)](#supported-optional-packages)
 [![Browser TeX](https://img.shields.io/badge/TeX-WebAssembly-success?style=flat-square)](architecture.md)
@@ -229,6 +230,14 @@ See the [complete examples catalogue](examples/index.md).
     * `data-md-color-scheme`.
 
 * [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Support for class-based theme detection.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Any valid CSS selector can identify one or more configured theme targets.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Optional standalone target styling with configurable light and dark background and text colors.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Target styling is disabled by default so existing integrations, including MkDocs Material, keep control of page-level colors.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Dark-mode adaptation of explicit chromatic SVG fills, strokes, and text colors through `theme.adaptiveColors`, enabled by default.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Perceptual-lightness adaptation keeps colors in the same visual family while producing brighter and more vivid dark-mode variants.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Configurable red, green, and blue hue shifts, including a default shift that moves deep blues towards a clearer sky-blue range.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Automatic foreground/background contrast correction can darken detected filled shapes behind text, bright outlines, or small light-neutral vector details when their contrast is below the configured minimum ratio.
+* [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Light mode restores the original chromatic SVG values, while the existing black-and-white normalization remains unchanged.
 * [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Optional fallback to `prefers-color-scheme`.
 * [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Dynamic updates of existing SVGs when the site theme changes.
 * [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) Cached SVGs are adapted to the current theme after insertion without recompiling TeX.
@@ -287,6 +296,9 @@ See the [complete examples catalogue](examples/index.md).
 | Per-diagram package configuration  |                  — |       [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) |
 | Per-diagram TikZ libraries         |                  — |       [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) |
 | Light and dark theme adaptation    |                  — |       [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) |
+| Adaptive explicit SVG colors       |                  — |       [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) |
+| Automatic foreground/background contrast |                  — |       [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) |
+| Configurable standalone palettes   |                  — |       [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) |
 | Dynamic Material theme updates     |                  — |       [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) |
 | Material tabs and admonitions      |                  — |       [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) |
 | Adaptive worker pool               |                  — |       [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax) |
@@ -583,12 +595,75 @@ data-tikz-libraries="braids"
 
 Theme adaptation is [![NEW](https://img.shields.io/badge/NEW-success?style=flat-square)](https://github.com/rod2ik/tikzjax).
 
-A Material for MkDocs configuration can use:
+TikZJax can update already-rendered and cached SVGs after a theme change without recompiling TeX.
+
+### Adaptive explicit colors
+
+Explicit chromatic SVG colors are adapted automatically in Dark mode through `theme.adaptiveColors`, which is enabled by default.
+
+Instead of applying a literal RGB negative, TikZJax raises perceptual lightness while keeping each color in the same visual family. Saturation can also be reinforced so dark blues, reds, greens, and other colors become clear, vivid dark-mode variants rather than pale greyish colors.
+
+The red, green, and blue color families have configurable hue shifts. By default, deep blues are shifted towards a clearer sky-blue range.
+
+The main defaults can be written explicitly as:
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        adaptiveColors: {
+            enabled: true,
+            strength: 1,
+
+            hueShift: {
+                red: 0,
+                green: 0,
+                blue: -40
+            },
+
+            contrast: {
+                enabled: true,
+                minimumRatio: 4.5
+            }
+        }
+    }
+};
+```
+
+This configuration block is optional because these values are already enabled by default.
+
+In Light mode, TikZJax restores the original chromatic SVG values. The existing special handling of black, white, `currentColor`, transparent paints, gradients, and patterns remains separate and unchanged.
+
+Set `theme.adaptiveColors` to `false` to disable explicit-color adaptation and its contrast stage.
+
+### Automatic foreground/background contrast
+
+In Dark mode, TikZJax can estimate the visible contrast in three common SVG arrangements:
+
+* text painted over a filled shape;
+* a bright neutral `stroke` belonging to the same element as its background `fill`;
+* a small bright-neutral vector detail painted over a larger filled shape.
+
+If the ratio is below `theme.adaptiveColors.contrast.minimumRatio`, the detected background fill is darkened until the requested contrast is approached.
+
+The default requested ratio is `4.5`. The foreground text, outline, or vector detail is not replaced by this contrast stage. Chromatic vector accents, such as a red target point, do not trigger the bright-neutral heuristic, and page components outside generated TikZJax SVGs are not restyled.
+
+No additional configuration option is required for this expanded foreground detection.
+
+A background modified by this stage can be identified in the generated SVG by:
+
+```html
+data-tikzjax-contrast-adjusted="true"
+```
+
+### Material for MkDocs
+
+A Material configuration can use:
 
 ```js
 window.TikzJaxOptions = {
     theme: {
         selector: "body",
+        applyTargetStyles: false,
         attribute: "data-md-color-scheme",
         darkValue: "slate",
         lightValue: "default",
@@ -598,9 +673,39 @@ window.TikzJaxOptions = {
 };
 ```
 
-TikZJax can update already-rendered and cached SVGs after a theme change without recompiling TeX.
+`applyTargetStyles` defaults to `false`. Material therefore remains responsible for the page background, text, navigation, cards, code blocks, tables, and admonitions.
 
-See [Light and Dark Themes](themes.md).
+The adaptive-color and SVG-contrast stages still apply to TikZJax diagrams in Dark mode; they do not require TikZJax to restyle the Material page itself.
+
+### Standalone HTML
+
+A custom standalone page can ask TikZJax to style one or more selected targets:
+
+```js
+window.TikzJaxOptions = {
+    theme: {
+        selector: ".app",
+        applyTargetStyles: true,
+
+        lightBackgroundColor: "#ffffff",
+        lightTextColor: "#000000",
+
+        darkBackgroundColor: "#1b1e2b",
+        darkTextColor: "#ffffff",
+
+        darkClass: "dark",
+        lightClass: "light",
+
+        attribute: "data-theme",
+        darkValue: "dark",
+        lightValue: "light"
+    }
+};
+```
+
+`theme.selector` accepts any valid CSS selector. Every matching target receives the resolved background and text colors only when `applyTargetStyles` is enabled.
+
+See [Light and Dark Themes](themes.md) and the [standalone advanced example](examples/advanced.html).
 
 ---
 
@@ -729,6 +834,7 @@ The configured fallback image should appear after all permitted attempts fail.
 
 * [API Reference](api-reference.md)
 * [Examples](examples/index.md)
+* [Standalone advanced HTML example](examples/advanced.html)
 * [TikZ examples](examples/tikz.md)
 * [`tkz-tab` examples](examples/tkz-tab.md)
 * [`physics` examples](examples/physics.md)
@@ -751,7 +857,7 @@ TikZJax exists because of the foundational work of the original TikZJax, Web2JS,
 * optional package loading;
 * global and local configuration;
 * MkDocs fenced blocks;
-* light and dark themes;
+* light and dark themes, including adaptive chromatic colors and automatic foreground/background SVG contrast correction;
 * adaptive parallel rendering;
 * dynamic content;
 * expanded caching;

@@ -53,7 +53,7 @@ render identity generation
              SVG insertion
                     |
                     v
-   target palette resolution, theme adaptation, and event
+   target palette resolution, ordered SVG adaptation, and event
 ```
 
 The main browser thread coordinates discovery, caching, scheduling, DOM updates, and theme handling.
@@ -77,7 +77,7 @@ The main TikZJax bundle runs in the page and manages:
 * worker-pool lifecycle;
 * DOM observation;
 * generated SVG insertion;
-* theme detection, palette resolution, optional target styling, and SVG adaptation;
+* theme detection, palette resolution, optional target styling, ordered SVG color adaptation, and foreground/background contrast correction;
 * error fallbacks;
 * completion events.
 
@@ -319,7 +319,9 @@ debugTimings
 
 A diagram cannot create an independent local worker pool. Pool sizing and worker initialization are global runtime concerns.
 
-Theme detection, configured targets, palette resolution, target styling, and theme observation are also global runtime concerns. A local diagram configuration does not create a separate page-level theme environment.
+Theme detection, configured targets, palette resolution, target styling, SVG color adaptation, foreground/background contrast correction, and theme observation are also global runtime concerns. This includes `theme.adaptiveColors`, `theme.adaptiveColors.contrast`, and `theme.adaptiveFills`.
+
+A local diagram configuration does not create a separate page-level theme environment and cannot override these theme stages for only one diagram.
 
 ---
 
@@ -1207,7 +1209,7 @@ The main thread:
 5. applies wrapper and helper classes;
 6. resolves the active theme and configured target palette;
 7. optionally styles configured page targets;
-8. adapts the wrapper and generated SVG;
+8. applies the ordered wrapper and SVG theme pipeline;
 9. dispatches the completion event;
 10. marks the worker idle;
 11. schedules the next queued job.
@@ -1386,7 +1388,7 @@ TikZJax does not automatically create or recolor arbitrary component borders.
 
 ### Separation between page styling and SVG adaptation
 
-The target and the generated diagram are handled at different levels:
+The configured page target and the generated diagram are handled at different levels:
 
 ```text
 configured page target
@@ -1405,12 +1407,16 @@ configured page target
                     v
               generated SVG
                     |
-                    +-- adaptive black foreground values
+                    +-- black/white normalization
                     |
-                    +-- selected white-background handling
+                    +-- very-light fill adaptation
+                    |
+                    +-- explicit chromatic color adaptation
+                    |
+                    +-- foreground/background contrast correction
 ```
 
-With `applyTargetStyles: false`, only the wrapper and SVG adaptation occur.
+With `applyTargetStyles: false`, only wrapper and SVG adaptation occur.
 
 With `applyTargetStyles: true`, target styling occurs in addition to wrapper and SVG adaptation.
 
@@ -1418,22 +1424,134 @@ Elements outside `theme.selector` remain controlled by the page's own CSS.
 
 ---
 
-### SVG adaptation
+### Ordered SVG adaptation pipeline
 
-TikZJax can adapt common generated colors for dark and light backgrounds.
+Theme adaptation happens on the main browser thread after SVG generation and insertion.
 
-Typical adaptations include:
+For every theme application, TikZJax performs the relevant stages in this order:
 
-* default black text;
-* black strokes;
-* black fills;
-* selected white backgrounds.
+```text
+1. one-time black/white normalization
+2. restore any previous contrast correction
+3. adapt very light non-text fills
+4. adapt explicit chromatic fill, stroke, and color values
+5. correct detected foreground/background contrast
+```
 
-Explicitly chosen TikZ colors are generally preserved.
+The first stage recognizes ordinary generated black and white values and applies TikZJax's existing foreground/background conventions. Pure black and pure white remain separate from `adaptiveColors`.
+
+The second stage restores fills saved by a previous contrast pass. This prevents repeated Dark-mode applications from progressively darkening an already corrected background.
+
+The third stage is `theme.adaptiveFills`. It converts very light non-text fills into darker Dark-mode fills before general chromatic adaptation.
+
+The fourth stage is `theme.adaptiveColors`. In Dark mode, parseable explicit chromatic `fill`, `stroke`, and `color` values can be transformed into lighter, more vivid variants while preserving their perceived color family. Light mode restores the stored original chromatic values.
+
+The fifth stage is `theme.adaptiveColors.contrast`. It can darken a detected filled background when the visible foreground/background contrast is below the configured minimum ratio.
+
+All color stages are recomputed from stored original SVG values rather than from the previously transformed result.
+
+---
+
+### Black and white normalization
+
+Typical black/white normalization includes:
+
+* default black text changed to the active wrapper foreground;
+* ordinary black strokes and fills changed to theme-compatible foreground values;
+* selected white backgrounds made transparent or otherwise handled by the existing white-background rules.
 
 The literal black and white values used to recognize ordinary generated SVG content remain detection markers. Configurable palette colors do not redefine which source colors are classified as default black or white.
 
-Theme adaptation happens after SVG generation and can be reapplied when the site's theme changes.
+---
+
+### Very-light fill adaptation
+
+`theme.adaptiveFills` is a separate Dark-mode stage for very light non-text fills.
+
+It runs before `adaptiveColors`, so a very light fill converted into a darker background is not immediately lightened again by the general chromatic fill transformation.
+
+Text nodes and rectangular mathematical rules associated with text are excluded from this stage.
+
+Light mode restores the stored fill from before the `adaptiveFills` transformation.
+
+---
+
+### Explicit chromatic color adaptation
+
+`theme.adaptiveColors` is enabled by default.
+
+The stage processes ordinary parseable SVG values used by:
+
+```text
+fill
+stroke
+color
+```
+
+It excludes:
+
+* pure black and pure white;
+* `currentColor`;
+* `none`;
+* transparent paint;
+* CSS variables;
+* gradients, patterns, and other `url(...)` paint servers.
+
+In Dark mode, perceptual lightness, saturation, and optional hue-family shifts are computed from the stored source color.
+
+In Light mode, the stored original chromatic value is restored exactly.
+
+Disabling `adaptiveColors` also disables its nested contrast stage, but it does not disable the separate `adaptiveFills` stage.
+
+---
+
+### Foreground/background contrast correction
+
+The contrast stage runs only when:
+
+```text
+active theme = dark
+adaptiveColors is enabled
+contrast.enabled is enabled
+```
+
+No additional configuration option is required for the expanded foreground detection.
+
+TikZJax evaluates three common SVG arrangements:
+
+1. an SVG `<text>` element painted over a previously painted filled shape;
+2. a bright neutral `stroke` belonging to the same element as its background `fill`;
+3. a small bright-neutral vector shape painted over a larger previously painted filled shape.
+
+For text and separate vector details, TikZJax searches common filled shapes painted earlier, compares screen-space geometry, and selects the smallest valid containing background.
+
+For a same-element `fill`/`stroke` pair, no containment search is required.
+
+The contrast calculation can use:
+
+* the resolved foreground fill or stroke;
+* the resolved background fill;
+* fill opacity;
+* stroke opacity;
+* element opacity;
+* the effective page background;
+* relative luminance.
+
+When the ratio is below `theme.adaptiveColors.contrast.minimumRatio`, TikZJax reduces the background fill's HSL lightness while preserving its hue, saturation, and alpha.
+
+The foreground text, stroke, or vector detail is not recolored by this stage.
+
+Chromatic vector accents, such as a red target point, are deliberately excluded from the bright-neutral outline and vector-detail heuristic.
+
+A modified background receives:
+
+```html
+data-tikzjax-contrast-adjusted="true"
+```
+
+The original fill and inline fill style are stored so that the correction can be restored before the next theme application.
+
+`containmentTolerance` affects only the association of separate text or vector details with a background shape. It does not affect a direct `fill`/`stroke` comparison on one SVG element.
 
 ---
 
@@ -1458,10 +1576,14 @@ resolve new palette
     |
     +-- optionally restyle configured targets
     |
-    +-- update wrappers and existing SVGs
+    +-- update wrappers
+    |
+    +-- restore previous adaptive corrections
+    |
+    +-- recompute fills, explicit colors, and contrast
 ```
 
-A cached SVG follows the same main-thread theme path after insertion as a freshly rendered SVG.
+A cached SVG follows the same main-thread theme path after insertion as a freshly rendered SVG. The persistent cache stores generated SVG markup before page-specific theme adaptation, so the same cached rendering can be adapted to the currently active theme after insertion.
 
 ---
 
@@ -1724,7 +1846,7 @@ The following sequence summarizes a fresh uncached render:
 18. Main thread inserts the SVG into grouped targets
 19. Main thread resolves the active theme and target palette
 20. Main thread optionally styles configured page targets
-21. Main thread adapts wrappers and SVG output
+21. Main thread applies black/white normalization, adaptive fills, adaptive colors, and foreground/background contrast correction
 22. Main thread dispatches tikzjax-load-finished
 23. Worker returns to the idle pool
 ```

@@ -138,7 +138,44 @@ const DEFAULT_THEME_OPTIONS = {
     lightTextColor: '#000000',
 
     darkBackgroundColor: '#1b1e2b',
-    darkTextColor: '#ffffff'
+    darkTextColor: '#ffffff',
+
+    /*
+     * Dark-mode adaptation of explicit TikZ colors.
+     *
+     * The adaptation is enabled by default. It preserves the
+     * perceived color family while making dark colors brighter.
+     * Pure blue is deliberately shifted towards a vivid sky blue,
+     * because a simple HSL lightening tends to look violet.
+     */
+    adaptiveColors: {
+        enabled: true,
+        strength: 1,
+
+        minimumPerceptualLightness: 0.60,
+        maximumPerceptualLightness: 0.82,
+
+        saturationBoost: 0.18,
+        minimumSaturation: 0.52,
+        maximumSaturation: 0.90,
+        chromaticThreshold: 0.08,
+
+        hueShift: {
+            red: 0,
+            green: 0,
+            blue: -40
+        },
+        hueShiftRange: 60,
+        hueShiftStrength: 1,
+
+        contrast: {
+            enabled: true,
+            minimumRatio: 4.5,
+            strength: 1,
+            minimumBackgroundLightness: 0.04,
+            containmentTolerance: 1
+        }
+    }
 };
 
 const DEFAULT_TIKZJAX_OPTIONS = {
@@ -2326,11 +2363,12 @@ const applyThemeToTikz = (
         }
 
         let match = normalized.match(
-            /^#([0-9a-f]{3})$/i
+            /^#([0-9a-f]{3})([0-9a-f])?$/i
         );
 
         if (match) {
             const digits = match[1];
+            const alphaDigit = match[2];
 
             return {
                 red: parseInt(
@@ -2344,16 +2382,24 @@ const applyThemeToTikz = (
                 blue: parseInt(
                     digits[2] + digits[2],
                     16
-                )
+                ),
+                alpha:
+                    alphaDigit === undefined
+                        ? 1
+                        : parseInt(
+                            alphaDigit + alphaDigit,
+                            16
+                        ) / 255
             };
         }
 
         match = normalized.match(
-            /^#([0-9a-f]{6})$/i
+            /^#([0-9a-f]{6})([0-9a-f]{2})?$/i
         );
 
         if (match) {
             const digits = match[1];
+            const alphaDigits = match[2];
 
             return {
                 red: parseInt(
@@ -2367,7 +2413,14 @@ const applyThemeToTikz = (
                 blue: parseInt(
                     digits.slice(4, 6),
                     16
-                )
+                ),
+                alpha:
+                    alphaDigits === undefined
+                        ? 1
+                        : parseInt(
+                            alphaDigits,
+                            16
+                        ) / 255
             };
         }
 
@@ -2376,10 +2429,16 @@ const applyThemeToTikz = (
         );
 
         if (match) {
-            if (
-                match[4] !== undefined &&
-                Number(match[4]) <= 0
-            ) {
+            const alpha =
+                match[4] === undefined
+                    ? 1
+                    : clamp(
+                        Number(match[4]),
+                        0,
+                        1
+                    );
+
+            if (alpha <= 0) {
                 return null;
             }
 
@@ -2398,7 +2457,8 @@ const applyThemeToTikz = (
                     Number(match[3]),
                     0,
                     255
-                )
+                ),
+                alpha
             };
         }
 
@@ -2554,27 +2614,117 @@ const applyThemeToTikz = (
         };
     };
 
-    const rgbToHex = ({
+    const rgbToCss = ({
         red,
         green,
-        blue
+        blue,
+        alpha = 1
     }) => {
-        const toHex = (component) => {
+        const normalizeComponent = (component) => {
             return clamp(
                 Math.round(component),
                 0,
                 255
-            )
+            );
+        };
+
+        const r = normalizeComponent(red);
+        const g = normalizeComponent(green);
+        const b = normalizeComponent(blue);
+        const a = clamp(alpha, 0, 1);
+
+        if (a < 1) {
+            return (
+                `rgba(${r}, ${g}, ${b}, ` +
+                `${Number(a.toFixed(4))})`
+            );
+        }
+
+        const toHex = (component) => {
+            return component
                 .toString(16)
                 .padStart(2, '0');
         };
 
         return (
             '#' +
-            toHex(red) +
-            toHex(green) +
-            toHex(blue)
+            toHex(r) +
+            toHex(g) +
+            toHex(b)
         );
+    };
+
+    const srgbComponentToLinear = (component) => {
+        const normalized =
+            clamp(component, 0, 255) / 255;
+
+        return normalized <= 0.04045
+            ? normalized / 12.92
+            : Math.pow(
+                (normalized + 0.055) / 1.055,
+                2.4
+            );
+    };
+
+    const getRelativeLuminance = ({
+        red,
+        green,
+        blue
+    }) => {
+        return (
+            0.2126 *
+            srgbComponentToLinear(red) +
+            0.7152 *
+            srgbComponentToLinear(green) +
+            0.0722 *
+            srgbComponentToLinear(blue)
+        );
+    };
+
+    const luminanceToPerceptualLightness = (
+        luminance
+    ) => {
+        const epsilon = 216 / 24389;
+        const kappa = 24389 / 27;
+        const y = clamp(luminance, 0, 1);
+
+        return y <= epsilon
+            ? clamp(
+                kappa * y / 100,
+                0,
+                1
+            )
+            : clamp(
+                (
+                    116 * Math.cbrt(y) -
+                    16
+                ) / 100,
+                0,
+                1
+            );
+    };
+
+    const perceptualLightnessToLuminance = (
+        lightness
+    ) => {
+        const kappa = 24389 / 27;
+        const lStar =
+            clamp(lightness, 0, 1) * 100;
+
+        return lStar <= 8
+            ? clamp(
+                lStar / kappa,
+                0,
+                1
+            )
+            : clamp(
+                Math.pow(
+                    (lStar + 16) / 116,
+                    3
+                ),
+                0,
+                1
+            );
     };
 
     /*
@@ -2582,7 +2732,7 @@ const applyThemeToTikz = (
      * typographiques sont souvent des <rect> placés dans le même
      * groupe que les éléments <text>.
      *
-     * Elles ne doivent jamais être traitées comme des fonds.
+     * Elles doivent être traitées comme du texte, pas comme des fonds.
      */
     const isMathRuleNode = (node) => {
         if (
@@ -2698,13 +2848,368 @@ const applyThemeToTikz = (
                 0.45
             );
 
-        return rgbToHex(
-            hslToRgb(
+        return rgbToCss({
+            ...hslToRgb(
                 hsl.hue,
                 darkSaturation,
                 adjustedLightness
-            )
+            ),
+            alpha: rgb.alpha
+        });
+    };
+
+    const getAdaptiveDarkColor = (
+        originalColor,
+        adaptiveOptions
+    ) => {
+        if (
+            !isExplicitColorValue(
+                originalColor
+            ) ||
+            isBlackValue(originalColor) ||
+            isWhiteValue(originalColor)
+        ) {
+            return '';
+        }
+
+        const rgb =
+            parseSvgColor(originalColor);
+
+        if (!rgb) {
+            return '';
+        }
+
+        const strength =
+            clamp(
+                Number(
+                    adaptiveOptions.strength ??
+                    1
+                ),
+                0,
+                1
+            );
+
+        if (strength <= 0) {
+            return originalColor;
+        }
+
+        const hsl = rgbToHsl(
+            rgb.red,
+            rgb.green,
+            rgb.blue
         );
+
+        const chromaticThreshold =
+            clamp(
+                Number(
+                    adaptiveOptions
+                        .chromaticThreshold ??
+                    0.08
+                ),
+                0,
+                0.5
+            );
+
+        const normalizeHue = (hue) => {
+            return (
+                (hue % 360) + 360
+            ) % 360;
+        };
+
+        const getHueDistance = (
+            firstHue,
+            secondHue
+        ) => {
+            return Math.abs(
+                (
+                    normalizeHue(
+                        firstHue - secondHue + 180
+                    )
+                ) - 180
+            );
+        };
+
+        const hueShiftOptions =
+            isPlainObject(
+                adaptiveOptions.hueShift
+            )
+                ? adaptiveOptions.hueShift
+                : {};
+
+        const hueShiftRange =
+            clamp(
+                Number(
+                    adaptiveOptions
+                        .hueShiftRange ??
+                    60
+                ),
+                1,
+                180
+            );
+
+        const hueShiftStrength =
+            clamp(
+                Number(
+                    adaptiveOptions
+                        .hueShiftStrength ??
+                    1
+                ),
+                0,
+                1
+            );
+
+        const hueFamilies = [
+            {
+                center: 0,
+                shift: Number(
+                    hueShiftOptions.red ??
+                    adaptiveOptions.redHueShift ??
+                    0
+                )
+            },
+            {
+                center: 120,
+                shift: Number(
+                    hueShiftOptions.green ??
+                    adaptiveOptions.greenHueShift ??
+                    0
+                )
+            },
+            {
+                center: 240,
+                shift: Number(
+                    hueShiftOptions.blue ??
+                    adaptiveOptions.blueHueShift ??
+                    -40
+                )
+            }
+        ];
+
+        let targetHue = hsl.hue;
+
+        if (
+            hsl.saturation >=
+            chromaticThreshold
+        ) {
+            const totalHueShift =
+                hueFamilies.reduce(
+                    (total, family) => {
+                        if (
+                            !Number.isFinite(
+                                family.shift
+                            )
+                        ) {
+                            return total;
+                        }
+
+                        const distance =
+                            getHueDistance(
+                                hsl.hue,
+                                family.center
+                            );
+
+                        const influence =
+                            clamp(
+                                1 -
+                                distance /
+                                hueShiftRange,
+                                0,
+                                1
+                            );
+
+                        return (
+                            total +
+                            family.shift *
+                            influence
+                        );
+                    },
+                    0
+                );
+
+            targetHue = normalizeHue(
+                hsl.hue +
+                totalHueShift *
+                hueShiftStrength *
+                strength
+            );
+        }
+
+        const saturationBoost =
+            clamp(
+                Number(
+                    adaptiveOptions
+                        .saturationBoost ??
+                    0.18
+                ),
+                0,
+                1
+            );
+
+        const minimumSaturation =
+            clamp(
+                Number(
+                    adaptiveOptions
+                        .minimumSaturation ??
+                    0.52
+                ),
+                0,
+                1
+            );
+
+        const maximumSaturation =
+            clamp(
+                Number(
+                    adaptiveOptions
+                        .maximumSaturation ??
+                    0.90
+                ),
+                minimumSaturation,
+                1
+            );
+
+        let targetSaturation =
+            hsl.saturation;
+
+        if (
+            hsl.saturation >=
+            chromaticThreshold
+        ) {
+            const boostedSaturation =
+                hsl.saturation +
+                (
+                    1 - hsl.saturation
+                ) * saturationBoost;
+
+            targetSaturation =
+                clamp(
+                    boostedSaturation,
+                    minimumSaturation,
+                    maximumSaturation
+                );
+        }
+
+        const adaptedSaturation =
+            hsl.saturation +
+            (
+                targetSaturation -
+                hsl.saturation
+            ) * strength;
+
+        const originalLuminance =
+            getRelativeLuminance(rgb);
+
+        const originalPerceptualLightness =
+            luminanceToPerceptualLightness(
+                originalLuminance
+            );
+
+        const minimumPerceptualLightness =
+            clamp(
+                Number(
+                    adaptiveOptions
+                        .minimumPerceptualLightness ??
+                    0.60
+                ),
+                0.5,
+                1
+            );
+
+        const maximumPerceptualLightness =
+            clamp(
+                Number(
+                    adaptiveOptions
+                        .maximumPerceptualLightness ??
+                    0.82
+                ),
+                minimumPerceptualLightness,
+                1
+            );
+
+        /*
+         * The perceptual lightness is reflected around 50 %.
+         * Dark colors therefore become light. A lower bound keeps
+         * medium colors vivid on a dark page, while the upper bound
+         * prevents very dark colors from becoming washed-out pastels.
+         */
+        const reflectedPerceptualLightness =
+            1 - originalPerceptualLightness;
+
+        const requestedPerceptualLightness =
+            Math.max(
+                originalPerceptualLightness,
+                reflectedPerceptualLightness,
+                minimumPerceptualLightness
+            );
+
+        const boundedPerceptualLightness =
+            requestedPerceptualLightness >
+                originalPerceptualLightness
+                ? Math.min(
+                    requestedPerceptualLightness,
+                    maximumPerceptualLightness
+                )
+                : originalPerceptualLightness;
+
+        const targetPerceptualLightness =
+            originalPerceptualLightness +
+            (
+                boundedPerceptualLightness -
+                originalPerceptualLightness
+            ) * strength;
+
+        const targetLuminance =
+            perceptualLightnessToLuminance(
+                targetPerceptualLightness
+            );
+
+        let minimumLightness = 0;
+        let maximumLightness = 1;
+
+        for (let iteration = 0;
+            iteration < 24;
+            iteration += 1
+        ) {
+            const candidateLightness =
+                (
+                    minimumLightness +
+                    maximumLightness
+                ) / 2;
+
+            const candidateRgb =
+                hslToRgb(
+                    targetHue,
+                    adaptedSaturation,
+                    candidateLightness
+                );
+
+            const candidateLuminance =
+                getRelativeLuminance(
+                    candidateRgb
+                );
+
+            if (
+                candidateLuminance <
+                targetLuminance
+            ) {
+                minimumLightness =
+                    candidateLightness;
+            } else {
+                maximumLightness =
+                    candidateLightness;
+            }
+        }
+
+        return rgbToCss({
+            ...hslToRgb(
+                targetHue,
+                adaptedSaturation,
+                (
+                    minimumLightness +
+                    maximumLightness
+                ) / 2
+            ),
+            alpha: rgb.alpha
+        });
     };
 
     const applyAdaptiveSvgFills = (
@@ -2791,6 +3296,12 @@ const applyThemeToTikz = (
                         originalFill;
                 }
 
+                node.dataset
+                    .tikzjaxAdaptiveFillApplied =
+                    replacement !== originalFill
+                        ? 'true'
+                        : 'false';
+
                 /*
                  * Le mode clair restaure toujours la couleur SVG
                  * originale.
@@ -2806,6 +3317,1217 @@ const applyThemeToTikz = (
                     'important'
                 );
             });
+    };
+
+    const applyAdaptiveSvgColors = (
+        svg,
+        theme
+    ) => {
+        const {
+            enabled,
+            options: adaptiveOptions
+        } = getAdaptiveColorsConfiguration();
+
+        const propertyDefinitions = [
+            {
+                property: 'stroke',
+                datasetKey:
+                    'tikzjaxOriginalAdaptiveStroke'
+            },
+            {
+                property: 'color',
+                datasetKey:
+                    'tikzjaxOriginalAdaptiveColor'
+            },
+            {
+                property: 'fill',
+                datasetKey:
+                    'tikzjaxOriginalAdaptiveFill'
+            }
+        ];
+
+        svg
+            .querySelectorAll(
+                '[fill], [stroke], [color], [style]'
+            )
+            .forEach((node) => {
+                propertyDefinitions
+                    .forEach((definition) => {
+                        const {
+                            property,
+                            datasetKey
+                        } = definition;
+
+                        if (
+                            property === 'fill' &&
+                            node.dataset
+                                .tikzjaxAdaptiveFillApplied ===
+                            'true'
+                        ) {
+                            return;
+                        }
+
+                        const currentValue =
+                            getNodePresentationValue(
+                                node,
+                                property
+                            );
+
+                        if (!node.dataset[datasetKey]) {
+                            if (
+                                !currentValue ||
+                                !isExplicitColorValue(
+                                    currentValue
+                                ) ||
+                                isBlackValue(
+                                    currentValue
+                                ) ||
+                                isWhiteValue(
+                                    currentValue
+                                ) ||
+                                !parseSvgColor(
+                                    currentValue
+                                )
+                            ) {
+                                return;
+                            }
+
+                            node.dataset[datasetKey] =
+                                currentValue;
+                        }
+
+                        const originalValue =
+                            node.dataset[datasetKey];
+
+                        let replacement =
+                            originalValue;
+
+                        if (
+                            enabled &&
+                            theme === 'dark'
+                        ) {
+                            replacement =
+                                getAdaptiveDarkColor(
+                                    originalValue,
+                                    adaptiveOptions
+                                ) ||
+                                originalValue;
+                        }
+
+                        node.setAttribute(
+                            property,
+                            replacement
+                        );
+
+                        node.style.setProperty(
+                            property,
+                            replacement,
+                            'important'
+                        );
+                    });
+            });
+    };
+
+    const getAdaptiveColorsConfiguration = () => {
+        const themeOptions =
+            getThemeOptions();
+
+        const configuredValue =
+            themeOptions.adaptiveColors;
+
+        const options =
+            isPlainObject(configuredValue)
+                ? configuredValue
+                : {};
+
+        const enabled =
+            isPlainObject(configuredValue)
+                ? parseBooleanOption(
+                    options.enabled,
+                    true
+                )
+                : parseBooleanOption(
+                    configuredValue,
+                    true
+                );
+
+        return {
+            enabled,
+            options
+        };
+    };
+
+    const restoreAdaptiveSvgContrast = (svg) => {
+        svg
+            .querySelectorAll(
+                '[data-tikzjax-contrast-adjusted="true"]'
+            )
+            .forEach((node) => {
+                const hadFillAttribute =
+                    node.dataset
+                        .tikzjaxContrastHadFillAttribute ===
+                    'true';
+
+                const hadFillStyle =
+                    node.dataset
+                        .tikzjaxContrastHadFillStyle ===
+                    'true';
+
+                if (hadFillAttribute) {
+                    node.setAttribute(
+                        'fill',
+                        node.dataset
+                            .tikzjaxContrastOriginalFillAttribute ||
+                        ''
+                    );
+                } else {
+                    node.removeAttribute('fill');
+                }
+
+                if (hadFillStyle) {
+                    node.style.setProperty(
+                        'fill',
+                        node.dataset
+                            .tikzjaxContrastOriginalFillStyle ||
+                        '',
+                        node.dataset
+                            .tikzjaxContrastOriginalFillPriority ||
+                        ''
+                    );
+                } else {
+                    node.style.removeProperty('fill');
+                }
+
+                delete node.dataset
+                    .tikzjaxContrastAdjusted;
+                delete node.dataset
+                    .tikzjaxContrastHadFillAttribute;
+                delete node.dataset
+                    .tikzjaxContrastOriginalFillAttribute;
+                delete node.dataset
+                    .tikzjaxContrastHadFillStyle;
+                delete node.dataset
+                    .tikzjaxContrastOriginalFillStyle;
+                delete node.dataset
+                    .tikzjaxContrastOriginalFillPriority;
+            });
+    };
+
+    const getComputedSvgColor = (
+        node,
+        property
+    ) => {
+        if (!(node instanceof Element)) {
+            return '';
+        }
+
+        const directValue =
+            getNodePresentationValue(
+                node,
+                property
+            );
+
+        if (parseSvgColor(directValue)) {
+            return directValue;
+        }
+
+        const computedStyle =
+            window.getComputedStyle(node);
+
+        const computedValue =
+            computedStyle.getPropertyValue(
+                property
+            );
+
+        if (parseSvgColor(computedValue)) {
+            return computedValue;
+        }
+
+        if (property === 'fill') {
+            const computedColor =
+                computedStyle.color;
+
+            if (parseSvgColor(computedColor)) {
+                return computedColor;
+            }
+        }
+
+        return '';
+    };
+
+    const getComputedOpacity = (
+        node,
+        property
+    ) => {
+        if (!(node instanceof Element)) {
+            return 1;
+        }
+
+        const computedStyle =
+            window.getComputedStyle(node);
+
+        const opacity =
+            clamp(
+                Number(computedStyle.opacity || 1),
+                0,
+                1
+            );
+
+        const paintOpacity =
+            clamp(
+                Number(
+                    computedStyle.getPropertyValue(
+                        `${property}-opacity`
+                    ) || 1
+                ),
+                0,
+                1
+            );
+
+        return opacity * paintOpacity;
+    };
+
+    const compositeRgb = (
+        foreground,
+        background
+    ) => {
+        const foregroundAlpha =
+            clamp(
+                foreground.alpha ?? 1,
+                0,
+                1
+            );
+
+        const backgroundAlpha =
+            clamp(
+                background.alpha ?? 1,
+                0,
+                1
+            );
+
+        const outputAlpha =
+            foregroundAlpha +
+            backgroundAlpha *
+            (1 - foregroundAlpha);
+
+        if (outputAlpha <= 0) {
+            return {
+                red: 0,
+                green: 0,
+                blue: 0,
+                alpha: 0
+            };
+        }
+
+        const composeComponent = (
+            foregroundComponent,
+            backgroundComponent
+        ) => {
+            return (
+                foregroundComponent *
+                foregroundAlpha +
+                backgroundComponent *
+                backgroundAlpha *
+                (1 - foregroundAlpha)
+            ) / outputAlpha;
+        };
+
+        return {
+            red: composeComponent(
+                foreground.red,
+                background.red
+            ),
+            green: composeComponent(
+                foreground.green,
+                background.green
+            ),
+            blue: composeComponent(
+                foreground.blue,
+                background.blue
+            ),
+            alpha: outputAlpha
+        };
+    };
+
+    const getContrastRatio = (
+        firstColor,
+        secondColor
+    ) => {
+        const firstLuminance =
+            getRelativeLuminance(
+                firstColor
+            );
+
+        const secondLuminance =
+            getRelativeLuminance(
+                secondColor
+            );
+
+        const lighter = Math.max(
+            firstLuminance,
+            secondLuminance
+        );
+
+        const darker = Math.min(
+            firstLuminance,
+            secondLuminance
+        );
+
+        return (
+            lighter + 0.05
+        ) / (
+            darker + 0.05
+        );
+    };
+
+    const getElementScreenBox = (node) => {
+        if (
+            !(node instanceof SVGGraphicsElement)
+        ) {
+            return null;
+        }
+
+        try {
+            const box = node.getBBox();
+            const matrix = node.getScreenCTM();
+
+            if (!matrix) {
+                return null;
+            }
+
+            const corners = [
+                new DOMPoint(box.x, box.y),
+                new DOMPoint(
+                    box.x + box.width,
+                    box.y
+                ),
+                new DOMPoint(
+                    box.x,
+                    box.y + box.height
+                ),
+                new DOMPoint(
+                    box.x + box.width,
+                    box.y + box.height
+                )
+            ].map((point) => {
+                return point.matrixTransform(
+                    matrix
+                );
+            });
+
+            const xValues = corners.map(
+                (point) => point.x
+            );
+
+            const yValues = corners.map(
+                (point) => point.y
+            );
+
+            const left = Math.min(...xValues);
+            const right = Math.max(...xValues);
+            const top = Math.min(...yValues);
+            const bottom = Math.max(...yValues);
+
+            return {
+                left,
+                right,
+                top,
+                bottom,
+                width: right - left,
+                height: bottom - top,
+                area: Math.max(
+                    0,
+                    (right - left) *
+                    (bottom - top)
+                ),
+                centerX: (left + right) / 2,
+                centerY: (top + bottom) / 2
+            };
+        } catch {
+            return null;
+        }
+    };
+
+    const getContrastDarkenedFill = (
+        originalFill,
+        textColor,
+        pageBackground,
+        contrastOptions,
+        fillOpacity = 1,
+        textOpacity = 1
+    ) => {
+        const fillRgb =
+            parseSvgColor(originalFill);
+
+        const textRgb =
+            parseSvgColor(textColor);
+
+        if (!fillRgb || !textRgb) {
+            return '';
+        }
+
+        const minimumRatio =
+            clamp(
+                Number(
+                    contrastOptions
+                        .minimumRatio ??
+                    4.5
+                ),
+                1,
+                21
+            );
+
+        const strength =
+            clamp(
+                Number(
+                    contrastOptions.strength ??
+                    1
+                ),
+                0,
+                1
+            );
+
+        const minimumBackgroundLightness =
+            clamp(
+                Number(
+                    contrastOptions
+                        .minimumBackgroundLightness ??
+                    0.04
+                ),
+                0,
+                0.5
+            );
+
+        const effectiveFillOpacity =
+            clamp(fillOpacity, 0, 1);
+
+        const effectiveTextOpacity =
+            clamp(textOpacity, 0, 1);
+
+        const getVisibleFill = (rgb) => {
+            return compositeRgb(
+                {
+                    ...rgb,
+                    alpha:
+                        clamp(
+                            rgb.alpha ?? 1,
+                            0,
+                            1
+                        ) *
+                        effectiveFillOpacity
+                },
+                pageBackground
+            );
+        };
+
+        const getVisibleText = (
+            visibleFill
+        ) => {
+            return compositeRgb(
+                {
+                    ...textRgb,
+                    alpha:
+                        clamp(
+                            textRgb.alpha ?? 1,
+                            0,
+                            1
+                        ) *
+                        effectiveTextOpacity
+                },
+                visibleFill
+            );
+        };
+
+        const fillOnPage =
+            getVisibleFill(fillRgb);
+
+        const textOnFill =
+            getVisibleText(fillOnPage);
+
+        if (
+            getContrastRatio(
+                textOnFill,
+                fillOnPage
+            ) >= minimumRatio
+        ) {
+            return '';
+        }
+
+        const fillHsl = rgbToHsl(
+            fillRgb.red,
+            fillRgb.green,
+            fillRgb.blue
+        );
+
+        const getCandidateContrast = (
+            lightness
+        ) => {
+            const candidate = {
+                ...hslToRgb(
+                    fillHsl.hue,
+                    fillHsl.saturation,
+                    lightness
+                ),
+                alpha: fillRgb.alpha
+            };
+
+            const candidateOnPage =
+                getVisibleFill(candidate);
+
+            const candidateText =
+                getVisibleText(
+                    candidateOnPage
+                );
+
+            return getContrastRatio(
+                candidateText,
+                candidateOnPage
+            );
+        };
+
+        if (
+            getCandidateContrast(
+                minimumBackgroundLightness
+            ) < minimumRatio
+        ) {
+            return rgbToCss({
+                ...hslToRgb(
+                    fillHsl.hue,
+                    fillHsl.saturation,
+                    minimumBackgroundLightness
+                ),
+                alpha: fillRgb.alpha
+            });
+        }
+
+        let acceptableLightness =
+            minimumBackgroundLightness;
+        let rejectedLightness =
+            fillHsl.lightness;
+
+        for (let iteration = 0;
+            iteration < 24;
+            iteration += 1
+        ) {
+            const candidateLightness =
+                (
+                    acceptableLightness +
+                    rejectedLightness
+                ) / 2;
+
+            if (
+                getCandidateContrast(
+                    candidateLightness
+                ) >= minimumRatio
+            ) {
+                acceptableLightness =
+                    candidateLightness;
+            } else {
+                rejectedLightness =
+                    candidateLightness;
+            }
+        }
+
+        const finalLightness =
+            fillHsl.lightness +
+            (
+                acceptableLightness -
+                fillHsl.lightness
+            ) * strength;
+
+        return rgbToCss({
+            ...hslToRgb(
+                fillHsl.hue,
+                fillHsl.saturation,
+                finalLightness
+            ),
+            alpha: fillRgb.alpha
+        });
+    };
+
+    const applyAdaptiveSvgContrast = (
+        svg,
+        theme,
+        pageBackgroundColor
+    ) => {
+        const {
+            enabled,
+            options: adaptiveOptions
+        } = getAdaptiveColorsConfiguration();
+
+        const contrastOptions =
+            isPlainObject(
+                adaptiveOptions.contrast
+            )
+                ? adaptiveOptions.contrast
+                : {};
+
+        if (
+            !enabled ||
+            theme !== 'dark' ||
+            !parseBooleanOption(
+                contrastOptions.enabled,
+                true
+            )
+        ) {
+            return;
+        }
+
+        const parsedPageBackground =
+            parseSvgColor(
+                pageBackgroundColor
+            ) || {
+                red: 27,
+                green: 30,
+                blue: 43,
+                alpha: 1
+            };
+
+        const pageBackground =
+            compositeRgb(
+                parsedPageBackground,
+                {
+                    red: 0,
+                    green: 0,
+                    blue: 0,
+                    alpha: 1
+                }
+            );
+
+        const containmentTolerance =
+            clamp(
+                Number(
+                    contrastOptions
+                        .containmentTolerance ??
+                    1
+                ),
+                0,
+                20
+            );
+
+        const shapeSelector =
+            'path, rect, circle, ellipse, polygon, polyline';
+
+        /*
+         * Background fills must be real painted fills. The generic
+         * getComputedSvgColor() helper deliberately falls back to the
+         * CSS color property for text-like content, but that fallback
+         * would incorrectly turn fill="none" shapes into backgrounds.
+         */
+        const getVisiblePaintColor = (
+            node,
+            property
+        ) => {
+            if (!(node instanceof Element)) {
+                return '';
+            }
+
+            const directValue =
+                getNodePresentationValue(
+                    node,
+                    property
+                );
+
+            const normalizedDirectValue =
+                String(directValue || '')
+                    .trim()
+                    .toLowerCase();
+
+            if (
+                normalizedDirectValue === 'none' ||
+                normalizedDirectValue === 'transparent'
+            ) {
+                return '';
+            }
+
+            if (parseSvgColor(directValue)) {
+                const parsedDirectColor =
+                    parseSvgColor(directValue);
+
+                if (
+                    parsedDirectColor &&
+                    clamp(
+                        parsedDirectColor.alpha ?? 1,
+                        0,
+                        1
+                    ) > 0
+                ) {
+                    return directValue;
+                }
+            }
+
+            const computedStyle =
+                window.getComputedStyle(node);
+
+            const computedValue =
+                computedStyle
+                    .getPropertyValue(property)
+                    .trim();
+
+            const normalizedComputedValue =
+                computedValue.toLowerCase();
+
+            if (
+                normalizedComputedValue === 'none' ||
+                normalizedComputedValue ===
+                    'transparent'
+            ) {
+                return '';
+            }
+
+            const parsedComputedColor =
+                parseSvgColor(computedValue);
+
+            if (
+                parsedComputedColor &&
+                clamp(
+                    parsedComputedColor.alpha ?? 1,
+                    0,
+                    1
+                ) > 0
+            ) {
+                return computedValue;
+            }
+
+            return '';
+        };
+
+        const getVisibleStrokeWidth = (node) => {
+            if (!(node instanceof Element)) {
+                return 0;
+            }
+
+            const computedStyle =
+                window.getComputedStyle(node);
+
+            const width = Number.parseFloat(
+                computedStyle.strokeWidth ||
+                computedStyle.getPropertyValue(
+                    'stroke-width'
+                ) ||
+                '0'
+            );
+
+            return Number.isFinite(width)
+                ? Math.max(0, width)
+                : 0;
+        };
+
+        const isBrightNeutralForeground = (
+            colorValue
+        ) => {
+            const parsedColor =
+                parseSvgColor(colorValue);
+
+            if (!parsedColor) {
+                return false;
+            }
+
+            const hsl = rgbToHsl(
+                parsedColor.red,
+                parsedColor.green,
+                parsedColor.blue
+            );
+
+            return (
+                getRelativeLuminance(
+                    parsedColor
+                ) >= 0.65 &&
+                hsl.saturation <= 0.25
+            );
+        };
+
+        const storeAndApplyContrastFill = (
+            backgroundNode,
+            darkenedFill
+        ) => {
+            if (
+                !backgroundNode ||
+                !darkenedFill
+            ) {
+                return false;
+            }
+
+            if (
+                backgroundNode.dataset
+                    .tikzjaxContrastAdjusted !==
+                'true'
+            ) {
+                backgroundNode.dataset
+                    .tikzjaxContrastHadFillAttribute =
+                    backgroundNode.hasAttribute('fill')
+                        ? 'true'
+                        : 'false';
+
+                backgroundNode.dataset
+                    .tikzjaxContrastOriginalFillAttribute =
+                    backgroundNode.getAttribute('fill') ||
+                    '';
+
+                const originalStyleFill =
+                    backgroundNode.style
+                        .getPropertyValue('fill');
+
+                backgroundNode.dataset
+                    .tikzjaxContrastHadFillStyle =
+                    originalStyleFill
+                        ? 'true'
+                        : 'false';
+
+                backgroundNode.dataset
+                    .tikzjaxContrastOriginalFillStyle =
+                    originalStyleFill;
+
+                backgroundNode.dataset
+                    .tikzjaxContrastOriginalFillPriority =
+                    backgroundNode.style
+                        .getPropertyPriority('fill');
+            }
+
+            backgroundNode.dataset
+                .tikzjaxContrastAdjusted =
+                'true';
+
+            backgroundNode.setAttribute(
+                'fill',
+                darkenedFill
+            );
+
+            backgroundNode.style.setProperty(
+                'fill',
+                darkenedFill,
+                'important'
+            );
+
+            return true;
+        };
+
+        const darkenBackgroundForForeground = (
+            backgroundNode,
+            foregroundColor,
+            foregroundOpacity = 1
+        ) => {
+            const backgroundFillValue =
+                getVisiblePaintColor(
+                    backgroundNode,
+                    'fill'
+                );
+
+            const parsedBackgroundFill =
+                parseSvgColor(
+                    backgroundFillValue
+                );
+
+            const parsedForegroundColor =
+                parseSvgColor(
+                    foregroundColor
+                );
+
+            if (
+                !parsedBackgroundFill ||
+                !parsedForegroundColor
+            ) {
+                return false;
+            }
+
+            const backgroundOpacity =
+                getComputedOpacity(
+                    backgroundNode,
+                    'fill'
+                );
+
+            const darkenedFill =
+                getContrastDarkenedFill(
+                    rgbToCss(
+                        parsedBackgroundFill
+                    ),
+                    rgbToCss(
+                        parsedForegroundColor
+                    ),
+                    pageBackground,
+                    contrastOptions,
+                    backgroundOpacity,
+                    foregroundOpacity
+                );
+
+            return storeAndApplyContrastFill(
+                backgroundNode,
+                darkenedFill
+            );
+        };
+
+        const shapeNodes = Array.from(
+            svg.querySelectorAll(
+                shapeSelector
+            )
+        )
+            .filter((node) => {
+                if (
+                    isTextNode(node) ||
+                    isMathRuleNode(node)
+                ) {
+                    return false;
+                }
+
+                return Boolean(
+                    getVisiblePaintColor(
+                        node,
+                        'fill'
+                    )
+                );
+            })
+            .map((node) => {
+                return {
+                    node,
+                    box: getElementScreenBox(node)
+                };
+            })
+            .filter(({ box }) => {
+                return Boolean(
+                    box &&
+                    box.area > 0
+                );
+            });
+
+        /*
+         * First handle a very common SVG pattern: one shape owns both
+         * its background fill and a bright outline stroke. This is the
+         * pattern used by the Kinematikz lever in which the grey beam
+         * has a currentColor (white in dark mode) border.
+         *
+         * The previous implementation only inspected <text> elements,
+         * so this contrast problem could never trigger.
+         */
+        shapeNodes.forEach(({ node }) => {
+            const strokeValue =
+                getVisiblePaintColor(
+                    node,
+                    'stroke'
+                );
+
+            if (
+                !strokeValue ||
+                getVisibleStrokeWidth(node) <= 0 ||
+                !isBrightNeutralForeground(
+                    strokeValue
+                )
+            ) {
+                return;
+            }
+
+            darkenBackgroundForForeground(
+                node,
+                strokeValue,
+                getComputedOpacity(
+                    node,
+                    'stroke'
+                )
+            );
+        });
+
+        const findBackgroundCandidate = (
+            foregroundNode,
+            foregroundBox
+        ) => {
+            return shapeNodes
+                .filter(({ node, box }) => {
+                    if (
+                        node === foregroundNode ||
+                        box.area < foregroundBox.area
+                    ) {
+                        return false;
+                    }
+
+                    const position =
+                        node.compareDocumentPosition(
+                            foregroundNode
+                        );
+
+                    const paintedBeforeForeground =
+                        Boolean(
+                            position &
+                            Node
+                                .DOCUMENT_POSITION_FOLLOWING
+                        );
+
+                    if (!paintedBeforeForeground) {
+                        return false;
+                    }
+
+                    return (
+                        foregroundBox.centerX >=
+                            box.left -
+                            containmentTolerance &&
+                        foregroundBox.centerX <=
+                            box.right +
+                            containmentTolerance &&
+                        foregroundBox.centerY >=
+                            box.top -
+                            containmentTolerance &&
+                        foregroundBox.centerY <=
+                            box.bottom +
+                            containmentTolerance
+                    );
+                })
+                .sort((first, second) => {
+                    return (
+                        first.box.area -
+                        second.box.area
+                    );
+                })[0];
+        };
+
+        /*
+         * Preserve the original text/background behavior, but use the
+         * stricter visible-fill helper so fill="none" outlines are not
+         * mistaken for text backgrounds.
+         */
+        svg.querySelectorAll('text')
+            .forEach((textNode) => {
+                const textBox =
+                    getElementScreenBox(
+                        textNode
+                    );
+
+                if (
+                    !textBox ||
+                    textBox.area <= 0
+                ) {
+                    return;
+                }
+
+                const textColorValue =
+                    getComputedSvgColor(
+                        textNode,
+                        'fill'
+                    );
+
+                const parsedTextColor =
+                    parseSvgColor(
+                        textColorValue
+                    );
+
+                if (!parsedTextColor) {
+                    return;
+                }
+
+                const backgroundCandidate =
+                    findBackgroundCandidate(
+                        textNode,
+                        textBox
+                    );
+
+                if (!backgroundCandidate) {
+                    return;
+                }
+
+                darkenBackgroundForForeground(
+                    backgroundCandidate.node,
+                    rgbToCss(parsedTextColor),
+                    getComputedOpacity(
+                        textNode,
+                        'fill'
+                    )
+                );
+            });
+
+        /*
+         * Bright neutral vector details (white paths, circles, marks,
+         * and similar currentColor graphics) can play the same visual
+         * role as text. Detect them only when they sit inside a larger
+         * previously painted fill. Chromatic foreground objects, such
+         * as the red target point, are deliberately ignored here so a
+         * coloured accent does not force the whole background towards
+         * black.
+         */
+        Array.from(
+            svg.querySelectorAll(
+                shapeSelector
+            )
+        ).forEach((foregroundNode) => {
+            const foregroundBox =
+                getElementScreenBox(
+                    foregroundNode
+                );
+
+            if (
+                !foregroundBox ||
+                foregroundBox.area <= 0
+            ) {
+                return;
+            }
+
+            const foregroundPaints = [];
+
+            const fillValue =
+                getVisiblePaintColor(
+                    foregroundNode,
+                    'fill'
+                );
+
+            if (
+                fillValue &&
+                isBrightNeutralForeground(
+                    fillValue
+                )
+            ) {
+                foregroundPaints.push({
+                    color: fillValue,
+                    opacity: getComputedOpacity(
+                        foregroundNode,
+                        'fill'
+                    )
+                });
+            }
+
+            const strokeValue =
+                getVisiblePaintColor(
+                    foregroundNode,
+                    'stroke'
+                );
+
+            if (
+                strokeValue &&
+                getVisibleStrokeWidth(
+                    foregroundNode
+                ) > 0 &&
+                isBrightNeutralForeground(
+                    strokeValue
+                )
+            ) {
+                foregroundPaints.push({
+                    color: strokeValue,
+                    opacity: getComputedOpacity(
+                        foregroundNode,
+                        'stroke'
+                    )
+                });
+            }
+
+            if (foregroundPaints.length === 0) {
+                return;
+            }
+
+            const backgroundCandidate =
+                findBackgroundCandidate(
+                    foregroundNode,
+                    foregroundBox
+                );
+
+            if (!backgroundCandidate) {
+                return;
+            }
+
+            foregroundPaints.forEach(
+                ({ color, opacity }) => {
+                    darkenBackgroundForForeground(
+                        backgroundCandidate.node,
+                        color,
+                        opacity
+                    );
+                }
+            );
+        });
     };
 
     getTikzWrappers(root)
@@ -2839,12 +4561,31 @@ const applyThemeToTikz = (
                     normalizeSvgForTheme(svg);
 
                     /*
-                     * Cette adaptation est réexécutée à chaque
-                     * changement de thème.
+                     * A previous contrast correction may have created
+                     * an explicit fill. Restore it before recomputing
+                     * the colors, so Light mode always gets the exact
+                     * original SVG values back.
+                     */
+                    restoreAdaptiveSvgContrast(svg);
+
+                    /*
+                     * These adaptations are recomputed on every theme
+                     * change from the stored original SVG colors.
                      */
                     applyAdaptiveSvgFills(
                         svg,
                         theme
+                    );
+
+                    applyAdaptiveSvgColors(
+                        svg,
+                        theme
+                    );
+
+                    applyAdaptiveSvgContrast(
+                        svg,
+                        theme,
+                        backgroundColor
                     );
                 });
         });
