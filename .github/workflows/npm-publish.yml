@@ -20,6 +20,41 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
+      - name: Validate tag against package.json version
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ "${GITHUB_REF_TYPE}" != "tag" ]; then
+            echo "npm publishing is only allowed from a Git tag."
+            echo "For a manual run, select the release tag in the GitHub Actions interface."
+            exit 1
+          fi
+
+          TAG_NAME="${GITHUB_REF_NAME}"
+
+          PACKAGE_VERSION="$(
+            python3 -c 'import json; print(str(json.load(open("package.json", encoding="utf-8")).get("version", "")).strip())'
+          )"
+
+          if [ -z "${PACKAGE_VERSION}" ]; then
+            echo "package.json does not contain a valid version."
+            exit 1
+          fi
+
+          EXPECTED_TAG="v${PACKAGE_VERSION}"
+
+          echo "Tag name:             ${TAG_NAME}"
+          echo "package.json version: ${PACKAGE_VERSION}"
+          echo "Expected tag:          ${EXPECTED_TAG}"
+
+          if [ "${TAG_NAME}" != "${EXPECTED_TAG}" ]; then
+            echo "The pushed tag must match package.json version with a leading v."
+            echo "Expected tag: ${EXPECTED_TAG}"
+            echo "Actual tag:   ${TAG_NAME}"
+            exit 1
+          fi
+
       - name: Checkout known-good CDN runtime
         uses: actions/checkout@v6
         with:
@@ -29,20 +64,38 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "24"
+          node-version: "24.16.0"
           registry-url: "https://registry.npmjs.org"
+          package-manager-cache: false
 
-      - name: Install supported npm version
+      - name: Setup npm and Yarn
+        shell: bash
         run: |
-          npm install -g npm@12.0.1
+          set -euo pipefail
+
+          npm install --global npm@12.0.1
+
+          corepack enable
+          corepack prepare yarn@1.22.22 --activate
+
+          echo "Node version:"
           node --version
+
+          echo "npm version:"
           npm --version
 
-      - name: Enable Corepack
-        run: corepack enable
+          echo "Yarn version:"
+          yarn --version
+
+          test "$(node --version)" = "v24.16.0"
+          test "$(npm --version)" = "12.0.1"
+          test "$(yarn --version)" = "1.22.22"
 
       - name: Install TeX Live dependencies
+        shell: bash
         run: |
+          set -euo pipefail
+
           sudo apt-get update
           sudo apt-get install -y \
             texlive-latex-base \
@@ -51,10 +104,16 @@ jobs:
             texlive-science
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        shell: bash
+        run: |
+          set -euo pipefail
+          yarn install --frozen-lockfile
 
       - name: Prepare required build runtime assets
+        shell: bash
         run: |
+          set -euo pipefail
+
           test -f cdn-runtime/tikzjax/core.dump.gz
           test -f cdn-runtime/tikzjax/tex.wasm.gz
 
@@ -65,10 +124,16 @@ jobs:
           ls -lh core.dump.gz tex.wasm.gz
 
       - name: Build and validate dist
-        run: yarn bfc
+        shell: bash
+        run: |
+          set -euo pipefail
+          yarn bfc
 
       - name: Replace TeX runtime with known-good CDN runtime
+        shell: bash
         run: |
+          set -euo pipefail
+
           test -f cdn-runtime/tikzjax/core.dump.gz
           test -f cdn-runtime/tikzjax/tex.wasm.gz
           test -d cdn-runtime/tikzjax/tex_files
@@ -84,10 +149,13 @@ jobs:
           ls -lh dist/core.dump.gz dist/tex.wasm.gz
 
           echo "Sample TeX runtime files:"
-          find dist/tex_files -type f | sort | head -20
+          find dist/tex_files -type f | sort | sed -n '1,20p'
 
       - name: Verify required dist files
+        shell: bash
         run: |
+          set -euo pipefail
+
           test -f dist/run-tex.js
           test -f dist/run-tex.min.js
           test -f dist/tikzjax.js
@@ -100,9 +168,9 @@ jobs:
           test -f dist/tex_files/l3backend-dvips.def.gz
 
           count="$(find dist/tex_files -type f | wc -l)"
-          echo "TeX runtime file count: $count"
+          echo "TeX runtime file count: ${count}"
 
-          test "$count" -gt 100
+          test "${count}" -gt 100
 
       - name: Check package contents
         shell: bash
@@ -115,12 +183,12 @@ jobs:
           npm pack --dry-run
 
           echo "Generating JSON package manifest:"
-          npm pack --dry-run --json > "$PACK_JSON"
+          npm pack --dry-run --json > "${PACK_JSON}"
 
           echo "npm pack JSON:"
-          cat "$PACK_JSON"
+          cat "${PACK_JSON}"
 
-          node - "$PACK_JSON" <<'NODE'
+          node - "${PACK_JSON}" <<'NODE'
           const fs = require("fs");
 
           const packJsonPath = process.argv[2];
@@ -254,4 +322,7 @@ jobs:
           NODE
 
       - name: Publish to npm
-        run: npm publish --access public
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm publish --access public

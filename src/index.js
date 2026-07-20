@@ -617,8 +617,8 @@ const getTkzTabPreamble = (
             preamble,
             'tkzTabDefaultLineWidth',
             '\\def\\tkzTabDefaultLineWidth{' +
-                String(tkzTab.lineWidth) +
-                '}'
+            String(tkzTab.lineWidth) +
+            '}'
         );
     }
 
@@ -676,8 +676,8 @@ const getTkzTabPreamble = (
             preamble,
             'tkzTabInit',
             '\\tikzset{every node/.append style={font=' +
-                String(tkzTab.font) +
-                '}}'
+            String(tkzTab.font) +
+            '}}'
         );
     }
 
@@ -3240,7 +3240,7 @@ const extractBrokenMkDocsTikzBody = (
         if (closingMatch) {
             const trailingText = nodeText.slice(
                 closingMatch.index +
-                    closingMatch[0].length
+                closingMatch[0].length
             );
 
             // Do not consume unrelated content after </script>.
@@ -3675,9 +3675,9 @@ const getWorkerOptions = () => {
         ].includes(workerMode)
     ) {
         console.warn(
-            `TikZJax: invalid workerMode ` +
-            `"${configuredWorkerMode}". ` +
-            'Falling back to "auto".'
+            'TikZJax: invalid workerMode "' +
+            configuredWorkerMode +
+            '". Falling back to "auto".'
         );
     }
 

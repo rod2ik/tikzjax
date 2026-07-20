@@ -3,7 +3,7 @@ name: Create GitHub Release
 on:
   push:
     tags:
-      - "v*"
+      - "v*.*.*"
 
 permissions:
   contents: write
@@ -18,20 +18,26 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Validate tag against package.json version
+        shell: bash
         run: |
+          set -euo pipefail
+
           TAG_NAME="${GITHUB_REF_NAME}"
 
-          PACKAGE_VERSION="$(python3 -c 'import json; print(str(json.load(open("package.json", encoding="utf-8")).get("version", "")).strip())')"
-          EXPECTED_TAG="v${PACKAGE_VERSION}"
-
-          echo "Tag name: ${TAG_NAME}"
-          echo "package.json version: ${PACKAGE_VERSION}"
-          echo "Expected tag: ${EXPECTED_TAG}"
+          PACKAGE_VERSION="$(
+            python3 -c 'import json; print(str(json.load(open("package.json", encoding="utf-8")).get("version", "")).strip())'
+          )"
 
           if [ -z "${PACKAGE_VERSION}" ]; then
             echo "package.json does not contain a valid version."
             exit 1
           fi
+
+          EXPECTED_TAG="v${PACKAGE_VERSION}"
+
+          echo "Tag name:             ${TAG_NAME}"
+          echo "package.json version: ${PACKAGE_VERSION}"
+          echo "Expected tag:          ${EXPECTED_TAG}"
 
           if [ "${TAG_NAME}" != "${EXPECTED_TAG}" ]; then
             echo "The pushed tag must match package.json version with a leading v."
@@ -41,24 +47,31 @@ jobs:
           fi
 
       - name: Create release notes from tagged commit
+        shell: bash
         run: |
+          set -euo pipefail
+
           TAG_NAME="${GITHUB_REF_NAME}"
 
           {
             echo "Release ${TAG_NAME}"
-            echo ""
+            echo
             echo "Commit:"
-            echo ""
+            echo
             git log -1 --pretty=format:"%h - %s%n%n%b"
+            echo
           } > release-notes.md
 
           echo "Release notes:"
           cat release-notes.md
 
       - name: Create GitHub release
+        shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          set -euo pipefail
+
           TAG_NAME="${GITHUB_REF_NAME}"
 
           gh release create "${TAG_NAME}" \

@@ -1,6 +1,6 @@
 {
     "name": "@rod2ik/tikzjax",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "description": "TikZ & TikZ-based LaTeX Libraries and Packages loader for the Web, in Standalone HTML pages and MkDocs Material, with Light/Dark Themes",
     "keywords": [
         "tikzjax",
@@ -98,7 +98,8 @@
     },
     "scripts": {
         "clean": "rm -rf dist",
-        "lint": "eslint . --fix",
+        "lint": "eslint .",
+        "lint:fix": "eslint . --fix",
         "format": "prettier --write .",
         "build:core": "webpack --config webpack.config.cjs --mode production",
         "build:assets": "yarn install-fonts && yarn gen-tex-files",
